@@ -62,6 +62,9 @@ def main() -> int:
     ap.add_argument("--size", type=int, default=224)
     ap.add_argument("--out", default="fabric_kaggle.tflite")
     ap.add_argument("--smoke", action="store_true", help="64px, 2+2 epochs — pipeline test only")
+    ap.add_argument("--no-pretrained", action="store_true",
+                    help="random-init backbone (offline machines where the ImageNet "
+                         "weights host is unreachable; Kaggle: leave this off)")
     args = ap.parse_args()
     if args.smoke:
         args.size, args.epochs_head, args.epochs_fine = 64, 2, 2
@@ -87,7 +90,8 @@ def main() -> int:
     inputs = tf.keras.Input(shape=(args.size, args.size, 3))
     x = tf.keras.applications.mobilenet_v3.preprocess_input(inputs)
     backbone = tf.keras.applications.MobileNetV3Small(
-        input_shape=(args.size, args.size, 3), include_top=False, weights="imagenet")
+        input_shape=(args.size, args.size, 3), include_top=False,
+        weights=None if args.no_pretrained else "imagenet")
     backbone.trainable = False
     x = backbone(x, training=False)
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
