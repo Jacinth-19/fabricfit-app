@@ -358,6 +358,12 @@ def main() -> int:
     }
     (out / "dataset-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
 
+    # ship the trainer inside the export so a Kaggle notebook can run it
+    # with internet OFF (dataset auto-mount only)
+    trainer = Path(__file__).resolve().parent / "train_on_kaggle.py"
+    if trainer.is_file():
+        shutil.copy2(trainer, out / "train_on_kaggle.py")
+
     write_data_card(out, stats, per_split_count, warnings, args, len(accepted),
                     n_groups, len(nc_rows))
 
@@ -471,8 +477,12 @@ def write_data_card(out: Path, stats, per_split_count, warnings, args,
         "# or upload kaggle_export.zip via https://www.kaggle.com/datasets",
         "```",
         "",
-        "New Kaggle Notebook → attach the dataset → run `tools/dataset/train_on_kaggle.py`",
-        "with `--data-dir /kaggle/input/<your-slug>`.",
+        "New Kaggle Notebook → attach the dataset → run `train_on_kaggle.py`",
+        "(shipped inside this export):",
+        "",
+        "```bash",
+        "python train_on_kaggle.py --data-dir /kaggle/input/<your-slug>",
+        "```",
         "",
         "## Readiness bars (label_schema.json)",
         "",
