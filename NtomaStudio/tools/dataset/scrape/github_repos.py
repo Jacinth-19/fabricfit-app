@@ -161,10 +161,20 @@ def main() -> int:
         if args.repo and repo != args.repo:
             continue
         expected = entry.get("expected_license", "")
+        license_override = bool(entry.get("license_override"))
+        root = Path(args.local) if args.local else None
 
         # -- 1. license check ------------------------------------------
-        if args.local:
-            root = Path(args.local)
+        if license_override:
+            # Operator-reviewed non-standard license (e.g. non-commercial
+            # academic). The allowlist entry IS the audit trail: the declared
+            # string is recorded per-image in CREDITS.csv and the restriction
+            # travels with the data forever.
+            common.log(
+                f"{repo}: license accepted via allowlist override "
+                f"(declared: {expected})"
+            )
+        elif args.local:
             if not root.is_dir():
                 common.log(f"! {repo}: --local path {root} does not exist")
                 return 2
@@ -260,14 +270,23 @@ def main() -> int:
             tile_size = int(entry.get("tile") or 0)
             tiles = slice_tiles(img, tile_size) if tile_size else [img]
             stem = Path(blob["path"]).stem
-            # group_by=parent: all files (and tiles) under the same directory
-            # share one source_key so prepare_kaggle.py keeps them in ONE split
-            # (e.g. AITEX frames of the same fabric roll must never straddle
-            # train/test). Default: one source_key per file.
-            if entry.get("group_by") == "parent":
-                src_key = f"github:{repo}@{blob['path'].rsplit('/', 1)[0] if '/' in blob['path'] else blob['path']}"
+            # group_by: share one source_key across files so prepare_kaggle.py
+            # keeps them in ONE split (e.g. AITEX frames of the same fabric
+            # roll must never straddle train/test):
+            #   "parent"      -> same directory (roll folders)
+            #   "grandparent" -> same grand-directory, so a dataset's parallel
+            #                    cropped/not_cropped variants co-locate
+            # default: one source_key per file.
+            gb = entry.get("group_by")
+            p = blob["path"]
+            parent = p.rsplit("/", 1)[0] if "/" in p else p
+            if gb == "parent":
+                rel_dir = parent
+            elif gb == "grandparent":
+                rel_dir = parent.rsplit("/", 1)[0] if "/" in parent else parent
             else:
-                src_key = f"github:{repo}@{blob['path']}"
+                rel_dir = p
+            src_key = f"github:{repo}@{rel_dir}"
             for ti, tile in enumerate(tiles):
                 outcome = staging.add(
                     cls, tile,

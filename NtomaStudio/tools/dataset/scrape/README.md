@@ -21,6 +21,11 @@ train_on_kaggle.py    training entrypoint for a Kaggle Notebook
 
 - **License gate** — only CC0 / Public domain / CC BY / CC BY-SA pass.
   NC, ND, "editorial use", "all rights reserved" are rejected (fail closed).
+  The one documented exception: an allowlist entry with
+  `"license_override": true` accepts a non-standard license the operator has
+  read (e.g. the non-commercial academic TS-Textile-Stripe set) — the declared
+  string is recorded per-image in CREDITS.csv and the restriction travels with
+  the data forever. The allowlist is the audit trail; never add one casually.
 - **Host blocklist** — stock agencies (Shutterstock, Getty, Alamy, …),
   marketplaces and pinboards (Etsy, Amazon, Pinterest, …) never enter the pool.
 - **Provenance** — every kept image writes a row to
@@ -32,8 +37,10 @@ train_on_kaggle.py    training entrypoint for a Kaggle Notebook
   out-of-schema classes into the 17-class dataset.
 - **Dedup + label-conflict detection** — 64-bit dHash (same as `ingest.py`),
   identical images and cross-class collisions are dropped, not silently kept.
-- **Leak-free splits** — near-duplicate clusters (looser dHash distance)
-  are kept inside one split, so val/test never see a twin of a train photo.
+- **Leak-free splits** — a shared provenance `source_key` (same source page,
+  same directory/grand-directory via the allowlist `group_by` option) plus
+  near-duplicate dHash clusters are kept inside one split, so val/test never
+  see a twin of a train photo and tiles/frames of one source never straddle.
 - **raw/ is sacred** — scrapers only write to `scraped/`; the `raw/` pool stays
   for human-vetted, consented app contributions (`ingest.py`).
 

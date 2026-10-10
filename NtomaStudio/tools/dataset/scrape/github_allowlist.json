@@ -39,6 +39,21 @@
       "default_label": "COTTON_PLAIN",
       "tile": 256,
       "group_by": "parent"
+    },
+    {
+      "repo": "ChristianJaspert/TS-Textile-Stripe-dataset-for-anomaly-detection",
+      "expected_license": "NOASSERTION - non-commercial academic use only (see repository LICENSE)",
+      "license_override": true,
+      "why": "OPERATOR-APPROVED EXCEPTION (explicit user direction, 2026-10-10): license is 'non-commercial academic purposes' only — not in the default permissive set, so license_override records it verbatim per-image in CREDITS.csv and the restriction travels with the data (never relicense this subset commercially). 1002 grayscale machine-vision captures of plain-weave industrial textiles (subtle self-stripe texture); mapped to COTTON_PLAIN as the app's APPEARANCE category, fiber unverified, grayscale noted. not_cropped/ full frames are skipped as derived twins of the cropped set (same scenes at 2500x1350 would otherwise leak across splits).",
+      "path_prefixes": [
+        "TS dataset/train/",
+        "TS dataset/test/cropped/",
+        "TS dataset/test_G1FW/cropped/",
+        "TS dataset/test_G2SR/cropped/"
+      ],
+      "extensions": [".png"],
+      "default_label": "COTTON_PLAIN",
+      "group_by": "grandparent"
     }
   ]
 }

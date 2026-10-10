@@ -329,6 +329,18 @@ def main() -> int:
                 "retrieved": row.get("retrieved", ""),
             })
 
+    # non-commercial rows (operator-approved allowlist exceptions): the
+    # restriction must be unmissable in warnings + DATA_CARD
+    nc_rows = [r for r in export_credits
+               if any(t in (r.get("license") or "").lower()
+                      for t in ("non-commercial", "noncommercial"))]
+    if nc_rows:
+        warnings.append(
+            f"{len(nc_rows)} exported image(s) carry a NON-COMMERCIAL license "
+            f"(operator-approved allowlist exception) — this dataset may only be "
+            f"used non-commercially; see CREDITS.csv license column"
+        )
+
     with (out / "labels.csv").open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=["path", "label", "split", "source"])
         w.writeheader()
@@ -346,7 +358,8 @@ def main() -> int:
     }
     (out / "dataset-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
 
-    write_data_card(out, stats, per_split_count, warnings, args, len(accepted), n_groups)
+    write_data_card(out, stats, per_split_count, warnings, args, len(accepted),
+                    n_groups, len(nc_rows))
 
     # -- summary -------------------------------------------------------
     print(f"\n{'class':16s} {'found':>6s} {'kept':>5s} {'dup':>4s} {'conf':>4s} "
@@ -383,7 +396,7 @@ def main() -> int:
 
 
 def write_data_card(out: Path, stats, per_split_count, warnings, args,
-                    kept_total: int, n_groups: dict) -> None:
+                    kept_total: int, n_groups: dict, nc_count: int = 0) -> None:
     lines = [
         f"# {args.title}",
         "",
@@ -436,7 +449,12 @@ def write_data_card(out: Path, stats, per_split_count, warnings, args,
         "- `scraped/github/`: allowlisted research repos only (see `scrape/github_allowlist.json`)",
         "- `scraped/manifest/`: explicit CSV rows with declared licenses",
         "",
-        "Blocked outright: stock agencies, marketplaces, NC/ND licenses (see `scrape/common.py`).",
+        ("Blocked outright: stock agencies, marketplaces, NC/ND licenses (see `scrape/common.py`)."
+         if not nc_count else
+         f"Blocked by default: stock agencies, marketplaces, ND and unlicensed repos "
+         f"(see `scrape/common.py`). **Exception (operator-approved):** {nc_count} image(s) "
+         f"under a *non-commercial academic* license are included — non-commercial "
+         f"restrictions apply to the whole subset; see `CREDITS.csv`."),
         "",
     ]
     if warnings:
