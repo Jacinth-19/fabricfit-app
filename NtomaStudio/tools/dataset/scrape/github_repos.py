@@ -56,7 +56,11 @@ def raw_headers() -> dict:
 
 
 def map_label(filename: str, entry: dict) -> str | None:
-    """Return a schema/aux class, or None when the file must be skipped."""
+    """Return a schema/aux class, or None when the file must be skipped.
+
+    Entries may set "default_label" for repos where every included path
+    belongs to one class (e.g. a vendored single-material dataset).
+    """
     low = Path(filename).name.lower()
     for pre in entry.get("skip_prefixes", []):
         if low.startswith(pre.lower()):
@@ -64,7 +68,23 @@ def map_label(filename: str, entry: dict) -> str | None:
     for pre, cls in (entry.get("label_map") or {}).items():
         if low.startswith(pre.lower()):
             return cls
-    return None
+    return entry.get("default_label")
+
+
+def slice_tiles(img, size: int) -> list:
+    """Split into non-overlapping size×size tiles (remainder strip dropped).
+
+    Used for wide strip scans (e.g. AITEX 4096x256): squashing a strip into
+    a square destroys weave texture, tiling preserves it.
+    """
+    w, h = img.size
+    if w < size or h < size:
+        return [img]
+    tiles = []
+    for y in range(0, h - size + 1, size):
+        for x in range(0, w - size + 1, size):
+            tiles.append(img.crop((x, y, x + size, y + size)))
+    return tiles
 
 
 def local_license_ok(root: Path, expected: str) -> tuple[bool, str]:
@@ -236,25 +256,38 @@ def main() -> int:
                 common.log(f"  - {blob['path']}: {why}")
                 continue
 
-            # -- 4/5. staging gate --------------------------------------
-            outcome = staging.add(
-                cls, img,
-                title=Path(blob["path"]).name,
-                creator=repo,
-                license_name=expected,
-                landing_url=f"https://github.com/{repo}/blob/HEAD/{blob['path']}",
-                file_url=f"https://github.com/{repo}",
-                source_key=f"github:{repo}@{blob['path']}",
-                filename_hint=f"{Path(blob['path']).stem}",
-                min_side=args.min_side,
-            )
-            if outcome == "ok":
-                kept += 1
-                repo_kept += 1
-                common.log(f"  + {cls}/{blob['path']} [{expected}]")
+            # -- 4/5. staging gate (optionally tile wide strips first) --
+            tile_size = int(entry.get("tile") or 0)
+            tiles = slice_tiles(img, tile_size) if tile_size else [img]
+            stem = Path(blob["path"]).stem
+            # group_by=parent: all files (and tiles) under the same directory
+            # share one source_key so prepare_kaggle.py keeps them in ONE split
+            # (e.g. AITEX frames of the same fabric roll must never straddle
+            # train/test). Default: one source_key per file.
+            if entry.get("group_by") == "parent":
+                src_key = f"github:{repo}@{blob['path'].rsplit('/', 1)[0] if '/' in blob['path'] else blob['path']}"
             else:
-                skipped += 1
-                common.log(f"  - {blob['path']}: {outcome}")
+                src_key = f"github:{repo}@{blob['path']}"
+            for ti, tile in enumerate(tiles):
+                outcome = staging.add(
+                    cls, tile,
+                    title=Path(blob["path"]).name,
+                    creator=repo,
+                    license_name=expected,
+                    landing_url=f"https://github.com/{repo}/blob/HEAD/{blob['path']}",
+                    file_url=f"https://github.com/{repo}",
+                    source_key=src_key,
+                    filename_hint=f"{stem}_t{ti}" if len(tiles) > 1 else stem,
+                    min_side=args.min_side,
+                )
+                if outcome == "ok":
+                    kept += 1
+                    repo_kept += 1
+                    common.log(f"  + {cls}/{blob['path']}{'#' + str(ti) if len(tiles) > 1 else ''} [{expected}]")
+                else:
+                    skipped += 1
+                    if len(tiles) > 1:
+                        common.log(f"  - {cls}/{blob['path']}#{ti}: {outcome}")
         common.log(f"{repo}: done ({repo_kept} kept from {len(blobs)} matching files)")
 
     if staging:

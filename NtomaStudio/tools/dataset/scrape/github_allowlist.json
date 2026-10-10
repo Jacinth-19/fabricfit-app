@@ -29,6 +29,16 @@
       "extensions": [".jpg", ".jpeg", ".png"],
       "label_map": { "real_": "KENTE", "fake_": "FAKE_KENTE" },
       "aux_note": "FAKE_KENTE is OUTSIDE label_schema.json: the imitations belong to the separate authenticity task and are staged for it only — prepare_kaggle.py never exports non-schema classes into the 17-class dataset (tools/dataset/README honesty rules)."
+    },
+    {
+      "repo": "jraad/fabric_defect_detection",
+      "expected_license": "MIT",
+      "why": "Vendors the AITEX Fabric Image Database under MIT: 141 defect-free + 106 defective frames of 7 solid industrial plain weaves (4096x256 strips, tiled to 256x256 here). Mapped to COTTON_PLAIN as the app's APPEARANCE category for plain solids — fiber composition is unverified, so provenance must travel with the data and no material claims may be made from it. object_detection crops and masks are excluded (crops would leak; masks are not photos).",
+      "path_prefixes": ["data/aitex/NODefect_images/", "data/aitex/Defect_images/"],
+      "extensions": [".png", ".jpg", ".jpeg"],
+      "default_label": "COTTON_PLAIN",
+      "tile": 256,
+      "group_by": "parent"
     }
   ]
 }

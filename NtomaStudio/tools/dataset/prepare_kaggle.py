@@ -222,6 +222,14 @@ def main() -> int:
         s["accepted"] += 1
 
     # -- 4: near-dup groups (leak-free split) -------------------------
+    # Two rules, applied so they cannot over-merge:
+    #   a) same provenance source_key (credits row — e.g. all tiles of one
+    #      AITEX strip / all frames of one fabric roll, or all variants of
+    #      one Commons page) -> ONE split. This is the safety rule.
+    #   b) near-duplicate images (dHash <= --group-threshold) -> ONE split,
+    #      but ONLY among items WITHOUT a provenance key (raw/ pool).
+    #      Chaining keyed items visually would percolate large homogeneous
+    #      sets (e.g. plain weaves) into a single useless group.
     groups_by_class: dict[str, list[list[dict]]] = defaultdict(list)
     for cls in classes:
         items = [it for it in accepted if it["class"] == cls]
@@ -230,8 +238,21 @@ def main() -> int:
         uf = UnionFind()
         for it in items:
             uf.find(it["id"])
-        for i, a in enumerate(items):
-            for b in items[i + 1:]:
+        # a) provenance-based grouping
+        by_source: dict[str, list[dict]] = defaultdict(list)
+        for it in items:
+            row = credits_index.get((it["source"], it["class"], it["path"].name)) or {}
+            sk = (row.get("source_key") or "").split("#")[0].strip()
+            it["gkey"] = sk
+            if sk:
+                by_source[sk].append(it)
+        for same_source in by_source.values():
+            for other in same_source[1:]:
+                uf.union(same_source[0]["id"], other["id"])
+        # b) visual near-duplicate grouping for un-keyed (raw pool) items
+        unkeyed = [it for it in items if not it.get("gkey")]
+        for i, a in enumerate(unkeyed):
+            for b in unkeyed[i + 1:]:
                 if common.hamming(a["dhash"], b["dhash"]) <= args.group_threshold:
                     uf.union(a["id"], b["id"])
         buckets: dict[str, list[dict]] = defaultdict(list)
@@ -244,9 +265,20 @@ def main() -> int:
     split_of: dict[str, str] = {}
     for cls, groups in groups_by_class.items():
         if len(groups) == 1:
-            warnings.append(f"{cls}: only 1 near-dup group — everything goes to train (no val/test possible)")
+            warnings.append(f"{cls}: only 1 source group — everything goes to train (no val/test possible)")
         elif len(groups) == 2:
             warnings.append(f"{cls}: only 2 groups — val or test will be empty")
+    n_groups = {cls: len(groups_by_class.get(cls, [])) for cls in classes}
+    for cls in classes:
+        kept = stats[cls].get("accepted", 0)
+        g = n_groups[cls]
+        if g and kept > 10 * g and g < 30:
+            warnings.append(
+                f"{cls}: diversity warning — {kept} images from only {g} source groups "
+                f"(tiles/frames of the same sources). Image count OVERSTATES photo diversity; "
+                f"keep field photos coming"
+            )
+    for cls, groups in groups_by_class.items():
         split_of.update(assign_splits(groups, rng, ratios=(1 - args.val - args.test, args.val, args.test)))
     for cls in classes:
         if cls not in groups_by_class:
@@ -314,11 +346,11 @@ def main() -> int:
     }
     (out / "dataset-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
 
-    write_data_card(out, stats, per_split_count, warnings, args, len(accepted))
+    write_data_card(out, stats, per_split_count, warnings, args, len(accepted), n_groups)
 
     # -- summary -------------------------------------------------------
     print(f"\n{'class':16s} {'found':>6s} {'kept':>5s} {'dup':>4s} {'conf':>4s} "
-          f"{'bad':>4s} {'train':>6s} {'val':>4s} {'test':>5s}  bar")
+          f"{'bad':>4s} {'grp':>4s} {'train':>6s} {'val':>4s} {'test':>5s}  bar")
     for cls in classes:
         s = stats[cls]
         c = per_split_count[cls]
@@ -332,7 +364,7 @@ def main() -> int:
         else:
             bar = f"need {BAR_TRAIN - c.get('train', 0)} more"
         print(f"{cls:16s} {s.get('found', 0):6d} {kept:5d} {s.get('duplicate', 0):4d} "
-              f"{s.get('conflict', 0):4d} {s.get('invalid', 0):4d} "
+              f"{s.get('conflict', 0):4d} {s.get('invalid', 0):4d} {n_groups.get(cls, 0):4d} "
               f"{c.get('train', 0):6d} {c.get('val', 0):4d} {c.get('test', 0):5d}  {bar}")
 
     if warnings:
@@ -350,7 +382,8 @@ def main() -> int:
     return 0
 
 
-def write_data_card(out: Path, stats, per_split_count, warnings, args, kept_total: int) -> None:
+def write_data_card(out: Path, stats, per_split_count, warnings, args,
+                    kept_total: int, n_groups: dict) -> None:
     lines = [
         f"# {args.title}",
         "",
@@ -364,21 +397,28 @@ def write_data_card(out: Path, stats, per_split_count, warnings, args, kept_tota
         "",
         "## Splits",
         "",
-        "Stratified 70/15/15 by **near-duplicate group** (dHash distance ≤ "
-        f"{args.group_threshold} stays in one split), seed {args.seed}.",
-        "Duplicates (≤ {0}) and cross-class conflicts are dropped before splitting.".format(args.threshold),
+        "Stratified 70/15/15 by **group**, seed " + str(args.seed) + ". A group is:",
+        "",
+        "1. all images sharing one provenance source (same Commons page, same source",
+        "   directory/tiles — so frames of one fabric roll never straddle splits), and/or",
+        "2. near-duplicate images (dHash distance ≤ " + str(args.group_threshold) + ").",
+        "",
+        "Duplicates (≤ " + str(args.threshold) + ") and cross-class conflicts are dropped before splitting.",
         "",
         "## Per-class counts",
         "",
-        "| class | found | kept | duplicates | conflicts | invalid | train | val | test |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "`src groups` = independent sources; tiles/frames of one source count as ONE group.",
+        "Treat a high image count with a low group count as quantity, not diversity.",
+        "",
+        "| class | found | kept | duplicates | conflicts | invalid | src groups | train | val | test |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     classes = common.load_classes()
     for cls in classes:
         s, c = stats[cls], per_split_count[cls]
         lines.append(
             f"| {cls} | {s.get('found', 0)} | {s.get('accepted', 0)} | {s.get('duplicate', 0)} "
-            f"| {s.get('conflict', 0)} | {s.get('invalid', 0)} "
+            f"| {s.get('conflict', 0)} | {s.get('invalid', 0)} | {n_groups.get(cls, 0)} "
             f"| {c.get('train', 0)} | {c.get('val', 0)} | {c.get('test', 0)} |"
         )
     lines += [
