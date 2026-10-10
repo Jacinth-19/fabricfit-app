@@ -17,3 +17,11 @@ tools/dataset/raw/
 tools/dataset/augmented/
 tools/dataset/out/
 tools/dataset/work/
+
+# Web-scraped pools + Kaggle exports (data, never committed)
+tools/dataset/scraped/
+tools/dataset/kaggle_export/
+tools/dataset/kaggle_export.zip
+
+# Python bytecode
+__pycache__/

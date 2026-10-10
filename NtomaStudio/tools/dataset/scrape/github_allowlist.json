@@ -1,0 +1,25 @@
+{
+  "_comment": "Allowlisted GitHub repos whose images may be harvested. Every entry MUST declare the repo's license and how filenames map to label_schema classes. Repos without a license (or with a mismatched one) are refused unless --ignore-license is passed. label_map keys are filename prefixes; files matching skip_prefixes are counted but never downloaded/labelled (kept for the separate tasks they belong to).",
+  "repos": [
+    {
+      "repo": "robinsonkwame/authente-kente-app",
+      "expected_license": "MIT",
+      "why": "Authente-Kente paper reference app (MIT). app/raw/real_*.jpg are 8 museum/private-collection kente photos used as demo inputs.",
+      "path_prefixes": ["app/raw/"],
+      "extensions": [".jpg", ".jpeg", ".png"],
+      "label_map": { "real_": "KENTE" },
+      "skip_prefixes": ["fake_"],
+      "skip_note": "fake_* swatches are machine-made imitations for the authenticity task — never merged into category labels (tools/dataset/README honesty rules)"
+    },
+    {
+      "repo": "robinsonkwame/authente-kente-online-learning",
+      "expected_license": "MIT",
+      "why": "Authente-Kente monorepo (MIT). One real kente sample image in notebooks.",
+      "path_prefixes": ["online-learner-pool/notebooks/"],
+      "extensions": [".jpg", ".jpeg", ".png"],
+      "label_map": { "real_": "KENTE" },
+      "skip_prefixes": ["fake_"],
+      "skip_note": "fake_* would be authenticity-task only"
+    }
+  ]
+}
