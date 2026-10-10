@@ -1,0 +1,22 @@
+{
+  "_comment": "Search terms per class for wikimedia.py / openverse.py. Kept short and specific: more queries with small per-query caps beat one broad query (better diversity, easier to audit). Edit freely — class names must exist in ../label_schema.json.",
+  "queries": {
+    "KENTE": ["kente cloth", "ashanti kente", "ewe kente cloth", "kente weaving loom"],
+    "KENTE_PRINT": ["kente print fabric", "kente pattern print", "kente wax print"],
+    "ADINKRA": ["adinkra cloth", "adinkra symbols cloth", "adinkra stamp"],
+    "WAX": ["african wax print fabric", "wax print cloth ghana", "dutch wax print"],
+    "ANKARA": ["ankara fabric", "ankara print cloth", "ankara dress fabric"],
+    "BATIK": ["batik cloth", "batik fabric pattern", "batik textile"],
+    "TIEDYE": ["tie dye fabric", "tie-dye textile", "shibori tie dye"],
+    "LACE": ["lace fabric", "guipure lace", "crochet lace fabric"],
+    "BROCADE": ["brocade fabric", "brocade textile", "damask brocade cloth"],
+    "COTTON_PLAIN": ["plain cotton fabric", "cotton cloth texture", "cotton fabric white"],
+    "LINEN": ["linen fabric", "linen texture", "linen cloth"],
+    "SILK": ["silk fabric", "silk textile", "satin silk cloth"],
+    "CHIFFON": ["chiffon fabric", "chiffon textile", "chiffon dress fabric"],
+    "VELVET": ["velvet fabric", "velvet texture", "velvet cloth"],
+    "DENIM": ["denim fabric", "denim texture", "jeans denim closeup"],
+    "FUGU": ["fugu smock ghana", "batakari smock", "guinea fowl smock ghana", "northern ghana smock"],
+    "GONJA": ["gonja smock", "gonja cloth ghana", "gonja northern ghana"]
+  }
+}

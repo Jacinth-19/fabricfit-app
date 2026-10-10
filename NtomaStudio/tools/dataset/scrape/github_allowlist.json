@@ -1,0 +1,59 @@
+{
+  "_comment": "Allowlisted GitHub repos whose images may be harvested. Every entry MUST declare the repo's license and how filenames map to label_schema classes. Repos without a license (or with a mismatched one) are refused unless --ignore-license is passed. label_map keys are filename prefixes; files matching skip_prefixes are counted but never downloaded/labelled (kept for the separate tasks they belong to).",
+  "repos": [
+    {
+      "repo": "robinsonkwame/authente-kente-app",
+      "expected_license": "MIT",
+      "why": "Authente-Kente paper reference app (MIT). app/raw/real_*.jpg are 8 museum/private-collection kente photos used as demo inputs.",
+      "path_prefixes": ["app/raw/"],
+      "extensions": [".jpg", ".jpeg", ".png"],
+      "label_map": { "real_": "KENTE" },
+      "skip_prefixes": ["fake_"],
+      "skip_note": "fake_* swatches are machine-made imitations for the authenticity task — never merged into category labels (tools/dataset/README honesty rules)"
+    },
+    {
+      "repo": "robinsonkwame/authente-kente-online-learning",
+      "expected_license": "MIT",
+      "why": "Authente-Kente monorepo (MIT). One real kente sample image in notebooks.",
+      "path_prefixes": ["online-learner-pool/notebooks/"],
+      "extensions": [".jpg", ".jpeg", ".png"],
+      "label_map": { "real_": "KENTE" },
+      "skip_prefixes": ["fake_"],
+      "skip_note": "fake_* would be authenticity-task only"
+    },
+    {
+      "repo": "CSDTs/kente-cloth-authentication",
+      "expected_license": "BSD-3-Clause",
+      "why": "The ORIGINAL Authente-Kente data release (paper's data-availability URL, surviving under the CSDTs org). 8 authentic whole kente cloths + 19 machine-made imitations, high-res, BSD-3.",
+      "path_prefixes": ["data/raw/"],
+      "extensions": [".jpg", ".jpeg", ".png"],
+      "label_map": { "real_": "KENTE", "fake_": "FAKE_KENTE" },
+      "aux_note": "FAKE_KENTE is OUTSIDE label_schema.json: the imitations belong to the separate authenticity task and are staged for it only — prepare_kaggle.py never exports non-schema classes into the 17-class dataset (tools/dataset/README honesty rules)."
+    },
+    {
+      "repo": "jraad/fabric_defect_detection",
+      "expected_license": "MIT",
+      "why": "Vendors the AITEX Fabric Image Database under MIT: 141 defect-free + 106 defective frames of 7 solid industrial plain weaves (4096x256 strips, tiled to 256x256 here). Mapped to COTTON_PLAIN as the app's APPEARANCE category for plain solids — fiber composition is unverified, so provenance must travel with the data and no material claims may be made from it. object_detection crops and masks are excluded (crops would leak; masks are not photos).",
+      "path_prefixes": ["data/aitex/NODefect_images/", "data/aitex/Defect_images/"],
+      "extensions": [".png", ".jpg", ".jpeg"],
+      "default_label": "COTTON_PLAIN",
+      "tile": 256,
+      "group_by": "parent"
+    },
+    {
+      "repo": "ChristianJaspert/TS-Textile-Stripe-dataset-for-anomaly-detection",
+      "expected_license": "NOASSERTION - non-commercial academic use only (see repository LICENSE)",
+      "license_override": true,
+      "why": "OPERATOR-APPROVED EXCEPTION (explicit user direction, 2026-10-10): license is 'non-commercial academic purposes' only — not in the default permissive set, so license_override records it verbatim per-image in CREDITS.csv and the restriction travels with the data (never relicense this subset commercially). 1002 grayscale machine-vision captures of plain-weave industrial textiles (subtle self-stripe texture); mapped to COTTON_PLAIN as the app's APPEARANCE category, fiber unverified, grayscale noted. not_cropped/ full frames are skipped as derived twins of the cropped set (same scenes at 2500x1350 would otherwise leak across splits).",
+      "path_prefixes": [
+        "TS dataset/train/",
+        "TS dataset/test/cropped/",
+        "TS dataset/test_G1FW/cropped/",
+        "TS dataset/test_G2SR/cropped/"
+      ],
+      "extensions": [".png"],
+      "default_label": "COTTON_PLAIN",
+      "group_by": "grandparent"
+    }
+  ]
+}

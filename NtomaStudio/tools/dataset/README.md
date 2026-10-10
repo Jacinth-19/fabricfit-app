@@ -30,6 +30,26 @@ tools/dataset/
    `./gradlew :app:testDebugUnitTest`, and only then stop labelling results
    `ON_DEVICE_DEMO` for the classes that genuinely improved.
 
+## Web sourcing → Kaggle training (new)
+Free-licensed photos can fill the pool faster than field days alone — through a
+scraper toolkit with hard safety rails (license gate CC0/PD/CC BY/CC BY-SA only,
+stock/marketplace blocklist, per-image `CREDITS.csv`, dHash dedup, leak-free splits):
+
+```bash
+python3 tools/dataset/scrape/selftest.py      # offline test-suite first
+python3 tools/dataset/scrape/wikimedia.py --per-class 60
+python3 tools/dataset/scrape/openverse.py --per-class 40   # optional OPENVERSE_API_KEY
+python3 tools/dataset/scrape/github_repos.py  # allowlisted research repos
+python3 tools/dataset/scrape/manifest.py my_urls.csv       # explicit URLs you vouch for
+
+python3 tools/dataset/prepare_kaggle.py --kaggle-id YOURUSER/ntoma-fabric-17 --zip
+kaggle datasets create -p tools/dataset/kaggle_export      # or upload the .zip
+# Kaggle Notebook → attach dataset → python3 train_on_kaggle.py --data-dir /kaggle/input/<slug>
+```
+
+Details + honesty implications: `scrape/README.md`. Web data is **starter** data —
+it never replaces the 1000+/class field + consented-contribution bar for claims.
+
 ## Honesty rules (non-negotiable)
 - No accuracy claims from models trained on <1000 images/class.
 - Authentic hand-woven vs machine-printed kente is a **separate task** (see
