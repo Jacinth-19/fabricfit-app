@@ -20,6 +20,15 @@
       "label_map": { "real_": "KENTE" },
       "skip_prefixes": ["fake_"],
       "skip_note": "fake_* would be authenticity-task only"
+    },
+    {
+      "repo": "CSDTs/kente-cloth-authentication",
+      "expected_license": "BSD-3-Clause",
+      "why": "The ORIGINAL Authente-Kente data release (paper's data-availability URL, surviving under the CSDTs org). 8 authentic whole kente cloths + 19 machine-made imitations, high-res, BSD-3.",
+      "path_prefixes": ["data/raw/"],
+      "extensions": [".jpg", ".jpeg", ".png"],
+      "label_map": { "real_": "KENTE", "fake_": "FAKE_KENTE" },
+      "aux_note": "FAKE_KENTE is OUTSIDE label_schema.json: the imitations belong to the separate authenticity task and are staged for it only — prepare_kaggle.py never exports non-schema classes into the 17-class dataset (tools/dataset/README honesty rules)."
     }
   ]
 }

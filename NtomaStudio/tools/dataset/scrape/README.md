@@ -26,6 +26,10 @@ train_on_kaggle.py    training entrypoint for a Kaggle Notebook
 - **Provenance** — every kept image writes a row to
   `scraped/<source>/CREDITS.csv` (title, creator, license, landing page);
   `prepare_kaggle.py` merges them into the export's `CREDITS.csv`.
+- **Auxiliary labels** — allowlist entries may map filenames to classes that are
+  NOT in `label_schema.json` (e.g. `FAKE_KENTE` for the authenticity task).
+  They are staged with full provenance but `prepare_kaggle.py` never exports
+  out-of-schema classes into the 17-class dataset.
 - **Dedup + label-conflict detection** — 64-bit dHash (same as `ingest.py`),
   identical images and cross-class collisions are dropped, not silently kept.
 - **Leak-free splits** — near-duplicate clusters (looser dHash distance)

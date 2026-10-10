@@ -45,12 +45,18 @@ def test_licenses():
         "public domain": "Public domain",
         "CC BY-SA": "CC BY-SA",
         "cc-by-4.0": "CC BY 4.0",
+        "MIT": "MIT",
+        "Apache-2.0": "Apache-2.0",
+        "BSD-3-Clause": "BSD-3-Clause",
+        "BSD 3-Clause": "BSD-3-Clause",
+        "Unlicense": "Unlicense",
     }
     for raw, want in accept.items():
         got = common.norm_license(raw)
         check(f"accept {raw!r}", got == want, f"got {got!r} want {want!r}")
     for raw in ("CC BY-NC 4.0", "CC BY-NC-SA 4.0", "CC BY-ND 4.0", "Copyrighted",
-                "All rights reserved", "", "Editorial use only", "In copyright"):
+                "All rights reserved", "", "Editorial use only", "In copyright",
+                "GPL-3.0", "Proprietary"):
         got = common.norm_license(raw)
         check(f"reject {raw!r}", got is None, f"got {got!r}")
 

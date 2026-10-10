@@ -63,7 +63,9 @@ def strip_html(value: str) -> str:
 def norm_license(raw: str) -> str | None:
     """Return a canonical license name if it allows commercial + derivative use.
 
-    Anything ambiguous returns None (fail closed).
+    Anything ambiguous returns None (fail closed). Permissive software-style
+    licenses (MIT/Apache/BSD/Unlicense) are accepted too — they are common on
+    GitHub repos that bundle research photos, and they permit commercial use.
     """
     s = strip_html(raw or "")
     if not s:
@@ -76,10 +78,21 @@ def norm_license(raw: str) -> str | None:
     if re.search(r"public\s*domain|\bpdm\b|^\s*pd\b", low):
         return "Public domain"
     m = re.search(r"cc[\s-]by([\s-]?sa)?([\s-]?(\d+(?:\.\d+)?))?", low)
-    if m and not _LICENSE_REJECT.search(low):
+    if m:
         base = "CC BY-SA" if m.group(1) else "CC BY"
         ver = m.group(3) or ""
         return f"{base} {ver}".strip()
+    # permissive code licenses (GitHub repos bundling data/photos)
+    for name, pat in (
+        ("MIT", r"\bmit\b"),
+        ("Apache-2.0", r"apache[\s-]?2(\.0)?"),
+        ("BSD-3-Clause", r"bsd[\s-]?3"),
+        ("BSD-2-Clause", r"bsd[\s-]?2"),
+        ("BSD", r"\bbsd\b"),
+        ("Unlicense", r"\bunlicense\b|\bpublic domain dedication\b"),
+    ):
+        if re.search(pat, low):
+            return name
     return None
 
 
