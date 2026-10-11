@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 concurrency:
   group: android-${{ github.ref }}
@@ -21,15 +22,28 @@ jobs:
       run:
         working-directory: NtomaStudio
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
       - name: Unit tests and installable debug APK
-        run: bash gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace
+        run: |
+          set -o pipefail
+          bash gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest --stacktrace 2>&1 | tee build-diagnostics.txt
+      - name: Accessible build diagnostics
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PYDIAG'
+          import json, os
+          from pathlib import Path
+          text = Path('build-diagnostics.txt').read_text() if Path('build-diagnostics.txt').exists() else 'Failure before compilation; inspect job setup.'
+          Path('check.json').write_text(json.dumps({'name':'Build diagnostics', 'head_sha':os.environ['GITHUB_SHA'], 'status':'completed', 'conclusion':'failure', 'output':{'title':'Build failure', 'summary':'Compiler/test diagnostics', 'text':text[-60000:]}}))
+          PYDIAG
+          gh api repos/${{ github.repository }}/check-runs --input check.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -48,12 +62,11 @@ jobs:
       run:
         working-directory: NtomaStudio
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
       - name: Enable Linux emulator acceleration
         run: |
