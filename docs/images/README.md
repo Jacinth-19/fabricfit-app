@@ -1,26 +1,34 @@
 # App screenshots and photo credits
 
-## Current README: editorial redesign
+## Current README: Heritage Luxe build
 
 The main README uses the following **unedited screenshots of the installed Android app**. They are not generated UI mockups.
 
-Source: [Actions run 38147477400](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38147477400), tested commit `5a36be6`, captured-files check `114494923203`, **Android 33**. The build and Android 33 device journey passed. Android 36 emulator setup failed before testing; publishing was skipped. These captures do not imply the redesign is in the downloadable release.
+Source: GitHub Actions run [38155674595](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38155674595), commit `111856b`, captured-files check `114520293283`, **Android 33** (`app-journey (33, google_apis)`). That journey passed. The **Android 16 (API 36)** journey failed: the app process crashed during its first test, so no Android 16 captures are used here. The downloadable APK was not refreshed by this run.
 
 | File | Screen | Git blob SHA |
 |---|---|---|
-| `00-home-light.png` | Redesigned Home, light mode | `10f294dfe88d91927bd233133c8c5634879f32a6` |
-| `00-home-dark.png` | Redesigned Home, dark mode | `265f6e7264ed8fad4e2d5b07a063bfcbe933c6ee` |
-| `03-selected-fabric.png` | Fabric selection from a real Adowa photograph | `192c164688b8324e1d6797abc6479cf24d45e2cc` |
-| `05-template.png` | Flat outfit template using the selected photo texture | `7ee13cfe8921c5a40b6f0bbe00be665ec6304424` |
+| `heritage-luxe/00-home-light.png` | Home, light mode | `47d852ac7e836216026fc5222b8b87fdf0d64dfa` |
+| `heritage-luxe/00-home-dark.png` | Home, dark mode | `822e80212c0183f4616a38eaa42b06674f1f5714` |
+| `heritage-luxe/03-selected-fabric.png` | Fabric selection on the Adowa photograph | `819542bcc69d9a931248284339ae11bf681b52db` |
+| `heritage-luxe/05-template.png` | Flat outfit template with the selected texture | `689e00da4fd5e25487b2e6fd9bf507a6c6819ff3` |
+| `heritage-luxe/08-tryon-light.png` | Try On, light mode | `59efbdd5998b4156f71e1143e7e0687369e4875c` |
+| `heritage-luxe/09-discover-dark.png` | Discover, dark mode | `dfccb40a02e2509ab9091fd74ba2797ba240aa0a` |
+
+Known gap: the Profile capture in dark mode is byte-identical to the light-mode capture, so the Profile theme switch is **not shown as verified** and no Profile dark-mode screenshot is used.
 
 ### Photography
 
 - Home: **“Kente fashion in Ghana”**, photographed by **Fquasie** at Afrochella Festival 2021. [Original source](https://commons.wikimedia.org/wiki/File:Kente_fashion_in_Ghana.jpg).
 - Fabric selection and template: **“Adowa Dancer in Kente Cloth”**, photographed by **Bright Kwame Ayisi (Kwameghana)**. [Original source](https://commons.wikimedia.org/wiki/File:Adowa_Dancer_in_Kente_Cloth.jpg).
-- Both photographs are licensed **[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)**. The app crops/resizes the photos for display and uses selected photo pixels for the template. The photographic adaptations retain that licence. See the [bundled credits](../../NtomaStudio/app/src/main/assets/editorial/CREDITS.md).
+- Both photographs are licensed **[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)**. The app crops/resizes the photos for display and uses selected photo pixels for the template. The photographic adaptations retain that licence. See the [bundled credits](../NtomaStudio/app/src/main/assets/editorial/CREDITS.md).
 - These are attributed cultural photographs, not endorsements by their subjects. Subject/model-release status is unverified.
 
 Screenshots are displayed smaller in the README; their original PNG pixels are preserved. Garment templates are flat layouts, not photoreal try-on or fit predictions.
+
+## Earlier editorial-redesign screenshots (not shown in the main README)
+
+`00-home-light.png`, `00-home-dark.png`, `03-selected-fabric.png` and `05-template.png` at this folder's top level are from the earlier editorial redesign, run [38147477400](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38147477400), commit `5a36be6`, Android 33. They do not show the Heritage Luxe design.
 
 ## Historical screenshots (not shown in the main README)
 
