@@ -1,46 +1,30 @@
 # On-device AI, try-on and Play launch plan
 
-Written 2026-10-11. Verified against the code in this checkout. **No model trained,
-no app behaviour changed, no remote job run.** Complements
-[`KAGGLE_AI_PLAN.md`](KAGGLE_AI_PLAN.md) and the automation in
-[`tools/kaggle_outfits/`](../tools/kaggle_outfits/README.md).
+Updated 2026-10-11. The owner approved local fabric previews and outfit templates now,
+with optional cloud photoreal try-on later. No specialist fabric model has been trained and no
+remote Kaggle job has run. The concept notebook is separate from app recognition.
 
-## Status so far (split confirmed 2026-10-11)
+## Implementation and validation status
 
-**Owner confirmed:** on-device **fabric preview + templates** now; cloud **photoreal try-on**
-later (opt-in, separately flavoured).
+Implemented on `arena/5b96a1cd-ntoma-studio`:
+- Camera/gallery editor displays the whole oriented image with a draggable rectangular fabric selection.
+- Saving uses normalised image coordinates, not the previous inverse view-space transform.
+- Saved fabric swatches, design illustrations, outfit templates and person-photo overlays use the selected pixels rather than invented palette tiles.
+- Templates need no person photo, allow silhouette selection and texture-repeat adjustment, and export via Android sharing.
+- Privacy/disclaimer/quota wording reflects local flat previews. Updated workflow strings in Twi/Ga/Ewe fall back to English pending native-language review; localization is not complete.
+- Root GitHub Actions workflow builds/tests and installs real APKs on an Android 33 x86_64 emulator.
 
-Done in this step — honesty relabel in all four locales (`values`, `-tw`, `-gaa`, `-ee`):
+Evidence so far:
+- Run `38110916690`: build and unit tests passed; installed-app journey launched, then failed at the Create tab. The label was not clickable; the whole tab is now clickable.
+- Run `38111452820`: verifies that fix and retries picker → selection → analysis → templates → share. Outcome pending when this status was written.
+- Marketing generation is gated on passing the journey. The test input is an original synthetic whole-dress illustration, not a real camera photograph or proof of recognition accuracy.
+- APKs/reports are Actions artifacts; debug signing is not production Play signing. No APK is committed to Git.
 
-| Key | Was | Now |
-|---|---|---|
-| `tryon_title` | "Try it on" | "Fabric preview" |
-| `tryon_state_uploading` | "Uploading your photo…" | "Reading your photo…" |
-| `tryon_state_generating` | "Creating your look…" | "Applying your fabric…" |
-| `tryon_state_success` | "Your look is ready" | "Your preview is ready" |
-| `onboarding_step3_title` | "See it on a photo of you" | "Preview it on a photo of you" |
-| `notif_channel_processing_desc` | "…when a generated look is ready." | "…when your preview is ready." |
-| `result_variations` | "Generate 3 more variations" | "Make 3 more variations" |
+Local Java is absent. GitHub Actions is the execution path requested by the owner. Standard Actions
+artifact/log download hosts are blocked from this workspace, so compiler/device failures are also
+reported through GitHub check output. Build artifacts remain downloadable from the run page.
 
-**Follow-up required (not yet done):** the three translations now hold English placeholders
-and must be retranslated; `tryon_quota_note`, `premium_benefit_tryons` and
-`privacy_images_body`/`privacy_device_body` still say "try-on"/"AI try-on" and should be
-aligned. Run `tools/i18n` checks if they exist for this project.
-
-**Build limitation (important):** `tools/setup_toolchain.sh` downloads the JDK from
-`adoptium.net`, the Android SDK from `dl.google.com` and Gradle from `services.gradle.org`.
-This session's network allowlist covers only GitHub, npm, PyPI and the Python CDN, so the
-Android build and unit tests **cannot run here**. String edits above were XML-validated only.
-The owner (or CI) must run:
-
-```bash
-bash /home/user/tools/setup_toolchain.sh
-export JAVA_HOME=/var/tmp/tools/jdk17 ANDROID_HOME=/var/tmp/android-sdk GRADLE_USER_HOME=/var/tmp/gradle-home
-cd NtomaStudio && ./gradlew :app:testDebugUnitTest :app:assembleDebug
-```
-
-No Kotlin/Compose screen was modified this step, so the build risk is limited to string
-resources; the check above is still required before shipping.
+The design discussion below predates implementation; treat it as a roadmap, not a completion report.
 
 ## The tradeoff to decide first
 

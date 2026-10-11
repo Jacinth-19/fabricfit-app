@@ -74,8 +74,11 @@ class FabricJourneyDeviceTest {
             waitText(context.getString(R.string.create_option_gallery_title))
             screenshot("01-create")
             compose.onNodeWithText(context.getString(R.string.create_option_gallery_title)).performClick()
-            assertTrue("Android photo picker did not open", device.wait(Until.hasObject(By.pkg("com.google.android.providers.media.module")), 15_000) ||
-                device.wait(Until.hasObject(By.pkg("com.android.providers.media.module")), 5_000))
+            device.waitForIdle()
+            Thread.sleep(2000)
+            device.dumpWindowHierarchy(File(artifacts, "picker-ui.xml"))
+            assertTrue("Android photo picker did not open; package=${device.currentPackageName}",
+                device.wait(Until.hasObject(By.pkg(java.util.regex.Pattern.compile(".*(providers.media|photopicker|documentsui).*"))), 15_000))
             val thumbnail = device.wait(Until.findObject(By.res(java.util.regex.Pattern.compile(".*:id/icon_thumbnail"))), 15_000)
                 ?: device.wait(Until.findObject(By.descContains("Photo taken")), 5000)
             assertNotNull("Picker thumbnail absent: ${device.currentPackageName}", thumbnail)
