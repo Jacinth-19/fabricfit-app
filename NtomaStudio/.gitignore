@@ -25,3 +25,6 @@ tools/dataset/kaggle_export.zip
 
 # Python bytecode
 __pycache__/
+
+# Downloaded CI reports and recordings
+qa-artifacts/

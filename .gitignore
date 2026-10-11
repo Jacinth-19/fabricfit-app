@@ -17,3 +17,13 @@ image-search/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local credentials and Python environments (never upload or commit secrets)
+.env
+.env.*
+!.env.example
+.kaggle/
+kaggle.json
+access_token
+.venv/
+__pycache__/

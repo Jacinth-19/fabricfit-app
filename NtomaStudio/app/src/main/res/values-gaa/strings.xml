@@ -51,8 +51,6 @@
     <string name="onboarding_step1_body">Kɛ o ntama shishifɔɔ, anaa kɛ ba mli kɛjɛ o shishifɔɔ kɛ mli. Ntama nɔŋ ji mɔ fɛɛ shishifɔɔ.</string>
     <string name="onboarding_step2_title">Kɛ susumɔi ni naa lɛ</string>
     <string name="onboarding_step2_body">Yɛkɛɛ ɛjɔŋmɔi, nutata kɛ ntama he mɔɔ, ni yɛŋwɛɛ Ghana kɛ shiŋ shisusumɔi yɛ ayeŋ kɛ anɔŋmɔi.</string>
-    <string name="onboarding_step3_title">Kɛ o shishifɔɔ nɔ</string>
-    <string name="onboarding_step3_body">O shikaŋ: kɛ o shishifɔɔ ba mli ni o kɛ susumɔ no gbɔmɔ nɔ bɔ o maŋ o tɔɔlɔ shi.</string>
     <string name="onboarding_step4_title">To mli ni o kɛɛ mɔ</string>
     <string name="onboarding_step4_body">To ntama kɛ shishifɔɔi ni osuɔ mli kɛ Suɔmɔi mli, ni o kɛɛ mɔ o tɔɔlɔ anaa o bii.</string>
     <string name="onboarding_started_title">Ba, yɛshi shishifɔɔ</string>
@@ -90,7 +88,6 @@
     <string name="create_option_camera_title">Kɛ shishifɔɔ</string>
     <string name="create_option_camera_body">Tsɔ o kamera kɛ ntama ni mli o hɛŋ shishifɔɔ.</string>
     <string name="create_option_gallery_title">Yi shishifɔɔ</string>
-    <string name="create_option_gallery_body">Yi ntama shishifɔɔ ni mli o fɔn nɔ.</string>
     <string name="create_option_person_title">Kɛ susumɔ no gbɔmɔ nɔ</string>
     <string name="create_option_person_body">Kɛ ntama kɛ susumɔ ni ato mli shishifɔɔ nɔ.</string>
     <string name="create_recent_title">Tsuɔmɔ ni mli</string>
@@ -110,9 +107,7 @@
     <string name="camera_no_device">Kamera bɔ fɔn nɔŋ nɔ</string>
     <string name="camera_no_device_body">O shikaŋ yi ntama shishifɔɔ kɛjɛ o shishifɔɔ kɛ mli.</string>
     <string name="camera_capture_failed">Yɛbɔɔ kɛ shishifɔɔ no. Kɛ o tsɔɔ eko.</string>
-    <string name="edit_title_fabric">Tsake o ntama shishifɔɔ</string>
     <string name="edit_title_person">Tsake shishifɔɔ no</string>
-    <string name="edit_hint">Kɛ o nɔɔmɔi nɔɔmɔ kɛ anaa kɛkɛi, hee kɛ shishifɔɔ, ni o kɛ shishi.</string>
     <string name="edit_rotate">Dane</string>
     <string name="edit_reset">Shi eko</string>
     <string name="edit_ratio_free">Fɛɛ</string>
@@ -140,12 +135,10 @@
     <string name="analysis_section_category">Ntama ko ni mli baaŋ</string>
     <string name="analysis_section_style">Ghana susumɔ ni mli baaŋ</string>
     <string name="analysis_section_uses">Tsuɔmɔi ni abɔ</string>
-    <string name="analysis_honesty_note">Nɔŋ ji mɔ ni mli baaŋ, ejjɛŋ shishifɔɔ krataa. Ntamai nɔɔmɔi baaŋ sɛ shishifɔɔ nɔ. O shɔɔŋ nɔɔ lɛ, bi o ntama shishifɔɔlɔ.</string>
     <string name="analysis_ml_title">ML shikamɔ ni yɔ mɔ̃ lɛ nɔ</string>
     <string name="analysis_ml_mapped">Etsɔɔmɔ ntama: %1$s</string>
     <string name="analysis_ml_note">MobileNetV2 ni tsuɔ o mɔ̃ lɛ nɔ no eee nɔ ni eekpɔ. Susumɔ arare ji, edaŋ shishi mli, acɛ mɔ ekoookɛ efee shika.</string>
     <string name="analysis_engine_on_device">Fɔn nɔ yitso (nɔŋmɔ)</string>
-    <string name="analysis_engine_on_device_note">O fɔn nɔŋ nɔ naa lɛ yɛkɛɛ ɛjɔŋmɔi kɛ nutata. Yɛtsɔɔ nɔŋ kɛɛ intanɛt nɔ. Tsɔ cloud mɔ ba mli toomɔi mli.</string>
     <string name="analysis_engine_cloud">Cloud mli yitso</string>
     <string name="analysis_engine_cloud_note">Yɛtsɔ o shishifɔɔ kɛɛ yitso tsuɔmɔ shi.</string>
     <string name="analysis_action_view_designs">Kɛ susumɔi ni naa lɛ</string>
@@ -214,7 +207,6 @@
     <string name="why_occasion">Ɛhewɔɔ mɔ %1$s.</string>
     <string name="why_tradition">Ghana ŋwɛɛmɔ susumɔ ni aŋwɛɛ nɔŋ nɔ.</string>
     <string name="why_gender">Atɔɔ %1$s.</string>
-    <string name="tryon_title">Ba kpɔ</string>
     <string name="tryon_step_person">Mɔ ni bɔɔ?</string>
     <string name="tryon_step_photo">Bɔ shishifɔɔ mli</string>
     <string name="tryon_step_design">Yi susumɔ</string>
@@ -233,22 +225,13 @@
     <string name="tryon_fabric_change">Tsake ntama</string>
     <string name="tryon_start">Tsɔ ntama no di mɔ</string>
     <string name="tryon_state_idle">Emɔŋ o heŋ</string>
-    <string name="tryon_state_uploading">Emɔŋ tsɔ o shishifɔɔ…</string>
     <string name="tryon_state_processing">Emɔŋ siesie o ntama…</string>
-    <string name="tryon_state_generating">Emɔŋ ŋwɛɛ o shishifɔɔ…</string>
     <string name="tryon_state_finishing">Siesiemɔ ni mli gbe…</string>
-    <string name="tryon_state_success">O shishifɔɔ ji gbe mli</string>
     <string name="tryon_state_error">Yɛbɔɔ ŋwɛɛ shishifɔɔ no</string>
-    <string name="tryon_quota_note">%1$d yɛ %2$d ba-kpɔmɔi femli ni ye nɔŋŋ fɛɛ nɔ</string>
-    <string name="tryon_quota_exhausted">O ba-kpɔmɔi femli ni ye nɔŋŋ na gbe.</string>
-    <string name="tryon_rewarded_offer">Kɛ shiŋmɔ kɛkɛ ni o bɔɔ ba-kpɔmɔ 1 nɔŋ nɔ</string>
-    <string name="tryon_rewarded_granted">Hewɔɔ — ba-kpɔmɔ 1 ba mli.</string>
     <string name="tryon_needs_connection">Do-kpɔmɔ hia intanɛt</string>
     <string name="tryon_demo_notice">Shishifɔɔ mli ŋwɛɛmɔ</string>
-    <string name="tryon_demo_notice_body">Shishifɔɔ nɔŋ nɔ, o fɔn nɔŋ nɔ naa lɛ aŋwɛɛ kɛjɛ ɛjɔŋmɔi kɛ nutata ni akɛ mli. Ɛŋwɛɛ ɛjɔŋmɔ kɛ kɛkɛ nɔŋ, ejjɛŋ ba-kpɔmɔ anɔkuale. Tsɔ generation backend ba mli nɔ anɔkuale.</string>
     <string name="tooltip_tryon">Tsɔ shishifɔɔ kɛ naa lɛ di mɔ nɔ o bɔɔ ŋwɛɛmɔ kɛ hewɔɔ.</string>
     <string name="result_title">O shishifɔɔ</string>
-    <string name="result_ai_disclaimer">AI shishifɔɔ</string>
     <string name="result_demo_disclaimer">Nɔŋmɔ — ɛjɔŋmɔ kɛ kɛkɛ nɔŋ</string>
     <string name="result_summary">%1$s mli %2$s</string>
     <string name="result_action_save">To mli</string>
@@ -377,7 +360,6 @@
     <string name="premium_title">Ntoma Premium</string>
     <string name="premium_pitch">Ntoma femli no kɛɛ o kɛɛ ntama shishifɔɔ, o kɛɛ susumɔi fɛɛ ni o toɔ suɔmɔi. Premium ji gbii ni oɔsiesie dadɔi bii.</string>
     <string name="premium_benefit_analyses">Ntama yitsomɔi ni ye mli</string>
-    <string name="premium_benefit_tryons">Ba-kpɔmɔi 20 fɛɛ nɔ</string>
     <string name="premium_benefit_resolution">Shishifɔɔi ni he jɔŋ</string>
     <string name="premium_benefit_speed">Mɔŋ tsɔɔmɔ</string>
     <string name="premium_benefit_styles">Susumɔi kɛ</string>
@@ -398,8 +380,6 @@
     <string name="premium_unlocked_toast">Premium kɛ fɔn nɔŋ nɔ (nɔŋmɔ)</string>
     <string name="paywall_sheet_title">O femli nɔŋmɔ na gbe</string>
     <string name="paywall_sheet_body_analyses">Akawnt femli bɔɔ ntama yitsomɔi %1$d gbɛɛ fɛɛ gbɛɛ. Premium kɛɛ nɔŋmɔ no jɛ mli.</string>
-    <string name="paywall_sheet_body_tryons">Akawnt femli bɔɔ ba-kpɔmɔi %1$d fɛɛ nɔ.</string>
-    <string name="paywall_sheet_alternative">Anaa kɛ shiŋmɔ kɛkɛ nɔ o bɔɔ ba-kpɔmɔ 1</string>
     <string name="ads_placeholder_title">Shiŋmɔ</string>
     <string name="ads_placeholder_body">Shiŋmɔ shi. Tsɔ ad mɔ ba mli nɔ shiŋmɔi anɔkuale. Premium mɔi bɔɔ nɔŋ gbɛɛ.</string>
     <string name="ads_rewarded_label">Shiŋmɔ ni aŋwɛɛ he (nɔŋmɔ)</string>
@@ -437,7 +417,6 @@
     <string name="error_memory_title">Fɔn no bɔɔ nɔŋ nɔ</string>
     <string name="error_memory_body">Shishifɔɔ no kɛ yɔ fɔn nɔŋ nɔ. Toɔ app bi anaa yi shishifɔɔ kɛkɛ.</string>
     <string name="notif_channel_processing">Tsuɔmɔ na gbe</string>
-    <string name="notif_channel_processing_desc">Ɛŋwɛɛ o nɔ shishifɔɔ ko ji gbe mli.</string>
     <string name="notif_channel_recommendations">Susumɔi ni abɔ</string>
     <string name="notif_channel_recommendations_desc">Susumɔi bibii kɛjɛ ntamai ni ato mli.</string>
     <string name="notif_channel_updates">Ntoma tsakemɔi</string>
@@ -458,7 +437,6 @@
     <string name="privacy_images_title">Shishifɔɔi nɔŋ ni ayitso mli</string>
     <string name="privacy_images_body">Ntama shishifɔɔi ni okɛɛ anaa oyí, kɛ — o tsɔɔ ba-kpɔmɔ nɔŋ nɔŋ — gbɔmɔ shishifɔɔ kɛkɛ. Shishifɔɔi ni aŋwɛɛ lɛ ye app no suɔŋmɔ kɛ mli.</string>
     <string name="privacy_device_title">Shishifɔɔi kɛɛ mi fɔn nɔ?</string>
-    <string name="privacy_device_body">Fɔn nɔ yitso: nato. Ayitso o ntama o fɔn nɔŋ nɔ ni yɛtsɔɔɔ intanɛt nɔ gbɛɛ. Cloud yitso kɛ AI ba-kpɔmɔ: yewaa — atsɔɔ shishifɔɔ no kɛɛ backend ni ayi no nɔ o kɛɛ. Yɛŋwɛɛ fɔn ni atsɔɔ mɔ no daa.</string>
     <string name="privacy_retention_title">Gbe sɛ ni ayeɛɛ shishifɔɔi?</string>
     <string name="privacy_retention_body">O fɔn nɔŋ nɔ kɛ ya o bɔɔ jɛ mli. Backend fɛɛ ŋwɛɛ lɛ nɔŋ gbɛɛmɔ; yɛbɔɔ gbɛɛmɔ kɛ dɔŋŋ 24 ji kɛ hewɔɔ shishifɔɔi ni atsɔɔ, ni nɔŋmɔ fɔn no yeɛɛɔ nɔŋ bi.</string>
     <string name="privacy_delete_title">Kɛ mi bɔɔ kɛ mi nɔŋ jɛ mli?</string>
@@ -482,25 +460,20 @@
     <string name="terms_body_4">Tsuɔmɔ no ye beta mli. Premium nɔŋ nɔ mli yɛɛɛ sika mli, ni yɛŋɔɔɔ sika bi.</string>
     <string name="terms_body_5">Bi bojamɔ nɔ o bɔɔ shikaŋmɔ anaa o shɔɔ o nɔŋ jɛmɔ.</string>
     <string name="credits_title">Yiwalɛmɔ</string>
-    <string name="credits_body">Ntoma — &quot;ntama&quot; Akan gbi mli. Aŋwɛɛ kɛ Jetpack Compose. Ntama kɛ susumɔi nimɔɔ kɛjɛ Ghana dadɔ kɔɔmɔi: kente, adinkra, wax print kɛ batakari. Shishifɔɔi ni mli nɔŋ nɔ fɛɛ kɛjɛ o ntama ɛjɔŋmɔi; yɛtsɔɔɔ shishifɔɔi nɔŋ nɔi.</string>
     <string name="help_title">Bojamɔ kɛ gbɛɛmɔi</string>
     <string name="help_how_title">Kɛ Ntoma tsɔɔ mɔ</string>
-    <string name="help_how_1">1. Kɛ ntama shishifɔɔ anaa tsɔ mli.</string>
     <string name="help_how_2">2. Kɛɛ yitso no: ɛjɔŋmɔi, nutata, he mɔɔ kɛ Ghana susumɔ.</string>
     <string name="help_how_3">3. Kɛɛ susumɔi ni naa lɛ ayeŋ kɛ anɔŋmɔi, ni ayi lɛ ŋwɛɛ nɔ.</string>
-    <string name="help_how_4">4. O shɔɔ lɛ, kɛɛ susumɔ no gbɔmɔ shishifɔɔ nɔ.</string>
     <string name="help_how_5">5. Toɔ nɔŋ ni osuɔ ni o kɛɛ mɔ o tɔɔlɔ.</string>
     <string name="help_tips_title">Shishifɔɔ gbɛɛmɔi</string>
     <string name="help_tips_body">Toɔ nutata no kɛ mli mli, tsɔ njɔɔŋ shikaŋ di mɔ, toɔ ntama no nɔɔ yɔɔ, ni o kɛ ɛsum anaa kanɛ shikaŋ kɛ yɔ.</string>
     <string name="help_faq_title">Bimɔi ni abɔɔ gbɛɛ gbɛɛ</string>
     <string name="help_faq_q1">Atsɔɔ mi shishifɔɔ intanɛt nɔ?</string>
-    <string name="help_faq_a1">O tsɔɔ cloud fɔn anaa AI ba-kpɔmɔ nɔŋ nɔŋ. Fɔn nɔ yitso kɛɛ o fɔn nɔ gbɛɛ.</string>
     <string name="help_faq_q2">Ŋɔɔ nɔ ni eŋwɛɛ &quot;mli baaŋ shikaŋ&quot;?</string>
     <string name="help_faq_a2">Shishifɔɔ bɔɔ kɛ ntama kente kɛ nɔŋ ni atintim akɛ lɛ daa. Yɛsuɔɔ anɔkuale nɔ yɛ bɔɔ shishifɔɔ.</string>
     <string name="help_faq_q3">Ba-kpɔmɔ no ji anɔkuale?</string>
     <string name="help_faq_a3">Nato. Ɛŋwɛɛ ɛjɔŋmɔ kɛ kɛkɛ gbɔmɔ nɔ. Kɛ mli baaŋ naa o he lɛ shishi o tɔɔlɔ nɔ.</string>
     <string name="help_faq_q4">Ɛtsɔɔ mɔ nɔɔ intanɛt bɔ?</string>
-    <string name="help_faq_a4">Susumɔi, suɔmɔi, nɔŋ ni mli kɛ toomɔi tsɔɔ mɔ nɔɔ intanɛt bɔ. Cloud yitso kɛ AI ba-kpɔmɔ hia intanɛt.</string>
     <string name="help_faq_q5">Mishikaŋ bɔ mi susumɔi mi nɔŋ ba mli?</string>
     <string name="help_faq_a5">Eshikaŋ mli. Susumɔi kɛ no kɛjɛ katalog ni atsɔɔ kɛɛ tsake backend nɔ.</string>
     <string name="help_contact_body">Ŋwɛɛ yɛ nɔŋ ni tsra ni yɛbɔɔ nyɛlɛmɔ. Toɔ o app fɔn nɔŋ nɔ ba mli: %1$s.</string>
@@ -686,7 +659,6 @@
     <string name="customizer_length">Ne kɛ yɔ</string>
     <string name="customizer_placement">Ntama no shi</string>
     <string name="customizer_accent">Ɛjɔŋmɔ ni mli kɛɛ</string>
-    <string name="customizer_demo_note">Nɔŋmɔ no ŋwɛɛ ntama shi kɛ ɛjɔŋmɔi. Tɔɔmɔ nɔŋmɔi kɛɛ o tɔɔlɔ shiŋmɔ mli.</string>
     <string name="custom_sleeve_default">Akɛ mli ŋwɛɛ</string>
     <string name="custom_sleeve_short">Kɛkɛ</string>
     <string name="custom_sleeve_long">Kɛ yɔ</string>
@@ -754,9 +726,7 @@
     <string name="measurement_neck">Ali (cm)</string>
     <string name="measurement_notes">Nɔŋmɔi tɔɔlɔi</string>
     <string name="measurements_saved">Ato kɛkɛmɔi mli</string>
-    <string name="result_variations">Ŋwɛɛ tsakemɔi 3 nɔŋ nɔi</string>
     <string name="result_variations_progress">Emɔŋ ŋwɛɛ tsakemɔi… (%1$d yɛ 3 mli)</string>
-    <string name="result_variations_quota">Ba-kpɔmɔi femli eyɔɔɔ nɔ tsakemɔi 3.</string>
     <string name="result_compare">Bɔɔ mɔ</string>
     <string name="result_compare_original">Ni mli dɛŋ</string>
     <string name="result_compare_result">Ni mli ba</string>
@@ -830,4 +800,5 @@
     <string name="contrib_delete_confirm">Ojie foto nɔŋ?</string>
     <string name="contrib_delete_confirm_body">Aaji foto nɔŋ kɛjɔ oboɔmɔ mli.</string>
     <string name="contrib_duplicate">Foto nɔŋ lɛ nɔŋ dedaw.</string>
+    <!-- Updated local-preview workflow strings fall back to English pending native-language review. -->
 </resources>

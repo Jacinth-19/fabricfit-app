@@ -54,7 +54,35 @@ class ImageProcessor(private val context: Context) {
             ?.use { BitmapFactory.decodeStream(it, null, opts) }
             ?: return Outcome.Failure(AppError.InvalidImage)
         if (bitmap.width == 0 || bitmap.height == 0) return Outcome.Failure(AppError.InvalidImage)
-        Outcome.Success(bitmap)
+        val orientation = context.contentResolver.openInputStream(uri)?.use {
+            androidx.exifinterface.media.ExifInterface(it).getAttributeInt(
+                androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
+                androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL,
+            )
+        } ?: androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL
+        val matrix = Matrix().apply {
+            when (orientation) {
+                2 -> setScale(-1f, 1f)
+                3 -> setRotate(180f)
+                4 -> setScale(1f, -1f)
+                5 -> { setRotate(90f); postScale(-1f, 1f) }
+                6 -> setRotate(90f)
+                7 -> { setRotate(90f); postScale(1f, -1f) }
+                8 -> setRotate(270f)
+            }
+        }
+        val oriented = if (matrix.isIdentity) bitmap else Bitmap.createBitmap(
+            bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true,
+        ).also { if (it !== bitmap) bitmap.recycle() }
+        val longest = maxOf(oriented.width, oriented.height)
+        val bounded = if (longest <= maxEdge) oriented else {
+            val ratio = maxEdge.toFloat() / longest
+            Bitmap.createScaledBitmap(oriented, (oriented.width * ratio).toInt().coerceAtLeast(1),
+                (oriented.height * ratio).toInt().coerceAtLeast(1), true).also {
+                if (it !== oriented) oriented.recycle()
+            }
+        }
+        Outcome.Success(bounded)
         } catch (oom: OutOfMemoryError) {
             Outcome.Failure(AppError.Memory)
         } catch (e: Exception) {
@@ -62,36 +90,10 @@ class ImageProcessor(private val context: Context) {
         }
     }
 
-    /**
-     * Applies rotation / scale / pan + aspect crop in view space, mirroring what the user saw
-     * in the editor overlay.
-     */
-    fun transform(
-        source: Bitmap,
-        rotationDeg: Int,
-        scale: Float,
-        panX: Float,
-        panY: Float,
-        viewW: Int,
-        viewH: Int,
-        coverScale: Float,
-    ): Bitmap {
-        val matrix = Matrix()
-        // Work in the view's coordinate space: centre the source, then undo the user transforms.
-        matrix.postTranslate(source.width / -2f, source.height / -2f)
-        matrix.postScale(1f / (coverScale * scale), 1f / (coverScale * scale))
-        matrix.postRotate(-rotationDeg.toFloat())
-        matrix.postTranslate(-panX, -panY)
-        matrix.postTranslate(viewW / 2f, viewH / 2f)
-        // The matrix above maps source->view; invert to sample source from view pixels.
-        val inverse = Matrix()
-        matrix.invert(inverse)
-
-        val out = Bitmap.createBitmap(viewW, viewH, Bitmap.Config.ARGB_8888)
-        val canvas = android.graphics.Canvas(out)
-        canvas.setMatrix(inverse)
-        canvas.drawBitmap(source, 0f, 0f, null)
-        return out
+    /** Save exactly the rectangle shown over the oriented image; no hidden view-space crop. */
+    fun crop(source: Bitmap, selection: FabricCrop): Bitmap {
+        val rect = selection.pixels(source.width, source.height)
+        return Bitmap.createBitmap(source, rect.x, rect.y, rect.width, rect.height)
     }
 
     fun downscaleForSave(bitmap: Bitmap): Bitmap {

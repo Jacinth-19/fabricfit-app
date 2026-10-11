@@ -21,8 +21,8 @@ import java.io.File
 import kotlin.math.roundToInt
 
 /**
- * Honest demo compositor: drapes the detected colours/pattern onto the garment outline over the
- * person photo. It demonstrates scale + palette, and the UI labels the output accordingly.
+ * Local flat compositor: tiles the selected fabric pixels over a fixed garment outline.
+ * This is a placement preview, not photoreal try-on or a fit prediction.
  */
 class DemoLookGenerator(
     private val imageProcessor: ImageProcessor,
@@ -161,6 +161,7 @@ class DemoLookGenerator(
             shapes.forEach { (path, _) -> combined.op(path, band, android.graphics.Path.Op.INTERSECT) }
             canvas.drawPath(combined, fabricFill)
         }
+        pattern.recycle()
         return out
     }
 
@@ -170,59 +171,12 @@ class DemoLookGenerator(
         return RectF(w * left, h * 0.26f, w * right, h * 0.96f)
     }
 
-    /** Builds a small tiling swatch from the analysed palette + pattern type. */
-    private fun patternBitmap(fabric: Fabric): Bitmap {
-        val size = 128
-        val bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bmp)
-        val colors = fabric.colors.map { it.argb.toInt() }.ifEmpty { listOf(0xFFC8952B.toInt(), 0xFF8C2F39.toInt()) }
-        val base = colors.first()
-        canvas.drawColor(base)
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-
-        fun colorAt(i: Int) = colors.getOrElse(i) { colors[i % colors.size] }
-
-        when (fabric.pattern) {
-            PatternType.STRIPED -> {
-                val band = size / (colors.size * 2).coerceAtLeast(4)
-                var y = 0
-                var i = 0
-                while (y < size) {
-                    paint.color = colorAt(i % colors.size)
-                    canvas.drawRect(0f, y.toFloat(), size.toFloat(), (y + band).toFloat(), paint)
-                    y += band
-                    i++
-                }
-            }
-            PatternType.CHECKED -> {
-                val cell = size / 4
-                for (cy in 0 until 4) for (cx in 0 until 4) {
-                    paint.color = if ((cx + cy) % 2 == 0) colorAt(0) else colorAt(1)
-                    canvas.drawRect((cx * cell).toFloat(), (cy * cell).toFloat(), ((cx + 1) * cell).toFloat(), ((cy + 1) * cell).toFloat(), paint)
-                }
-            }
-            PatternType.DOTTED, PatternType.FLORAL, PatternType.ORGANIC -> {
-                val cell = size / 4
-                for (cy in 0 until 4) for (cx in 0 until 4) {
-                    paint.color = colorAt((cx * 3 + cy) % colors.size)
-                    canvas.drawCircle(cx * cell + cell / 2f, cy * cell + cell / 2f, cell / 3f, paint)
-                }
-            }
-            PatternType.GRADIENT -> {
-                paint.shader = android.graphics.LinearGradient(
-                    0f, 0f, 0f, size.toFloat(), colorAt(0), colorAt(1), Shader.TileMode.CLAMP,
-                )
-                canvas.drawRect(0f, 0f, size.toFloat(), size.toFloat(), paint)
-            }
-            else -> {
-                val cell = size / 3
-                for (cy in 0 until 3) for (cx in 0 until 3) {
-                    paint.color = colorAt((cx + cy * 2) % colors.size)
-                    canvas.drawRect((cx * cell).toFloat(), (cy * cell).toFloat(), ((cx + 1) * cell).toFloat(), ((cy + 1) * cell).toFloat(), paint)
-                }
-            }
-        }
-        return bmp
+    /** Uses the saved selected pixels, never a palette-generated substitute. */
+    private fun patternBitmap(fabric: Fabric): Bitmap = when (
+        val loaded = imageProcessor.load(android.net.Uri.parse(fabric.imageUri), 256)
+    ) {
+        is Outcome.Success -> loaded.data
+        is Outcome.Failure -> error("Selected fabric image is unavailable")
     }
 
     private fun darken(argb: Int): Int {

@@ -18,6 +18,7 @@ object Routes {
     fun analysis(uri: String) = "analysis/${Uri.encode(uri)}"
     fun fabric(id: Long) = "fabric/$id"
     fun recommendations(fabricId: Long) = "recommendations/$fabricId"
+    fun templates(fabricId: Long, styleId: String = "") = "templates/$fabricId?styleId=$styleId"
     fun design(styleId: String) = "design/$styleId"
     fun tryOn(fabricId: Long?, styleId: String?, personPath: String? = null) =
         "tryon?fabricId=${fabricId ?: -1}&styleId=${styleId ?: ""}" +

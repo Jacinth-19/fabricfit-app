@@ -12,8 +12,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        // Ship only the ABIs real target devices use; trims TFLite/AndroidX natives (~6 MB).
-        ndk { abiFilters += listOf("armeabi-v7a", "arm64-v8a") }
+
 
         applicationId = "com.ntoma.studio"
         minSdk = 24
@@ -38,11 +37,13 @@ android {
 
     buildTypes {
         debug {
+            ndk { abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64") }
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isMinifyEnabled = false
         }
         release {
+            ndk { abiFilters += listOf("armeabi-v7a", "arm64-v8a") }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -154,6 +155,7 @@ dependencies {
 
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)

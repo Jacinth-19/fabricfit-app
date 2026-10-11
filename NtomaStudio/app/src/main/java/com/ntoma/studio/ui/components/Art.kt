@@ -42,58 +42,27 @@ internal fun Fabric.paletteColors(): List<Color> =
  */
 @Composable
 fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
-    val colors = fabric.paletteColors()
-    val pattern = fabric.pattern
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-        drawRect(colors.first())
-        when (pattern) {
-            PatternType.STRIPED -> {
-                val bands = (colors.size * 2).coerceAtLeast(4)
-                val band = h / bands
-                repeat(bands) { i ->
-                    drawRect(colors[i % colors.size], topLeft = Offset(0f, i * band), size = Size(w, band))
-                }
-            }
-            PatternType.CHECKED -> {
-                val cell = w / 5
-                for (cy in 0 until 6) for (cx in 0 until 6) {
-                    if ((cx + cy) % 2 == 0) continue
-                    drawRect(colors.getOrElse(1) { colors[0] }, topLeft = Offset(cx * cell, cy * cell), size = Size(cell, cell))
-                }
-            }
-            PatternType.DOTTED, PatternType.FLORAL, PatternType.ORGANIC -> {
-                val cell = w / 5
-                for (cy in 0 until 6) for (cx in 0 until 6) {
-                    drawCircle(
-                        colors[(cx * 3 + cy) % colors.size],
-                        radius = cell / 3f,
-                        center = Offset(cx * cell + cell / 2, cy * cell + cell / 2),
-                    )
-                }
-            }
-            PatternType.GRADIENT -> {
-                drawRect(colors.getOrElse(1) { colors[0] }, topLeft = Offset(0f, h / 2), size = Size(w, h / 2))
-            }
-            else -> {
-                val cell = w / 4
-                for (cy in 0 until 5) for (cx in 0 until 5) {
-                    drawRect(
-                        colors[(cx + cy * 2) % colors.size],
-                        topLeft = Offset(cx * cell, cy * cell),
-                        size = Size(cell * 0.86f, cell * 0.86f),
-                    )
-                }
-            }
-        }
-    }
+    LocalImage(uri = fabric.imageUri, contentDescription = androidx.compose.ui.res.stringResource(com.ntoma.studio.R.string.cd_fabric_image), modifier = modifier)
 }
 
 /** Flat garment illustration built from the shared geometry + the analysed palette. */
 @Composable
 fun GarmentArt(style: DressStyle, fabric: Fabric?, modifier: Modifier = Modifier) {
-    val colors = fabric?.paletteColors() ?: FALLBACK
+    if (fabric != null) {
+        val context = LocalContext.current
+        var preview by remember(fabric.imageUri, style.id) { mutableStateOf<android.graphics.Bitmap?>(null) }
+        LaunchedEffect(fabric.imageUri, style.id) {
+            val result = withContext(Dispatchers.Default) {
+                com.ntoma.studio.di.AppContainer.get(context).templateRenderer.render(fabric.imageUri, style)
+            }
+            preview = (result as? com.ntoma.studio.domain.model.Outcome.Success)?.data
+        }
+        val bitmap = preview
+        if (bitmap != null) Image(bitmap.asImageBitmap(), androidx.compose.ui.res.stringResource(com.ntoma.studio.R.string.template_title), modifier, contentScale = ContentScale.Fit)
+        else Box(modifier) { androidx.compose.material3.Text(androidx.compose.ui.res.stringResource(com.ntoma.studio.R.string.template_loading)) }
+        return
+    }
+    val colors = FALLBACK
     val shapes = GarmentGeometry.shapesFor(style.silhouette)
     Canvas(modifier = modifier) {
         val w = size.width

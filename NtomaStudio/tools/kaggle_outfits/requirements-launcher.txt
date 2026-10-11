@@ -1,0 +1,4 @@
+# Python 3.11+. Local launcher only; GPU dependencies install inside Kaggle.
+kaggle==2.2.4
+# Explicit request types with version_label support.
+kagglesdk==0.1.37

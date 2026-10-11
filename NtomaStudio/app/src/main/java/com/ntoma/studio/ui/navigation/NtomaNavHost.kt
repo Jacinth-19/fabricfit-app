@@ -166,6 +166,14 @@ private fun NtomaNavHost(
             RecommendationsScreen(nav, padding, fabricId = entry.arguments?.getLong("fabricId") ?: 0)
         }
 
+        composable("templates/{fabricId}?styleId={styleId}", arguments = listOf(
+            androidx.navigation.navArgument("fabricId") { type = NavType.LongType },
+            androidx.navigation.navArgument("styleId") { type = NavType.StringType; defaultValue = "" },
+        )) { entry ->
+            com.ntoma.studio.ui.screens.templates.TemplatesScreen(nav, padding,
+                entry.arguments?.getLong("fabricId") ?: 0, entry.arguments?.getString("styleId").orEmpty())
+        }
+
         composable(
             "design/{styleId}",
             arguments = listOf(androidx.navigation.navArgument("styleId") { type = NavType.StringType }),

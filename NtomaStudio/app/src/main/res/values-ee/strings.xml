@@ -51,8 +51,6 @@
     <string name="onboarding_step1_body">Ɖe avɔ si le kplɔ̃a dzi la ƒe nɔnɔmeɖeɖe, alo tiae tso wò nɔnɔmeɖeɖewo me. Avɔ la dzie nuwo katã dze egɔme tso.</string>
     <string name="onboarding_step2_title">Kpɔ ɖoɖo siwo sɔ kplii</string>
     <string name="onboarding_step2_body">Míexlẽ amadedewo, nutata kɔ avɔ ƒe nɔnɔme, emegbe míeɖo Ghana kɔ egbeŋkeke ƒe awuɖoɖowo ɖa na nyɔnuwo kɔ ŋutsuwo.</string>
-    <string name="onboarding_step3_title">Kpɔe wò nɔnɔmeɖeɖe dzi</string>
-    <string name="onboarding_step3_body">Ne èdi la, tsɔ wò nɔnɔmeɖeɖe kpe ɖe eŋu nàkpɔ ɖoɖo la amegbetɔ ƒe nɔnɔmeɖeɖe dzi hafi ayi wò tɔla gbɔ.</string>
     <string name="onboarding_step4_title">Dzraɖo eye nàma</string>
     <string name="onboarding_step4_body">Dzra avɔwo kɔ nɔnɔmeɖeɖe siwo nèlɔ̃ ɖo ɖe Lɔlɔ̃nuwo me, eye nàma wo kɔ wò tɔla alo xɔ̃wòwo.</string>
     <string name="onboarding_started_title">Mina míadze egɔme</string>
@@ -90,7 +88,6 @@
     <string name="create_option_camera_title">Ɖe nɔnɔmeɖeɖe</string>
     <string name="create_option_camera_body">Zã wò kamera nàɖe avɔ si le ŋkuwòme la.</string>
     <string name="create_option_gallery_title">Tia nɔnɔmeɖeɖe</string>
-    <string name="create_option_gallery_body">Tia avɔ ƒe nɔnɔmeɖeɖe si le wò mɔ̃a dzi xoxo.</string>
     <string name="create_option_person_title">Do ɖoɖo kpɔ amegbetɔ dzi</string>
     <string name="create_option_person_body">Kpɔ avɔ kɔ ɖoɖo si nèdzra ɖo la nɔnɔmeɖeɖe dzi.</string>
     <string name="create_recent_title">Dɔ yeyewo</string>
@@ -110,9 +107,7 @@
     <string name="camera_no_device">Kamera meli mɔ̃ sia dzi o</string>
     <string name="camera_no_device_body">Àte ŋu atia avɔ ƒe nɔnɔmeɖeɖe tso wò nɔnɔmeɖeɖewo me boŋ.</string>
     <string name="camera_capture_failed">Míete ŋu ɖe nɔnɔmeɖeɖe ma o. Gadze agbagba ake.</string>
-    <string name="edit_title_fabric">Trɔ wò avɔ ƒe nɔnɔmeɖeɖe</string>
     <string name="edit_title_person">Trɔ nɔnɔmeɖeɖe la</string>
-    <string name="edit_hint">Zã asibidɛ eve ne nàdo alo aɖe, hee yi teƒe, emegbe nàɖe asi ɖe edzi.</string>
     <string name="edit_rotate">Trɔe</string>
     <string name="edit_reset">Gadze egɔme</string>
     <string name="edit_ratio_free">De mɔ</string>
@@ -140,12 +135,10 @@
     <string name="analysis_section_category">Avɔ ƒomevi si wòate ŋu anye</string>
     <string name="analysis_section_style">Ghana awuɖoɖo si wòate ŋu anye</string>
     <string name="analysis_section_uses">Zazã siwo woɖo ɖa</string>
-    <string name="analysis_honesty_note">Esi nye mɔsɔsɔ si ate ŋu anye, menye ɖaseɖiɖi o. Avɔ eve ate ŋu adze abe ɖeka le nɔnɔmeɖeɖe me ene. Ne èka ɖi la, bi wò avɔdzrala.</string>
     <string name="analysis_ml_title">ML dzodzro si le wò mɔ̃a dzi</string>
     <string name="analysis_ml_mapped">Eɖea av fia: %1$s</string>
     <string name="analysis_ml_note">MobileNetV2 si le dɔ wɔm wò mɔ̃a dzi la gblɔa nu si wòkpɔna. Susu eveliae, menye ʋɔnudɔdrɔ̃ o, eye womedoa naneke ɖa o.</string>
     <string name="analysis_engine_on_device">Mɔ̃a dzi dzodzro (kpɔɖeŋu)</string>
-    <string name="analysis_engine_on_device_note">Wò mɔ̃a dzi woexlẽ amadedewo kɔ nutata. Womeɖo naneke ɖa o. Tsɔ cloud ɖoɖo kpe ɖe eŋu le ɖoɖowo me.</string>
     <string name="analysis_engine_cloud">Cloud dzi dzodzro</string>
     <string name="analysis_engine_cloud_note">Woɖo wò nɔnɔmeɖeɖe ɖa na dzroɖeƒe la be wòaxlẽe.</string>
     <string name="analysis_action_view_designs">Kpɔ ɖoɖo siwo sɔ</string>
@@ -214,7 +207,6 @@
     <string name="why_occasion">Tiatia nyui na %1$s.</string>
     <string name="why_tradition">Ghana ƒe awu xoxo ƒe ɖoɖo yeye.</string>
     <string name="why_gender">Woɖee na %1$s.</string>
-    <string name="tryon_title">Do kpɔ</string>
     <string name="tryon_step_person">Ame kae le ewom?</string>
     <string name="tryon_step_photo">Tsɔ nɔnɔmeɖeɖe kpe ɖe eŋu</string>
     <string name="tryon_step_design">Tia ɖoɖo</string>
@@ -233,22 +225,13 @@
     <string name="tryon_fabric_change">Trɔ avɔ</string>
     <string name="tryon_start">Zã avɔ la</string>
     <string name="tryon_state_idle">Emɔŋ wò</string>
-    <string name="tryon_state_uploading">Emɔŋ le wò nɔnɔmeɖeɖe ɖom ɖa…</string>
     <string name="tryon_state_processing">Emɔŋ le wò avɔ dzram ɖo…</string>
-    <string name="tryon_state_generating">Emɔŋ le wò nɔnɔmeɖeɖe wɔm…</string>
     <string name="tryon_state_finishing">Ɖoɖo ƒe nuwuwu…</string>
-    <string name="tryon_state_success">Wò nɔnɔmeɖeɖe le klalo</string>
     <string name="tryon_state_error">Míete ŋu wɔ nɔnɔmeɖeɖe ma o</string>
-    <string name="tryon_quota_note">%1$d le %2$d dodokpɔ femaxewo me susɔ le ɣleti sia me</string>
-    <string name="tryon_quota_exhausted">Èzã ɣleti sia ƒe dodokpɔ femaxewo vɔ.</string>
-    <string name="tryon_rewarded_offer">Kpɔ adzɔnu kpuie aɖe nàkpɔ dodokpɔ 1 bubu</string>
-    <string name="tryon_rewarded_granted">Nyoe — dodokpɔ 1 kpe ɖe eŋu.</string>
     <string name="tryon_needs_connection">Dodokpɔ hiã internet</string>
     <string name="tryon_demo_notice">Kpɔɖeŋu nɔnɔmeɖeɖe</string>
-    <string name="tryon_demo_notice_body">Wò mɔ̃a dzi wowɔ kpɔɖeŋu sia tso amadede kɔ nutata si wokpɔ me. Eɖea amadede kɔ didime fia, menye dodokpɔ ŋutɔŋutɔ o. Tsɔ generation backend kpe ɖe eŋu na kpɔɖeŋu ŋutɔŋutɔ.</string>
     <string name="tooltip_tryon">Zã nɔnɔmeɖeɖe nyui nàkpɔ kpɔɖeŋu nyui.</string>
     <string name="result_title">Wò nɔnɔmeɖeɖe</string>
-    <string name="result_ai_disclaimer">AI ƒe nɔnɔmeɖeɖe</string>
     <string name="result_demo_disclaimer">Kpɔɖeŋu — amadede kɔ didime ko</string>
     <string name="result_summary">%1$s le %2$s me</string>
     <string name="result_action_save">Dzraɖo</string>
@@ -377,7 +360,6 @@
     <string name="premium_title">Ntoma Premium</string>
     <string name="premium_pitch">Ntoma femaxe la nana nèɖea avɔwo, nèkpɔa ɖoɖo katã, eye nèdzraa lɔlɔ̃nuwo ɖo. Premium nye na ŋkeke siwo nèle awu geɖe ɖom ɖa le.</string>
     <string name="premium_benefit_analyses">Avɔ dzroɖewɔwɔ si me seɖoƒe meli o</string>
-    <string name="premium_benefit_tryons">Dodokpɔ 20 ɣleti sia ɣleti</string>
     <string name="premium_benefit_resolution">Nɔnɔmeɖeɖe kɔkɔwo</string>
     <string name="premium_benefit_speed">Dɔwɔwɔ kaba</string>
     <string name="premium_benefit_styles">Awuɖoɖo ɖoɖoƒe gã</string>
@@ -398,8 +380,6 @@
     <string name="premium_unlocked_toast">Premium le ʋuʋu le mɔ̃ sia dzi (kpɔɖeŋu)</string>
     <string name="paywall_sheet_title">Èɖo femaxe ƒe seɖoƒe</string>
     <string name="paywall_sheet_body_analyses">Akaŋti femaxewo xɔa avɔ dzroɖewɔwɔ %1$d le ŋkeke ɖeka me. Premium ɖea seɖoƒe la ɖa.</string>
-    <string name="paywall_sheet_body_tryons">Akaŋti femaxewo xɔa dodokpɔ %1$d le ɣleti ɖeka me.</string>
-    <string name="paywall_sheet_alternative">Alo kpɔ adzɔnu kpuie aɖe nàkpɔ dodokpɔ bubu ɖeka</string>
     <string name="ads_placeholder_title">Adzɔnu</string>
     <string name="ads_placeholder_body">Adzɔnu teƒe. Tsɔ adzɔnu ɖoɖo kpe ɖe eŋu nàna adzɔnu ŋutɔŋutɔ. Premium me tɔwo mekpɔa esia gbeɖe o.</string>
     <string name="ads_rewarded_label">Adzɔnu si wokpɔ (kpɔɖeŋu)</string>
@@ -437,7 +417,6 @@
     <string name="error_memory_title">Ŋkuɖoɖoƒe mede o</string>
     <string name="error_memory_body">Nɔnɔmeɖeɖe ma lolo akpa na mɔ̃ sia. Ɖe app ɖeka alo eve ɖa alo tsɔ nɔnɔmeɖeɖe sue.</string>
     <string name="notif_channel_processing">Dɔwɔwɔ wu enu</string>
-    <string name="notif_channel_processing_desc">Ɛgblɔe na wò ne nɔnɔmeɖeɖe si wowɔ la le klalo.</string>
     <string name="notif_channel_recommendations">Awuɖoɖo susuwɔ</string>
     <string name="notif_channel_recommendations_desc">Ɖoɖo susu ɣeaɖewoɣi tso avɔ siwo nèdzra ɖo me.</string>
     <string name="notif_channel_updates">Ntoma ƒe tɔtrɔ</string>
@@ -458,7 +437,6 @@
     <string name="privacy_images_title">Nɔnɔmeɖeɖe kawoe wowɔa dɔ ɖo</string>
     <string name="privacy_images_body">Avɔ ƒe nɔnɔmeɖeɖe siwo nèɖe alo nètia, kɔ — ne èzã dodokpɔ ko — ame ƒe nɔnɔmeɖeɖe ɖeka. Nɔnɔmeɖeɖe siwo wowɔ la le app la ƒe teƒe ŋutɔ me.</string>
     <string name="privacy_device_title">Ðe nɔnɔmeɖeɖewo dzoa nye mɔ̃a dzia?</string>
-    <string name="privacy_device_body">Mɔ̃a dzi dzodzro: ao. Wodzroa wò avɔ ƒe nɔnɔmeɖeɖe me le mɔ̃a dzi eye womeɖonɛ ɖa gbeɖe o. Cloud dzi dzodzro kɔ AI dodokpɔ: ɛ̃ — woɖoa nɔnɔmeɖeɖe la ɖa na teƒe si woɖo ɖi la be ɖoɖoa nawɔ dɔ ɖe edzi. Woɖea ɖoɖo si wozã la fia le dzroɖeƒea gbesiagbe.</string>
     <string name="privacy_retention_title">Ɣeyiɣi didi sɔŋ ka woadzra nɔnɔmeɖeɖewo ɖo?</string>
     <string name="privacy_retention_body">Le mɔ̃a dzi, vaseɖe ɣesiɣi nàɖe wo ɖa. Teƒe si woka ɖe eŋu la ɖoa eya ŋutɔ ƒe ɣeyiɣi; míeɖo aɖaŋu be gaƒoƒo 24 ko nasɔ na nɔnɔmeɖeɖe siwo woɖo ɖa, eye kpɔɖeŋu ɖoɖoa medzraa naneke ɖo o.</string>
     <string name="privacy_delete_title">Alekee maɖe nye nyatakaka ɖae?</string>
@@ -482,25 +460,20 @@
     <string name="terms_body_4">Beta ƒe ɣeyiɣi mee dɔwɔƒe la le. Premium ƒe dɔwɔwɔ le version sia me nyaa akɔntabubu ŋu o, eye womexɔa ga aɖeke o.</string>
     <string name="terms_body_5">Bia kpekpeɖeŋu be nàgblɔ kuxi alo nàbia wò nyatakaka ɖeɖeɖa.</string>
     <string name="credits_title">Ɖeɖe fiafia</string>
-    <string name="credits_body">Ntoma — &quot;avɔ&quot; le Akan gbe me. Woɖoe kɔ Jetpack Compose. Avɔ kɔ awuɖoɖo ŋuti nyanya tso Ghana ƒe awuɖoɖo kɔnyinyi me: kente, adinkra, wax print kɔ batakari. Kpɔɖeŋu nɔnɔmeɖeɖe siwo katã le version sia me tso wò avɔ ƒe amadedewo me; wometsɔ ame bubu ƒe nɔnɔmeɖeɖewo ɖe eŋu o.</string>
     <string name="help_title">Kpekpeɖeŋu kɔ aɖaŋuɖoɖo</string>
     <string name="help_how_title">Ale si Ntoma wɔa dɔ</string>
-    <string name="help_how_1">1. Ɖe avɔ ƒe nɔnɔmeɖeɖe alo tsɔe ɖo ɖa.</string>
     <string name="help_how_2">2. Xlẽ dzodzro la: amadedewo, nutata, nɔnɔme kɔ Ghana ƒe awuɖoɖo.</string>
     <string name="help_how_3">3. Kpɔ awuɖoɖo siwo sɔ na nyɔnuwo kɔ ŋutsuwo, siwo woma ɖe ŋkekenyuinu.</string>
-    <string name="help_how_4">4. Ne èdi la, kpɔ ɖoɖo la ame ƒe nɔnɔmeɖeɖe dzi.</string>
     <string name="help_how_5">5. Dzra nu si nèlɔ̃ ɖo nàmae kɔ wò tɔla.</string>
     <string name="help_tips_title">Nɔnɔmeɖeɖeɖeɖe ƒe aɖaŋuɖoɖo</string>
     <string name="help_tips_body">Na nutata la naxɔ agbadzi la katã, zã ŋdɔkɛkɛ, na avɔ la nanɔ anyi sɔsɔe, eye nàƒo asa na vɔvɔli sesẽ alo kɛklẽ ƒe dzedzeme.</string>
     <string name="help_faq_title">Biabia siwo wobiana zi geɖe</string>
     <string name="help_faq_q1">Ðe woɖoa nye nɔnɔmeɖeɖe ɖa?</string>
-    <string name="help_faq_a1">Ne èzã cloud ƒe ɖoɖo alo AI dodokpɔ ko. Mɔ̃a dzi dzodzro medzoa wò mɔ̃a dzi gbeɖe o.</string>
     <string name="help_faq_q2">Nu ka tae wògblɔna be &quot;ate ŋu anye esia&quot;?</string>
     <string name="help_faq_a2">Elabena nɔnɔmeɖeɖe mete ŋu ɖea vovototo si le kete kɔ esi wota la me gbeɖe o. Míedi be míanye nugblɔla wu kakaɖedzitɔ.</string>
     <string name="help_faq_q3">Ðe dodokpɔ la nye dodokpɔ ŋutɔŋutɔa?</string>
     <string name="help_faq_a3">Ao. Eɖea amadede kɔ didime fia ame dzi. Ale si wòawɔ ɖeka kɔ ŋutilã la tso wò tɔla dzi.</string>
     <string name="help_faq_q4">Ðe ewɔa dɔ internet manɔmea?</string>
-    <string name="help_faq_a4">Ɖoɖo kpɔkpɔ, lɔlɔ̃nuwo, ŋutinya kɔ ɖoɖowo wɔa dɔ internet manɔmee. Cloud dzi dzodzro kɔ AI dodokpɔ hiã internet.</string>
     <string name="help_faq_q5">Ðe mate ŋu atsɔ nye ɖoɖo ŋutɔ akpe ɖe eŋua?</string>
     <string name="help_faq_a5">Meka o haɖe. Woɖoa awuɖoɖo ɖoɖoƒe la tso agbalẽ me si woate ŋu atrɔ tso teƒe bubu.</string>
     <string name="help_contact_body">Gblɔ nu si gblẽ la na mí eye míaɖo ŋu. Tsɔ wò app version kpe ɖe eŋu: %1$s.</string>
@@ -686,7 +659,6 @@
     <string name="customizer_length">Didime</string>
     <string name="customizer_placement">Avɔ ƒe teƒe</string>
     <string name="customizer_accent">Amadede si kɔtɔ</string>
-    <string name="customizer_demo_note">Kpɔɖeŋua ɖea avɔ ƒe teƒe kɔ amadedewo fia. Lɔlɔ̃ ƒe ɖoɖoɖi siwo yia wò tɔla ƒe nyatakaka me.</string>
     <string name="custom_sleeve_default">Abe ale si wòdze ene</string>
     <string name="custom_sleeve_short">Kpuie</string>
     <string name="custom_sleeve_long">Kɛkɛ</string>
@@ -754,9 +726,7 @@
     <string name="measurement_neck">Kɔ (cm)</string>
     <string name="measurement_notes">Nya ŋɔŋlɔ na tɔlawo</string>
     <string name="measurements_saved">Wodzra dzidzemewo ɖo</string>
-    <string name="result_variations">Wɔ tɔtrɔ 3 bubuwo</string>
     <string name="result_variations_progress">Emɔŋ le tɔtrɔwo wɔm… (%1$d le 3 me)</string>
-    <string name="result_variations_quota">Dodokpɔ femaxe susɔwo mede tɔtrɔ 3 o.</string>
     <string name="result_compare">Tsɔ sɔ</string>
     <string name="result_compare_original">Gbãtɔ</string>
     <string name="result_compare_result">Esi do tso eme</string>
@@ -830,4 +800,5 @@
     <string name="contrib_delete_confirm">Woaɖe foto sia ɖa?</string>
     <string name="contrib_delete_confirm_body">Woaɖe foto sia le wò kpekpeɖeŋuwo me.</string>
     <string name="contrib_duplicate">Foto sia tɔgbe li xoxo.</string>
+    <!-- Updated local-preview workflow strings fall back to English pending native-language review. -->
 </resources>

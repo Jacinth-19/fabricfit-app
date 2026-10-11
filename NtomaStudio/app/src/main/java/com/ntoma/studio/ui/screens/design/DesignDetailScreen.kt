@@ -156,6 +156,12 @@ fun DesignDetailScreen(nav: NavHostController, padding: PaddingValues, styleId: 
                 }
 
                 item {
+                    Button(onClick = { selectedFabric?.let { nav.navigate(Routes.templates(it.id, s.id)) } },
+                        enabled = selectedFabric != null, modifier = Modifier.fillMaxWidth().padding(20.dp, 8.dp)) {
+                        Text(stringResource(R.string.template_action))
+                    }
+                }
+                item {
                     Text(
                         stringResource(R.string.design_detail_occasions),
                         style = MaterialTheme.typography.titleSmall,

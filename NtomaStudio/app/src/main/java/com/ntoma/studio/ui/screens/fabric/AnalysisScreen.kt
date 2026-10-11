@@ -222,6 +222,12 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
             }
         }
 
+        item {
+            Button(onClick = { nav.navigate(Routes.templates(fabric.id)) },
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+                Text(stringResource(R.string.template_action))
+            }
+        }
         item { ResultSection(R.string.analysis_section_colors) }
         item {
             Row(

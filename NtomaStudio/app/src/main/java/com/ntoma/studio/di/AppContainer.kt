@@ -87,6 +87,8 @@ class AppContainer private constructor(context: Context) {
     val tailors: com.ntoma.studio.domain.repository.TailorRepository =
         com.ntoma.studio.data.remote.DemoTailorSource()
 
+    val templateRenderer = com.ntoma.studio.media.garment.FabricTemplateRenderer(imageProcessor)
+
     val lookGenerator = DemoLookGenerator(imageProcessor)
 
     val tryOn: VirtualTryOnRepository = VirtualTryOnRepositoryImpl(

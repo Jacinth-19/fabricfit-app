@@ -155,6 +155,11 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                     }
                 }
                 Spacer(Modifier.height(16.dp))
+                Button(onClick = { nav.navigate(Routes.templates(f.id)) },
+                    modifier = Modifier.fillMaxWidth().height(52.dp)) {
+                    Text(stringResource(R.string.template_action))
+                }
+                Spacer(Modifier.height(8.dp))
                 Button(
                     onClick = { nav.navigate(Routes.recommendations(f.id)) },
                     modifier = Modifier.fillMaxWidth().height(52.dp),
