@@ -188,10 +188,22 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/download-artifact@v4
         with:
           name: ntoma-debug-apk
           path: dist
+      - name: Confirm the APK is present and installable
+        run: |
+          test -s dist/app-debug.apk
+          python3 - <<'PYAPK'
+          import zipfile
+          with zipfile.ZipFile('dist/app-debug.apk') as apk:
+              names = apk.namelist()
+              assert 'AndroidManifest.xml' in names and 'classes.dex' in names
+              assert any(name.startswith('lib/') for name in names)
+          print('Debug APK contains a manifest, dex code and native libraries.')
+          PYAPK
       - name: Publish or refresh the debug prerelease
         env:
           GH_TOKEN: ${{ github.token }}
