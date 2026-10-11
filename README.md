@@ -1,61 +1,75 @@
 # Ntoma Studio
 
-**Turn the fabric you already own into your next outfit idea.**
+**Rooted in culture. Made yours.**
 
-Ntoma Studio is an Android app for exploring fabric colours, patterns and outfit layouts. Start with a photo of a fabric swatch—or fabric in an existing dress—select the area you want to use, and see it applied to outfit templates.
+Explore what your fabric could become. Ntoma Studio is an Android app that helps you select fabric from a photo, discover its colours and patterns, and preview it in different outfit layouts—inspired by Ghanaian dress traditions.
 
-### Try the app
+[Download the current test APK](https://github.com/Jacinth-19/ntoma-studio/releases/download/debug-latest/app-debug.apk) · [Release notes](https://github.com/Jacinth-19/ntoma-studio/releases/tag/debug-latest) · [Build instructions](NtomaStudio/BUILD.md)
 
-**[Download the Android APK](https://github.com/Jacinth-19/ntoma-studio/releases/download/debug-latest/app-debug.apk)** · [Release notes](https://github.com/Jacinth-19/ntoma-studio/releases/tag/debug-latest)
+> **Which version am I seeing?** The screenshots below show the new design on this branch. The downloadable APK still has the previous design: the new build passed Android 33 testing, but its Android 16 emulator setup failed before testing. The download will update only after both device checks pass.
 
-The current download is an **English-language test build** for Android 7.0 or newer. Download it on your phone, open the APK, and allow installation from that source if Android asks. It is not yet a Google Play release.
+## One studio. Two moods.
 
-## A look inside
-
-These are screenshots of the actual app running on Android. The dress shown is an original test illustration, used to demonstrate fabric selection.
+Warm ivory by day. Deep forest green by night. Tap the **sun/moon button** on Home, Create or Discover to switch themes; your choice is saved. Prefer to follow your phone? Choose **System** in Settings → Theme.
 
 <table>
   <tr>
-    <td align="center"><strong>1. Select your fabric</strong></td>
-    <td align="center"><strong>2. Explore colours and patterns</strong></td>
+    <td align="center"><strong>Light mode · Warm ivory</strong></td>
+    <td align="center"><strong>Dark mode · Forest green</strong></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/images/select-fabric.png" width="250" alt="Ntoma Studio fabric editor with a rectangle selecting patterned fabric from a dress illustration"></td>
-    <td align="center"><img src="docs/images/fabric-analysis.png" width="250" alt="Fabric analysis screen showing the selected texture, dominant colours and estimated fabric category"></td>
-  </tr>
-  <tr>
-    <td align="center"><strong>3. Preview an outfit template</strong></td>
-    <td align="center"><strong>4. Adjust texture repeats</strong></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="docs/images/outfit-template.png" width="250" alt="Kaba and slit outfit template filled with the selected fabric texture"></td>
-    <td align="center"><img src="docs/images/texture-repeats.png" width="250" alt="Another outfit template with texture repeat controls and a Share template button"></td>
+    <td align="center"><img src="docs/images/00-home-light.png" width="280" alt="Actual Ntoma Studio Home screen in warm-ivory light mode, with Ghanaian Kente photography and camera and gallery actions"></td>
+    <td align="center"><img src="docs/images/00-home-dark.png" width="280" alt="The same Ntoma Studio Home screen in forest-green dark mode with a sun button to switch back to light mode"></td>
   </tr>
 </table>
 
-## What you can do
+Real photography, not generated people: the Home image shows Kente fashion at Afrochella in Ghana, photographed by **Fquasie**. The app also includes an **Adowa dancer in Kente**, photographed by **Bright Kwame Ayisi (Kwameghana)**, as an offline sample you can explore.
 
-- **Take or choose a photo.** Use the camera or gallery with a swatch or an existing outfit.
-- **Choose the fabric area.** Drag a rectangle to isolate the texture you want, rather than using the whole photo.
-- **Explore your fabric.** See dominant colours, pattern observations and an estimated fabric category.
-- **Try outfit layouts.** Apply the selected texture to different garment templates and adjust how often it repeats.
-- **Share an idea.** Export the template to discuss the look with a tailor or friend.
+Both photographs are used under **CC BY-SA 4.0**, with credits and original-source links in the app. The people pictured are not presented as endorsers. [Photo sources and licences →](NtomaStudio/app/src/main/assets/editorial/CREDITS.md)
 
-### How to get a useful preview
+## From a photo to an outfit idea
 
-Choose a clear, evenly lit fabric area. Avoid skin, backgrounds, seams and deep folds where possible. The app uses the pixels you select, so lighting and folds in the photo remain in the texture.
+1. **Choose your starting point.** Take a photo, select one from your gallery, or try the bundled Adowa photo. You can use a fabric swatch or fabric in an existing dress.
+2. **Select the fabric.** Drag a rectangle over a clear patch of cloth. Only the selected pixels are used.
+3. **Explore the details.** See dominant colours, pattern observations and an estimated fabric category.
+4. **Make it your own.** Try different garment templates, adjust the texture repeats, and share a layout with a tailor or friend.
 
-## What to expect
+<table>
+  <tr>
+    <td align="center"><strong>Select fabric from a real photo</strong></td>
+    <td align="center"><strong>Explore a new silhouette</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/03-selected-fabric.png" width="280" alt="Ntoma fabric editor selecting a patch of Kente from the real Adowa dancer photograph by Kwameghana"></td>
+    <td align="center"><img src="docs/images/05-template.png" width="280" alt="A flat Kaba and slit template using the fabric texture selected from the Adowa photograph"></td>
+  </tr>
+</table>
 
-Templates are **flat outfit previews**, intended to help you explore a design—not a prediction of fit or a photorealistic try-on. Fabric identification is an estimate, not a verified material assessment. Cloud photoreal try-on is not available in this build.
+*All screenshots above are captures of the installed Android app, not UI mockups. [Capture details and image credits](docs/images/README.md).*
 
-The default fabric analysis and template workflow run **on your phone without uploading your photos**. If you explicitly configure and select the optional cloud-analysis endpoint, the selected fabric image is sent to that endpoint. Sharing a template is your choice.
+**Tip:** Pick an evenly lit area without skin, background, seams or deep folds. The app keeps the lighting and folds in the pixels you select.
 
-English is the current launch language. Twi, Ga and Ewe drafts are preserved for future native-language review; they are not included in the app yet.
+## Try it on your phone
 
-## For developers
+The available download is an **English-language debug test build** for **Android 7.0 or newer**, not a Google Play release.
 
-The Android project lives in [`NtomaStudio/`](NtomaStudio/). It uses Kotlin, Jetpack Compose and an on-device LiteRT model, with Android 7.0 as the minimum supported version and API 36 as the target.
+1. Open the [APK download](https://github.com/Jacinth-19/ntoma-studio/releases/download/debug-latest/app-debug.apk) on your Android phone.
+2. Open the downloaded file and allow installation from that source if Android asks.
+3. Launch Ntoma Studio and choose a fabric photo.
+
+The test app uses package `com.ntoma.studio.debug`, separate from a future production version. See the version note above before downloading if you want the new design specifically.
+
+## What the previews mean
+
+Outfit templates are **flat design ideas**, not fit predictions or photorealistic try-on. Fabric identification is an estimate, not a verified material assessment. Cloud photoreal try-on is not available yet.
+
+By default, analysis and template previews run **on your phone without uploading your photos**. An optional cloud-analysis endpoint receives the selected image only if you explicitly configure and select it. Sharing a template is your choice.
+
+English is the current launch language. Twi, Ga and Ewe are planned after native-language review; those drafts are not shipped in the app.
+
+## Build and contribute
+
+The Android project is in [`NtomaStudio/`](NtomaStudio/): **Kotlin · Jetpack Compose · LiteRT · target API 36**.
 
 With JDK 17 and Android SDK 36 installed:
 
@@ -64,22 +78,12 @@ cd NtomaStudio
 bash gradlew :app:assembleDebug :app:testDebugUnitTest
 ```
 
-GitHub Actions builds the app and tests the installed fabric-selection, analysis, template and sharing journey on Android 33 and Android 16 with 16 KB memory pages. The downloadable test APK is refreshed only after the build and both device journeys pass.
+GitHub Actions checks the build, unit tests, native-library alignment and the installed fabric workflow on Android 33 and Android 16 with 16 KB memory pages. The debug prerelease is refreshed only after the build and both device journeys pass.
 
+- [Redesign implementation and test status](NtomaStudio/docs/EDITORIAL_REDESIGN.md)
 - [Build instructions](NtomaStudio/BUILD.md)
-- [Verified app workflow and test results](NtomaStudio/docs/VALIDATED_FABRIC_WORKFLOW.md)
+- [Workflow validation history](NtomaStudio/docs/VALIDATED_FABRIC_WORKFLOW.md)
 - [Production signing and Play release setup](NtomaStudio/docs/PRODUCTION_RELEASE.md)
-- [Privacy policy](NtomaStudio/store/privacy_policy.html)
-- [Data safety notes](NtomaStudio/docs/PLAY_DATA_SAFETY.md)
+- [Privacy policy](NtomaStudio/store/privacy_policy.html) · [Data safety notes](NtomaStudio/docs/PLAY_DATA_SAFETY.md)
 
 Found a problem or have an idea? [Open an issue](https://github.com/Jacinth-19/ntoma-studio/issues).
-
-## New studio design
-
-The redesigned studio pairs forest-green dark mode with warm-ivory light mode. Use the sun/moon button on Home, Create or Discover; your choice is saved. Settings also offers System, Light and Dark.
-
-<p><img src="docs/images/00-home-light.png" width="250" alt="Redesigned Ntoma home in light mode"> <img src="docs/images/00-home-dark.png" width="250" alt="Redesigned Ntoma home in dark mode"></p>
-
-These are actual Android 33 captures from the redesigned app. Real Ghanaian Kente photographs now appear on Home and onboarding, with a real Adowa photo sample in Create. Photo credits and original sources are accessible in-app; see [image licences](NtomaStudio/app/src/main/assets/editorial/CREDITS.md). The subjects are not endorsers of the app.
-
-The redesign passed its build and Android 33 journey. Android 36 emulator setup failed before testing on the latest run; the downloadable prerelease remains the previous version until both device jobs pass.
