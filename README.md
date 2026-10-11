@@ -73,3 +73,13 @@ GitHub Actions builds the app and tests the installed fabric-selection, analysis
 - [Data safety notes](NtomaStudio/docs/PLAY_DATA_SAFETY.md)
 
 Found a problem or have an idea? [Open an issue](https://github.com/Jacinth-19/ntoma-studio/issues).
+
+## New studio design
+
+The redesigned studio pairs forest-green dark mode with warm-ivory light mode. Use the sun/moon button on Home, Create or Discover; your choice is saved. Settings also offers System, Light and Dark.
+
+<p><img src="docs/images/00-home-light.png" width="250" alt="Redesigned Ntoma home in light mode"> <img src="docs/images/00-home-dark.png" width="250" alt="Redesigned Ntoma home in dark mode"></p>
+
+These are actual Android 33 captures from the redesigned app. Real Ghanaian Kente photographs now appear on Home and onboarding, with a real Adowa photo sample in Create. Photo credits and original sources are accessible in-app; see [image licences](NtomaStudio/app/src/main/assets/editorial/CREDITS.md). The subjects are not endorsers of the app.
+
+The redesign passed its build and Android 33 journey. Android 36 emulator setup failed before testing on the latest run; the downloadable prerelease remains the previous version until both device jobs pass.
