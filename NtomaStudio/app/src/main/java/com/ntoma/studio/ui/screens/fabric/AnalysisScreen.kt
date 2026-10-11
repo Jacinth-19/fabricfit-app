@@ -203,7 +203,7 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
                                 contentDescription = stringResource(
                                     if (fabric.isFavorite) R.string.cd_favorite_on else R.string.cd_favorite_off,
                                 ),
-                                tint = if (fabric.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = if (fabric.isFavorite) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                         IconButton(onClick = { onShare(fabric) }) {

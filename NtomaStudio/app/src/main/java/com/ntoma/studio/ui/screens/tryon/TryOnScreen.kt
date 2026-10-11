@@ -1,5 +1,6 @@
 package com.ntoma.studio.ui.screens.tryon
 
+import com.ntoma.studio.ui.theme.previewCanvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -90,6 +92,7 @@ fun TryOnScreen(
     fabricId: Long?,
     styleId: String?,
     personPath: String?,
+    topLevel: Boolean = false,
 ) {
     val vm: TryOnViewModel = appViewModel { c, ctx -> TryOnViewModel(c, fabricId, styleId, personPath) }
     val state by vm.state.collectAsStateWithLifecycle()
@@ -110,7 +113,7 @@ fun TryOnScreen(
         val st = state.tryOn
         if (st is TryOnState.Success) {
             nav.navigate(Routes.result(st.look.id)) {
-                popUpTo(Routes.CREATE)
+                launchSingleTop = true
             }
         }
     }
@@ -118,7 +121,9 @@ fun TryOnScreen(
     Box(Modifier.fillMaxSize().padding(padding)) {
         LazyColumn(contentPadding = PaddingValues(bottom = 32.dp)) {
             item {
-                Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (topLevel) {
+                    com.ntoma.studio.ui.components.StudioHeader(subtitle = R.string.heritage_tryon_subtitle)
+                } else Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { nav.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
                     }
@@ -126,25 +131,35 @@ fun TryOnScreen(
                 }
             }
 
+            item {
+                Column(Modifier.padding(horizontal = 20.dp)) {
+                    Text(stringResource(R.string.heritage_tryon_heading), style = MaterialTheme.typography.displayMedium)
+                    Text(stringResource(R.string.tryon_demo_notice_body), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+                }
+            }
             // Step 1: person photo
             item { StepLabel(R.string.tryon_step_photo) }
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.previewCanvas),
                 ) {
                     Column(Modifier.padding(14.dp)) {
                         if (state.personPath != null) {
                             LocalImage(
                                 state.personPath!!,
                                 contentDescription = stringResource(R.string.cd_person_image),
-                                modifier = Modifier.fillMaxWidth().height(200.dp),
+                                modifier = Modifier.fillMaxWidth().height(320.dp),
                             )
                             Spacer(Modifier.height(8.dp))
                             OutlinedButton(onClick = { picker.launch(pickReq()) }) {
                                 Text(stringResource(R.string.tryon_photo_replace))
                             }
                         } else {
+                            Box(Modifier.fillMaxWidth().height(170.dp), contentAlignment = Alignment.Center) {
+                                Icon(Icons.Filled.Checkroom, null, modifier = Modifier.size(64.dp), tint = MaterialTheme.colorScheme.primary)
+                            }
                             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                 Icon(Icons.Filled.Person, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                                 Column {
@@ -205,12 +220,17 @@ fun TryOnScreen(
             item { StepLabel(R.string.tryon_fabric_current) }
             item {
                 if (state.fabrics.isEmpty()) {
+                    Column {
                     Text(
                         stringResource(R.string.empty_fabrics_body),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(horizontal = 20.dp),
                     )
+                    OutlinedButton(onClick = { nav.navigate(Routes.CREATE) }, modifier = Modifier.padding(horizontal = 20.dp)) {
+                        Text(stringResource(R.string.heritage_add_fabric))
+                    }
+                    }
                 } else {
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 20.dp),

@@ -1,5 +1,9 @@
 package com.ntoma.studio.ui.screens.home
 
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,15 +81,28 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
         )
     }
 
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().padding(padding)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
             item { com.ntoma.studio.ui.components.StudioHeader() }
             item {
+                Surface(onClick = { nav.navigate(Routes.DISCOVER) },
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 16.dp),
+                    shape = MaterialTheme.shapes.small, color = MaterialTheme.colorScheme.surface,
+                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+                    Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Search, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Spacer(Modifier.width(10.dp))
+                        Text(stringResource(R.string.heritage_search), style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+            item {
                 Column(Modifier.padding(horizontal = 24.dp)) {
-                    com.ntoma.studio.ui.components.StudioHero { nav.navigate(Routes.CREATE) }
+                    com.ntoma.studio.ui.components.StudioHero { nav.navigate(Routes.DISCOVER) }
                     com.ntoma.studio.ui.components.PhotoCredits(com.ntoma.studio.ui.components.editorialPhotos[0])
                     Spacer(Modifier.height(8.dp))
                     Text(stringResource(R.string.studio_make_it_yours), style = MaterialTheme.typography.headlineMedium)
@@ -93,21 +110,47 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Spacer(Modifier.height(16.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Button(onClick = requestCamera, modifier = Modifier.weight(1f).height(52.dp)) {
+                        Button(onClick = requestCamera, modifier = Modifier.weight(1f).height(52.dp).testTag("home_scan")) {
                             Icon(Icons.Filled.CameraAlt, null); Spacer(Modifier.width(8.dp))
-                            Text(stringResource(R.string.studio_camera))
+                            Text(stringResource(R.string.heritage_scan))
                         }
-                        OutlinedButton(onClick = { picker.launch(pickImagesRequest()) }, modifier = Modifier.weight(1f).height(52.dp)) {
+                        OutlinedButton(onClick = { picker.launch(pickImagesRequest()) }, modifier = Modifier.weight(1f).height(52.dp).testTag("home_gallery")) {
                             Icon(Icons.Filled.PhotoLibrary, null); Spacer(Modifier.width(8.dp))
                             Text(stringResource(R.string.studio_gallery))
                         }
                     }
                     Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(20.dp))
+                }
+            }
+
+            item { SectionHeader(R.string.heritage_categories) }
+            item {
+                LazyRow(contentPadding = PaddingValues(horizontal = 24.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    items(listOf(com.ntoma.studio.domain.model.FabricCategory.KENTE,
+                        com.ntoma.studio.domain.model.FabricCategory.ANKARA,
+                        com.ntoma.studio.domain.model.FabricCategory.LACE,
+                        com.ntoma.studio.domain.model.FabricCategory.BATIK)) { category ->
+                        Column(Modifier.width(82.dp).clickable {
+                            nav.navigate(Routes.discoverFabric(category.name))
+                        }, horizontalAlignment = Alignment.CenterHorizontally) {
+                            com.ntoma.studio.ui.components.AssetImage(category.asset!!, stringResource(category.labelRes),
+                                Modifier.size(82.dp).clip(MaterialTheme.shapes.small))
+                            Text(stringResource(category.labelRes), style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.padding(top = 8.dp, bottom = 16.dp))
+                        }
+                    }
+                }
+            }
+            item { SectionHeader(R.string.heritage_inspiration) }
+            item {
+                Column(Modifier.padding(horizontal = 24.dp)) {
+                    Text(stringResource(R.string.heritage_inspiration_body), style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 12.dp))
                     com.ntoma.studio.ui.components.RealPhotoSample { uri ->
                         context.openFabricFlow(uri, navigate = { nav.navigate(it) },
                             onError = { e -> scope.launch { snackbar.showSnackbar(context.getString(e.titleRes)) } })
                     }
-                    Spacer(Modifier.height(20.dp))
                 }
             }
 
@@ -293,7 +336,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             item { Spacer(Modifier.height(16.dp)) }
         }
 
-        SnackbarHost(snackbar, modifier = Modifier.align(Alignment.BottomCenter).padding(padding))
+        SnackbarHost(snackbar, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 

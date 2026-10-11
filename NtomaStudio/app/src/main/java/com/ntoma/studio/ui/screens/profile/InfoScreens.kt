@@ -280,6 +280,8 @@ fun AboutScreen(nav: NavHostController, padding: PaddingValues) {
         Text(stringResource(R.string.settings_about_made), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(24.dp))
         Text(stringResource(R.string.credits_body), style = MaterialTheme.typography.bodyMedium)
+        Spacer(Modifier.height(12.dp))
+        Text(stringResource(R.string.heritage_fonts_credit), style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(16.dp))
         TextButton(onClick = { nav.navigate(Routes.legal("terms")) }) { Text(stringResource(R.string.settings_terms)) }
         TextButton(onClick = { nav.navigate(Routes.legal("privacy")) }) { Text(stringResource(R.string.settings_privacy_policy)) }

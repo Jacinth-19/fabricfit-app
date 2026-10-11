@@ -42,7 +42,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_discover">Discover</string>
     <string name="nav_create">Create</string>
-    <string name="nav_favorites">Favourites</string>
+    <string name="nav_favorites">Saved</string>
     <string name="nav_profile">Profile</string>
     <string name="cd_bottom_navigation">Main navigation</string>
 
@@ -936,16 +936,16 @@
     <string name="template_share_text">Ntoma Studio — flat outfit template with selected fabric. Not a fit prediction or photoreal try-on.</string>
 
     <!-- Editorial redesign: English launch copy. -->
-    <string name="studio_header_subtitle">FABRIC • CULTURE • YOUR NEXT LOOK</string>
+    <string name="studio_header_subtitle">HERITAGE LUXE · NTOMA STUDIO</string>
     <string name="studio_create_subtitle">YOUR PERSONAL DESIGN STUDIO</string>
     <string name="studio_discover_subtitle">THE STYLE EDIT</string>
     <string name="studio_switch_light">Switch to light mode</string>
     <string name="studio_switch_dark">Switch to dark mode</string>
     <string name="studio_hero_badge">INSPIRED BY GHANA</string>
-    <string name="studio_hero_title">Rooted in culture.\nMade yours.</string>
-    <string name="studio_hero_body">Your fabric has a story. Find its next look.</string>
-    <string name="studio_start_designing">Start designing</string>
-    <string name="studio_make_it_yours">A little fabric. A new possibility.</string>
+    <string name="studio_hero_title">Ghanaian fabrics.\nTimeless style.</string>
+    <string name="studio_hero_body">Scan. Discover. Try. Wear.</string>
+    <string name="studio_start_designing">Explore the collection</string>
+    <string name="studio_make_it_yours">Your fabric. Your next look.</string>
     <string name="studio_camera">Camera</string>
     <string name="studio_gallery">Gallery</string>
     <string name="studio_festival_title">Kente at Afrochella</string>
@@ -959,4 +959,23 @@
     <string name="studio_real_sample_body">Explore fabric from this Adowa photograph. Select a clear patch of cloth.</string>
     <string name="studio_use_real_photo">Use this photo →</string>
     <string name="studio_sample_error">Could not open the sample photo. Try again.</string>
+
+    <!-- Heritage Luxe visual system. No sample prices, identities or model scores. -->
+    <string name="nav_try_on">Try On</string>
+    <string name="heritage_brand">Ntoma Studio</string>
+    <string name="heritage_categories">Explore fabrics</string>
+    <string name="heritage_inspiration">Woven into everyday life</string>
+    <string name="heritage_inspiration_body">Real Ghanaian style, photographed in the world. Editorial inspiration, not generated try-on.</string>
+    <string name="heritage_view_all">View all</string>
+    <string name="heritage_scan">Scan fabric</string>
+    <string name="heritage_search">Find fabrics and styles</string>
+    <string name="heritage_tryon_subtitle">YOUR PERSONAL PREVIEW STUDIO</string>
+    <string name="heritage_tryon_heading">Imagine your next look.</string>
+    <string name="heritage_add_fabric">Add a fabric or dress photo</string>
+    <string name="heritage_template_card">Outfit template</string>
+    <string name="heritage_compatibility">Suggested for %1$s</string>
+    <string name="heritage_discover_subtitle">FIND A CUT THAT FEELS LIKE YOU</string>
+    <string name="heritage_camera_gallery">Import from gallery</string>
+    <string name="heritage_fonts_credit">Typography: Inter and Playfair Display, SIL Open Font License. Licence texts are bundled with the app.</string>
+    <string name="heritage_saved_subtitle">THE LOOKS YOU LOVE, ALL TOGETHER</string>
 </resources>

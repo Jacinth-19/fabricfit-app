@@ -6,6 +6,9 @@ object Routes {
     const val HOME = "home"
     const val DISCOVER = "discover"
     const val CREATE = "create"
+    const val TRY_ON = "try-on"
+    const val DISCOVER_FABRIC = "discover/fabric/{category}"
+    fun discoverFabric(category: String) = "discover/fabric/${Uri.encode(category)}"
     const val FAVORITES = "favorites"
     const val PROFILE = "profile"
 
@@ -43,5 +46,5 @@ object Routes {
     fun tailor(id: String) = "tailor/$id"
     const val MEASUREMENTS = "measurements"
 
-    val TOP_LEVEL = listOf(HOME, DISCOVER, CREATE, FAVORITES, PROFILE)
+    val TOP_LEVEL = listOf(HOME, DISCOVER, TRY_ON, FAVORITES, PROFILE)
 }

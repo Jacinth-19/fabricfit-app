@@ -1,5 +1,7 @@
 package com.ntoma.studio.ui.screens.result
 
+import androidx.compose.foundation.background
+import com.ntoma.studio.ui.theme.previewCanvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.LazyRow
@@ -129,12 +131,12 @@ fun ResultScreen(nav: NavHostController, padding: PaddingValues, lookId: Long) {
                             contentDescription = stringResource(
                                 if (l.isFavorite) R.string.cd_favorite_on else R.string.cd_favorite_off,
                             ),
-                            tint = if (l.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (l.isFavorite) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                 }
 
-                Box(Modifier.fillMaxWidth().weight(1f)) {
+                Box(Modifier.fillMaxWidth().weight(1f).background(MaterialTheme.colorScheme.previewCanvas)) {
                     if (showCompare) {
                         BeforeAfterSlider(
                             beforePath = l.personImageUri,

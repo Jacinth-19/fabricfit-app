@@ -88,8 +88,9 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
             modifier = Modifier.fillMaxSize(),
         ) {
         Column(Modifier.fillMaxSize()) {
+            com.ntoma.studio.ui.components.StudioHeader(subtitle = R.string.heritage_saved_subtitle)
             Text(
-                stringResource(R.string.favorites_title),
+                stringResource(R.string.nav_favorites),
                 style = MaterialTheme.typography.displayMedium,
                 modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
             )
@@ -108,7 +109,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
                 singleLine = true,
             )
-            PrimaryTabRow(selectedTabIndex = tab) {
+            androidx.compose.material3.PrimaryScrollableTabRow(selectedTabIndex = tab, edgePadding = 20.dp) {
                 listOf(
                     R.string.favorites_tab_fabrics,
                     R.string.favorites_tab_designs,

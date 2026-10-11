@@ -88,29 +88,25 @@ private fun SplashArt() {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
     ) {
-        Image(
-            painter = painterResource(R.drawable.splash_art),
-            contentDescription = stringResource(R.string.app_name),
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop,
-        )
+        com.ntoma.studio.ui.components.AssetImage("catalog/fabrics/kente.jpg", null, Modifier.fillMaxSize())
+        Box(Modifier.fillMaxSize().background(androidx.compose.ui.graphics.Brush.verticalGradient(
+            listOf(androidx.compose.ui.graphics.Color(0xFF173F35), androidx.compose.ui.graphics.Color(0x44173F35), androidx.compose.ui.graphics.Color(0xFF173F35)))))
         Column(
             Modifier.align(Alignment.BottomCenter).padding(bottom = 64.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            // The artwork is always light, so the wordmark uses a fixed ink colour
-            // regardless of the system theme (dark mode included).
+            // Fixed forest scrim keeps the splash wordmark legible in either theme.
             Text(
                 stringResource(R.string.app_name),
                 style = MaterialTheme.typography.displayMedium,
-                color = androidx.compose.ui.graphics.Color(0xFF14110F),
+                color = androidx.compose.ui.graphics.Color(0xFFF8F3E9),
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(R.string.app_tagline),
                 style = MaterialTheme.typography.bodyMedium,
-                color = androidx.compose.ui.graphics.Color(0xFF14110F),
+                color = androidx.compose.ui.graphics.Color(0xFFF8F3E9),
             )
         }
     }

@@ -46,7 +46,7 @@ import com.ntoma.studio.ui.screens.wardrobe.WardrobeScreen
 fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
-    val currentRoute = backStack?.destination?.route
+    val currentRoute = backStack?.destination?.route.let { if (it == Routes.DISCOVER_FABRIC) Routes.DISCOVER else it }
 
     LaunchedEffect(startWithScan) {
         if (startWithScan) {
@@ -122,7 +122,11 @@ private fun NtomaNavHost(
     ) {
         composable(Routes.HOME) { HomeScreen(nav, padding) }
         composable(Routes.DISCOVER) { DiscoverScreen(nav, padding) }
+        composable(Routes.DISCOVER_FABRIC) { entry ->
+            DiscoverScreen(nav, padding, entry.arguments?.getString("category"))
+        }
         composable(Routes.CREATE) { CreateScreen(nav, padding) }
+        composable(Routes.TRY_ON) { TryOnScreen(nav, padding, null, null, null, topLevel = true) }
         composable(Routes.FAVORITES) { FavoritesScreen(nav, padding) }
         composable(Routes.PROFILE) { ProfileScreen(nav, padding) }
 

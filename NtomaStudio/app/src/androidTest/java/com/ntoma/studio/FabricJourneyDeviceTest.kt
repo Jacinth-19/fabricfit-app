@@ -62,7 +62,11 @@ class FabricJourneyDeviceTest {
 
     @Test fun selectedDressFabricFlowsToRealTextureTemplates() {
         val container = AppContainer.get(context)
-        runBlocking { container.tooltips.markSeen(TooltipStore.CREATE) }
+        runBlocking {
+            container.tooltips.markSeen(TooltipStore.CREATE)
+            container.tooltips.markSeen(TooltipStore.TRYON)
+            container.tooltips.markSeen(TooltipStore.FAVORITES)
+        }
         val original = context.assets.open("editorial/adowa-kente.jpg").use { BitmapFactory.decodeStream(it) }!!
         // Keep the real photograph under the editor's sampling threshold; compare crop
         // dimensions against exactly the pixels inserted into MediaStore.
@@ -92,11 +96,31 @@ class FabricJourneyDeviceTest {
             darkCapture.recycle(); lightCapture.recycle()
             compose.onNodeWithTag("studio_theme_toggle").performClick()
             compose.waitUntil(10_000) { runBlocking { container.settings.current().themeMode } == com.ntoma.studio.domain.model.ThemeMode.LIGHT }
-            waitText(context.getString(R.string.nav_create))
-            compose.onNodeWithContentDescription(context.getString(R.string.nav_create)).performClick()
-            waitText(context.getString(R.string.create_option_gallery_title))
+            // Real navigation contract: Try On is the centre tab, scan stays on Home.
+            compose.onNodeWithTag("nav_try-on").performClick()
+            waitText(context.getString(R.string.heritage_tryon_heading))
+            compose.onNodeWithTag("nav_try-on").assertIsSelected()
+            screenshot("08-tryon-light")
+            compose.onNodeWithTag("studio_theme_toggle").performClick()
+            screenshot("08-tryon-dark")
+            compose.onNodeWithTag("nav_discover").performClick()
+            waitText(context.getString(R.string.discover_title))
+            screenshot("09-discover-dark")
+            compose.onNodeWithTag("studio_theme_toggle").performClick()
+            screenshot("09-discover-light")
+            compose.onNodeWithTag("nav_favorites").performClick()
+            screenshot("10-saved-light")
+            compose.onNodeWithTag("nav_profile").performClick()
+            waitText(context.getString(R.string.profile_title))
+            screenshot("11-profile-light")
+            compose.onNodeWithTag("studio_theme_toggle").performClick()
+            screenshot("11-profile-dark")
+            compose.onNodeWithTag("studio_theme_toggle").performClick()
+            compose.onNodeWithTag("nav_home").performClick()
+            waitTag("home_gallery")
+            compose.onNodeWithTag("home_gallery").performScrollTo()
             screenshot("01-create")
-            compose.onNodeWithText(context.getString(R.string.create_option_gallery_title)).performClick()
+            compose.onNodeWithTag("home_gallery").performClick()
             device.waitForIdle()
             Thread.sleep(2000)
             device.dumpWindowHierarchy(File(artifacts, "picker-ui.xml"))

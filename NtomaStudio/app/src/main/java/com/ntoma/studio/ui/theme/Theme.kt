@@ -14,7 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ntoma.studio.di.AppContainer
 import com.ntoma.studio.domain.model.ThemeMode
 
-private val LightScheme = lightColorScheme(
+internal val LightScheme = lightColorScheme(
     primary = LightPrimary,
     onPrimary = LightOnPrimary,
     primaryContainer = LightPrimaryContainer,
@@ -49,7 +49,7 @@ private val LightScheme = lightColorScheme(
     surfaceContainerHighest = LightSurfaceContainerHighest,
 )
 
-private val DarkScheme = darkColorScheme(
+internal val DarkScheme = darkColorScheme(
     primary = DarkPrimary,
     onPrimary = DarkOnPrimary,
     primaryContainer = DarkPrimaryContainer,
@@ -87,8 +87,8 @@ private val DarkScheme = darkColorScheme(
 val NtomaShapes = Shapes(
     extraSmall = RoundedCornerShape(12.dp),
     small = RoundedCornerShape(12.dp),
-    medium = RoundedCornerShape(20.dp),
-    large = RoundedCornerShape(28.dp),
+    medium = RoundedCornerShape(16.dp),
+    large = RoundedCornerShape(24.dp),
     extraLarge = RoundedCornerShape(28.dp),
 )
 
@@ -102,6 +102,15 @@ fun NtomaTheme(content: @Composable () -> Unit) {
         ThemeMode.DARK -> true
         ThemeMode.SYSTEM -> systemDark
     }
+    val view = androidx.compose.ui.platform.LocalView.current
+    androidx.compose.runtime.SideEffect {
+        (view.context as? android.app.Activity)?.window?.let { window ->
+            androidx.core.view.WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = !dark
+                isAppearanceLightNavigationBars = !dark
+            }
+        }
+    }
     MaterialTheme(
         colorScheme = if (dark) DarkScheme else LightScheme,
         typography = NtomaTypography,
@@ -113,3 +122,7 @@ fun NtomaTheme(content: @Composable () -> Unit) {
 /** Build version guard kept for clarity; we use fixed brand schemes on all versions. */
 @Suppress("UNUSED_PARAMETER")
 private fun dynamicColorAvailable(): Boolean = Build.VERSION.SDK_INT >= 31
+
+/** Canvas for local flat previews; never presented as a photoreal fitting room. */
+val androidx.compose.material3.ColorScheme.previewCanvas: androidx.compose.ui.graphics.Color
+    get() = if (background == DarkBackground) DarkPreviewCanvas else LightPreviewCanvas

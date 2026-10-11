@@ -1,5 +1,8 @@
 package com.ntoma.studio.ui.screens.discover
 
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.FilterChip
+import com.ntoma.studio.domain.model.StyleCategory
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -52,12 +55,13 @@ import com.ntoma.studio.ui.navigation.appViewModel
 import com.ntoma.studio.ui.util.resolveKey
 
 @Composable
-fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
+fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialCategory: String? = null) {
     val vm: DiscoverViewModel = appViewModel { c, ctx -> DiscoverViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var tab by remember { mutableStateOf(0) }
-    var query by remember { mutableStateOf("") }
+    var tab by remember(initialCategory) { mutableStateOf(if (initialCategory == null) 0 else 1) }
+    var query by remember(initialCategory) { mutableStateOf(FabricCategory.entries.find { it.name == initialCategory }?.let { context.getString(it.labelRes) }.orEmpty()) }
+    var styleFilter by remember { mutableStateOf<StyleCategory?>(null) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         com.ntoma.studio.ui.components.StudioHeader(subtitle = R.string.studio_discover_subtitle)
@@ -88,13 +92,19 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
             }
         }
 
+        if (tab == 0) LazyRow(contentPadding = PaddingValues(horizontal = 20.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            item { FilterChip(selected = styleFilter == null, onClick = { styleFilter = null }, label = { Text(stringResource(R.string.recs_clear_filters)) }) }
+            items(StyleCategory.entries.toList()) { category ->
+                FilterChip(selected = styleFilter == category, onClick = { styleFilter = category }, label = { Text(stringResource(category.labelRes)) })
+            }
+        }
         val q = query.trim()
         when (tab) {
             0 -> {
                 if (!state.loaded) {
                     Column(Modifier.padding(20.dp)) { CardSkeleton(); Spacer(Modifier.height(16.dp)); CardSkeleton() }
                 } else {
-                    val styles = smartFilterStyles(state.styles, q, context)
+                    val styles = smartFilterStyles(state.styles, q, context).filter { styleFilter == null || it.category == styleFilter }
                     if (styles.isEmpty()) {
                         EmptyState(
                             R.drawable.illust_empty_collection,
@@ -110,24 +120,11 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             items(styles, key = { it.id }) { style ->
-                                Card(
-                                    onClick = { nav.navigate(Routes.design(style.id)) },
-                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                                ) {
-                                    Column(Modifier.padding(10.dp)) {
-                                        GarmentArt(style, null, modifier = Modifier.fillMaxWidth().height(140.dp))
-                                        Spacer(Modifier.height(6.dp))
-                                        Text(
-                                            context.resolveKey(style.titleKey) ?: style.id,
-                                            style = MaterialTheme.typography.titleSmall,
-                                        )
-                                        Text(
-                                            stringResource(style.gender.labelRes),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        )
-                                    }
-                                }
+                                com.ntoma.studio.ui.components.HeritageStyleCard(
+                                    style = style, isFavorite = style.id in state.favoriteStyles,
+                                    onFavorite = { vm.toggleFavorite(style) },
+                                    onOpen = { nav.navigate(Routes.design(style.id)) },
+                                )
                             }
                         }
                     }

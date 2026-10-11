@@ -187,7 +187,7 @@ private fun RecommendationCard(
                             contentDescription = stringResource(
                                 if (isFavorite) R.string.cd_favorite_on else R.string.cd_favorite_off,
                             ),
-                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                            tint = if (isFavorite) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
                     IconButton(onClick = onDismiss) {

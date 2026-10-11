@@ -93,7 +93,7 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                         contentDescription = stringResource(
                             if (f.isFavorite) R.string.cd_favorite_on else R.string.cd_favorite_off,
                         ),
-                        tint = if (f.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (f.isFavorite) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
                 IconButton(onClick = {

@@ -2,6 +2,7 @@ package com.ntoma.studio.ui.components
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,8 +44,10 @@ val editorialPhotos = listOf(
 @Composable
 fun StudioHeader(modifier: Modifier = Modifier, subtitle: Int = R.string.studio_header_subtitle) {
     Row(modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+        BrandMark(Modifier.size(38.dp))
+        Spacer(Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
-            Text("ntoma", fontFamily = FontFamily.Serif, fontSize = 32.sp, letterSpacing = (-1).sp)
+            Text(stringResource(R.string.heritage_brand), fontFamily = com.ntoma.studio.ui.theme.HeritageSerif, fontSize = 27.sp, color = MaterialTheme.colorScheme.primary)
             Text(stringResource(subtitle), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         ThemeSwitch()
@@ -69,18 +72,18 @@ fun ThemeSwitch() {
 
 @Composable
 fun StudioHero(onCreate: () -> Unit) {
-    Box(Modifier.fillMaxWidth().height(370.dp).clip(RoundedCornerShape(28.dp)).testTag("studio_editorial_hero")) {
+    Box(Modifier.fillMaxWidth().height(300.dp).clip(RoundedCornerShape(20.dp)).testTag("studio_editorial_hero")) {
         AssetImage(editorialPhotos[0].asset, stringResource(editorialPhotos[0].description), Modifier.fillMaxSize())
-        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xEE101C16)), startY = 180f)))
-        Surface(Modifier.align(Alignment.TopStart).padding(18.dp), shape = RoundedCornerShape(50), color = Color(0xECF6F4E9)) {
-            Text(stringResource(R.string.studio_hero_badge), Modifier.padding(12.dp, 7.dp), color = Color(0xFF183F32), style = MaterialTheme.typography.labelSmall)
+        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color.Transparent, Color(0xF2173F35)), startY = 180f)))
+        Surface(Modifier.align(Alignment.TopStart).padding(18.dp), shape = RoundedCornerShape(50), color = Color(0xF2F8F3E9)) {
+            Text(stringResource(R.string.studio_hero_badge), Modifier.padding(12.dp, 7.dp), color = Color(0xFF173F35), style = MaterialTheme.typography.labelSmall)
         }
         Column(Modifier.align(Alignment.BottomStart).padding(24.dp)) {
-            Text(stringResource(R.string.studio_hero_title), color = Color.White, fontFamily = FontFamily.Serif,
-                fontSize = 34.sp, lineHeight = 38.sp)
+            Text(stringResource(R.string.studio_hero_title), color = Color.White, fontFamily = com.ntoma.studio.ui.theme.HeritageSerif,
+                fontSize = 29.sp, lineHeight = 34.sp)
             Text(stringResource(R.string.studio_hero_body), Modifier.padding(top = 8.dp, bottom = 16.dp),
                 color = Color(0xFFF0EDE2), style = MaterialTheme.typography.bodyMedium)
-            Button(onClick = onCreate, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF4DEB3), contentColor = Color(0xFF18392E))) {
+            Button(onClick = onCreate, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD6A84F), contentColor = Color(0xFF252722))) {
                 Text(stringResource(R.string.studio_start_designing))
                 Spacer(Modifier.width(16.dp)); Icon(Icons.AutoMirrored.Filled.ArrowForward, null)
             }

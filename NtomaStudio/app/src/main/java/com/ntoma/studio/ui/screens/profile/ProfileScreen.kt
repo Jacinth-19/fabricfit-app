@@ -59,7 +59,10 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
             .padding(horizontal = 20.dp),
     ) {
         Spacer(Modifier.height(24.dp))
-        Text(stringResource(R.string.profile_title), style = MaterialTheme.typography.displayMedium)
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.profile_title), style = MaterialTheme.typography.displayMedium, modifier = Modifier.weight(1f))
+            com.ntoma.studio.ui.components.ThemeSwitch()
+        }
         Spacer(Modifier.height(16.dp))
 
         Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {

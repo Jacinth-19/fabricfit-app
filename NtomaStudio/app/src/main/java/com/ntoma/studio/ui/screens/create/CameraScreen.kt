@@ -31,6 +31,14 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.testTag
+import com.ntoma.studio.ui.util.rememberPhotoPicker
+import com.ntoma.studio.ui.util.openFabricFlow
+import com.ntoma.studio.ui.util.openPersonFlow
+import kotlinx.coroutines.launch
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -73,6 +81,16 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
     var failed by remember { mutableStateOf(false) }
     var capturing by remember { mutableStateOf(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
+    DisposableEffect(Unit) { onDispose { executor.shutdown() } }
+    val scope = rememberCoroutineScope()
+    val snackbar = remember { androidx.compose.material3.SnackbarHostState() }
+    val picker = rememberPhotoPicker { uri ->
+        val onError: (com.ntoma.studio.domain.model.AppError) -> Unit = { error ->
+            scope.launch { snackbar.showSnackbar(context.getString(error.titleRes)) }
+        }
+        if (target == "person") context.openPersonFlow(uri, { nav.navigate(it) }, onError)
+        else context.openFabricFlow(uri, { nav.navigate(it) }, onError)
+    }
 
     Column(
         modifier = Modifier.fillMaxSize().padding(padding),
@@ -93,6 +111,12 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(Modifier.weight(1f))
+            IconButton(modifier = Modifier.testTag("camera_gallery"), onClick = {
+                picker.launch(androidx.activity.result.PickVisualMediaRequest(
+                    androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly))
+            }) {
+                Icon(Icons.Filled.PhotoLibrary, stringResource(R.string.heritage_camera_gallery))
+            }
             IconButton(onClick = { flashOn = !flashOn; imageCapture?.flashMode = if (flashOn) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF }) {
                 Icon(
                     if (flashOn) Icons.Filled.FlashOn else Icons.Filled.FlashOff,
@@ -104,6 +128,7 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
             }
         }
 
+        androidx.compose.material3.SnackbarHost(snackbar)
         if (failed) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column {
@@ -157,7 +182,7 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                 // Frame + guidance overlay
                 Box(
                     Modifier.fillMaxSize().padding(28.dp)
-                        .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.7f), MaterialTheme.shapes.large),
+                        .border(2.dp, Color(0xFFE5B85C), MaterialTheme.shapes.large),
                 )
                 Text(
                     stringResource(R.string.camera_guidance),
@@ -202,17 +227,17 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                                 )
                             },
                             shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primary,
+                            color = Color.White,
                             modifier = Modifier
-                                .size(72.dp)
-                                .border(4.dp, MaterialTheme.colorScheme.onPrimary, CircleShape)
+                                .size(80.dp)
+                                .border(4.dp, Color(0xFF173F35), CircleShape)
                                 .semantics { contentDescription = context.getString(R.string.camera_capture) },
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     androidx.compose.material.icons.Icons.Filled.CameraAlt,
                                     contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
+                                    tint = Color(0xFF173F35),
                                 )
                             }
                         }
@@ -247,13 +272,17 @@ private fun capture(
         executor,
         object : ImageCapture.OnImageSavedCallback {
             override fun onImageSaved(result: ImageCapture.OutputFileResults) {
-                onCapturing(false)
-                onSaved(file)
+                ContextCompat.getMainExecutor(context).execute {
+                    onCapturing(false)
+                    onSaved(file)
+                }
             }
 
             override fun onError(exception: ImageCaptureException) {
-                onCapturing(false)
-                onError()
+                ContextCompat.getMainExecutor(context).execute {
+                    onCapturing(false)
+                    onError()
+                }
             }
         },
     )

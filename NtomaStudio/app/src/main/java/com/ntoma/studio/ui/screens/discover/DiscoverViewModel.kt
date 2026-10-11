@@ -19,14 +19,20 @@ data class DiscoverUiState(
     val loaded: Boolean = false,
     val offline: Boolean = false,
     val query: String = "",
+    val favoriteStyles: Set<String> = emptySet(),
 )
 
-class DiscoverViewModel(container: AppContainer) : ViewModel() {
+class DiscoverViewModel(private val container: AppContainer) : ViewModel() {
 
     private val _state = MutableStateFlow(DiscoverUiState())
     val state: StateFlow<DiscoverUiState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            container.favorites.observeFavoriteDesigns().collect { favorites ->
+                _state.value = _state.value.copy(favoriteStyles = favorites.map { it.id }.toSet())
+            }
+        }
         viewModelScope.launch {
             container.dressStyles.observeAll().collect { styles ->
                 _state.value = _state.value.copy(styles = styles, loaded = true)
@@ -37,6 +43,10 @@ class DiscoverViewModel(container: AppContainer) : ViewModel() {
                 _state.value = _state.value.copy(looks = looks)
             }
         }
+    }
+
+    fun toggleFavorite(style: DressStyle) {
+        viewModelScope.launch { container.favorites.setDesignFavorite(style.id, style.id !in _state.value.favoriteStyles) }
     }
 
     fun setQuery(q: String) {

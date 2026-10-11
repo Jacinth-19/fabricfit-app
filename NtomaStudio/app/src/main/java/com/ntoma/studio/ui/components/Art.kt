@@ -108,30 +108,22 @@ private fun Color.darkenForOutline(): Color =
 
 @Composable
 fun BrandMark(modifier: Modifier = Modifier) {
+    // Abstract interlaced threads, not a claim to reproduce a named sacred symbol.
     Canvas(modifier = modifier) {
         val w = size.width
         val h = size.height
-        drawRoundRect(Color(0xFF14110F), cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.18f))
-        val sheet = Path().apply {
-            moveTo(w * 0.28f, h * 0.24f)
-            lineTo(w * 0.61f, h * 0.24f)
-            lineTo(w * 0.74f, h * 0.37f)
-            lineTo(w * 0.74f, h * 0.76f)
-            lineTo(w * 0.28f, h * 0.76f)
-            close()
+        drawRoundRect(Color(0xFF173F35), cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * .25f))
+        for (mirror in listOf(false, true)) {
+            val path = Path().apply {
+                fun px(x: Float) = if (mirror) w * (1f-x) else w*x
+                moveTo(px(.36f), h*.18f)
+                cubicTo(px(.08f), h*.42f, px(.77f), h*.54f, px(.36f), h*.82f)
+            }
+            drawPath(path, Color(0xFFD6A84F), style = androidx.compose.ui.graphics.drawscope.Stroke(w*.055f,
+                cap = androidx.compose.ui.graphics.StrokeCap.Round))
         }
-        drawPath(sheet, Color(0xFFFDF8F2))
-        drawPath(
-            Path().apply {
-                moveTo(w * 0.61f, h * 0.24f)
-                lineTo(w * 0.74f, h * 0.37f)
-                lineTo(w * 0.61f, h * 0.37f)
-                close()
-            },
-            Color(0xFFC8952B),
-        )
-        drawRect(Color(0xFF8C2F39), topLeft = Offset(w * 0.34f, h * 0.48f), size = Size(w * 0.35f, h * 0.07f))
-        drawRect(Color(0xFF1F5450), topLeft = Offset(w * 0.34f, h * 0.6f), size = Size(w * 0.24f, h * 0.07f))
+        drawCircle(Color(0xFFD6A84F), w*.045f, Offset(w*.5f,h*.18f))
+        drawCircle(Color(0xFFD6A84F), w*.045f, Offset(w*.5f,h*.82f))
     }
 }
 

@@ -72,7 +72,7 @@ jobs:
               # Crash tails make instrumentation process deaths diagnosable from the run itself.
               lines = crash.read_text(errors='replace').splitlines()
               markers = [i for i, line in enumerate(lines) if 'FATAL EXCEPTION' in line or 'beginning of crash' in line]
-              text += '\n'.join(lines[max(0, i - 3):i + 25] for i in markers[-2:])
+              text += '\n'.join('\n'.join(lines[max(0, i - 3):i + 25]) for i in markers[-2:])
           for log in ['native-alignment.txt', 'signing-gate.txt']:
               if Path(log).exists(): text += '\n' + Path(log).read_text()[-15000:]
           Path('check.json').write_text(json.dumps({'name':'Build diagnostics', 'head_sha':os.environ['GITHUB_SHA'], 'status':'completed', 'conclusion':'failure', 'output':{'title':'Build failure', 'summary':'Compiler/test diagnostics', 'text':text[-60000:]}}))
@@ -164,6 +164,11 @@ jobs:
           log = Path('qa-artifacts/device-diagnostics.txt')
           text += log.read_text()[-20000:] if log.exists() else 'Emulator setup failed before tests.'
           text += '\n'.join(p.read_text() for p in Path('qa-artifacts').glob('*ui.xml'))
+          crash = Path('qa-artifacts/logcat.txt')
+          if crash.exists():
+              lines = crash.read_text(errors='replace').splitlines()
+              markers = [i for i, line in enumerate(lines) if any(token in line for token in ('FATAL EXCEPTION', 'Fatal signal', 'Abort message:', 'OutOfMemoryError', 'Process com.ntoma'))]
+              text = '\n'.join('\n'.join(lines[max(0, i-3):i+45]) for i in markers[-6:]) + '\n' + text
           setup = Path('qa-artifacts/sdk-setup.txt')
           if setup.exists(): text += '\n' + setup.read_text()[-18000:]
           Path('check.json').write_text(json.dumps({'name':'Emulator diagnostics', 'head_sha':os.environ['GITHUB_SHA'], 'status':'completed', 'conclusion':'failure', 'output':{'title':'App journey failure', 'summary':'Device test diagnostics', 'text':text[:60000]}}))
