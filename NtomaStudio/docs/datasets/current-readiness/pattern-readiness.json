@@ -1,0 +1,135 @@
+{
+  "task": "pattern",
+  "policy_status": "provisional_planning_targets_not_a_release_guarantee",
+  "candidate_rows_seen": 0,
+  "approved_usable_rows": 0,
+  "held_rows": {},
+  "integrity_errors": [],
+  "class_budgets": {
+    "CHECKED": {
+      "counts": {
+        "train_design_groups": 0,
+        "validation_design_groups": 0,
+        "test_design_groups": 0,
+        "target_domain_validation_design_groups": 0,
+        "target_domain_test_design_groups": 0,
+        "camera_test_design_groups": 0,
+        "gallery_test_design_groups": 0
+      },
+      "gaps": {
+        "train_design_groups": 300,
+        "validation_design_groups": 150,
+        "test_design_groups": 200,
+        "target_domain_validation_design_groups": 75,
+        "target_domain_test_design_groups": 200,
+        "camera_test_design_groups": 100,
+        "gallery_test_design_groups": 100
+      }
+    },
+    "DOTTED": {
+      "counts": {
+        "train_design_groups": 0,
+        "validation_design_groups": 0,
+        "test_design_groups": 0,
+        "target_domain_validation_design_groups": 0,
+        "target_domain_test_design_groups": 0,
+        "camera_test_design_groups": 0,
+        "gallery_test_design_groups": 0
+      },
+      "gaps": {
+        "train_design_groups": 300,
+        "validation_design_groups": 150,
+        "test_design_groups": 200,
+        "target_domain_validation_design_groups": 75,
+        "target_domain_test_design_groups": 200,
+        "camera_test_design_groups": 100,
+        "gallery_test_design_groups": 100
+      }
+    },
+    "FLORAL": {
+      "counts": {
+        "train_design_groups": 0,
+        "validation_design_groups": 0,
+        "test_design_groups": 0,
+        "target_domain_validation_design_groups": 0,
+        "target_domain_test_design_groups": 0,
+        "camera_test_design_groups": 0,
+        "gallery_test_design_groups": 0
+      },
+      "gaps": {
+        "train_design_groups": 300,
+        "validation_design_groups": 150,
+        "test_design_groups": 200,
+        "target_domain_validation_design_groups": 75,
+        "target_domain_test_design_groups": 200,
+        "camera_test_design_groups": 100,
+        "gallery_test_design_groups": 100
+      }
+    },
+    "GEOMETRIC": {
+      "counts": {
+        "train_design_groups": 0,
+        "validation_design_groups": 0,
+        "test_design_groups": 0,
+        "target_domain_validation_design_groups": 0,
+        "target_domain_test_design_groups": 0,
+        "camera_test_design_groups": 0,
+        "gallery_test_design_groups": 0
+      },
+      "gaps": {
+        "train_design_groups": 300,
+        "validation_design_groups": 150,
+        "test_design_groups": 200,
+        "target_domain_validation_design_groups": 75,
+        "target_domain_test_design_groups": 200,
+        "camera_test_design_groups": 100,
+        "gallery_test_design_groups": 100
+      }
+    },
+    "PLAID": {
+      "counts": {
+        "train_design_groups": 0,
+        "validation_design_groups": 0,
+        "test_design_groups": 0,
+        "target_domain_validation_design_groups": 0,
+        "target_domain_test_design_groups": 0,
+        "camera_test_design_groups": 0,
+        "gallery_test_design_groups": 0
+      },
+      "gaps": {
+        "train_design_groups": 300,
+        "validation_design_groups": 150,
+        "test_design_groups": 200,
+        "target_domain_validation_design_groups": 75,
+        "target_domain_test_design_groups": 200,
+        "camera_test_design_groups": 100,
+        "gallery_test_design_groups": 100
+      }
+    },
+    "STRIPED": {
+      "counts": {
+        "train_design_groups": 0,
+        "validation_design_groups": 0,
+        "test_design_groups": 0,
+        "target_domain_validation_design_groups": 0,
+        "target_domain_test_design_groups": 0,
+        "camera_test_design_groups": 0,
+        "gallery_test_design_groups": 0
+      },
+      "gaps": {
+        "train_design_groups": 300,
+        "validation_design_groups": 150,
+        "test_design_groups": 200,
+        "target_domain_validation_design_groups": 75,
+        "target_domain_test_design_groups": 200,
+        "camera_test_design_groups": 100,
+        "gallery_test_design_groups": 100
+      }
+    }
+  },
+  "ood_test_groups": 0,
+  "ood_test_gap": 1000,
+  "collection_budget_met": false,
+  "release_ready": false,
+  "reason": "Independent model evaluation and device tests still required; counts never authorize release."
+}

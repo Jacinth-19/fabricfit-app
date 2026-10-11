@@ -5,6 +5,13 @@ for **visible pattern recognition**, including textiles and clothing. No special
 model has been trained, exported, uploaded to Kaggle or enabled in the Android app.
 The separate **Ghanaian fabric-family** task still needs suitable labelled data.
 
+**Release answer: no.** See the [reviewed-design acquisition budget and release
+checks](datasets/RELEASE_READINESS.md). More data is now being collected in run
+[38153771996](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38153771996).
+The first finished job acquired **69 additional Cleveland candidates**, distinct
+from the 951 prior public-image hashes. Two Commons jobs are still running; no
+new candidate has been training-approved.
+
 ## 1. Acquired: AI4Culture textile patterns
 
 Sources: [publisher repository](https://github.com/datable-be/AI4_C_datasets),

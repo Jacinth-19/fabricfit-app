@@ -34,6 +34,27 @@ For unattended status/error observation of an **existing saved Kaggle version**,
 [`KAGGLE_MONITORING.md`](../../docs/KAGGLE_MONITORING.md). It requires secure runner
 authentication and does not submit or automatically repair training jobs.
 
+## Release budget and expanded collection
+
+A new bounded run uses pagination, four queries/category and 951 prior-source
+exclusions rather than redownloading the old pool. Collection ceilings are not
+promised counts. See [live acquisition and release gaps](../../docs/datasets/RELEASE_READINESS.md).
+
+Audit **reviewed annotations** separately from collector suggestions:
+
+```bash
+python3 NtomaStudio/tools/dataset/audit_readiness.py  # zero approvals, honest gaps
+python3 NtomaStudio/tools/dataset/audit_readiness.py --annotations reviewed.jsonl
+python3 -m unittest discover -s NtomaStudio/tools/dataset -p 'test_*.py' -v
+```
+
+Annotation rows need explicit approval, reviewer, rights evidence/verification,
+cloth-region review, verified `reviewed_pattern` labels, image SHA-256, source/design group,
+train/validation/test assignment and explicit app-QA exclusion status. Target-domain
+camera/gallery and worn-outfit fields support the separate test slices. No reviewed
+file exists yet; missing annotations mean **zero**, not query labels. The auditor
+flags identity/split conflicts and never authorizes a release from counts alone.
+
 ## Layout
 ```
 tools/dataset/
@@ -46,15 +67,20 @@ tools/dataset/
 ```
 
 ## Workflow
-1. **Collect**: 300+ photos/class minimum (1000+ before publishing accuracy claims).
-   Market days at Makola/Kantamanto/Kejetia, weaver cooperatives in Bonwire (kente) and
-   Tamale (fugu), user contributions with consent. Follow `label_schema.json` guidance —
-   lighting, distance, angle and fold variety matter more than volume.
+1. **Collect and review**: use the provisional design-group budget in
+   [RELEASE_READINESS.md](../../docs/datasets/RELEASE_READINESS.md), not a magic
+   image-count threshold. Initial milestone: 300 training + 150 validation + 200
+   independent target-domain test groups per supported class, plus unknown tests.
+   Resolve overlapping family labels before using the old 17-folder trainer.
+   Market/cooperative photography and consented contributions can complement public
+   data; baseline acquisition is not blocked on owner-supplied original photos.
 2. **Augment**: `python3 tools/dataset/augment.py --per-image 10`
 3. **Train**: `python3 tools/dataset/train_finetune.py` (add `--smoke` first on a laptop
    to prove the toolchain; a smoke model is a pipeline test, NEVER a shipped model).
-4. **Review**: check the printed validation accuracy per class; inspect confusions
-   (KENTE vs KENTE_PRINT and FUGU vs GONJA will be the hard pairs).
+4. **Evaluate**: tune thresholds on validation only, then use a locked,
+   design-disjoint test with real camera/gallery dresses, per-class metrics,
+   uncertainty coverage and confidence intervals. KENTE_PRINT/GONJA stay unsupported
+   until provenanced data exists; a random image split is not independent validation.
 5. **Integrate**: replace the classifier asset, keep the heuristic fallback, re-run
    `./gradlew :app:testDebugUnitTest`, and only then stop labelling results
    `ON_DEVICE_DEMO` for the classes that genuinely improved.
@@ -77,10 +103,12 @@ kaggle datasets create -p tools/dataset/kaggle_export      # or upload the .zip
 ```
 
 Details + honesty implications: `scrape/README.md`. Web data is **starter** data —
-it never replaces the 1000+/class field + consented-contribution bar for claims.
+it does not replace target-domain independent tests. The old allowlist is not
+per-image rights clearance; the newer rights-aware collector preserves review status.
 
 ## Honesty rules (non-negotiable)
-- No accuracy claims from models trained on <1000 images/class.
+- No release accuracy claim from dataset size alone. Report actual independent
+  evaluation and uncertainty; 1000 images/class is not a guarantee.
 - Authentic hand-woven vs machine-printed kente is a **separate task** (see
   Authente-Kente, ~88% published) — do not conflate it with category labels.
 - The demo fallback and its labelling stay in the app permanently.

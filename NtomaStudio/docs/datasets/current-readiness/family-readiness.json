@@ -1,0 +1,14 @@
+{
+  "task": "family",
+  "policy_status": "provisional_planning_targets_not_a_release_guarantee",
+  "candidate_rows_seen": 0,
+  "approved_usable_rows": 0,
+  "held_rows": {},
+  "integrity_errors": [],
+  "class_budgets": {},
+  "ood_test_groups": 0,
+  "ood_test_gap": 1000,
+  "collection_budget_met": false,
+  "release_ready": false,
+  "reason": "Independent model evaluation and device tests still required; counts never authorize release."
+}

@@ -1,0 +1,39 @@
+{
+  "started_at": "2026-10-11T16:02:23.745816+00:00",
+  "finished_at": "2026-10-11T16:04:27.971483+00:00",
+  "records": 69,
+  "unique_images": 69,
+  "coverage": {
+    "pattern": {
+      "DOTTED": 0,
+      "CHECKED": 0,
+      "PLAID": 0,
+      "STRIPED": 1,
+      "GEOMETRIC": 8,
+      "FLORAL": 60
+    }
+  },
+  "counts": {
+    "accepted_records": 69,
+    "rejected_small_image": 6
+  },
+  "request_count": 101,
+  "errors": [],
+  "skipped_known_source_ids": 130,
+  "stop_reason": "queries_finished",
+  "per_label_cap": 150,
+  "near_duplicate_pairs": [
+    [
+      "cma:142305",
+      "cma:142306",
+      0
+    ],
+    [
+      "cma:122575",
+      "cma:122574",
+      4
+    ]
+  ],
+  "training_approved_images": 0,
+  "warning": "Search hits are not ground-truth labels. Review rights, cloth region, family, pattern and design groups first."
+}

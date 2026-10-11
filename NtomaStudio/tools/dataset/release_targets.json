@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "status": "provisional_planning_targets_not_a_release_guarantee",
+  "pattern_labels": ["CHECKED", "DOTTED", "FLORAL", "GEOMETRIC", "PLAID", "STRIPED"],
+  "family_labels": [],
+  "family_status": "blocked_until_aliases_overlaps_and_visually_unsupported_claims_resolved",
+  "per_supported_class": {
+    "train_design_groups": 300,
+    "validation_design_groups": 150,
+    "test_design_groups": 200,
+    "target_domain_validation_design_groups": 75,
+    "target_domain_test_design_groups": 200,
+    "camera_test_design_groups": 100,
+    "gallery_test_design_groups": 100
+  },
+  "ood_test_groups": 1000,
+  "proposed_evaluation_gates": {
+    "selective_precision_wilson95_lower_min": 0.85,
+    "coverage_min": 0.50,
+    "worn_camera_precision_wilson95_lower_min": 0.75,
+    "ood_false_confident_wilson95_upper_max": 0.05
+  },
+  "notes": [
+    "300 training groups is an initial learning-curve milestone, not sufficient evidence for production.",
+    "Expand training toward 1000+ diverse groups per class as learning curves and failure slices require; no count guarantees release.",
+    "Test groups and garment subset overlap; do not add the subset to the 200 test groups.",
+    "Multiple photos, tiles, crops or augmented samples from one design/session are one group, confined to one split.",
+    "Pattern labels may overlap. Resolve checked/plaid and mixed-pattern annotation before training, using ambiguous or multi-label handling instead of forcing labels.",
+    "Count approved independent groups only. Query suggestions and thumbnail triage are not approval.",
+    "The six-class 3900 total is a class-group allocation target, not necessarily 3900 distinct photos when annotations overlap.",
+    "Proposed gates are product safety targets, not measured performance or a universal statistical standard."
+  ]
+}
