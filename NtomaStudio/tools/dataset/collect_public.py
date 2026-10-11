@@ -70,17 +70,21 @@ class Collector:
 
     def get(self, url, **kwargs):
         self.request_count += 1
-        time.sleep(0.2)
+        time.sleep(1.0)
         # Limit retries and duration: unavailable sources cannot hang a whole run.
         for attempt in range(3):
             try:
                 response = self.session.get(url, timeout=(10, 35), **kwargs)
                 response.raise_for_status()
                 return response
-            except requests.RequestException:
-                if attempt == 2:
+            except requests.RequestException as error:
+                response = getattr(error, "response", None)
+                status = response.status_code if response is not None else None
+                if attempt == 2 or (status and 400 <= status < 500 and status != 429):
                     raise
-                time.sleep(2 ** attempt)
+                retry_after = response.headers.get("Retry-After", "") if response is not None else ""
+                delay = min(int(retry_after), 120) if retry_after.isdigit() else (15 * (attempt + 1) if status == 429 else 2 ** attempt)
+                time.sleep(delay)
 
     def record_error(self, source, query, error):
         # Don't persist arbitrary exception strings, signed URLs or request headers.
@@ -101,7 +105,7 @@ class Collector:
         # Only known first-party media hosts, no arbitrary URLs from catalogue text.
         image_url = item["image_url"]
         parsed = urlsplit(image_url)
-        allowed = {"upload.wikimedia.org", "openaccess-cdn.clevelandart.org", "images.metmuseum.org"}
+        allowed = {"upload.wikimedia.org", "thumb.wikimedia.org", "openaccess-cdn.clevelandart.org", "images.metmuseum.org"}
         if parsed.scheme != "https" or parsed.hostname not in allowed:
             self.counts["rejected_image_host"] += 1
             return
@@ -122,7 +126,7 @@ class Collector:
                 # Save a separate resized review copy, preserve original byte hash.
                 image.thumbnail((1024, 1024))
                 reduced = image.convert("L").resize((9, 8))
-                pixels = list(reduced.getdata())
+                pixels = list(reduced.get_flattened_data())
                 bits = [pixels[y*9+x] > pixels[y*9+x+1] for y in range(8) for x in range(8)]
                 dhash = f"{sum(int(b) << i for i,b in enumerate(bits)):016x}"
                 uid = hashlib.sha256(key.encode()).hexdigest()[:24]
@@ -235,7 +239,7 @@ def main():
     ap.add_argument("--out", type=Path, default=Path(".datasets/public-review"))
     ap.add_argument("--per-query", type=int, default=10)
     ap.add_argument("--queries-per-label", type=int, default=2)
-    ap.add_argument("--sources", default="commons,cma,met")
+    ap.add_argument("--sources", default="commons,cma")
     args = ap.parse_args()
     if not 1 <= args.per_query <= 50 or not 1 <= args.queries_per_label <= 3:
         ap.error("Use 1–50 hits per query and 1–3 queries per label")

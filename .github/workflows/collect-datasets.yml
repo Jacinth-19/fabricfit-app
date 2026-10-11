@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   checks: write
 
 concurrency:
@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        source: [commons, cma, met]
+        source: [commons, cma]
     steps:
       - uses: actions/checkout@v5
         with:
@@ -40,7 +40,7 @@ jobs:
         run: >-
           python NtomaStudio/tools/dataset/collect_public.py
           --out .datasets/public-${{ matrix.source }}
-          --sources ${{ matrix.source }} --per-query 12 --queries-per-label 2
+          --sources ${{ matrix.source }} --per-query 40 --queries-per-label 2
       - name: Preserve candidates and rights evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -48,7 +48,7 @@ jobs:
           name: public-fabric-review-${{ matrix.source }}
           path: .datasets/public-${{ matrix.source }}/
           include-hidden-files: true
-          retention-days: 7
+          retention-days: 30
           if-no-files-found: warn
       - name: Publish readable acquisition audit
         if: always()
@@ -57,12 +57,29 @@ jobs:
           SOURCE: ${{ matrix.source }}
         run: |
           python - <<'PY'
-          import json, os, pathlib, subprocess
+          import base64, json, os, pathlib, subprocess, io, zipfile
           root = pathlib.Path('.datasets') / ('public-' + os.environ['SOURCE'])
           report = root / 'report.json'
           text = (root / 'summary.md').read_text() if report.exists() else 'Collection failed before a report was saved.'
           if report.exists():
               data = json.loads(report.read_text())
+              buffer = io.BytesIO()
+              with zipfile.ZipFile(buffer, 'w', zipfile.ZIP_DEFLATED) as archive:
+                  for name in ('report.json','summary.md','manifest.jsonl'):
+                      archive.write(root / name, name)
+                  # Small review images only. Full-sized candidates remain in the artifact.
+                  from PIL import Image
+                  for picture in sorted((root / 'images').glob('*.jpg')):
+                      with Image.open(picture) as image:
+                          image.thumbnail((320,320))
+                          thumb = io.BytesIO()
+                          image.save(thumb, format='JPEG', quality=75)
+                          archive.writestr('review-thumbnails/' + picture.name, thumb.getvalue())
+              blob_payload = json.dumps(dict(content=base64.b64encode(buffer.getvalue()).decode(), encoding='base64'))
+              blob = subprocess.run(['gh','api','--method','POST','repos/' + os.environ['GITHUB_REPOSITORY'] + '/git/blobs','--input','-'],
+                                    input=blob_payload, text=True, capture_output=True, check=True)
+              sha = json.loads(blob.stdout)['sha']
+              text += '\nReview metadata + small thumbnails git blob (not training images): `' + sha + '`\n'
               # Small result inventory makes review possible without downloading photos.
               inventory = []
               for line in (root / 'manifest.jsonl').read_text().splitlines():

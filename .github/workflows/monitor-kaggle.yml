@@ -1,0 +1,76 @@
+name: Monitor an existing Kaggle training version
+
+on:
+  push:
+    branches: [arena/5b96a1cd-ntoma-studio]
+    paths:
+      - '.github/workflows/monitor-kaggle.yml'
+      - 'NtomaStudio/tools/dataset/monitor_kaggle.py'
+      - 'NtomaStudio/tools/dataset/test_monitor_kaggle.py'
+  workflow_dispatch:
+    inputs:
+      kernel_version:
+        description: 'Kaggle owner/notebook-slug/version (no tokens)'
+        type: string
+        required: true
+      minutes:
+        description: 'Monitoring window in minutes, max 300'
+        type: choice
+        options: ['60', '120', '240', '300']
+        default: '240'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaggle-monitor-${{ inputs.kernel_version || vars.KAGGLE_KERNEL_VERSION || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  observer-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s NtomaStudio/tools/dataset -p test_monitor_kaggle.py -v
+  monitor:
+    needs: observer-tests
+    if: github.event_name == 'workflow_dispatch' || vars.KAGGLE_KERNEL_VERSION != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 320
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install pinned Kaggle client
+        run: python -m pip install -r NtomaStudio/tools/kaggle_outfits/requirements-launcher.txt
+      - name: Test observer without authentication
+        run: python -m unittest discover -s NtomaStudio/tools/dataset -p test_monitor_kaggle.py -v
+      - name: Observe version and collect selected outputs
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          KERNEL_VERSION: ${{ inputs.kernel_version || vars.KAGGLE_KERNEL_VERSION }}
+          MONITOR_MINUTES: ${{ inputs.minutes || '240' }}
+        run: |
+          if [ -z "$KAGGLE_API_TOKEN" ]; then
+            echo 'Missing KAGGLE_API_TOKEN repository secret. Do not put a token in workflow inputs.'
+            exit 1
+          fi
+          python NtomaStudio/tools/dataset/monitor_kaggle.py \
+            --ref "$KERNEL_VERSION" --minutes "$MONITOR_MINUTES"
+      - name: Preserve observer report and model outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kaggle-observer-${{ github.run_id }}
+          path: .datasets/kaggle-monitor/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
