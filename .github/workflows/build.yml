@@ -108,9 +108,14 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Preflight system image installation with accessible diagnostics
+        run: |
+          mkdir -p qa-artifacts
+          set -o pipefail
+          sdkmanager --install 'system-images;android-${{ matrix.api }};${{ matrix.target }};x86_64' --channel=3 2>&1 | tee qa-artifacts/sdk-setup.txt
       - name: Install and run real app on Android ${{ matrix.api }}
         timeout-minutes: 15
-        uses: reactivecircus/android-emulator-runner@v2.35.0
+        uses: reactivecircus/android-emulator-runner@v2.37.0
         with:
           api-level: ${{ matrix.api }}
           target: ${{ matrix.target }}
@@ -133,6 +138,8 @@ jobs:
           log = Path('qa-artifacts/device-diagnostics.txt')
           text += log.read_text()[-20000:] if log.exists() else 'Emulator setup failed before tests.'
           text += '\n'.join(p.read_text() for p in Path('qa-artifacts').glob('*ui.xml'))
+          setup = Path('qa-artifacts/sdk-setup.txt')
+          if setup.exists(): text += '\n' + setup.read_text()[-18000:]
           Path('check.json').write_text(json.dumps({'name':'Emulator diagnostics', 'head_sha':os.environ['GITHUB_SHA'], 'status':'completed', 'conclusion':'failure', 'output':{'title':'App journey failure', 'summary':'Device test diagnostics', 'text':text[:60000]}}))
           PYDIAG
           gh api repos/${{ github.repository }}/check-runs --input check.json
