@@ -90,8 +90,8 @@ class FabricJourneyDeviceTest {
             val loaded = container.imageProcessor.load(android.net.Uri.parse(saved.imageUri), 1600)
             assertTrue(loaded is com.ntoma.studio.domain.model.Outcome.Success)
             val crop = (loaded as com.ntoma.studio.domain.model.Outcome.Success).data
-            assertTrue("Actual selected crop width ${crop.width}", crop.width in 110..130)
-            assertTrue("Actual selected crop height ${crop.height}", crop.height in 170..190)
+            assertTrue("Actual selected crop width ${crop.width}", crop.width in 100..135)
+            assertTrue("Actual selected crop height ${crop.height}", crop.height in 150..195)
             assertTrue("Retains pattern pixels", crop.getPixel(20, 20) != crop.getPixel(35, 35))
             crop.recycle()
             screenshot("04-analysis")

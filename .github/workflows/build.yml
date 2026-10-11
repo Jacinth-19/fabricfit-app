@@ -78,7 +78,8 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Install and run real app on Android 33
-        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 15
+        uses: reactivecircus/android-emulator-runner@v2.34.0
         with:
           api-level: 33
           target: google_apis
