@@ -67,6 +67,12 @@ jobs:
           import json, os
           from pathlib import Path
           text = Path('build-diagnostics.txt').read_text() if Path('build-diagnostics.txt').exists() else 'Failure before compilation; inspect job setup.'
+          crash = Path('qa-artifacts/logcat.txt')
+          if crash.exists():
+              # Crash tails make instrumentation process deaths diagnosable from the run itself.
+              lines = crash.read_text(errors='replace').splitlines()
+              markers = [i for i, line in enumerate(lines) if 'FATAL EXCEPTION' in line or 'beginning of crash' in line]
+              text += '\n'.join(lines[max(0, i - 3):i + 25] for i in markers[-2:])
           for log in ['native-alignment.txt', 'signing-gate.txt']:
               if Path(log).exists(): text += '\n' + Path(log).read_text()[-15000:]
           Path('check.json').write_text(json.dumps({'name':'Build diagnostics', 'head_sha':os.environ['GITHUB_SHA'], 'status':'completed', 'conclusion':'failure', 'output':{'title':'Build failure', 'summary':'Compiler/test diagnostics', 'text':text[-60000:]}}))
@@ -182,7 +188,7 @@ jobs:
             NtomaStudio/app/build/outputs/androidTest-results/
 
   publish-debug-apk:
-    needs: verify
+    needs: [verify, app-journey]
     if: github.event_name == 'push' && github.ref == 'refs/heads/arena/5b96a1cd-ntoma-studio'
     runs-on: ubuntu-latest
     permissions:
