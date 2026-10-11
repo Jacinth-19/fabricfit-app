@@ -50,6 +50,14 @@ jobs:
           set -o pipefail
           python tools/qa/check-native-alignment.py app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/releaseCheck/app-releaseCheck.apk app/build/outputs/bundle/releaseCheck/app-releaseCheck.aab 2>&1 | tee native-alignment.txt
           "$ANDROID_HOME/build-tools/35.0.0/zipalign" -c -P 16 -v 4 app/build/outputs/apk/releaseCheck/app-releaseCheck.apk 2>&1 | tee -a native-alignment.txt
+      - name: Keep tested debug APK for a download release
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ntoma-debug-apk
+          retention-days: 30
+          path: NtomaStudio/app/build/outputs/apk/debug/app-debug.apk
+
       - name: Accessible build diagnostics
         if: failure()
         env:
@@ -172,3 +180,25 @@ jobs:
             NtomaStudio/qa-artifacts/
             NtomaStudio/app/build/reports/androidTests/
             NtomaStudio/app/build/outputs/androidTest-results/
+
+  publish-debug-apk:
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/arena/5b96a1cd-ntoma-studio'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ntoma-debug-apk
+          path: dist
+      - name: Publish or refresh the debug prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The tag must not change, or the asset URL breaks for existing testers.
+          if gh release view debug-latest --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload debug-latest dist/app-debug.apk --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create debug-latest dist/app-debug.apk               --repo "$GITHUB_REPOSITORY"               --target "$GITHUB_SHA"               --title "Ntoma Studio — debug test build"               --prerelease               --notes-file NtomaStudio/docs/DEBUG_RELEASE_NOTES.md
+          fi
