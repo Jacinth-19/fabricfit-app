@@ -16,7 +16,8 @@ Implemented on `arena/5b96a1cd-ntoma-studio`:
 
 Evidence so far:
 - Run `38110916690`: build and unit tests passed; installed-app journey launched, then failed at the Create tab. The label was not clickable; the whole tab is now clickable.
-- Run `38111452820`: verifies that fix and retries picker → selection → analysis → templates → share. Outcome pending when this status was written.
+- Runs `38113151166` and `38113656244`: **PASS** build, unit tests and installed-app journey (Android picker → selection → saved crop pixel assertions → local analysis → two templates → repeat adjustment → share). Final captures were visually reviewed; early splash timing was corrected before packaging.
+- Deliverables: `qa-artifacts/store/` (six 1080×1920 screenshots, 1024×500 feature graphic, 512×512 icon); `qa-artifacts/ntoma-studio-demo.mp4` (actual emulator recording, trimmed only to remove installation/blank launch). Raw recording is retained.
 - Marketing generation is gated on passing the journey. The test input is an original synthetic whole-dress illustration, not a real camera photograph or proof of recognition accuracy.
 - APKs/reports are Actions artifacts; debug signing is not production Play signing. No APK is committed to Git.
 
@@ -28,7 +29,7 @@ The design discussion below predates implementation; treat it as a roadmap, not 
 
 ## The tradeoff to decide first
 
-These two requirements cannot both hold today:
+The original scope raised a feasibility tradeoff; no specific mobile photoreal pipeline was benchmarked in this project:
 
 - **"Fabric recognition and try-on must run on-device for privacy."**
 - **"Show the user a photorealistic rendering of a brand-new dress style on their body."**
