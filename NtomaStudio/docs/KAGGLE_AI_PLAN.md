@@ -1,6 +1,6 @@
 # Ntoma Studio: Kaggle dataset shortlist and AI plan
 
-Researched: 2026-10-11. Status: **outfit-concept automation prepared and locally tested; no remote job, dataset download, training run, model export or app behaviour change.**
+Researched: 2026-10-11. **Update:** the subsequent [fabric dataset acquisition](FABRIC_DATASETS.md) downloaded AI4Culture and isolated 803 metadata-filtered, byte-deduplicated pattern candidates. No Kaggle upload, training run, model export or app behaviour change has occurred. Outfit-concept automation is prepared and locally tested; no remote job has run.
 
 The uploadable notebook and private-job launcher are in
 [`tools/kaggle_outfits/`](../tools/kaggle_outfits/README.md). They run pretrained

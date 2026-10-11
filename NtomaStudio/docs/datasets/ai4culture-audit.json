@@ -1,0 +1,49 @@
+{
+  "repository": "datable-be/AI4_C_datasets",
+  "revision": "767169b2b053485ee7b909fd19b96e98f6be0453",
+  "checksums": {
+    "metadata.json": "38ee91a032c67feae5b68b2b909b401a54e759d95a21bcc089aa34db972f59b8",
+    "pt1.tar.gz": "d2020f7e22d774e234701a0d195dc86974234527eb9e82c2c0d78d0c6340681e",
+    "pt2.tar.gz": "19e91eeda7fa720b0f8f525fad27e5f24e188c6d54173134bb6fc12ae9552b0d"
+  },
+  "total_images": 1245,
+  "archive_images": 1245,
+  "rights_counts": {
+    "http://creativecommons.org/licenses/by-nc-nd/4.0/": 2,
+    "http://creativecommons.org/licenses/by/4.0/": 199,
+    "http://creativecommons.org/publicdomain/mark/1.0/": 44,
+    "http://creativecommons.org/publicdomain/zero/1.0/": 767,
+    "missing": 87,
+    "unknown": 146
+  },
+  "candidate_counts": {
+    "CHECKED": 39,
+    "DOTTED": 33,
+    "FLORAL": 397,
+    "GEOMETRIC": 113,
+    "PLAID": 81,
+    "STRIPED": 140
+  },
+  "metadata_eligible_before_dedup": 804,
+  "candidate_total": 803,
+  "excluded_counts": {
+    "rights_review": 434,
+    "missing_provenance": 7,
+    "exact_duplicate": 1
+  },
+  "exact_duplicate_groups": [
+    [
+      "1920faeed0712ffd2d8a207f8609fa17",
+      "0991ef2c3ebc432ec4f56215175b17f6"
+    ]
+  ],
+  "unique_candidate_source_objects": 803,
+  "status": "Downloaded and metadata-filtered; NOT trained or production-approved",
+  "review_required": [
+    "Verify upstream source rights and labels",
+    "Perceptual/design deduplication",
+    "Group splits by source object AND repeated cloth design",
+    "Ghanaian phone-photo evaluation",
+    "No SOLID, UNKNOWN, KENTE, ANKARA, ADINKRA or material labels in this dataset"
+  ]
+}

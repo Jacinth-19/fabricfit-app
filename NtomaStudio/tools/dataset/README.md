@@ -5,6 +5,22 @@ honest `ON_DEVICE_DEMO` labelling. This pipeline is the path to a **real** fabri
 a MobileNetV3-Small fine-tuned on labelled Ghanaian fabric photos, exported to a ~2-3 MB
 quantized TFLite model that drops into `app/src/main/assets/` behind the same interface.
 
+## Public pattern data acquired (11 October 2026)
+
+A separate importer now downloads the pinned AI4Culture textile-pattern dataset:
+
+```bash
+# Run from the repository root; Python 3.11+, GitHub CLI
+python3 NtomaStudio/tools/dataset/acquire_patterns.py
+```
+
+The completed audit retained **803 unique candidate images** with upstream
+CC0/public-domain declarations and source links. This is a **six-pattern** pool,
+not a Kente/Ankara classifier or a production-cleared dataset. Source/design review
+is still required. It stays in ignored `.datasets/ai4culture/`, separate from
+`raw/<FABRIC_FAMILY>`. Do not pass it to the 17-family trainer.
+See [acquisition report and next steps](../../docs/FABRIC_DATASETS.md).
+
 ## Layout
 ```
 tools/dataset/

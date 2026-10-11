@@ -27,3 +27,7 @@ kaggle.json
 access_token
 .venv/
 __pycache__/
+
+# Downloaded datasets / local research caches (reproducible via acquisition tools)
+.local/
+.datasets/
