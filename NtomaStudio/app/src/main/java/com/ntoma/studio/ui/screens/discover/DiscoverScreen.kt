@@ -60,6 +60,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
     var query by remember { mutableStateOf("") }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
+        com.ntoma.studio.ui.components.StudioHeader(subtitle = R.string.studio_discover_subtitle)
         Text(
             stringResource(R.string.discover_title),
             style = MaterialTheme.typography.displayMedium,

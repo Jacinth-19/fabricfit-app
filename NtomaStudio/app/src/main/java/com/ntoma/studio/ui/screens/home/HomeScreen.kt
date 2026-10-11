@@ -82,49 +82,32 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
+            item { com.ntoma.studio.ui.components.StudioHeader() }
             item {
-                Column(Modifier.padding(horizontal = 20.dp).padding(top = 28.dp)) {
-                    Text(
-                        greeting(state.prefs.displayName),
-                        style = MaterialTheme.typography.displayMedium,
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(
-                        stringResource(R.string.home_subtitle),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                Column(Modifier.padding(horizontal = 24.dp)) {
+                    com.ntoma.studio.ui.components.StudioHero { nav.navigate(Routes.CREATE) }
+                    com.ntoma.studio.ui.components.PhotoCredits(com.ntoma.studio.ui.components.editorialPhotos[0])
+                    Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.studio_make_it_yours), style = MaterialTheme.typography.headlineMedium)
+                    Text(stringResource(R.string.home_subtitle), style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Spacer(Modifier.height(16.dp))
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Button(onClick = requestCamera, modifier = Modifier.weight(1f).height(52.dp)) {
+                            Icon(Icons.Filled.CameraAlt, null); Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.studio_camera))
+                        }
+                        OutlinedButton(onClick = { picker.launch(pickImagesRequest()) }, modifier = Modifier.weight(1f).height(52.dp)) {
+                            Icon(Icons.Filled.PhotoLibrary, null); Spacer(Modifier.width(8.dp))
+                            Text(stringResource(R.string.studio_gallery))
+                        }
+                    }
+                    Spacer(Modifier.height(16.dp))
+                    com.ntoma.studio.ui.components.RealPhotoSample { uri ->
+                        context.openFabricFlow(uri, navigate = { nav.navigate(it) },
+                            onError = { e -> scope.launch { snackbar.showSnackbar(context.getString(e.titleRes)) } })
+                    }
                     Spacer(Modifier.height(20.dp))
-                    Button(
-                        onClick = requestCamera,
-                        modifier = Modifier.fillMaxWidth().height(54.dp),
-                    ) {
-                        Icon(Icons.Filled.CameraAlt, contentDescription = null)
-                        Spacer(Modifier.width(10.dp))
-                        Text(stringResource(R.string.home_cta_scan))
-                    }
-                    Spacer(Modifier.height(10.dp))
-                    OutlinedButton(
-                        onClick = { picker.launch(pickImagesRequest()) },
-                        modifier = Modifier.fillMaxWidth().height(54.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(),
-                    ) {
-                        Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
-                        Spacer(Modifier.width(10.dp))
-                        Text(stringResource(R.string.home_cta_upload))
-                    }
-                    if (!state.prefs.premiumEnabled) {
-                        Spacer(Modifier.height(10.dp))
-                        Text(
-                            stringResource(
-                                R.string.home_quota_note,
-                                state.analysesLeft.coerceAtMost(3),
-                                3,
-                            ),
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
                 }
             }
 

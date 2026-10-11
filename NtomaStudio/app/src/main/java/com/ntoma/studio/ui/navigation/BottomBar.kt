@@ -74,9 +74,10 @@ internal fun NtomaBottomBar(
     modifier: Modifier = Modifier,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(28.dp),
         color = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 3.dp,
+        tonalElevation = 0.dp,
     ) {
         // System bars never scale with font size; clamp so huge accessibility sizes
         // cannot clip the five tabs.
@@ -88,7 +89,7 @@ internal fun NtomaBottomBar(
                 ),
         ) {
         Row(
-            Modifier.fillMaxWidth().height(72.dp).padding(top = 6.dp),
+            Modifier.fillMaxWidth().height(76.dp).padding(top = 6.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom,
         ) {

@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -74,15 +75,13 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    if (page.illustration == null) {
-                        BrandMark(modifier = Modifier.size(120.dp))
-                    } else {
-                        Image(
-                            painter = painterResource(page.illustration),
-                            contentDescription = null,
-                            modifier = Modifier.height(220.dp),
-                        )
-                    }
+                    com.ntoma.studio.ui.components.AssetImage(
+                        asset = com.ntoma.studio.ui.components.editorialPhotos[index % 2].asset,
+                        contentDescription = stringResource(com.ntoma.studio.ui.components.editorialPhotos[index % 2].description),
+                        modifier = Modifier.fillMaxWidth().height(260.dp)
+                            .then(Modifier.clip(androidx.compose.foundation.shape.RoundedCornerShape(28.dp))),
+                    )
+                    com.ntoma.studio.ui.components.PhotoCredits(com.ntoma.studio.ui.components.editorialPhotos[index % 2])
                     Spacer(Modifier.height(32.dp))
                     Text(
                         stringResource(page.title),

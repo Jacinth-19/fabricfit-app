@@ -10,6 +10,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.background
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -58,16 +61,16 @@ fun TemplatesScreen(nav: NavHostController, padding: PaddingValues, fabricId: Lo
     Column(Modifier.fillMaxSize().padding(padding)) {
         Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
             IconButton(onClick = { nav.popBackStack() }) { Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.cd_back)) }
-            Text(stringResource(R.string.template_title), style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.template_title), style = MaterialTheme.typography.headlineMedium)
         }
-        Text(stringResource(R.string.template_disclosure), Modifier.padding(horizontal = 20.dp), style = MaterialTheme.typography.bodySmall)
+        Text(stringResource(R.string.template_disclosure), Modifier.padding(horizontal = 20.dp, vertical = 10.dp), style = MaterialTheme.typography.bodySmall)
         fabric?.let { f ->
             Row(Modifier.padding(20.dp, 10.dp), verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
                 LocalImage(f.imageUri, stringResource(R.string.cd_fabric_image), Modifier.size(48.dp))
                 Text(stringResource(R.string.template_selected_fabric), Modifier.padding(start = 12.dp), style = MaterialTheme.typography.labelLarge)
             }
         }
-        Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 20.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
+        Box(Modifier.weight(1f).fillMaxWidth().padding(horizontal = 20.dp).clip(RoundedCornerShape(28.dp)).background(MaterialTheme.colorScheme.surfaceContainerLow), contentAlignment = androidx.compose.ui.Alignment.Center) {
             val bitmap = preview
             if (bitmap != null) Image(bitmap.asImageBitmap(), stringResource(R.string.template_title), Modifier.fillMaxSize().testTag("template_preview"), contentScale = ContentScale.Fit)
             else if (error == null) CircularProgressIndicator()

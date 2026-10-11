@@ -934,4 +934,29 @@
     <string name="template_motif_scale">Texture repeats</string>
     <string name="template_share">Share template</string>
     <string name="template_share_text">Ntoma Studio — flat outfit template with selected fabric. Not a fit prediction or photoreal try-on.</string>
+
+    <!-- Editorial redesign: English launch copy. -->
+    <string name="studio_header_subtitle">FABRIC • CULTURE • YOUR NEXT LOOK</string>
+    <string name="studio_create_subtitle">YOUR PERSONAL DESIGN STUDIO</string>
+    <string name="studio_discover_subtitle">THE STYLE EDIT</string>
+    <string name="studio_switch_light">Switch to light mode</string>
+    <string name="studio_switch_dark">Switch to dark mode</string>
+    <string name="studio_hero_badge">INSPIRED BY GHANA</string>
+    <string name="studio_hero_title">Rooted in culture.\nMade yours.</string>
+    <string name="studio_hero_body">Your fabric has a story. Find its next look.</string>
+    <string name="studio_start_designing">Start designing</string>
+    <string name="studio_make_it_yours">A little fabric. A new possibility.</string>
+    <string name="studio_camera">Camera</string>
+    <string name="studio_gallery">Gallery</string>
+    <string name="studio_festival_title">Kente at Afrochella</string>
+    <string name="studio_festival_description">A woman wearing Kente at Afrochella Festival 2021 in Ghana. Photograph by Fquasie.</string>
+    <string name="studio_adowa_title">Adowa, in motion</string>
+    <string name="studio_adowa_description">An Adowa dancer wearing Kente in Ghana. Photograph by Bright Kwame Ayisi, Wikimedia user Kwameghana.</string>
+    <string name="studio_photo_credit">Photo credits &amp; source</string>
+    <string name="studio_view_source">Open original source</string>
+    <string name="studio_credit_disclosure">Editorial cultural inspiration only. No endorsement is implied and model-release status is unverified. Photos are bundled for offline use under CC BY-SA 4.0; cropping and resizing retain that licence.</string>
+    <string name="studio_real_sample_title">Try a real Ghanaian look</string>
+    <string name="studio_real_sample_body">Explore fabric from this Adowa photograph. Select a clear patch of cloth.</string>
+    <string name="studio_use_real_photo">Use this photo →</string>
+    <string name="studio_sample_error">Could not open the sample photo. Try again.</string>
 </resources>

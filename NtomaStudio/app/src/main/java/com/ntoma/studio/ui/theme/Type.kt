@@ -14,14 +14,14 @@ val NtomaTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = FontFamily.Serif,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 34.sp,
-        lineHeight = 42.sp,
+        fontSize = 38.sp,
+        lineHeight = 44.sp,
         letterSpacing = (-0.2).sp,
     ),
     displayMedium = TextStyle(
         fontFamily = FontFamily.Serif,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 28.sp,
+        fontWeight = FontWeight.Normal,
+        fontSize = 30.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
     ),
@@ -58,7 +58,7 @@ val NtomaTypography = Typography(
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp,
+        letterSpacing = 0.1.sp,
     ),
     bodyMedium = TextStyle(
         fontWeight = FontWeight.Normal,

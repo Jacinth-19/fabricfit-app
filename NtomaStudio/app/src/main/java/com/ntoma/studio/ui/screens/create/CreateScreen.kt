@@ -76,8 +76,9 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
             contentPadding = PaddingValues(bottom = 24.dp),
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
+            item { com.ntoma.studio.ui.components.StudioHeader(subtitle = R.string.studio_create_subtitle) }
             item {
-                Column(Modifier.padding(horizontal = 20.dp).padding(top = 28.dp)) {
+                Column(Modifier.padding(horizontal = 24.dp).padding(top = 8.dp)) {
                     Text(stringResource(R.string.create_title), style = MaterialTheme.typography.displayMedium)
                     Text(
                         stringResource(R.string.create_subtitle),
@@ -86,7 +87,7 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                     )
                 }
             }
-            item { Spacer(Modifier.height(16.dp)) }
+            item { Spacer(Modifier.height(20.dp)) }
             item {
                 OptionCard(
                     icon = Icons.Filled.CameraAlt,
@@ -110,6 +111,14 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                     body = R.string.create_option_person_body,
                     onClick = { nav.navigate(Routes.tryOn(null, null)) },
                 )
+            }
+            item {
+                Column(Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
+                    com.ntoma.studio.ui.components.RealPhotoSample { uri ->
+                        context.openFabricFlow(uri, navigate = { nav.navigate(it) },
+                            onError = { e -> scope.launch { snackbar.showSnackbar(context.getString(e.titleRes)) } })
+                    }
+                }
             }
             item {
                 Column(Modifier.padding(horizontal = 20.dp).padding(top = 16.dp)) {
@@ -196,20 +205,20 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
 private fun OptionCard(icon: ImageVector, title: Int, body: Int, onClick: () -> Unit) {
     Card(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 6.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(vertical = 6.dp),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
         Row(
             Modifier.padding(18.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
+            androidx.compose.material3.Surface(shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.primaryContainer) {
+                Icon(icon, null, tint = MaterialTheme.colorScheme.onPrimaryContainer, modifier = Modifier.padding(14.dp))
+            }
             Spacer(Modifier.width(16.dp))
-            Column {
+            Column(Modifier.weight(1f)) {
                 Text(stringResource(title), style = MaterialTheme.typography.titleMedium)
                 Text(
                     stringResource(body),

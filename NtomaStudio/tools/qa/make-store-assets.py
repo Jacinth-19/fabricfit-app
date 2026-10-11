@@ -38,7 +38,7 @@ for i, (name, title, subtitle) in enumerate(shots, 1):
     x, y = (1080 - screenshot.width)//2, 285
     canvas.paste(screenshot, (x, y))
     d.rounded_rectangle((x-3, y-3, x+screenshot.width+3, y+screenshot.height+3), 12, outline='#201b17', width=3)
-    d.text((60, 1860), 'Actual app capture • Original test illustration, not a real dress photo', font=font(22), fill='#534b40')
+    d.text((60, 1860), 'Actual app • Adowa photo: Kwameghana / CC BY-SA 4.0', font=font(22), fill='#534b40')
     canvas.save(out / f'{i:02d}-{name}.png')
 # Exact Play feature graphic dimensions; uses the real template capture.
 banner = Image.new('RGB', (1024, 500), '#1f5650')

@@ -17,5 +17,5 @@ for path in sorted(Path('qa-artifacts').rglob('*')):
     blob = json.loads(result.stdout)
     manifest.append({'file': str(path.relative_to('qa-artifacts')), 'sha': blob['sha'], 'bytes': path.stat().st_size})
 summary = json.dumps(manifest, indent=2)
-check = {'name':'Captured app files', 'head_sha':head, 'status':'completed', 'conclusion':'neutral', 'output':{'title':'Real emulator captures', 'summary':'Original synthetic dress fixture. These are captures, not evidence that the entire journey passed; check validation.txt and the app-journey result.', 'text':summary}}
+check = {'name':'Captured app files', 'head_sha':head, 'status':'completed', 'conclusion':'neutral', 'output':{'title':'Real emulator captures', 'summary':'Real Adowa Kente photograph: Bright Kwame Ayisi / CC BY-SA 4.0. These are captures, not evidence that the entire journey passed; check validation.txt and the app-journey result.', 'text':summary}}
 subprocess.run(['gh', 'api', f'repos/{repo}/check-runs', '--input', '-'], input=json.dumps(check), text=True, check=True)
