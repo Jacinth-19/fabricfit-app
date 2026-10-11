@@ -1,4 +1,12 @@
-import java.util.Properties
+import java.security.KeyStore
+import java.security.MessageDigest
+
+// Release credentials are injected only in the protected manual release workflow.
+val uploadStorePath = providers.environmentVariable("NTOMA_UPLOAD_KEYSTORE").orNull
+val uploadStorePassword = providers.environmentVariable("NTOMA_UPLOAD_STORE_PASSWORD").orNull
+val uploadAlias = providers.environmentVariable("NTOMA_UPLOAD_KEY_ALIAS").orNull
+val uploadKeyPassword = providers.environmentVariable("NTOMA_UPLOAD_KEY_PASSWORD").orNull
+val hasUploadCredentials = listOf(uploadStorePath, uploadStorePassword, uploadAlias, uploadKeyPassword).all { !it.isNullOrBlank() }
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,15 +17,15 @@ plugins {
 
 android {
     namespace = "com.ntoma.studio"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
 
 
         applicationId = "com.ntoma.studio"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
+        targetSdk = 36
+        versionCode = providers.environmentVariable("NTOMA_VERSION_CODE").orNull?.toInt() ?: 1
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -25,13 +33,13 @@ android {
     }
 
     signingConfigs {
-        create("demo") {
-            // Debug-style signing so `assembleRelease` produces an installable artifact in CI.
-            // A real upload key belongs in Play Console / your keystore, never in the repo.
-            storeFile = file("demo-release.keystore")
-            storePassword = "ntomastudio"
-            keyAlias = "ntoma"
-            keyPassword = "ntomastudio"
+        if (hasUploadCredentials) {
+            create("upload") {
+                storeFile = file(uploadStorePath!!)
+                storePassword = uploadStorePassword
+                keyAlias = uploadAlias
+                keyPassword = uploadKeyPassword
+            }
         }
     }
 
@@ -47,9 +55,20 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("demo")
+            signingConfig = signingConfigs.findByName("upload")
         }
     }
+
+    // CI-only R8 variant: test package + debug certificate, never a production artifact.
+    buildTypes.create("releaseCheck") {
+        initWith(buildTypes.getByName("release"))
+        applicationIdSuffix = ".check"
+        versionNameSuffix = "-check"
+        signingConfig = signingConfigs.getByName("debug")
+        ndk { abiFilters.clear(); abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86_64") }
+        matchingFallbacks += listOf("release")
+    }
+    testBuildType = providers.gradleProperty("deviceTestBuildType").getOrElse("debug")
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -107,7 +126,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     // on-device inference runtime for the bundled MobileNetV2 fabric classifier
-    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+    implementation("com.google.ai.edge.litert:litert:1.4.1")
     // optional cloud analysis backend client (dormant unless an operator configures a URL)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -159,4 +178,32 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+// A missing signingConfig otherwise silently builds unsigned releases. Gate the shared
+// release pre-build task, not requested CLI task names (also covers bundle/install/IDE builds).
+val requireUploadSigning by tasks.registering {
+    doLast {
+        check(hasUploadCredentials) {
+            "Production release signing is missing. Set NTOMA_UPLOAD_* credentials; use releaseCheck for CI tests."
+        }
+        val store = file(uploadStorePath!!)
+        check(store.isFile) { "Production upload keystore not found." }
+        val keyStore = KeyStore.getInstance(store, uploadStorePassword!!.toCharArray())
+        check(keyStore.isKeyEntry(uploadAlias!!)) { "Upload alias is not a private key entry." }
+        val certificate = keyStore.getCertificate(uploadAlias!!).encoded
+        val actual = MessageDigest.getInstance("SHA-256").digest(certificate)
+            .joinToString("") { "%02x".format(it) }
+        val expected = providers.environmentVariable("NTOMA_UPLOAD_CERT_SHA256").orNull
+            ?.replace(Regex("[:\\s]"), "")?.lowercase()
+        check(actual != "dae4dafd1e9aef9abf51cb9178f40a9b8f3dc317a36fbe9191d11b3680a5c785") {
+            "The public demo upload certificate is forbidden, even if renamed."
+        }
+        check(expected != null && expected.matches(Regex("[0-9a-f]{64}")) && actual == expected) {
+            "Upload certificate does not match NTOMA_UPLOAD_CERT_SHA256. Check the Play Console upload certificate."
+        }
+    }
+}
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    dependsOn(requireUploadSigning)
 }

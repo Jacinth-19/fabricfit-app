@@ -78,7 +78,8 @@ class OnDeviceMlClassifier(private val context: Context) {
         val output = ByteBuffer.wrap(raw)
         interpreter.run(input, output)
         val q = interpreter.getOutputTensor(0).quantizationParams()
-        val logits = FloatArray(CLASSES) { i -> q.scale * (raw[i].toInt() - q.zeroPoint) }
+        // The bundled model output is UINT8: Kotlin Byte is signed, so mask before dequantizing.
+        val logits = FloatArray(CLASSES) { i -> q.scale * ((raw[i].toInt() and 0xFF) - q.zeroPoint) }
         val maxLogit = logits.max()
         val exps = FloatArray(CLASSES) { exp((logits[it] - maxLogit).toDouble()).toFloat() }
         val sum = exps.sum()

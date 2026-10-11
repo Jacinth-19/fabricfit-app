@@ -1,0 +1,835 @@
+string_id,english,existing_translation_unverified,reviewed_translation,reviewer,review_date,status
+a11y_demo_result,"This is a demo visualisation, not a photorealistic try-on","Esia nye kpɔɖeŋu nɔnɔmeɖeɖe, menye dodokpɔ ŋutɔŋutɔ o",,,,needs-native-review
+a11y_new_content,New,Yeye,,,,needs-native-review
+a11y_tab_selected,"%1$s, selected","%1$s, wotiae",,,,needs-native-review
+action_apply,Apply,Zãe,,,,needs-native-review
+action_back,Back,Yi megbe,,,,needs-native-review
+action_cancel,Cancel,Dzudzɔ,,,,needs-native-review
+action_clear,Clear,Ɖe ɖa,,,,needs-native-review
+action_close,Close,Ɖe edzi,,,,needs-native-review
+action_confirm,Confirm,Ɖe asi ɖe edzi,,,,needs-native-review
+action_continue,Continue,Yi edzi,,,,needs-native-review
+action_delete,Delete,Ɖe ɖa,,,,needs-native-review
+action_done,Done,Wu enu,,,,needs-native-review
+action_got_it,Got it,Megɔ̃ esi,,,,needs-native-review
+action_learn_more,Learn more,Srɔ̃ nu geɖe wu,,,,needs-native-review
+action_no,No,Ao,,,,needs-native-review
+action_not_now,Not now,Meɖo ŋku edzi azɔ o,,,,needs-native-review
+action_open_settings,Open settings,Ɖe ɖoɖowo ƒe,,,,needs-native-review
+action_remove,Remove,Ɖe ɖa,,,,needs-native-review
+action_retry,Try again,Gadze agbagba ake,,,,needs-native-review
+action_save,Save,Dzraɖo,,,,needs-native-review
+action_saved,Saved,Wodzrae ɖo,,,,needs-native-review
+action_search,Search,Di,,,,needs-native-review
+action_see_all,See all,Kpɔ wo katã,,,,needs-native-review
+action_share,Share,Ma,,,,needs-native-review
+action_yes,Yes,Ɛ̃,,,,needs-native-review
+ads_placeholder_body,Ad space. Connect an ad provider to serve real adverts. Premium members never see this.,Adzɔnu teƒe. Tsɔ adzɔnu ɖoɖo kpe ɖe eŋu nàna adzɔnu ŋutɔŋutɔ. Premium me tɔwo mekpɔa esia gbeɖe o.,,,,needs-native-review
+ads_placeholder_title,Advertisement,Adzɔnu,,,,needs-native-review
+ads_rewarded_label,Rewarded ad (demo),Adzɔnu si wokpɔ (kpɔɖeŋu),,,,needs-native-review
+ads_rewarded_playing,Playing demo ad… %1$d,Emɔŋ le kpɔɖeŋu adzɔnu ƒom… %1$d,,,,needs-native-review
+ads_rewarded_skip,Skip,Dze edzi,,,,needs-native-review
+analysis_action_rescan,Scan another fabric,Ɖe avɔ bubu,,,,needs-native-review
+analysis_action_save_favorite,Save fabric,Dzra avɔ la ɖo,,,,needs-native-review
+analysis_action_view_designs,See matching designs,Kpɔ ɖoɖo siwo sɔ,,,,needs-native-review
+analysis_confidence,Confidence %1$d%%,Kakaɖedzi %1$d%%,,,,needs-native-review
+analysis_engine_cloud,Cloud analysis,Cloud dzi dzodzro,,,,needs-native-review
+analysis_engine_cloud_note,Your image was sent to the analysis service to read it.,Woɖo wò nɔnɔmeɖeɖe ɖa na dzroɖeƒe la be wòaxlẽe.,,,,needs-native-review
+analysis_engine_on_device,On-device analysis (demo engine),Mɔ̃a dzi dzodzro (kpɔɖeŋu),,,,needs-native-review
+analysis_engine_on_device_note,"Colours and pattern were read on your phone. Nothing was uploaded. Fabric labels are estimates, not verified identification.",,,,,english-fallback
+analysis_honesty_note,"Colours and pattern are estimated from the selected image area. Fabric type, weave and feel cannot be confirmed from a photo alone.",,,,,english-fallback
+analysis_match_confident,Likely match,Ðewohi mɔsɔ,,,,needs-native-review
+analysis_match_possible,Possible match,Ate ŋu anye esia,,,,needs-native-review
+analysis_match_uncertain,Not sure yet,Mekpɔ ka ɖe edzi haɖe o,,,,needs-native-review
+analysis_ml_mapped,Suggests fabric: %1$s,Eɖea av fia: %1$s,,,,needs-native-review
+analysis_ml_note,"A MobileNetV2 neural network running on your phone labels what it sees. It is a second opinion, not a verdict, and nothing is uploaded.","MobileNetV2 si le dɔ wɔm wò mɔ̃a dzi la gblɔa nu si wòkpɔna. Susu eveliae, menye ʋɔnudɔdrɔ̃ o, eye womedoa naneke ɖa o.",,,,needs-native-review
+analysis_ml_title,On-device ML classifier,ML dzodzro si le wò mɔ̃a dzi,,,,needs-native-review
+analysis_rename_hint,e.g. Kente from Bonwire,le kpɔɖeŋu me: Kete tso Bonwire,,,,needs-native-review
+analysis_rename_title,Name this fabric,Na ŋkɔ avɔ sia,,,,needs-native-review
+analysis_result_title,Fabric analysis,Avɔ ƒe dzodzro,,,,needs-native-review
+analysis_section_category,Possible fabric category,Avɔ ƒomevi si wòate ŋu anye,,,,needs-native-review
+analysis_section_colors,Dominant colours,Amadede vevitɔwo,,,,needs-native-review
+analysis_section_pattern,Pattern,Nutata,,,,needs-native-review
+analysis_section_print,Print characteristics,Ɖeɖe ƒe nɔnɔmewo,,,,needs-native-review
+analysis_section_style,Possible Ghanaian style,Ghana awuɖoɖo si wòate ŋu anye,,,,needs-native-review
+analysis_section_texture,Texture,Avɔ ƒe nɔnɔme,,,,needs-native-review
+analysis_section_uses,Suggested uses,Zazã siwo woɖo ɖa,,,,needs-native-review
+analysis_stage_colors,Reading colours…,Emɔŋ le amadedewo xlẽm…,,,,needs-native-review
+analysis_stage_finishing,Finishing touches…,Ɖoɖo ƒe nuwuwu…,,,,needs-native-review
+analysis_stage_pattern,Studying the pattern…,Emɔŋ le nutata la srɔ̃m…,,,,needs-native-review
+analysis_stage_preparing,Preparing your fabric…,Emɔŋ le wò avɔ dzram ɖo…,,,,needs-native-review
+analysis_stage_styles,Finding matching styles…,Emɔŋ le awuɖoɖo siwo sɔ dim…,,,,needs-native-review
+analysis_title,Analyzing your fabric…,Emɔŋ le wò avɔ me dzrom…,,,,needs-native-review
+analysis_unnamed,Fabric scan,Avɔ ƒe ɖeɖe,,,,needs-native-review
+app_name,Ntoma,Ntoma,,,,needs-native-review
+app_tagline,Turn the fabric you already own into your next look.,Tsɔ avɔ si le asiwò la nàtrɔe wòazu wò awu yeye.,,,,needs-native-review
+brief_customizations,Customizations: %1$s,Tɔtrɔwo: %1$s,,,,needs-native-review
+brief_design,Design: %1$s,Ɖoɖo: %1$s,,,,needs-native-review
+brief_fabric,Fabric: %1$s,Avɔ: %1$s,,,,needs-native-review
+brief_include_measurements,Include my measurements,Tsɔ nye dzidzemewo kpe ɖe eŋu,,,,needs-native-review
+brief_measurements,Measurements (cm): %1$s,Dzidzemewo (cm): %1$s,,,,needs-native-review
+brief_no_design,No design selected,Wometia ɖoɖo aɖeke o,,,,needs-native-review
+brief_no_fabric,No fabric selected,Wometia avɔ aɖeke o,,,,needs-native-review
+brief_notes,Notes: %1$s,Nya ŋɔŋlɔ: %1$s,,,,needs-native-review
+brief_notes_hint,"Add notes for the tailor (e.g. ""make sleeves longer"")","Tsɔ nya kpe ɖe eŋu na tɔla (le kpɔɖeŋu me ""wɔ abɔwo kɛkɛ wu"")",,,,needs-native-review
+brief_pdf_action,PDF brief,PDF agbalẽ,,,,needs-native-review
+brief_pdf_custom,Customizations,Tɔtrɔwo,,,,needs-native-review
+brief_pdf_design,Design,Ɖoɖo,,,,needs-native-review
+brief_pdf_fabric,Fabric,Avɔ,,,,needs-native-review
+brief_pdf_footer,Prepared with Ntoma. Measurements are the customer\'s own approximate numbers — confirm everything in person.,Ntoma wɔ esia ɖo. Dzidzemewo nye kɔstama ŋutɔ ƒe xexlẽdzesi lɔlɔ̃dzedzewo — ka ɖe wo dzi le ame ŋutɔ ŋkume.,,,,needs-native-review
+brief_pdf_measurements,"Customer measurements (cm, approximate)","Kɔstama ƒe dzidzemewo (cm, lɔlɔ̃dzedze)",,,,needs-native-review
+camera_capture,Capture photo,Ɖe nɔnɔmeɖeɖe,,,,needs-native-review
+camera_capture_failed,We could not capture that photo. Please try again.,Míete ŋu ɖe nɔnɔmeɖeɖe ma o. Gadze agbagba ake.,,,,needs-native-review
+camera_capturing,Capturing…,Emɔŋ ɖe…,,,,needs-native-review
+camera_flash_auto,Flash auto,Kɛklẽ: ɖokuiwò,,,,needs-native-review
+camera_flash_off,Flash off,Kɛklẽ: tsi,,,,needs-native-review
+camera_flash_on,Flash on,Kɛklẽ: le ʋuʋu,,,,needs-native-review
+camera_focus_hint,Tap anywhere to focus,Ka asi afi aɖekee ne wòaɖo ŋku edzi,,,,needs-native-review
+camera_guidance,Place the fabric inside the frame,De avɔ la agbadzi la me,,,,needs-native-review
+camera_guidance_dark,It looks dark — add light or turn on the flash,Avɔti me — kpe kɛkɛ ɖe eŋu alo ɖe kɛklẽ la,,,,needs-native-review
+camera_guidance_far,Move a little closer so the print fills the frame,Va te ŋutɔ vie ne nutata la naxɔ agbadzi la katã,,,,needs-native-review
+camera_no_device,This device has no camera,Kamera meli mɔ̃ sia dzi o,,,,needs-native-review
+camera_no_device_body,You can still choose a fabric photo from your gallery.,Àte ŋu atia avɔ ƒe nɔnɔmeɖeɖe tso wò nɔnɔmeɖeɖewo me boŋ.,,,,needs-native-review
+camera_switch_lens,Switch camera,Trɔ kamera,,,,needs-native-review
+camera_title,Scan fabric,Ɖe avɔ,,,,needs-native-review
+cd_app_logo,Ntoma logo,Ntoma ƒe dzesi,,,,needs-native-review
+cd_back,Navigate back,Yi megbe,,,,needs-native-review
+cd_bottom_navigation,Main navigation,Zɔzɔ vevitɔ,,,,needs-native-review
+cd_clear_search,Clear search text,Ɖe didi ƒe nyawo ɖa,,,,needs-native-review
+cd_color_dot,Colour %1$s,Amadede %1$s,,,,needs-native-review
+cd_color_swatch,Colour swatch,Amadede ƒe kpɔɖeŋu,,,,needs-native-review
+cd_delete_item,Delete this item,Ɖe nu sia ɖa,,,,needs-native-review
+cd_design_image,Design illustration,Ɖoɖo ƒe nɔnɔmeɖeɖe,,,,needs-native-review
+cd_fabric_image,Fabric photo,Avɔ ƒe nɔnɔmeɖeɖe,,,,needs-native-review
+cd_favorite_off,Add to favourites,Tsɔ kpe ɖe lɔlɔ̃nuwo ŋu,,,,needs-native-review
+cd_favorite_on,Remove from favourites,Ɖe ɖa le lɔlɔ̃nuwo me,,,,needs-native-review
+cd_generated_image,Generated look,Nɔnɔmeɖeɖe si wowɔ,,,,needs-native-review
+cd_more_options,More options,Tiatia bubuwo,,,,needs-native-review
+cd_open_item,Open %1$s,Ɖe %1$s,,,,needs-native-review
+cd_person_image,Photo of the person,Ame ƒe nɔnɔmeɖeɖe,,,,needs-native-review
+cd_progress,Progress,Yiyi,,,,needs-native-review
+cd_scan_fabric,Scan a fabric with the camera,Ɖe avɔ ƒe nɔnɔmeɖeɖe kɔ kamera,,,,needs-native-review
+cd_share_item,Share this item,Ma nu sia,,,,needs-native-review
+collections_add,Add to collection,Tsɔ kpe ɖe nuƒoƒu ŋu,,,,needs-native-review
+collections_added,Added to collection,Wotsɔ kpe ɖe nuƒoƒu ŋu,,,,needs-native-review
+collections_create,New collection,Nuƒoƒu yeye,,,,needs-native-review
+collections_delete,Delete collection,Ɖe nuƒoƒu ɖa,,,,needs-native-review
+collections_designs,Designs,Ɖoɖowo,,,,needs-native-review
+collections_empty_body,"Create a collection for your next event and keep fabrics, designs and looks together.","Wɔ nuƒoƒu na wò wɔna si gbɔna nàdzra avɔwo, ɖoɖowo kɔ nɔnɔmeɖeɖewo ɖe ɖeka.",,,,needs-native-review
+collections_empty_title,No collections yet,Nuƒoƒu aɖeke meli haɖe o,,,,needs-native-review
+collections_fabrics,Fabrics,Avɔwo,,,,needs-native-review
+collections_item_count,%1$d items,Nu %1$d,,,,needs-native-review
+collections_looks,Looks,Nɔnɔmeɖeɖewo,,,,needs-native-review
+collections_name_hint,e.g. Wedding ideas,le kpɔɖeŋu me: Srɔ̃ɖeɖe ƒe susuwo,,,,needs-native-review
+collections_title,Collections,Nuƒoƒuwo,,,,needs-native-review
+color_accessory_hint,"Use these for shoes, bags, jewellery, headwraps and ties.","Zã esiawo na afɔkpa, akotoku, sikawɔ, duku kɔ tai.",,,,needs-native-review
+color_match_subtitle,Colours that work with this fabric,Amadede siwo wɔ ɖeka kɔ avɔ sia,,,,needs-native-review
+color_match_title,Colour ideas,Amadede ƒe susuwo,,,,needs-native-review
+color_name_black,Black,Vivi,,,,needs-native-review
+color_name_blue,Blue,Bulu,,,,needs-native-review
+color_name_brown,Brown,Anyigba,,,,needs-native-review
+color_name_cream,Cream,Krim,,,,needs-native-review
+color_name_gold,Gold,Sikawo,,,,needs-native-review
+color_name_green,Green,Atama,,,,needs-native-review
+color_name_grey,Grey,Grey,,,,needs-native-review
+color_name_indigo,Indigo,Indigo,,,,needs-native-review
+color_name_orange,Orange,Ɔrendzi,,,,needs-native-review
+color_name_pink,Pink,Pink,,,,needs-native-review
+color_name_purple,Purple,Papul,,,,needs-native-review
+color_name_red,Red,Dzĩ,,,,needs-native-review
+color_name_teal,Teal,Tiil,,,,needs-native-review
+color_name_white,White,Ƒu,,,,needs-native-review
+color_name_yellow,Yellow,Kɔkɔdzo,,,,needs-native-review
+color_role_analogous,Analogous,Amadede si le eteƒe,,,,needs-native-review
+color_role_complementary,Complementary,Amadede si kɔtɔ,,,,needs-native-review
+color_role_metallic,Metallic,Gakpe ƒe amadede,,,,needs-native-review
+color_role_neutral,Neutral,Amadede fafa,,,,needs-native-review
+color_why_analogous,"Neighbouring hue — a calm, harmonious pairing.",Amadede si le eteƒe — esia naa ŋutifafa.,,,,needs-native-review
+color_why_bronze,Bronze is an easy everyday metallic.,Akɔbli nye gakpe ƒe amadede si nɔna bɔbɔe gbesiagbe.,,,,needs-native-review
+color_why_complementary,Sits opposite on the colour wheel — a lively contrast.,Ele ɖoɖo ƒe akpa kemɛ — esia naa vovototo nyui.,,,,needs-native-review
+color_why_gold,Gold warms up this fabric\'s palette.,Sikawo ɖea dzoxɔxɔ ɖe avɔ sia ƒe amadedewo me.,,,,needs-native-review
+color_why_neutral_dark,A dark neutral grounds bright colours.,Amadede fafa viviti tsia amadede keklẽwo teƒe.,,,,needs-native-review
+color_why_neutral_light,A light neutral lets the fabric lead.,Amadede fafa kɛkɛ nana avɔ la ɖea eɖokui fia.,,,,needs-native-review
+color_why_silver,Silver cools and modernises this palette.,Dadeɖi ɖea fafa ɖe amadede mawo me eye wònaa wo nya kpɔna.,,,,needs-native-review
+contrib_body,Donate photos of real fabrics to improve recognition for everyone. Photos stay on this device until you export them.,Na avɔ ŋutɔŋutɔ ƒe foto be woatrɔ dɔwɔwɔ na amewo katã. Foto la tsoa wò kaɖimasia dzi va se ɖe esime wòatsɔ wo adoe go.,,,,needs-native-review
+contrib_category,Fabric type,Avɔ ƒomevi,,,,needs-native-review
+contrib_consent,I took or own this photo and consent to it being used to train fabric recognition,Nyee ɖe foto sia alo enye tɔnye eye meɖe mɔ be woazãe le avɔ dzedzeme ŋu nusese me,,,,needs-native-review
+contrib_consent_needed,Consent is required to contribute,Mɔɖeɖe hiã hafi,,,,needs-native-review
+contrib_delete_cd,Delete this contribution,Ɖe foto sia ɖa,,,,needs-native-review
+contrib_delete_confirm,Delete this photo?,Woaɖe foto sia ɖa?,,,,needs-native-review
+contrib_delete_confirm_body,The photo will be removed from your contributions.,Woaɖe foto sia le wò kpekpeɖeŋuwo me.,,,,needs-native-review
+contrib_duplicate,This photo looks like one you already contributed.,Foto sia tɔgbe li xoxo.,,,,needs-native-review
+contrib_edit_category,Edit category,Trɔ hatsotsoe,,,,needs-native-review
+contrib_export,Export for training,Tsɔe do go hena hehe,,,,needs-native-review
+contrib_gallery,Your contributions,Wò ŋutɔ wò foto,,,,needs-native-review
+contrib_photo_needed,Pick a photo first,Tia foto gbã,,,,needs-native-review
+contrib_save,Save contribution,Ŋlɔe ɖi,,,,needs-native-review
+contrib_saved_count,%1$d photo(s) collected on this device,Foto %1$d le kaɖimasia dzi,,,,needs-native-review
+contrib_title,Contribute fabric photos,Na avɔ foto,,,,needs-native-review
+create_empty_body,Nothing here yet — your fabrics and looks will show up as you create.,Naneke meli afii haɖe o — wò avɔwo kɔ nɔnɔmeɖeɖewo adze afii.,,,,needs-native-review
+create_guidance_header,For the best result,Nu si nana kpɔɖeŋu nyuitɔ,,,,needs-native-review
+create_option_camera_body,Use your camera to capture the fabric in front of you.,Zã wò kamera nàɖe avɔ si le ŋkuwòme la.,,,,needs-native-review
+create_option_camera_title,Take a photo,Ɖe nɔnɔmeɖeɖe,,,,needs-native-review
+create_option_gallery_body,"Choose a dress photo or swatch, then select the fabric area.",,,,,english-fallback
+create_option_gallery_title,Choose a photo,Tia nɔnɔmeɖeɖe,,,,needs-native-review
+create_option_person_body,Visualise a saved fabric and design on a photo.,Kpɔ avɔ kɔ ɖoɖo si nèdzra ɖo la nɔnɔmeɖeɖe dzi.,,,,needs-native-review
+create_option_person_title,Try a design on a person,Do ɖoɖo kpɔ amegbetɔ dzi,,,,needs-native-review
+create_recent_title,Recent work,Dɔ yeyewo,,,,needs-native-review
+create_subtitle,What are we working with today?,Nuka mee míele wɔwɔm le egbe?,,,,needs-native-review
+create_title,Create,Wɔ Yeye,,,,needs-native-review
+credits_body,"Ntoma — “cloth” in Akan. Built with Jetpack Compose. Fabric and style knowledge draws on Ghanaian dress traditions. Templates repeat your selected image pixels; they are flat illustrations, not fitted garments.",,,,,english-fallback
+credits_title,Credits,Ɖeɖe fiafia,,,,needs-native-review
+custom_length_default,As shown,Abe ale si wòdze ene,,,,needs-native-review
+custom_length_maxi,Maxi,Anyigba,,,,needs-native-review
+custom_length_midi,Midi,Afɔklo dome,,,,needs-native-review
+custom_length_mini,Mini,Kpuikpui,,,,needs-native-review
+custom_neck_default,As shown,Abe ale si wòdze ene,,,,needs-native-review
+custom_neck_high,High neck,Kɔ kɛkɛ,,,,needs-native-review
+custom_neck_off_shoulder,Off-shoulder,Eɖe le abɔta dzi,,,,needs-native-review
+custom_neck_round,Round,Kɔ nɔnɔ,,,,needs-native-review
+custom_neck_v,V-neck,V-kɔ,,,,needs-native-review
+custom_place_accents,Accents,Ɖeɖe sue,,,,needs-native-review
+custom_place_accents_desc,A plain garment with fabric bands and trims.,Awu amadede ɖeka si me avɔ ƒe kɔɖiwo kɔ ɖoɖoɖi le.,,,,needs-native-review
+custom_place_full,Full garment,Awu blibo,,,,needs-native-review
+custom_place_full_desc,The fabric covers the whole design.,Avɔ la tsyɔ ɖoɖo blibo la dzi.,,,,needs-native-review
+custom_place_panels,Panels,Akpa,,,,needs-native-review
+custom_place_panels_desc,Fabric and contrast panels alternate.,Avɔ kɔ akpa siwo kɔtɔ dze wo yome.,,,,needs-native-review
+custom_place_skirt,Skirt only,Ete ko,,,,needs-native-review
+custom_place_skirt_desc,Fabric on the skirt; a plain or contrast top.,Avɔ le ete; dzi nye amadede ɖeka alo si kɔtɔ.,,,,needs-native-review
+custom_place_top,Top only,Dzi ko,,,,needs-native-review
+custom_place_top_desc,Fabric on the top; a plain or contrast bottom.,Avɔ le dzi; anyi nye amadede ɖeka alo si kɔtɔ.,,,,needs-native-review
+custom_sleeve_default,As shown,Abe ale si wòdze ene,,,,needs-native-review
+custom_sleeve_long,Long,Kɛkɛ,,,,needs-native-review
+custom_sleeve_puff,Puff,Abɔ ƒoƒu,,,,needs-native-review
+custom_sleeve_short,Short,Kpuie,,,,needs-native-review
+custom_sleeve_sleeveless,Sleeveless,Abɔ mele o,,,,needs-native-review
+customizer_accent,Contrast colour,Amadede si kɔtɔ,,,,needs-native-review
+customizer_demo_note,The local preview shows flat fabric placement. Cut details travel with your tailor brief; they do not reshape this preview.,,,,,english-fallback
+customizer_length,Length,Didime,,,,needs-native-review
+customizer_neckline,Neckline,Kɔnu,,,,needs-native-review
+customizer_placement,Fabric placement,Avɔ ƒe teƒe,,,,needs-native-review
+customizer_sleeve,Sleeve,Abɔ,,,,needs-native-review
+customizer_title,Customize this design,Trɔ ɖoɖo sia,,,,needs-native-review
+design_detail_about,About this design,Ɖoɖo sia ŋuti,,,,needs-native-review
+design_detail_fabrics,Works well with,Ɛwɔ ɖeka kɔ,,,,needs-native-review
+design_detail_occasions,Best for,Ɛnyo na,,,,needs-native-review
+design_detail_pick_fabric,Choose a fabric,Tia avɔ,,,,needs-native-review
+design_detail_title,Design,Ɖoɖo,,,,needs-native-review
+design_detail_tryon,Try it on a photo,Do kpɔ nɔnɔmeɖeɖe dzi,,,,needs-native-review
+discover_empty_search,No results for “%1$s”,Nutometsonu aɖeke meli na “%1$s” o,,,,needs-native-review
+discover_empty_search_body,Check the spelling or try a shorter word.,Kpɔ ŋɔŋlɔɖi la alo tsɔ nya kpuie aɖe gadze agbagba.,,,,needs-native-review
+discover_offline_note,Showing designs cached on this device.,Ɖoɖo siwo le mɔ̃ sia dzi lae míele fiafia.,,,,needs-native-review
+discover_search_hint,"Search styles, fabrics or looks","Di ɖoɖowo, avɔwo alo nɔnɔmeɖeɖewo",,,,needs-native-review
+discover_section_editorial,Style edits,Ɖoɖo tiatiawo,,,,needs-native-review
+discover_section_fabric_library,Fabric library,Avɔwo ƒe ɖoɖoƒe,,,,needs-native-review
+discover_section_trending,Popular styles,Ɖoɖo siwo dze ŋgɔ,,,,needs-native-review
+discover_tab_fabrics,Fabrics,Avɔwo,,,,needs-native-review
+discover_tab_looks,Looks,Nɔnɔmeɖeɖewo,,,,needs-native-review
+discover_tab_styles,Styles,Ɖoɖowo,,,,needs-native-review
+discover_title,Discover,Di,,,,needs-native-review
+edit_hint,"Drag a rectangle over the fabric in your dress or swatch. Avoid skin, background, seams and deep folds. Only the selected pixels will be used.",,,,,english-fallback
+edit_hint_person,"Drag a rectangle to crop the photo, or keep the full image.",,,,,english-fallback
+edit_ratio_free,Free,De mɔ,,,,needs-native-review
+edit_ratio_full,Full,Blibo,,,,needs-native-review
+edit_ratio_portrait,3:4,3:4,,,,needs-native-review
+edit_ratio_square,Square,Aɖaɖa ene,,,,needs-native-review
+edit_reset,Reset,Gadze egɔme,,,,needs-native-review
+edit_retake,Retake,Ɖee ake,,,,needs-native-review
+edit_rotate,Rotate,Trɔe,,,,needs-native-review
+edit_saving,Preparing your image…,Emɔŋ ɖo wò nɔnɔmeɖeɖe ɖa…,,,,needs-native-review
+edit_title_fabric,Select fabric area,,,,,english-fallback
+edit_title_person,Adjust the photo,Trɔ nɔnɔmeɖeɖe la,,,,needs-native-review
+edit_use_fabric,Use selected fabric,,,,,english-fallback
+edit_use_photo,Use photo,Zã nɔnɔmeɖeɖe la,,,,needs-native-review
+empty_fabrics_body,Scan a fabric to start building your collection.,Ɖe avɔ nàdze wò nuƒoƒu gɔme.,,,,needs-native-review
+empty_fabrics_title,No fabrics yet,Avɔ aɖeke meli haɖe o,,,,needs-native-review
+empty_history_body,Your activity will show up here.,Wò dɔwɔwɔ adze afii.,,,,needs-native-review
+empty_looks_body,Try a design on a photo and your results will appear here.,Do ɖoɖo kpɔ nɔnɔmeɖeɖe dzi eye wò kpɔɖeŋu adze afii.,,,,needs-native-review
+empty_looks_title,No looks yet,Nɔnɔmeɖeɖe aɖeke meli haɖe o,,,,needs-native-review
+error_analysis_body,"Try a clearer photo with better lighting, with the print filling the frame.","Tsɔ nɔnɔmeɖeɖe nyui si me kɛkɛ le adze agbagba, ne nutata la naxɔ agbadzi la katã.",,,,needs-native-review
+error_analysis_title,We could not analyse that fabric,Míete ŋu dzro avɔ ma me o,,,,needs-native-review
+error_generation_body,The generation service could not finish. Try a clearer photo with better lighting.,Nɔnɔmeɖeɖewɔƒe la mete ŋu wu enu o. Tsɔ nɔnɔmeɖeɖe nyui si me kɛkɛ le adze agbagba.,,,,needs-native-review
+error_generation_title,We could not create that look,Míete ŋu wɔ nɔnɔmeɖeɖe ma o,,,,needs-native-review
+error_generic_body,That did not work. Please try again.,Emete ŋu o. Gadze agbagba ake.,,,,needs-native-review
+error_generic_title,Something went wrong,Nane gblẽ,,,,needs-native-review
+error_image_too_large_body,Try a smaller photo — we work best with images under 20 MP.,Tsɔ nɔnɔmeɖeɖe sue aɖe adze agbagba — nɔnɔmeɖeɖe si mede 20 MP o la wɔa dɔ nyuitɔ.,,,,needs-native-review
+error_image_too_large_title,That photo is too large,Nɔnɔmeɖeɖe ma lolo akpa,,,,needs-native-review
+error_invalid_image_body,The file may be damaged or empty. Try a different photo.,Ðewohi fael la gblẽ alo ele ƒuƒu. Tsɔ nɔnɔmeɖeɖe bubu adze agbagba.,,,,needs-native-review
+error_invalid_image_title,We could not read that image,Míete ŋu xlẽ nɔnɔmeɖeɖe ma o,,,,needs-native-review
+error_memory_body,That image is too big to process here. Close a few apps or choose a smaller photo.,Nɔnɔmeɖeɖe ma lolo akpa na mɔ̃ sia. Ɖe app ɖeka alo eve ɖa alo tsɔ nɔnɔmeɖeɖe sue.,,,,needs-native-review
+error_memory_title,Not enough memory,Ŋkuɖoɖoƒe mede o,,,,needs-native-review
+error_no_internet_body,"Check your connection and try again. Browsing, favourites and history still work offline.","Kpɔ wò internet dzi nàgadze agbagba. Ɖoɖo kpɔkpɔ, lɔlɔ̃nuwo kɔ ŋutinya gadzea dɔ internet manɔmee.",,,,needs-native-review
+error_no_internet_title,No internet connection,Internet meli o,,,,needs-native-review
+error_permission_title,Permission needed,Mɔɖeɖe hiã,,,,needs-native-review
+error_rate_limit_body,You have sent several requests in a row. Please wait a minute and try again.,Èɖo biabia geɖe ɖa le ɖeka nu. Dzra ɖi miniti ɖeka nàgadze agbagba.,,,,needs-native-review
+error_rate_limit_title,Slow down a little,Dzudzɔ vie,,,,needs-native-review
+error_server_body,Our service is not responding right now. Please try again in a moment.,Yɛyɔƒe mele ŋuɖoɖo nam azɔ o. Gadze agbagba ake le ɣeyiɣi kpui aɖe megbe.,,,,needs-native-review
+error_server_title,Service unavailable,Dɔwɔƒe meli o,,,,needs-native-review
+error_timeout_body,The request timed out. A shorter photo or a better connection usually helps.,Biabia la ƒe ɣeyiɣi wu enu. Nɔnɔmeɖeɖe kpuie alo internet nyui ate ŋu akpe ɖe ŋu.,,,,needs-native-review
+error_timeout_title,That took too long,Exɔ ɣeyiɣi didi akpa,,,,needs-native-review
+error_unsupported_image_body,"Please choose a JPG, PNG or WebP photo.","Tia JPG, PNG alo WebP nɔnɔmeɖeɖe.",,,,needs-native-review
+error_unsupported_image_title,That file type is not supported,Fael ƒomevi ma medze o,,,,needs-native-review
+fabric_adinkra,Adinkra,Adinkra,,,,needs-native-review
+fabric_adinkra_desc,"Cotton stamped with symbols cut from calabash, traditionally worn for mourning and ceremony.","Avɔ si woɖe dzesiwo ɖo, si woɖona le konyifafa kɔ ŋkekenyuiwo me le kɔnyinyi nu.",,,,needs-native-review
+fabric_amount_hint,Approx. length (cm),Didime (cm),,,,needs-native-review
+fabric_ankara,Ankara print,Ankara avɔ,,,,needs-native-review
+fabric_ankara_desc,Bold all-over printed cotton with saturated colour on both faces.,Avɔ si wota nyuie le eƒe akpa evea katã kɔ amadede sesẽwo.,,,,needs-native-review
+fabric_batik,Batik,Batik,,,,needs-native-review
+fabric_batik_desc,"Hand-dyed resist cloth with soft, blended edges and organic motifs.",Avɔ si wotsɔ asi ɖe amadede ɖo si ƒe nuwo fa nyuie.,,,,needs-native-review
+fabric_brocade,Brocade / Bazin,Brocade / Bazin,,,,needs-native-review
+fabric_brocade_desc,"Stiff, lustrous jacquard that holds a sculpted silhouette.",Avɔ sesẽ si keklẽna si tsia eɖokui nyuie.,,,,needs-native-review
+fabric_chiffon,Chiffon,Chiffon,,,,needs-native-review
+fabric_chiffon_desc,"Sheer, airy weave that moves with the body.",Avɔ henhene si zɔna kɔ ŋutilã.,,,,needs-native-review
+fabric_cotton_plain,Plain woven cotton,Cotton avɔ ƒuƒu,,,,needs-native-review
+fabric_cotton_plain_desc,"Even, matte weave in a single colour — quiet and versatile.",Avɔ amadede ɖeka si le faa — efa eye wòate ŋu awɔ nu geɖe.,,,,needs-native-review
+fabric_denim,Denim,Denim,,,,needs-native-review
+fabric_denim_desc,Sturdy indigo twill with a visible diagonal weave.,Avɔ sesẽ bulu si ƒe lɔlɔ dze nyuie.,,,,needs-native-review
+fabric_edit_title,Edit fabric,Trɔ avɔ,,,,needs-native-review
+fabric_fugu,Fugu (batakari smock cloth),Fugu (batakari avɔ),,,,needs-native-review
+fabric_fugu_desc,"Hand-loomed narrow-strip cotton from northern Ghana, usually indigo, black and white.","Avɔ si wɔlɔna le Ghana ƒe dziehe; zi geɖe yɔwɔ, blɔ kple ɣi.",,,,needs-native-review
+fabric_gonja,Gonja cloth,Gonja avɔ,,,,needs-native-review
+fabric_gonja_desc,"Northern Gonja hand-woven strips, typically ochre or brown with white and black.",Gonja asinufɔ avɔ; zi geɖe dɔtsɔ alo ɣi kple yɔwɔ.,,,,needs-native-review
+fabric_kente,Kente,Kete,,,,needs-native-review
+fabric_kente_desc,"Hand-woven strip cloth from the Ashanti and Ewe traditions, known for bold geometric blocks.","Avɔ si wotsɔ asi lɔ̃ le Ashanti kɔ Ewe ƒe kɔnyinyi me, si nyanya le eƒe nutata gãwo ta.",,,,needs-native-review
+fabric_kente_print,Kente-style print,Kete ƒe ta,,,,needs-native-review
+fabric_kente_print_desc,"Printed cotton imitating woven strip motifs — a possible match, not woven kente.","Avɔ si wota abe kete ene — ate ŋu anye mɔsɔsɔ, menye kete si wolɔ̃ o.",,,,needs-native-review
+fabric_lace,Lace,Lace,,,,needs-native-review
+fabric_lace_desc,"Open-work embroidered cloth, a favourite for weddings and church.","Avɔ si wotsɔ nu ɖo nyuie, si dze ŋu na srɔ̃ɖeɖe kɔ sɔleme.",,,,needs-native-review
+fabric_linen,Linen,Linen,,,,needs-native-review
+fabric_linen_desc,"Slubby, breathable weave with a relaxed natural texture.",Avɔ si ya tona eme si ƒe nɔnɔme le ŋutɔme.,,,,needs-native-review
+fabric_notes_hint,Notes (e.g. wedding fabric),Nya ŋɔŋlɔ (le kpɔɖeŋu me: srɔ̃ɖeɖe ƒe avɔ),,,,needs-native-review
+fabric_occasion_hint,Intended occasion (optional),Ŋkekenyui (ne èdi),,,,needs-native-review
+fabric_silk,Silk / satin,Silk / satin,,,,needs-native-review
+fabric_silk_desc,"Smooth, reflective surface with a fluid drape.",Avɔ si keklẽna eye wòzɔna nyuie.,,,,needs-native-review
+fabric_tiedye,Tie-dye,Tie-dye,,,,needs-native-review
+fabric_tiedye_desc,Bound and dyed cloth with radiating rings and marbled gradients.,Avɔ si wobla heɖe amadede ɖo si ƒe kpɔɖeŋuwo le keklẽm.,,,,needs-native-review
+fabric_unknown,Unidentified cloth,Avɔ si womenya o,,,,needs-native-review
+fabric_unknown_desc,We could not place this fabric confidently. The colour and pattern notes still hold.,Míete ŋu ɖe avɔ sia me kɔtɛ o. Amadede kɔ nutata ŋuti nyawo gale eteƒe.,,,,needs-native-review
+fabric_velvet,Velvet,Velvet,,,,needs-native-review
+fabric_velvet_desc,"Dense pile with deep, light-catching colour.",Avɔ si ƒe fu le edzi kɔ amadede sesẽ.,,,,needs-native-review
+fabric_wax,Wax print (Ankara),Wax print (Ankara),,,,needs-native-review
+fabric_wax_desc,"Vibrant wax-resist printed cotton, the everyday fabric of West African dressmaking.",Avɔ si wota amadede sesẽwo ɖo — Yevuƒe Afrika ƒe awuɖoɖo ƒe avɔ.,,,,needs-native-review
+fabric_wearer_hint,Intended wearer (optional),Ame si ado (ne èdi),,,,needs-native-review
+favorites_count,%1$d saved,%1$d siwo nèdzra ɖo,,,,needs-native-review
+favorites_empty_body,Save fabrics and looks you love to find them here later.,Dzra avɔwo kɔ nɔnɔmeɖeɖe siwo nèlɔ̃ ɖo ne nàkpɔ wo afii emegbe.,,,,needs-native-review
+favorites_empty_title,Your style collection is empty,Wò awuɖoɖo nuƒoƒu le ƒuƒu,,,,needs-native-review
+favorites_removed,Removed from favourites,Woɖee ɖa le lɔlɔ̃nuwo me,,,,needs-native-review
+favorites_search_hint,Search your favourites,Di wò lɔlɔ̃nuwo,,,,needs-native-review
+favorites_tab_collections,Collections,Nuƒoƒuwo,,,,needs-native-review
+favorites_tab_designs,Designs,Ɖoɖowo,,,,needs-native-review
+favorites_tab_fabrics,Fabrics,Avɔwo,,,,needs-native-review
+favorites_tab_looks,Looks,Nɔnɔmeɖeɖewo,,,,needs-native-review
+favorites_tab_tailors,Tailors,Tɔlawo,,,,needs-native-review
+favorites_title,Favourites,Lɔlɔ̃nuwo,,,,needs-native-review
+help_contact_body,Tell us what went wrong and we will reply. Include your app version: %1$s.,Gblɔ nu si gblẽ la na mí eye míaɖo ŋu. Tsɔ wò app version kpe ɖe eŋu: %1$s.,,,,needs-native-review
+help_contact_email,support@ntoma.app,support@ntoma.app,,,,needs-native-review
+help_contact_subject,Ntoma support request,Ntoma kpekpeɖeŋu biabia,,,,needs-native-review
+help_faq_a1,"Local analysis, templates and photo previews do not upload images. Only explicitly configured cloud analysis sends the selected fabric image to your endpoint.",,,,,english-fallback
+help_faq_a2,Because a photo cannot always tell kente from a printed imitation. We would rather be honest than certain.,Elabena nɔnɔmeɖeɖe mete ŋu ɖea vovototo si le kete kɔ esi wota la me gbeɖe o. Míedi be míanye nugblɔla wu kakaɖedzitɔ.,,,,needs-native-review
+help_faq_a3,No. It shows colour and scale on a person. Fit and finish depend on your tailor.,Ao. Eɖea amadede kɔ didime fia ame dzi. Ale si wòawɔ ɖeka kɔ ŋutilã la tso wò tɔla dzi.,,,,needs-native-review
+help_faq_a4,"Fabric selection, local analysis, templates, placement previews and your saved library work offline. Configured cloud analysis needs a connection.",,,,,english-fallback
+help_faq_a5,Not yet. The style library is loaded from a catalogue that can be updated from the backend.,Meka o haɖe. Woɖoa awuɖoɖo ɖoɖoƒe la tso agbalẽ me si woate ŋu atrɔ tso teƒe bubu.,,,,needs-native-review
+help_faq_q1,Is my photo uploaded?,Ðe woɖoa nye nɔnɔmeɖeɖe ɖa?,,,,needs-native-review
+help_faq_q2,Why does it say “possible match”?,"Nu ka tae wògblɔna be ""ate ŋu anye esia""?",,,,needs-native-review
+help_faq_q3,Is the try-on a real fitting?,Ðe dodokpɔ la nye dodokpɔ ŋutɔŋutɔa?,,,,needs-native-review
+help_faq_q4,Does it work offline?,Ðe ewɔa dɔ internet manɔmea?,,,,needs-native-review
+help_faq_q5,Can I add my own designs?,Ðe mate ŋu atsɔ nye ɖoɖo ŋutɔ akpe ɖe eŋua?,,,,needs-native-review
+help_faq_title,Frequently asked questions,Biabia siwo wobiana zi geɖe,,,,needs-native-review
+help_how_1,"1. Capture or pick a dress or swatch photo, then select the fabric area.",,,,,english-fallback
+help_how_2,"2. Read the analysis: colours, pattern, texture and a possible Ghanaian style.","2. Xlẽ dzodzro la: amadedewo, nutata, nɔnɔme kɔ Ghana ƒe awuɖoɖo.",,,,needs-native-review
+help_how_3,"3. Browse matching designs for women and men, filtered by occasion.","3. Kpɔ awuɖoɖo siwo sɔ na nyɔnuwo kɔ ŋutsuwo, siwo woma ɖe ŋkekenyuinu.",,,,needs-native-review
+help_how_4,"4. Explore outfit templates, or optionally make a flat placement preview on a person photo.",,,,,english-fallback
+help_how_5,5. Save what you like and share it with your tailor.,5. Dzra nu si nèlɔ̃ ɖo nàmae kɔ wò tɔla.,,,,needs-native-review
+help_how_title,How Ntoma works,Ale si Ntoma wɔa dɔ,,,,needs-native-review
+help_tips_body,"Fill the frame with the print, use daylight, keep the cloth flat, and avoid strong shadows or flash glare.","Na nutata la naxɔ agbadzi la katã, zã ŋdɔkɛkɛ, na avɔ la nanɔ anyi sɔsɔe, eye nàƒo asa na vɔvɔli sesẽ alo kɛklẽ ƒe dzedzeme.",,,,needs-native-review
+help_tips_title,Photography tips,Nɔnɔmeɖeɖeɖeɖe ƒe aɖaŋuɖoɖo,,,,needs-native-review
+help_title,Help & tips,Kpekpeɖeŋu kɔ aɖaŋuɖoɖo,,,,needs-native-review
+history_clear,Clear history,Ɖe ŋutinya ɖa,,,,needs-native-review
+history_clear_confirm_body,"This removes your scan, design and look history from this device. Favourites are kept.","Esia ɖea wò ɖeɖewo, ɖoɖowo kɔ nɔnɔmeɖeɖewo ƒe ŋutinya ɖa tso mɔ̃ sia dzi. Woagblẽ wò lɔlɔ̃nuwo o.",,,,needs-native-review
+history_clear_confirm_title,Clear all history?,Ɖe ŋutinya blibo ɖa?,,,,needs-native-review
+history_cleared,History cleared,Woɖe ŋutinya ɖa,,,,needs-native-review
+history_empty_body,"Scans, chosen designs and generated looks will be listed here.","Wò ɖeɖewo, ɖoɖo tiatiawo kɔ nɔnɔmeɖeɖe siwowɔ adze afii.",,,,needs-native-review
+history_empty_title,No activity yet,Dɔwɔwɔ aɖeke meli haɖe o,,,,needs-native-review
+history_event_analysis,Analysed %1$s,Wodzro %1$s me,,,,needs-native-review
+history_event_design,Opened %1$s,Woʋu %1$s,,,,needs-native-review
+history_event_look,Created a look: %1$s,Wowɔ nɔnɔmeɖeɖe: %1$s,,,,needs-native-review
+history_event_scan,Scanned a fabric,Woɖe avɔ,,,,needs-native-review
+history_item_deleted,Item deleted,Woɖe nu la ɖa,,,,needs-native-review
+history_subtitle,Your recent activity stays on this device.,Wò dɔwɔwɔ yeyewo tsia mɔ̃ sia dzi.,,,,needs-native-review
+history_title,History,Ŋutinya,,,,needs-native-review
+home_cta_scan,Scan fabric,Ɖe avɔ,,,,needs-native-review
+home_cta_upload,Choose from photos,Tia tso nɔnɔmeɖeɖewo me,,,,needs-native-review
+home_empty_recent,No fabrics analysed yet,Avɔ aɖeke meli haɖe o,,,,needs-native-review
+home_empty_recent_body,Your scans will appear here so you can pick up where you left off.,Wò ɖeɖewo adze afi sia ne nàte ŋu ayi edzi tso afi si nèdzudzɔ le.,,,,needs-native-review
+home_greeting_afternoon,Good afternoon,Ŋdɔ nyui,,,,needs-native-review
+home_greeting_evening,Good evening,Fiẽ nyui,,,,needs-native-review
+home_greeting_morning,Good morning,Ŋdi nyui,,,,needs-native-review
+home_quota_exhausted,You have used today\'s free analyses. Premium unlocks unlimited scans.,Èzã egbe ƒe dzroɖewɔwɔ femaxewo katã vɔ. Premium ɖe seɖoƒe la ɖa.,,,,needs-native-review
+home_quota_note,%1$d of %2$d free analyses left today,%1$d le %2$d dzroɖewɔwɔ femaxewo me susɔ le egbe,,,,needs-native-review
+home_section_continue,Continue creating,Yi edzi nàwɔ,,,,needs-native-review
+home_section_favorites,Saved looks,Nɔnɔmeɖeɖe siwo nèdzra ɖo,,,,needs-native-review
+home_section_recent_fabrics,Your recent fabrics,Wò avɔ yeyewo,,,,needs-native-review
+home_section_recommended,Recommended for you,Wotsɔ ɖo ɖa na wò,,,,needs-native-review
+home_section_tips,Good to know,Nu siwo nyanya nyui,,,,needs-native-review
+home_subtitle,Discover what your fabric could become.,Kpɔ nu si wò avɔ ate ŋu azu.,,,,needs-native-review
+home_tip_1_body,Move close so the print fills the screen — patterns are easier to read that way.,Va teƒe si nutata la axɔ agbadzi la katã — enana xlẽle le bɔbɔe wu.,,,,needs-native-review
+home_tip_1_title,Fill the frame,Ɖe nutata la ƒe ŋkuɖoɖo,,,,needs-native-review
+home_tip_2_body,Natural light keeps colours true. Yellow indoor bulbs can shift a fabric\'s tone.,Ŋdɔkɛkɛ nana amadedewo ɖea wo ɖokui faa. Xɔme kɛklẽ awu ate ŋu atrɔ avɔ ƒe amadede.,,,,needs-native-review
+home_tip_2_title,Use daylight,Zã ŋdɔkɛkɛ,,,,needs-native-review
+home_tip_3_body,Lay the fabric flat and smooth out folds before you photograph it.,Le avɔ la ƒu anyi nyuie ne wòsɔ pɛ hafi nàɖe eƒe nɔnɔmeɖeɖe.,,,,needs-native-review
+home_tip_3_title,Flat and smooth,Le avɔ la ƒu anyi nyuie,,,,needs-native-review
+home_tools_title,Tools,Dɔwɔnu,,,,needs-native-review
+label_advertisement,Advertisement,Adzɔnu,,,,needs-native-review
+label_demo_badge,Demo,Kpɔɖeŋu,,,,needs-native-review
+label_free,Free,Femaxe,,,,needs-native-review
+label_loading,Loading…,Emɔŋ va…,,,,needs-native-review
+label_offline,You are offline,Internet meli o,,,,needs-native-review
+label_offline_short,Offline,Internet meli o,,,,needs-native-review
+label_online_short,Online,Internet li,,,,needs-native-review
+label_premium,Premium,Premium,,,,needs-native-review
+look_ankara_men_1,Ankara shirt set,Ankara awu kple awutavɔ,,,,needs-native-review
+look_ankara_men_2,Ankara casual shirt,Ankara gbesiagbe awu,,,,needs-native-review
+look_ankara_women_1,Ankara two-piece,Ankara evea,,,,needs-native-review
+look_ankara_women_2,Ankara mermaid set,Ankara mermaid,,,,needs-native-review
+look_kente_men_1,Kente groom wear,Kente srɔ̃ɖeɖe awu,,,,needs-native-review
+look_kente_men_2,Kente agbada,Kente agbada,,,,needs-native-review
+look_kente_women_1,Kente kaba \u0026 slit,Kente kaba kple slit,,,,needs-native-review
+look_kente_women_2,Kente celebration dress,Kente ɖuɖuɣi awu,,,,needs-native-review
+look_lace_women_1,White lace gown,Lace ɣi awu,,,,needs-native-review
+look_lace_women_2,Lace occasion dress,Lace ɖoɖoɖi awu,,,,needs-native-review
+look_smock_men_1,Northern fugu smock,Dziehe fugu,,,,needs-native-review
+look_smock_men_2,Hand-woven batakari,Asinufɔ batakari,,,,needs-native-review
+looks_section_caption,"Brand illustrations \u2014 honest style examples, not a render of your fabric","Katalog foto \u2014 kpɔɖeŋu ko, menye wò avɔ la ƒe foto o",,,,needs-native-review
+looks_section_title,Real looks for this fabric,Awu siawo ƒe foto,,,,needs-native-review
+looks_share_cd,Share this look photo,Fa foto sia ɖe,,,,needs-native-review
+measurement_chest,Chest (cm),Akɔta (cm),,,,needs-native-review
+measurement_height,Height (cm),Kɔkɔme (cm),,,,needs-native-review
+measurement_hip,Hip (cm),Klo (cm),,,,needs-native-review
+measurement_inseam,Inseam (cm),Afɔdome (cm),,,,needs-native-review
+measurement_neck,Neck (cm),Kɔ (cm),,,,needs-native-review
+measurement_notes,Notes for tailors,Nya ŋɔŋlɔ na tɔlawo,,,,needs-native-review
+measurement_shoulder,Shoulder (cm),Abɔta (cm),,,,needs-native-review
+measurement_sleeve,Sleeve (cm),Abɔ (cm),,,,needs-native-review
+measurement_waist,Waist (cm),Ali (cm),,,,needs-native-review
+measurements_disclaimer,"These are your own numbers, stored only on this device. Ntoma does not estimate body measurements.","Wò ŋutɔ wò nɔnɔmewoe le afi sia, eye wodzra wo ɖo ɖe mɔ̃ sia dzi ko. Ntoma mebua ŋutilã ƒe dzidzeme o.",,,,needs-native-review
+measurements_saved,Measurements saved,Wodzra dzidzemewo ɖo,,,,needs-native-review
+measurements_title,My measurements,Nye Dzidzemewo,,,,needs-native-review
+nav_create,Create,Wɔ yeye,,,,needs-native-review
+nav_discover,Discover,Di,,,,needs-native-review
+nav_favorites,Favourites,Lɔlɔ̃nuwo,,,,needs-native-review
+nav_home,Home,Aƒeme,,,,needs-native-review
+nav_profile,Profile,Nye Ŋuti,,,,needs-native-review
+notif_brief_ready_body,Your PDF brief for %1$s is ready to share.,Wò PDF %1$s ŋuti agbawo dzadzraɖo.,,,,needs-native-review
+notif_brief_ready_title,Tailor brief ready,Tailor ƒe agbawo dzadzraɖo,,,,needs-native-review
+notif_channel_processing,Processing complete,Dɔwɔwɔ wu enu,,,,needs-native-review
+notif_channel_processing_desc,Tells you when your preview is ready.,,,,,english-fallback
+notif_channel_recommendations,Style recommendations,Awuɖoɖo susuwɔ,,,,needs-native-review
+notif_channel_recommendations_desc,Occasional design ideas based on your saved fabrics.,Ɖoɖo susu ɣeaɖewoɣi tso avɔ siwo nèdzra ɖo me.,,,,needs-native-review
+notif_channel_updates,Product updates,Ntoma ƒe tɔtrɔ,,,,needs-native-review
+notif_channel_updates_desc,Important improvements and fixes.,Tɔtrɔ kɔ ɖɔɖɔɖo veviwo.,,,,needs-native-review
+notif_look_ready_body,%1$s is waiting for you in Ntoma.,%1$s le wò lalam le Ntoma me.,,,,needs-native-review
+notif_look_ready_title,Your look is ready,Wò nɔnɔmeɖeɖe le klalo,,,,needs-native-review
+notif_recommendation_body,%1$s would suit a fabric like yours.,%1$s asɔ avɔ abe tɔwò ene.,,,,needs-native-review
+notif_recommendation_title,A style idea for you,Awuɖoɖo susu na wò,,,,needs-native-review
+notif_update_body,See what is new in this version.,Kpɔ nu yeye siwo le version sia me.,,,,needs-native-review
+notif_update_title,Ntoma has been updated,Wotrɔ Ntoma,,,,needs-native-review
+occasion_ceremony,Ceremony,Wɔna,,,,needs-native-review
+occasion_church,Church,Sɔleme,,,,needs-native-review
+occasion_everyday,Everyday,Gbesiagbe,,,,needs-native-review
+occasion_festival,Festival,Aza,,,,needs-native-review
+occasion_mourning,Mourning,Konyifafa,,,,needs-native-review
+occasion_office,Office,Dɔwɔƒe,,,,needs-native-review
+occasion_party,Party,Kplɔ̃,,,,needs-native-review
+occasion_wedding,Wedding,Srɔ̃ɖeɖe,,,,needs-native-review
+onboarding_cta_scan,Scan my fabric,Ɖe nye avɔ ƒe nɔnɔmeɖeɖe,,,,needs-native-review
+onboarding_cta_skip,Skip for now,Dze edzi megbe,,,,needs-native-review
+onboarding_next,Next,Esi kplɔe ɖo,,,,needs-native-review
+onboarding_page_indicator,Page %1$d of %2$d,Axa %1$d le %2$d me,,,,needs-native-review
+onboarding_privacy_note,No account needed. Your photos stay on this device unless you ask for AI generation.,Akaŋti mehiã o. Wò nɔnɔmeɖeɖewo tsia mɔ̃a dzi negbe ɖe nèbia AI nɔnɔmeɖeɖewɔwɔ ko.,,,,needs-native-review
+onboarding_started_body,Your first scan is ready whenever you are.,Wò ɖeɖe gbãtɔ la le klalo ɖi ne wò hã nèklalo.,,,,needs-native-review
+onboarding_started_title,Let\'s get started,Mina míadze egɔme,,,,needs-native-review
+onboarding_step1_body,"Take a photo of the material on your table, or choose one from your gallery. Everything starts with the cloth.","Ɖe avɔ si le kplɔ̃a dzi la ƒe nɔnɔmeɖeɖe, alo tiae tso wò nɔnɔmeɖeɖewo me. Avɔ la dzie nuwo katã dze egɔme tso.",,,,needs-native-review
+onboarding_step1_title,Scan or upload a fabric,Ɖe avɔ alo tsɔe ɖo ɖa,,,,needs-native-review
+onboarding_step2_body,"We read the colours, pattern and texture, then suggest Ghanaian and contemporary styles for women and men.","Míexlẽ amadedewo, nutata kɔ avɔ ƒe nɔnɔme, emegbe míeɖo Ghana kɔ egbeŋkeke ƒe awuɖoɖowo ɖa na nyɔnuwo kɔ ŋutsuwo.",,,,needs-native-review
+onboarding_step2_title,Discover designs that suit it,Kpɔ ɖoɖo siwo sɔ kplii,,,,needs-native-review
+onboarding_step3_body,Apply your selected fabric to flat outfit templates. Optionally make a placement preview on a person photo.,,,,,english-fallback
+onboarding_step3_title,Explore outfit templates,,,,,english-fallback
+onboarding_step4_body,"Keep the fabrics and looks you love in Favourites, and share them with your tailor or friends.","Dzra avɔwo kɔ nɔnɔmeɖeɖe siwo nèlɔ̃ ɖo ɖe Lɔlɔ̃nuwo me, eye nàma wo kɔ wò tɔla alo xɔ̃wòwo.",,,,needs-native-review
+onboarding_step4_title,Save and share your looks,Dzraɖo eye nàma,,,,needs-native-review
+onboarding_welcome_body,Ntoma is Akan for cloth. Photograph a fabric you own and we will show you what it could become — from kaba and slit to a modern kaftan.,"Ntoma gɔmee nye ""avɔ"" le Egbe me. Ɖe avɔ si le asiwò ƒe nɔnɔmeɖeɖe, eye míafia nu si wòate ŋu azu wò — tso kaba kɔ ɛɖɛ dzi va se ɖe kaftan yeye dzi.",,,,needs-native-review
+onboarding_welcome_title,Welcome to Ntoma,"Woezɔ loo, Ntoma",,,,needs-native-review
+outfit_builder_empty,Pick at least one item to save an outfit.,Tia nu ɖeka ya teti hafi nàdzra awuɖoɖo ɖo.,,,,needs-native-review
+outfit_builder_name_hint,Outfit name,Awuɖoɖo ƒe ŋkɔ,,,,needs-native-review
+outfit_builder_save,Save outfit,Dzra awuɖoɖo ɖo,,,,needs-native-review
+outfit_builder_surprise,Surprise me,Tia ɖeka nam,,,,needs-native-review
+outfit_builder_title,Build an outfit,Ɖo awuɖoɖo,,,,needs-native-review
+outfits_empty_body,Combine wardrobe items into complete outfits you can wear again.,Tsɔ wò awuwo ƒo ƒu wɔ awuɖoɖo blibo si nàte ŋu ado ake.,,,,needs-native-review
+outfits_empty_title,No outfits yet,Awuɖoɖo aɖeke meli haɖe o,,,,needs-native-review
+pattern_abstract,Abstract,Abstrakt,,,,needs-native-review
+pattern_checked,Checked / plaid,Kɔɖi siwo do alɔ̃me,,,,needs-native-review
+pattern_dotted,Dotted,Togbɛviwo,,,,needs-native-review
+pattern_floral,Floral,Seƒoƒo,,,,needs-native-review
+pattern_geometric,Geometric blocks,Geometri ƒe nutata,,,,needs-native-review
+pattern_gradient,Gradient / ombre,Amadede siwo tsaka,,,,needs-native-review
+pattern_organic,Organic motifs,Ŋutɔme nutata,,,,needs-native-review
+pattern_solid,Plain / solid,Amadede ɖeka,,,,needs-native-review
+pattern_striped,Striped,Kɔɖiwo,,,,needs-native-review
+pattern_symbolic,Symbolic stamps,Dzesiwo,,,,needs-native-review
+paywall_sheet_alternative,Or watch a short ad for one more photo preview,,,,,english-fallback
+paywall_sheet_body_analyses,Free accounts include %1$d fabric analyses a day. Premium removes the limit.,Akaŋti femaxewo xɔa avɔ dzroɖewɔwɔ %1$d le ŋkeke ɖeka me. Premium ɖea seɖoƒe la ɖa.,,,,needs-native-review
+paywall_sheet_body_tryons,Free accounts include %1$d photo previews a month.,,,,,english-fallback
+paywall_sheet_title,You have reached the free limit,Èɖo femaxe ƒe seɖoƒe,,,,needs-native-review
+permission_camera_body,Ntoma uses the camera only to photograph the fabric or person you choose. Photos are stored on this device unless you request AI generation.,Ntoma zãa kamera ne wòle avɔ alo ame si nètia ƒe nɔnɔmeɖeɖe ɖem ko. Nɔnɔmeɖeɖewo tsia mɔ̃ sia dzi negbe ɖe nèbia AI wɔwɔ ko.,,,,needs-native-review
+permission_camera_denied_body,"You can still choose an existing photo from your gallery, or turn the camera on in system settings.","Àte ŋu atia nɔnɔmeɖeɖe xoxo tso wò nɔnɔmeɖeɖewo me, alo nàʋu kamera le mɔ̃a ƒe ɖoɖowo me.",,,,needs-native-review
+permission_camera_denied_title,Camera is off,Kamera tsi,,,,needs-native-review
+permission_camera_title,Camera access,Kamera ƒe mɔɖeɖe,,,,needs-native-review
+permission_denied_continue,Continue without it,Yi edzi evelia,,,,needs-native-review
+permission_notifications_body,"We only notify you when something you started finishes, or when you opt in to style ideas.","Míedea asi ɖe nya ŋu na wò ne nu si nèdze egɔme la wu enu, alo ne èlɔ̃ ɖe awuɖoɖo susuwo dzi ko.",,,,needs-native-review
+permission_notifications_title,Notifications,Nyatakakawo,,,,needs-native-review
+permission_open_app_settings,Enable in system settings,Ɖe mɔ le mɔ̃a ƒe ɖoɖowo me,,,,needs-native-review
+premium_already_active,Premium is already active on this device.,Premium le dɔ wɔm le mɔ̃ sia dzi xoxo.,,,,needs-native-review
+premium_benefit_ads,No advertisements,Adzɔnu aɖeke o,,,,needs-native-review
+premium_benefit_analyses,Unlimited fabric analyses,Avɔ dzroɖewɔwɔ si me seɖoƒe meli o,,,,needs-native-review
+premium_benefit_history,Full history retention,Ŋutinya blibo dzi dzadzraɖo,,,,needs-native-review
+premium_benefit_resolution,High-resolution results,Nɔnɔmeɖeɖe kɔkɔwo,,,,needs-native-review
+premium_benefit_speed,Priority processing,Dɔwɔwɔ kaba,,,,needs-native-review
+premium_benefit_styles,Advanced style library,Awuɖoɖo ɖoɖoƒe gã,,,,needs-native-review
+premium_benefit_tryons,20 photo previews a month,,,,,english-fallback
+premium_billing_notice,Billing is not connected in this build. This screen demonstrates the paywall layout only — no payment is taken and no subscription is created.,Wometsɔ akɔntabubu ka ɖe eŋu le version sia me o. Anyigba sia fia xeƒeɖoɖo ƒe ɖoɖo ko — womexɔa ga eye womewɔa ŋkɔŋlɔɖi aɖeke o.,,,,needs-native-review
+premium_current_plan,Current plan: %1$s,Ɖoɖo si le eme: %1$s,,,,needs-native-review
+premium_demo_activated,Demo premium enabled. No payment was taken — this build has no billing connection.,Kpɔɖeŋu Premium le ʋuʋu. WOMEXƆ GA AÐEKE O — akɔntabubu mele version sia me o.,,,,needs-native-review
+premium_demo_locked,Disable Premium (demo flag),Tsɔ Premium ƒe dzesi ɖa (kpɔɖeŋu),,,,needs-native-review
+premium_demo_unlock,Enable Premium (demo flag),Ɖe Premium (kpɔɖeŋu dzesi),,,,needs-native-review
+premium_pitch,"Free Ntoma already lets you scan fabrics, browse every design and save favourites. Premium is for the days you are planning a whole wardrobe.","Ntoma femaxe la nana nèɖea avɔwo, nèkpɔa ɖoɖo katã, eye nèdzraa lɔlɔ̃nuwo ɖo. Premium nye na ŋkeke siwo nèle awu geɖe ɖom ɖa le.",,,,needs-native-review
+premium_price_monthly,%1$s / month,%1$s ɣleti sia,,,,needs-native-review
+premium_price_yearly,%1$s / year,%1$s ƒe sia,,,,needs-native-review
+premium_restore,Restore purchases,Gbugbɔ nuƒlewo xɔ,,,,needs-native-review
+premium_subscribe,Subscribe,Ŋlɔ ŋkɔ,,,,needs-native-review
+premium_tab_monthly,Monthly,Ɣleti sia,,,,needs-native-review
+premium_tab_yearly,Yearly,Ƒe sia,,,,needs-native-review
+premium_title,Ntoma Premium,Ntoma Premium,,,,needs-native-review
+premium_unlocked_toast,Premium enabled for this device (demo),Premium le ʋuʋu le mɔ̃ sia dzi (kpɔɖeŋu),,,,needs-native-review
+print_trait_all_over,All-over print,Ɖeɖe si le agbadzi la katã,,,,needs-native-review
+print_trait_directional,Directional print,Ɖeɖe si xɔ mɔɖeɖe,,,,needs-native-review
+print_trait_high_contrast,High-contrast print,Ɖeɖe si ƒe amadede vovovowo dze ŋutɔ,,,,needs-native-review
+print_trait_large_scale,Large-scale motifs,Nutata gãwo,,,,needs-native-review
+print_trait_low_contrast,Low-contrast print,Ɖeɖe si ƒe amadede vovovowo medze ŋutɔ o,,,,needs-native-review
+print_trait_multicolour,Multicoloured,Amadede geɖe,,,,needs-native-review
+print_trait_small_repeat,Small all-over repeat,Nutata sue siwo le edzi yim,,,,needs-native-review
+print_trait_two_tone,Two-tone,Amadede eve,,,,needs-native-review
+print_trait_woven_strips,Narrow woven strips,Avɔba kpuikpui siwo wolɔ̃,,,,needs-native-review
+privacy_ads_body,"This version of Ntoma contains no advertisements and no advertising SDK. No advertising identifiers or ad data are collected. If ads are introduced in a future version, they will be clearly labelled and this policy will be updated first.","Ntoma ƒe version sia me adzɔnuwo alo adzɔnu SDK aɖeke mele o. Womexɔa adzɔnu ŋuti nyatakaka aɖeke o. Ne adzɔnuwo va le version aɖe me le etsɔme la, woaɖe wo fia kɔtɛ eye woaɖɔ ɖoɖo sia ŋu gbã.",,,,needs-native-review
+privacy_ads_title,Advertising,Adzɔnuwo,,,,needs-native-review
+privacy_analytics_body,This build ships with a debug-only logger. No analytics SDK is included and no usage data leaves your device.,Version sia kpe debug ƒe nuŋlɔɖi ko. Analytics SDK aɖeke mele eme o eye dɔwɔwɔ ŋuti nyatakaka aɖeke medzoa wò mɔ̃a dzi o.,,,,needs-native-review
+privacy_analytics_title,Analytics,Dɔwɔwɔ ŋuti nyatakaka,,,,needs-native-review
+privacy_data_deleted,Your local data has been deleted,Woɖe wò nyatakaka ɖa le mɔ̃a dzi,,,,needs-native-review
+privacy_delete_body,"Use Delete my data below. It removes scans, analyses, looks, history, favourites and cached images from this device immediately.","Zã ""Ɖe nye nyatakaka ɖa"" si le ete la. Eɖea ɖeɖewo, dzroɖewɔwɔwo, nɔnɔmeɖeɖewo, ŋutinya, lɔlɔ̃nuwo kɔ nɔnɔmeɖeɖe siwo le adzɔgbe la ɖa le mɔ̃ sia dzi enumake.",,,,needs-native-review
+privacy_delete_data_body,"This permanently removes your fabrics, analyses, generated looks, history and favourites from this device. It cannot be undone.","Esia ɖea wò avɔwo, dzroɖewɔwɔwo, nɔnɔmeɖeɖe siwowɔ, ŋutinya kɔ lɔlɔ̃nuwo ɖa le mɔ̃ sia dzi keŋkeŋ. Màte ŋu agbugbɔe o.",,,,needs-native-review
+privacy_delete_data_title,Delete my data?,Ɖe nye nyatakaka ɖa?,,,,needs-native-review
+privacy_delete_title,How do I delete my data?,Alekee maɖe nye nyatakaka ɖae?,,,,needs-native-review
+privacy_device_body,"Local analysis, outfit templates and person-photo placement previews do not upload images. If you explicitly configure and select cloud analysis, the selected fabric image is sent to that endpoint. Cloud photoreal try-on is not available in this build.",,,,,english-fallback
+privacy_device_title,Do images leave my device?,Ðe nɔnɔmeɖeɖewo dzoa nye mɔ̃a dzia?,,,,needs-native-review
+privacy_images_body,"Fabric photos you capture or pick, and — only if you use try-on — one photo of a person. Generated looks are stored in the app\'s private storage.","Avɔ ƒe nɔnɔmeɖeɖe siwo nèɖe alo nètia, kɔ — ne èzã dodokpɔ ko — ame ƒe nɔnɔmeɖeɖe ɖeka. Nɔnɔmeɖeɖe siwo wowɔ la le app la ƒe teƒe ŋutɔ me.",,,,needs-native-review
+privacy_images_title,What images are processed,Nɔnɔmeɖeɖe kawoe wowɔa dɔ ɖo,,,,needs-native-review
+privacy_intro,"Short version: Ntoma works on your phone. We only send an image somewhere when you ask for AI generation, and we say so when it happens.","Ɖoɖo kpuie: Ntoma wɔa dɔ le wò mɔ̃a dzi. Míeɖoa nɔnɔmeɖeɖe ɖa afi aɖeke negbe ɖe nèbia AI wɔwɔ ko, eye míegblɔnae ne edzɔ.",,,,needs-native-review
+privacy_keep_days,%1$d days,Ŋkeke %1$d,,,,needs-native-review
+privacy_keep_forever,Keep everything,Dzra nuwo katã ɖo,,,,needs-native-review
+privacy_keep_history_days,History retention,Ŋutinya ƒe ɣeyiɣi,,,,needs-native-review
+privacy_permissions_body,"Camera (only when you scan or take a photo) and notifications (only if you enable them). Photos are read through the Android photo picker, so no storage permission is requested. We never ask for contacts, location, microphone, SMS, phone or call logs.","Kamera (ne èle ɖeɖe alo nɔnɔmeɖeɖe ɖem ko) kɔ nyatakakawo (ne èʋu wo ko). Woxlẽa nɔnɔmeɖeɖewo to Android ƒe nɔnɔmeɖeɖe tiamɔ̃ dzi, eya ta womediadzraɖoƒe ƒe mɔɖeɖe o. Míebiana amewo ŋuti nyatakaka, teƒe, mikrofon, SMS, kaƒoƒo alo kaƒoƒo ŋutinya gbeɖe o.",,,,needs-native-review
+privacy_permissions_title,Permissions,Mɔɖeɖewo,,,,needs-native-review
+privacy_retention_body,"Locally, until you delete them. A connected backend decides its own retention; we recommend a maximum of 24 hours for uploaded images, and the demo engine keeps nothing.","Le mɔ̃a dzi, vaseɖe ɣesiɣi nàɖe wo ɖa. Teƒe si woka ɖe eŋu la ɖoa eya ŋutɔ ƒe ɣeyiɣi; míeɖo aɖaŋu be gaƒoƒo 24 ko nasɔ na nɔnɔmeɖeɖe siwo woɖo ɖa, eye kpɔɖeŋu ɖoɖoa medzraa naneke ɖo o.",,,,needs-native-review
+privacy_retention_title,How long are images kept?,Ɣeyiɣi didi sɔŋ ka woadzra nɔnɔmeɖeɖewo ɖo?,,,,needs-native-review
+privacy_title,Privacy,Ameŋutinyawo,,,,needs-native-review
+profile_guest,Guest user,Amedzro,,,,needs-native-review
+profile_guest_body,You are using Ntoma without an account. Everything you save stays on this device.,Èle Ntoma zãm akaŋti manɔmee. Nu si nèdzra ɖo la katã tsia mɔ̃ sia dzi.,,,,needs-native-review
+profile_name_hint,Display name,Ŋkɔ si nàɖe fia,,,,needs-native-review
+profile_name_saved,Name saved,Wodzra ŋkɔ la ɖo,,,,needs-native-review
+profile_preference_all,Show everything,Ɖe nuwo katã fia,,,,needs-native-review
+profile_preference_menswear,Menswear,Ŋutsuwo ƒe awu,,,,needs-native-review
+profile_preference_womenswear,Womenswear,Nyɔnuwo ƒe awu,,,,needs-native-review
+profile_row_about,About Ntoma,Ntoma ŋuti,,,,needs-native-review
+profile_row_help,Help & tips,Kpekpeɖeŋu kɔ aɖaŋuɖoɖo,,,,needs-native-review
+profile_row_history,History,Ŋutinya,,,,needs-native-review
+profile_row_measurements,My measurements,Nye dzidzemewo,,,,needs-native-review
+profile_row_notifications,Notifications,Nyatakakawo,,,,needs-native-review
+profile_row_premium,Ntoma Premium,Ntoma Premium,,,,needs-native-review
+profile_row_privacy,Privacy,Ameŋutinyawo ƒe nya,,,,needs-native-review
+profile_row_settings,Settings,Ɖoɖowo,,,,needs-native-review
+profile_row_wardrobe,My wardrobe,Nye awuwo,,,,needs-native-review
+profile_section_activity,Activity,Dɔwɔwɔ,,,,needs-native-review
+profile_section_preferences,Preferences,Tiatia,,,,needs-native-review
+profile_section_support,Support,Kpekpeɖeŋu,,,,needs-native-review
+profile_section_you,You,Wò,,,,needs-native-review
+profile_stats_designs,Designs,Ɖoɖowo,,,,needs-native-review
+profile_stats_fabrics,Fabrics,Avɔwo,,,,needs-native-review
+profile_stats_looks,Looks,Nɔnɔmeɖeɖewo,,,,needs-native-review
+profile_style_preference,Style preference,Awuɖoɖo tiatia,,,,needs-native-review
+profile_title,Profile,Nye Ŋuti,,,,needs-native-review
+recs_clear_filters,Clear filters,Ɖe tiatia ɖa,,,,needs-native-review
+recs_empty_body,Try removing a filter or switching between women\'s and men\'s styles.,Ɖe tiatia ɖeka ɖa alo trɔ le nyɔnuwo kɔ ŋutsuwo ƒe awuɖoɖowo dome.,,,,needs-native-review
+recs_empty_title,No designs match those filters,Ɖoɖo aɖeke mesɔ kɔ tiatia mawo o,,,,needs-native-review
+recs_favorite_added,Added to favourites,Wotsɔ kpe ɖe lɔlɔ̃nuwo ŋu,,,,needs-native-review
+recs_favorite_removed,Removed from favourites,Woɖee ɖa le lɔlɔ̃nuwo me,,,,needs-native-review
+recs_filter_casual,Casual,Bɔbɔe,,,,needs-native-review
+recs_filter_church,Church,Sɔleme,,,,needs-native-review
+recs_filter_everyday,Everyday,Gbesiagbe,,,,needs-native-review
+recs_filter_formal,Formal,Kɔkɔe,,,,needs-native-review
+recs_filter_men,Men,Ŋutsuwo,,,,needs-native-review
+recs_filter_office,Office,Dɔwɔƒe,,,,needs-native-review
+recs_filter_party,Party,Kplɔ̃,,,,needs-native-review
+recs_filter_traditional,Traditional,Kɔnyinyi,,,,needs-native-review
+recs_filter_unisex,Unisex,Nyɔnu kɔ ŋutsu,,,,needs-native-review
+recs_filter_wedding,Wedding,Srɔ̃ɖeɖe,,,,needs-native-review
+recs_filter_women,Women,Nyɔnuwo,,,,needs-native-review
+recs_filters_label,Filters,Tiatia,,,,needs-native-review
+recs_for_fabric,For %1$s,Na %1$s,,,,needs-native-review
+recs_match_score,%1$d%% match,Ɛsɔ %1$d%%,,,,needs-native-review
+recs_not_interested,Not interested,Nye metsɔ ɖeke le eme o,,,,needs-native-review
+recs_not_interested_undone,Suggestion restored,Wogbugbɔ susu la ɖo,,,,needs-native-review
+recs_subtitle,%1$d designs suit this cloth,Ɖoɖo %1$d sɔ kɔ avɔ sia,,,,needs-native-review
+recs_title,Looks made for your fabric,Ɖoɖo siwo wolɔ̃ na wò avɔ,,,,needs-native-review
+recs_try_on,Try on,Do kpɔ,,,,needs-native-review
+recs_view_design,View design,Kpɔ ɖoɖo la,,,,needs-native-review
+recs_why_title,Why it suits your fabric,Nu si tae wòsɔ kɔ wò avɔ,,,,needs-native-review
+result_action_another_design,Try another design,Do ɖoɖo bubu kpɔ,,,,needs-native-review
+result_action_another_person,Try on another person,Do kpɔ ame bubu dzi,,,,needs-native-review
+result_action_change_fabric,Change fabric,Trɔ avɔ,,,,needs-native-review
+result_action_favorite,Favourite,Lɔlɔ̃nu,,,,needs-native-review
+result_action_save,Save,Dzraɖo,,,,needs-native-review
+result_action_share,Share,Ma,,,,needs-native-review
+result_action_start_over,Start over,Gadze egɔme ake,,,,needs-native-review
+result_ai_disclaimer,On-device fabric placement preview,,,,,english-fallback
+result_compare,Compare,Tsɔ sɔ,,,,needs-native-review
+result_compare_original,Original,Gbãtɔ,,,,needs-native-review
+result_compare_result,Result,Esi do tso eme,,,,needs-native-review
+result_demo_disclaimer,Demo visualisation — colours and scale only,Kpɔɖeŋu — amadede kɔ didime ko,,,,needs-native-review
+result_saved_to_gallery,Saved to your device,Wodzrae ɖe wò mɔ̃a dzi,,,,needs-native-review
+result_summary,%1$s in %2$s,%1$s le %2$s me,,,,needs-native-review
+result_title,Your look,Wò nɔnɔmeɖeɖe,,,,needs-native-review
+result_variations,Make 3 more variations,,,,,english-fallback
+result_variations_progress,Generating variations… (%1$d of 3),Emɔŋ le tɔtrɔwo wɔm… (%1$d le 3 me),,,,needs-native-review
+result_variations_quota,Not enough free photo previews left for 3 variations.,,,,,english-fallback
+result_zoom_hint,Pinch to zoom,Zã asibidɛ eve ne nàdo,,,,needs-native-review
+sample_cta,Try a sample fabric,Dze agbagba kple avɔ kpɔɖeŋu,,,,needs-native-review
+sample_picker_body,Run the whole pipeline on one of these bundled reference fabrics.,Zã avɔ siwo wona be nàtsɔ wɔ dɔ awɔ la dometɔ ɖeka nàkpɔ mɔ nyinaa.,,,,needs-native-review
+sample_picker_title,No fabric at hand?,Avɔ mele asiwò oa?,,,,needs-native-review
+search_intent_applied,Filtered by your words,Womae ɖe wò nyawo nu,,,,needs-native-review
+settings_about_credits,Credits,Ɖeɖe fiafia,,,,needs-native-review
+settings_about_made,"Made in Accra, Ghana","Wowɔe le Accra, Ghana",,,,needs-native-review
+settings_about_version,Version,Version,,,,needs-native-review
+settings_clear_history,Clear local history,Ɖe ŋutinya ɖa,,,,needs-native-review
+settings_cloud_url_hint,Cloud backend URL (optional),Cloud backend URL (ne èdi),,,,needs-native-review
+settings_data_controls,Data controls,Nyatakaka dzi ɖuɖu,,,,needs-native-review
+settings_data_saver,Data saver,Nyatakaka dzraɖo,,,,needs-native-review
+settings_data_saver_body,Use smaller images and skip high-resolution generation.,Zã nɔnɔmeɖeɖe suewo eye nàdze aɖaŋu nɔnɔmeɖeɖe kɔkɔwo wɔwɔ dzi.,,,,needs-native-review
+settings_data_used,Local storage used,Teƒe si wozã,,,,needs-native-review
+settings_delete_data,Delete my data,Ɖe nye nyatakaka ɖa,,,,needs-native-review
+settings_engine,Analysis provider,Dzroɖeƒe,,,,needs-native-review
+settings_engine_cloud,Cloud analysis (not connected),Cloud dzi dzodzro (womeka ɖe eŋu o),,,,needs-native-review
+settings_engine_cloud_body,Sends the image to your analysis backend. Requires an API endpoint — no keys are stored in the app.,Eɖoa nɔnɔmeɖeɖe la ɖa na wò dzroɖeƒe. API hiã — womedzraa safuiwo ɖo ɖe app la me o.,,,,needs-native-review
+settings_engine_cloud_unavailable,"No cloud endpoint is configured, so Ntoma is using the on-device engine.","Cloud ƒe teƒe aɖeke meli o, eya ta Ntoma le mɔ̃a dzi ɖoɖo zãm.",,,,needs-native-review
+settings_engine_demo,On-device demo engine,Mɔ̃a dzi kpɔɖeŋu,,,,needs-native-review
+settings_engine_demo_body,Runs entirely on your phone. No image leaves the device.,Ewɔa dɔ le wò mɔ̃a dzi bliboe. Nɔnɔmeɖeɖe aɖeke medzoa mɔ̃a dzi o.,,,,needs-native-review
+settings_engine_saved,Engine preference saved,Wodzra dzroɖeƒe ƒe tiatia ɖo,,,,needs-native-review
+settings_help_contact,Contact support,Bia kpekpeɖeŋu,,,,needs-native-review
+settings_help_faq,FAQ,Biabia siwo wobiana zi geɖe,,,,needs-native-review
+settings_help_how,How Ntoma works,Ale si Ntoma wɔa dɔ,,,,needs-native-review
+settings_help_tutorial,Step-by-step tutorial,Nufiafia ɖe afɔɖeɖe nu,,,,needs-native-review
+settings_language,Language,Gbe,,,,needs-native-review
+settings_language_english,English,Yevugbe,,,,needs-native-review
+settings_language_ewe,Ewe,Ewe,,,,needs-native-review
+settings_language_ga,Ga,Ga,,,,needs-native-review
+settings_language_note,"Twi, Ga and Ewe are in progress. Untranslated text is shown in English.","Wole Twi, Ga kɔ Ewe dzi wɔm. Woɖea nya siwo womeɖe gɔme o la le Yevugbe me.",,,,needs-native-review
+settings_language_twi,Twi,Twi,,,,needs-native-review
+settings_notif_denied_body,Notifications are blocked in system settings. You can still use every other part of Ntoma.,Woxe nyatakakawo le mɔ̃a ƒe ɖoɖowo me. Àte ŋu azã Ntoma ƒe akpa bubuwo katã boŋ.,,,,needs-native-review
+settings_notif_inspiration,Weekly inspiration,Ŋkeke ƒe susu nyui,,,,needs-native-review
+settings_notif_inspiration_body,One gentle idea each week. Off by default.,Susu nyui ɖeka kwasiɖa sia kwasiɖa. Womeʋunɛ tso gɔmeɖoanyia o.,,,,needs-native-review
+settings_notif_permission_needed,Allow notifications to receive these.,Ɖe mɔ na nyatakakawo ne nàkpɔ esiawo.,,,,needs-native-review
+settings_notif_processing,Processing complete,Dɔwɔwɔ wu enu,,,,needs-native-review
+settings_notif_processing_body,Tell me when a look finishes generating.,Gblɔe nam ne nɔnɔmeɖeɖe aɖe ƒe wɔwɔ wu enu.,,,,needs-native-review
+settings_notif_recommendations,New recommendations,Ɖoɖo yeyewo,,,,needs-native-review
+settings_notif_recommendations_body,Occasional style ideas based on fabrics I have saved.,Awuɖoɖo susuwɔ ɣeaɖewoɣi siwo tso avɔ siwo medzra ɖo la me.,,,,needs-native-review
+settings_notif_updates,Product updates,Ntoma ƒe tɔtrɔ,,,,needs-native-review
+settings_notif_updates_body,Important improvements to Ntoma.,Tɔtrɔ veviwo le Ntoma me.,,,,needs-native-review
+settings_personalization_reset_done,Personalization reset,Wogadze tiatia gɔme,,,,needs-native-review
+settings_privacy_policy,Privacy policy,Ameŋutinyawo ƒe ɖoɖo,,,,needs-native-review
+settings_replay_onboarding,Show onboarding again,Ɖe gɔmedzedze nufiafia ake,,,,needs-native-review
+settings_reset_personalization,Reset personalization,Gadze tiatia gɔme,,,,needs-native-review
+settings_reset_tips,Reset tooltips,Gadze aɖaŋuɖoɖo kpuikpuiwo gɔme,,,,needs-native-review
+settings_section_about,About,Ŋuti,,,,needs-native-review
+settings_section_account,Account,Akaŋti,,,,needs-native-review
+settings_section_analysis,Analysis engine,Dzroɖeƒe,,,,needs-native-review
+settings_section_appearance,Appearance,Dzedzeme,,,,needs-native-review
+settings_section_help,Help,Kpekpeɖeŋu,,,,needs-native-review
+settings_section_language,Language,Gbe,,,,needs-native-review
+settings_section_notifications,Notifications,Nyatakakawo,,,,needs-native-review
+settings_section_privacy,Privacy,Ameŋutinyawo,,,,needs-native-review
+settings_terms,Terms of service,Sedede kɔ ɖoɖowo,,,,needs-native-review
+settings_theme,Theme,Dzedzeme,,,,needs-native-review
+settings_theme_dark,Dark,Viviti,,,,needs-native-review
+settings_theme_light,Light,Kɛkɛ,,,,needs-native-review
+settings_theme_system,System default,Mɔ̃a ƒe ɖokui,,,,needs-native-review
+settings_tips_reset_done,Tooltips will show again,Aɖaŋuɖoɖo kpuikpuiwo agadze ake,,,,needs-native-review
+settings_title,Settings,Ɖoɖowo,,,,needs-native-review
+share_chooser_title,Share with,Ma kɔ,,,,needs-native-review
+share_design_text,Design: %1$s — %2$s. Found on Ntoma.,Ɖoɖo: %1$s — %2$s. Wokpɔe le Ntoma dzi.,,,,needs-native-review
+share_fabric_text,Fabric: %1$s — %2$s. Spotted with Ntoma.,Avɔ: %1$s — %2$s. Ntoma kpe ɖe eŋu.,,,,needs-native-review
+share_look_text,Look: %1$s in %2$s — created with Ntoma.,Nɔnɔmeɖeɖe: %1$s le %2$s me — Ntoma wɔe.,,,,needs-native-review
+share_saved,Ready to share,Eklalo na mɔmɔ,,,,needs-native-review
+style_african_gown,African print gown,Afrika nutata awu kɛkɛ,,,,needs-native-review
+style_african_gown_desc,A formal floor-length gown with structured bodice and train.,Awu kɛkɔ ŋkekenyui si ƒe dzi sesẽ eye eƒe nu le megbe.,,,,needs-native-review
+style_african_suit,Formal African suit,Afrika ƒe suit ŋkekenyui,,,,needs-native-review
+style_african_suit_desc,A jacket and trouser combination with print lapels or lining.,Jaket kɔ awɔvi siwo me nutata le le woƒe dzi alo wo me.,,,,needs-native-review
+style_agbada,Agbada-inspired outfit,Agbada ƒe awuɖoɖo,,,,needs-native-review
+style_agbada_desc,A flowing grand boubou worn over a tunic and trousers.,Awu gã si zɔna si wodo le tunic kɔ awɔviwo dzi.,,,,needs-native-review
+style_beach_cover,Relaxed cover-up,Awu fafawu,,,,needs-native-review
+style_beach_cover_desc,"A loose, unisex layer for casual days.",Awu ƒoƒu si nyɔnuwo kɔ ŋutsuwo ate ŋu ado le ŋkeke fafawo me.,,,,needs-native-review
+style_co_ords,Matching co-ord set,Awu siwo sɔ kɔ wo nɔewo,,,,needs-native-review
+style_co_ords_desc,A shirt-and-short or shirt-and-trouser set in one cloth.,Hem kɔ awɔvi kpuikpui alo hem kɔ awɔvi kɛkɛ tso avɔ ɖeka me.,,,,needs-native-review
+style_contemporary_formal,Contemporary formal dress,Ɖoɖo ŋkekenyui awu yeye,,,,needs-native-review
+style_contemporary_formal_desc,"A tailored dress for office, church and formal events.","Awu si wolɔ̃ nyuie na dɔwɔƒe, sɔleme kɔ ŋkekenyuinuwo.",,,,needs-native-review
+style_jumpsuit,Printed jumpsuit,Nutata jumpsuit,,,,needs-native-review
+style_jumpsuit_desc,One-piece tailoring with a wide leg and defined waist.,Awu ɖeka si ƒe afɔ kɛ eye ali dze nyuie.,,,,needs-native-review
+style_kaba_slit,Kaba and slit,Kaba kɔ ɛɖɛ,,,,needs-native-review
+style_kaba_slit_desc,The Ghanaian classic: a fitted blouse with a wrapped or straight long skirt.,Ghana ƒe awu xoxo: awu si woɖe ɖe ŋutilã nu kɔ ɛɖɛ kɛkɛ.,,,,needs-native-review
+style_kaftan,Kaftan,Kaftan,,,,needs-native-review
+style_kaftan_desc,A long pull-over tunic with a straight fall and side vents.,Awu kɛkɛ si wotsɔna do le ta si tɔ ɖe ɖeka eye akpa le eƒe akpa.,,,,needs-native-review
+style_maxi_dress,Maxi dress,Awu kɛkɛ,,,,needs-native-review
+style_maxi_dress_desc,A floor-length dress with a full skirt that lets the print move.,Awu si ɖo anyigba si ƒe ete trɛw ne nutata la naɖo zɔ.,,,,needs-native-review
+style_mermaid_dress,Mermaid dress,Mermaid awu,,,,needs-native-review
+style_mermaid_dress_desc,"Fitted through the body, flaring below the knee for evening wear.",Eɖea ŋutilã eye wòtrɛna le afɔklo teƒe na fiẽ ƒe ŋkekenyui.,,,,needs-native-review
+style_modern_kaba,Modern kaba,Kaba yeye,,,,needs-native-review
+style_modern_kaba_desc,Kaba lines re-cut with a corseted bodice and contemporary sleeves.,Kaba ƒe ɖoɖo yeye kɔ abɔwo yeyewo.,,,,needs-native-review
+style_modern_traditional,Modern traditional wear,Kɔnyinyi yeye,,,,needs-native-review
+style_modern_traditional_desc,A contemporary cut with traditional trim and detailing.,Ɖoɖo yeye kɔ kɔnyinyi ƒe ɖoɖoɖi.,,,,needs-native-review
+style_peplum,Peplum top and skirt,Peplum dzi kɔ ete,,,,needs-native-review
+style_peplum_desc,A flounced waist over a pencil or A-line skirt.,Eƒoƒo le ali dzi le awu si tɔ ɖe ɖeka alo si trɛna la dzi.,,,,needs-native-review
+style_print_shirt,African print shirt,Afrika nutata hem,,,,needs-native-review
+style_print_shirt_desc,A short-sleeve camp-collar shirt in the fabric of your choice.,Hem si ƒe abɔ kpuie eye kɔla le eƒe kɔdzi le avɔ si nètia me.,,,,needs-native-review
+style_senator,Senator-style outfit,Senator ƒe awuɖoɖo,,,,needs-native-review
+style_senator_desc,A slim tunic with subtle embroidery over matching trousers.,Tunic kpuie si me ŋutɔɖoɖo sue le kɔ awɔvi siwo sɔ kplii.,,,,needs-native-review
+style_shirt_trousers,Shirt and trousers,Hem kɔ awɔvi,,,,needs-native-review
+style_shirt_trousers_desc,Everyday tailoring that lets the fabric be the statement.,Gbesiagbe ƒe awu si nana avɔ la ɖea eɖokui fia.,,,,needs-native-review
+style_skirt_blouse,Skirt and blouse,Ete kɔ dzi,,,,needs-native-review
+style_skirt_blouse_desc,A separate blouse and skirt that can be mixed with other pieces.,Dzi kɔ ete vovovo siwo nàte ŋu atsaka kɔ bubuwo.,,,,needs-native-review
+style_smock,Smock-inspired set (fugu),Batakari ƒe awuɖoɖo (fugu),,,,needs-native-review
+style_smock_desc,A hand-woven smock silhouette with a woven trim neckline.,Batakari si wolɔ̃ kɔ asi si ƒe kɔdzi wolɔ̃ nyuie.,,,,needs-native-review
+style_straight_dress,Straight dress,Awu tɔtɔ,,,,needs-native-review
+style_straight_dress_desc,A clean column silhouette with minimal seaming.,Awu si tso ɖe ɖeka si me lɔlɔ̃ geɖe mele o.,,,,needs-native-review
+tailor_delivery,Offers delivery,Ɛɖoa ɖa,,,,needs-native-review
+tailor_filter_all,All,Katã,,,,needs-native-review
+tailor_hours_demo,"Mon–Sat, 8:00–18:00 (demo)","Dzoɖa–Memleɖa, 8:00–18:00 (kpɔɖeŋu)",,,,needs-native-review
+tailor_not_verified,Not verified,Womeɖe kpe ɖe edzi o,,,,needs-native-review
+tailor_portfolio_demo,Portfolio available on request (demo listing).,Àte ŋu abia dɔwɔwɔ ƒe nɔnɔmeɖeɖewo (kpɔɖeŋu).,,,,needs-native-review
+tailor_price_budget,Budget-friendly,Aɖaŋu si le bɔbɔe,,,,needs-native-review
+tailor_price_mid,Mid-range,Dome,,,,needs-native-review
+tailor_price_premium,Premium,Premium,,,,needs-native-review
+tailor_quote_body,This shares a design brief you can send to any tailor. Ntoma does not contact tailors or take payments in this version.,Esia maa dɔwɔwɔ ƒe nyatakaka si nàte ŋu atsɔ aɖo ɖa na tɔla aɖeke. Ntoma meyɔa tɔlawo alo xɔa ga le version sia me o.,,,,needs-native-review
+tailor_quote_share,Share brief,Ma nyatakaka,,,,needs-native-review
+tailor_quote_title,Design brief,Dɔwɔwɔ ƒe nyatakaka,,,,needs-native-review
+tailor_request_quote,Request a quote (demo),Bi xɔ (kpɔɖeŋu),,,,needs-native-review
+tailor_spec_agbada,Agbada,Agbada,,,,needs-native-review
+tailor_spec_bridal,Bridal,Srɔ̃ɖeɖe ƒe awu,,,,needs-native-review
+tailor_spec_kaba,Kaba & slit,Kaba kɔ ɛɖɛ,,,,needs-native-review
+tailor_spec_kaftan,Kaftans,Kaftanwo,,,,needs-native-review
+tailor_spec_smock,Smocks,Batakari,,,,needs-native-review
+tailor_spec_suits,African suits,Afrika ƒe suitwo,,,,needs-native-review
+tailor_specialties,Specialties,Ɛƒe nunya,,,,needs-native-review
+tailor_verified,Verified,Woɖe kpe ɖe edzi,,,,needs-native-review
+tailors_demo_banner,Demo directory — sample listings only. No real businesses are contacted in this build.,Kpɔɖeŋu ƒe ŋkɔwo — kpɔɖeŋuwo ko. Yɔƒe aɖeke mele dɔwɔwɔ me kɔ dɔwɔƒe ŋutɔŋutɔ aɖeke o le version sia me.,,,,needs-native-review
+tailors_title,Tailors & designers,Tɔlawo kɔ ɖoɖowɔlawo,,,,needs-native-review
+template_action,Preview outfit templates,,,,,english-fallback
+template_disclosure,"On-device • Flat fabric layout, not a fitting. Your selected image is mirrored and repeated; folds and lighting remain in the texture.",,,,,english-fallback
+template_loading,Loading selected fabric…,,,,,english-fallback
+template_motif_scale,Texture repeats,,,,,english-fallback
+template_selected_fabric,Your selected fabric,,,,,english-fallback
+template_share,Share template,,,,,english-fallback
+template_share_text,Ntoma Studio — flat outfit template with selected fabric. Not a fit prediction or photoreal try-on.,,,,,english-fallback
+template_title,Outfit templates,,,,,english-fallback
+terms_body_1,"Ntoma helps you explore how a fabric could look as a garment. Suggestions and visualisations are ideas, not professional tailoring advice, and results depend on your fabric, measurements and seamstress.","Ntoma kpena ɖe ŋuwò nàkpɔ ale si avɔ ate ŋu adze le awu me. Susuwɔ kɔ nɔnɔmeɖeɖewo nye susu, menye tɔla ƒe aɖaŋuɖoɖo o, eye kpɔɖeŋu la tso wò avɔ, wò dzidzeme kɔ wò tɔla dzi.",,,,needs-native-review
+terms_body_2,"You keep the rights to the photos you upload. You are responsible for having permission to use any photo of another person, and for how you share generated images.","Wòe lé nɔnɔmeɖeɖe siwo nètsɔ vɛ la ƒe gomenɔamesi. Wòe wòle be wòakpɔ mɔɖeɖe be yeazã ame bubu ƒe nɔnɔmeɖeɖe, eye wòe kpɔa ale si nàma nɔnɔmeɖeɖe siwo wowɔ la dzi.",,,,needs-native-review
+terms_body_3,"Generated images are illustrative. Do not present them as a finished garment, a guarantee of fit, or a real photograph of an existing product.","Nɔnɔmeɖeɖe siwo wowɔ la nye nufiafia. Mègatsɔ wo afia abe awu si wowu enu, alo kakaɖedzi be ewɔ ɖeka kɔ ŋutilã, alo nɔnɔmeɖeɖe ŋutɔŋutɔ o.",,,,needs-native-review
+terms_body_4,"The service is provided as-is during beta. Premium features in this build are not connected to billing, and no payment is collected.","Beta ƒe ɣeyiɣi mee dɔwɔƒe la le. Premium ƒe dɔwɔwɔ le version sia me nyaa akɔntabubu ŋu o, eye womexɔa ga aɖeke o.",,,,needs-native-review
+terms_body_5,Contact support to report a problem or to request removal of your data.,Bia kpekpeɖeŋu be nàgblɔ kuxi alo nàbia wò nyatakaka ɖeɖeɖa.,,,,needs-native-review
+terms_title,Terms of service,Sedede kɔ ɖoɖowo,,,,needs-native-review
+texture_embroidered,Embroidered,Ŋutɔɖoɖo,,,,needs-native-review
+texture_pile,Pile,Fu,,,,needs-native-review
+texture_quilted,Quilted,Quilt,,,,needs-native-review
+texture_sheer,Sheer,Henhene,,,,needs-native-review
+texture_slub,Slubby,Togbɛvi suewo,,,,needs-native-review
+texture_smooth,Smooth,Fafa,,,,needs-native-review
+texture_soft,Soft drape,Zɔzɔ le bɔbɔe,,,,needs-native-review
+texture_stiff,Stiff / structured,Sesẽ,,,,needs-native-review
+texture_woven,Firm woven,Lɔlɔ̃ sesẽ,,,,needs-native-review
+time_days_ago,%1$d d ago,Ŋkeke %1$d si va yi,,,,needs-native-review
+time_hours_ago,%1$d h ago,Gaƒoƒo %1$d si va yi,,,,needs-native-review
+time_just_now,Just now,Ɖeɖeɖi sia,,,,needs-native-review
+time_minutes_ago,%1$d min ago,Aɖabaƒoƒo %1$d si va yi,,,,needs-native-review
+tool_collections,Collections,Nuƒoƒuwo,,,,needs-native-review
+tool_color_ideas,Colour ideas,Amadede ƒe susuwo,,,,needs-native-review
+tool_tailors,Tailors,Tɔlawo,,,,needs-native-review
+tool_wardrobe,Wardrobe,Nye awuwo,,,,needs-native-review
+tooltip_create,Start here by photographing your fabric. You can also pick an existing photo.,Dze egɔme le afi sia: ɖe wò avɔ ƒe nɔnɔmeɖeɖe. Àte ŋu atia nɔnɔmeɖeɖe xoxo hã.,,,,needs-native-review
+tooltip_favorites,Save designs and generated looks here.,Dzra ɖoɖowo kɔ nɔnɔmeɖeɖe siwowɔ la ɖe afii.,,,,needs-native-review
+tooltip_tryon,Use a clear photo for the best visualisation.,Zã nɔnɔmeɖeɖe nyui nàkpɔ kpɔɖeŋu nyui.,,,,needs-native-review
+tryon_demo_notice,Demo visualisation,Kpɔɖeŋu nɔnɔmeɖeɖe,,,,needs-native-review
+tryon_demo_notice_body,"This flat placement preview uses your selected fabric pixels on your device. It does not predict fit or recreate realistic drape. Optional cloud photoreal try-on is planned, not available in this build.",,,,,english-fallback
+tryon_design_change,Change design,Trɔ ɖoɖo,,,,needs-native-review
+tryon_design_current,Current design,Ɖoɖo si le eme,,,,needs-native-review
+tryon_fabric_change,Change fabric,Trɔ avɔ,,,,needs-native-review
+tryon_fabric_current,Fabric,Avɔ,,,,needs-native-review
+tryon_gender_auto,Auto detect,Ɖokuiwò,,,,needs-native-review
+tryon_gender_man,Man,Ŋutsu,,,,needs-native-review
+tryon_gender_woman,Woman,Nyɔnu,,,,needs-native-review
+tryon_needs_connection,Try-on needs an internet connection,Dodokpɔ hiã internet,,,,needs-native-review
+tryon_photo_camera,Take a photo,Ɖe nɔnɔmeɖeɖe,,,,needs-native-review
+tryon_photo_gallery,Choose photo,Tia nɔnɔmeɖeɖe,,,,needs-native-review
+tryon_photo_guidance,Use a clear full-body or upper-body photo with good lighting. Stand straight and avoid busy backgrounds.,Zã ŋutilã blibo alo ɖe dzi nɔnɔmeɖeɖe si me kɛkɛ le. Tso ɖe ɖeka nàƒo asa na nu geɖe le megbe.,,,,needs-native-review
+tryon_photo_guidance_title,For the best result,Nu si nana kpɔɖeŋu nyuitɔ,,,,needs-native-review
+tryon_photo_replace,Replace photo,Trɔ nɔnɔmeɖeɖe,,,,needs-native-review
+tryon_quota_exhausted,You have used this month\'s free photo previews.,,,,,english-fallback
+tryon_quota_note,%1$d of %2$d free photo previews left this month,,,,,english-fallback
+tryon_rewarded_granted,Nice — 1 extra photo preview added.,,,,,english-fallback
+tryon_rewarded_offer,Watch a short ad to get 1 additional photo preview,,,,,english-fallback
+tryon_start,Apply fabric,Zã avɔ la,,,,needs-native-review
+tryon_state_error,We could not create that look,Míete ŋu wɔ nɔnɔmeɖeɖe ma o,,,,needs-native-review
+tryon_state_finishing,Finishing touches…,Ɖoɖo ƒe nuwuwu…,,,,needs-native-review
+tryon_state_generating,Applying your fabric…,,,,,english-fallback
+tryon_state_idle,Ready when you are,Emɔŋ wò,,,,needs-native-review
+tryon_state_processing,Preparing your fabric…,Emɔŋ le wò avɔ dzram ɖo…,,,,needs-native-review
+tryon_state_success,Your preview is ready,,,,,english-fallback
+tryon_state_uploading,Reading your photo…,,,,,english-fallback
+tryon_step_apply,Apply fabric,Zã avɔ la,,,,needs-native-review
+tryon_step_design,Choose design,Tia ɖoɖo,,,,needs-native-review
+tryon_step_person,Who is wearing it?,Ame kae le ewom?,,,,needs-native-review
+tryon_step_photo,Add a photo,Tsɔ nɔnɔmeɖeɖe kpe ɖe eŋu,,,,needs-native-review
+tryon_title,Fabric preview,,,,,english-fallback
+wardrobe_add,Add clothing item,Tsɔ awu kpe ɖe eŋu,,,,needs-native-review
+wardrobe_add_photo,Add a photo,Tsɔ nɔnɔmeɖeɖe kpe ɖe eŋu,,,,needs-native-review
+wardrobe_cat_accessory,Accessory,Nu kpeɖeŋu,,,,needs-native-review
+wardrobe_cat_bag,Bag,Akotoku,,,,needs-native-review
+wardrobe_cat_bottom,Bottom,Anyi awu,,,,needs-native-review
+wardrobe_cat_dress,Dress,Awu blibo,,,,needs-native-review
+wardrobe_cat_shoes,Shoes,Afɔkpa,,,,needs-native-review
+wardrobe_cat_top,Top,Dzi awu,,,,needs-native-review
+wardrobe_change_photo,Change photo,Trɔ nɔnɔmeɖeɖe,,,,needs-native-review
+wardrobe_empty_body,"Photograph clothing, shoes and accessories you already own to build your wardrobe.","Ɖe awu, afɔkpa kɔ nu kpeɖeŋu siwo le asiwò xoxo ƒe nɔnɔmeɖeɖe nàwɔ wò awuwo ƒe nuƒoƒu.",,,,needs-native-review
+wardrobe_empty_title,Your wardrobe is empty,Wò awuwo le ƒuƒu,,,,needs-native-review
+wardrobe_name_hint,Item name,Nu ƒe ŋkɔ,,,,needs-native-review
+wardrobe_notes_hint,Notes (optional),Nya ŋɔŋlɔ (ne èdi),,,,needs-native-review
+wardrobe_remove_bg,Remove background,Ɖe megbe ɖa,,,,needs-native-review
+wardrobe_remove_bg_note,"Works best on plain, even backgrounds",Enyona nyuie ne megbe le dza,,,,needs-native-review
+wardrobe_tab_items,Items,Nuwo,,,,needs-native-review
+wardrobe_tab_outfits,Outfits,Awuɖoɖowo,,,,needs-native-review
+wardrobe_title,My wardrobe,Nye Awuwo,,,,needs-native-review
+why_colors_muted,The calm palette keeps this design easy to wear daily.,Amadede fafawo na ɖoɖo sia nɔna bɔbɔe na gbesiagbe.,,,,needs-native-review
+why_colors_rich,"Rich, saturated colours carry the occasion this design is made for.",Amadede sesẽwo tsɔa ŋkekenyui si woɖo ɖoɖo sia ɖi la vɛ.,,,,needs-native-review
+why_gender,Cut for %1$s.,Woɖee na %1$s.,,,,needs-native-review
+why_occasion,A dependable choice for %1$s.,Tiatia nyui na %1$s.,,,,needs-native-review
+why_pattern_flowing,The flowing print follows the movement of this silhouette.,Nutata si ƒe zɔzɔ dze edzi la dze awuɖoɖo sia ƒe zɔzɔ yome.,,,,needs-native-review
+why_pattern_structured,"Bold, structured motifs hold their shape beautifully in this cut.",Nutata sesẽwo tsia wo ɖokui nyuie le ɖoɖo sia me.,,,,needs-native-review
+why_scale_large,"Large motifs need generous panels, which this design gives them.","Nutata gãwo hiã akpa gãwo, eye ɖoɖo sia na mɔnukpɔkpɔ ma wo.",,,,needs-native-review
+why_scale_small,"The small, all-over repeat reads well across a fitted shape.",Nutata sue siwo le edzi yim la dze nyuie le awu si woɖe ɖe ŋutilã nu la me.,,,,needs-native-review
+why_texture_heavy,"A firm, woven hand suits this tailored style.",Avɔ sesẽ si wolɔ̃ nyuie la sɔna awuɖoɖo sia.,,,,needs-native-review
+why_texture_light,The light drape of this cloth flatters this flowing cut.,Avɔ ƒe zɔzɔ le bɔbɔe la nya kpɔna le ɖoɖo sia me.,,,,needs-native-review
+why_tradition,A contemporary take on a Ghanaian classic.,Ghana ƒe awu xoxo ƒe ɖoɖo yeye.,,,,needs-native-review

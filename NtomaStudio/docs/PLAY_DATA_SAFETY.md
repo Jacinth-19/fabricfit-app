@@ -7,19 +7,17 @@ Play Console requires an **Android App Bundle (.aab)**, not an APK:
 ./gradlew :app:bundleRelease   # -> app/build/outputs/bundle/release/app-release.aab
 ```
 
-The release bundle is signed with `app/demo-release.keystore` (storepass/keypass `ntomademo`).
-**Before uploading:**
-1. Create a real upload key (`keytool -genkeypair ...`) and enable **Play App Signing**.
-2. Update `signingConfigs.release` in `app/build.gradle.kts` (read passwords from
-   `local.properties`/CI secrets — never commit them).
-3. Bump `versionCode` for every upload.
+The production release requires a separately supplied upload keystore and verified certificate.
+The public demo key has been removed and its certificate is rejected. See
+[PRODUCTION_RELEASE.md](PRODUCTION_RELEASE.md) for the protected manual workflow and owner-only
+secret configuration. No production-signed AAB has yet been built or published.
 
 ## Data safety form (as this build behaves)
 Map the form answers to actual code behaviour:
 
 | Question | Answer for this build | Why (code reference) |
 |---|---|---|
-| Photos collected/shared? | **No** | Images are read via CameraX/Photo Picker and stored only in app-private storage (`ImageProcessor.save` → `filesDir/media`). No upload path exists; analysis and try-on run on-device (`FabricAnalysisRepositoryImpl`, `DemoLookGenerator`). |
+| Photos collected/shared? | **No in default local mode; review if cloud analysis is configured** | CameraX/Photo Picker images are stored locally. Default analysis, flat templates and person-photo placement are local. An explicit user-configured cloud analysis endpoint CAN receive the selected image; shared exports are initiated by the user. Photoreal cloud try-on is not implemented. |
 | Camera permission | Yes, requested at runtime | Only for fabric/person capture, with pre-explanation (`permissions/PermissionGate.kt`). |
 | Analytics collected? | **No** | `DebugAnalyticsLogger` writes to logcat only; nothing is transmitted. |
 | Crash logs? | On-device only | `analytics/CrashReporter.kt` writes stack traces to `filesDir/crashlogs` (max 10). Not transmitted. Swap for Crashlytics before enabling collection (see below). |
