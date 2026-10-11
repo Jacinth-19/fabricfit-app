@@ -21,6 +21,19 @@ is still required. It stays in ignored `.datasets/ai4culture/`, separate from
 `raw/<FABRIC_FAMILY>`. Do not pass it to the 17-family trainer.
 See [acquisition report and next steps](../../docs/FABRIC_DATASETS.md).
 
+## Expanded family and pattern collection
+
+`collect_public.py` now runs via `.github/workflows/collect-datasets.yml` on an
+internet-connected GitHub runner. The completed expanded acquisition downloaded
+**951 byte-distinct review candidates** from Commons and Cleveland, with creator,
+rights evidence, hashes and explicit unreviewed query suggestions. Photos and full
+metadata remain in Actions artifacts, not Git or Android assets. See the
+[acquisition report](../../docs/FABRIC_DATASETS.md) for actual counts and remaining gaps.
+
+For unattended status/error observation of an **existing saved Kaggle version**, see
+[`KAGGLE_MONITORING.md`](../../docs/KAGGLE_MONITORING.md). It requires secure runner
+authentication and does not submit or automatically repair training jobs.
+
 ## Layout
 ```
 tools/dataset/

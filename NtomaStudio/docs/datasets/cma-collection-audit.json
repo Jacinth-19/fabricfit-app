@@ -1,0 +1,130 @@
+{
+  "started_at": "2026-10-11T15:29:36.783773+00:00",
+  "finished_at": "2026-10-11T15:38:20.797568+00:00",
+  "records": 415,
+  "unique_images": 415,
+  "coverage": {
+    "family": {
+      "KENTE": 0,
+      "KENTE_PRINT": 0,
+      "ADINKRA": 0,
+      "WAX": 0,
+      "ANKARA": 0,
+      "BATIK": 20,
+      "TIEDYE": 10,
+      "LACE": 44,
+      "BROCADE": 55,
+      "COTTON_PLAIN": 58,
+      "LINEN": 75,
+      "SILK": 75,
+      "CHIFFON": 0,
+      "VELVET": 56,
+      "DENIM": 0,
+      "FUGU": 0,
+      "GONJA": 0
+    },
+    "pattern": {
+      "CHECKED": 2,
+      "DOTTED": 5,
+      "FLORAL": 40,
+      "GEOMETRIC": 40,
+      "PLAID": 1,
+      "STRIPED": 45
+    }
+  },
+  "counts": {
+    "accepted_records": 415,
+    "rejected_small_image": 12
+  },
+  "request_count": 473,
+  "errors": [],
+  "near_duplicate_pairs": [
+    [
+      "cma:95941",
+      "cma:95942",
+      0
+    ],
+    [
+      "cma:164420",
+      "cma:164419",
+      0
+    ],
+    [
+      "cma:114056",
+      "cma:100784",
+      3
+    ],
+    [
+      "cma:100789",
+      "cma:100783",
+      4
+    ],
+    [
+      "cma:100789",
+      "cma:116180",
+      5
+    ],
+    [
+      "cma:100789",
+      "cma:150740",
+      4
+    ],
+    [
+      "cma:100783",
+      "cma:150740",
+      6
+    ],
+    [
+      "cma:95747",
+      "cma:95746",
+      0
+    ],
+    [
+      "cma:116180",
+      "cma:150740",
+      1
+    ],
+    [
+      "cma:149425",
+      "cma:149424",
+      4
+    ],
+    [
+      "cma:150738",
+      "cma:150739",
+      0
+    ],
+    [
+      "cma:135579",
+      "cma:150895",
+      0
+    ],
+    [
+      "cma:118469",
+      "cma:150881",
+      6
+    ],
+    [
+      "cma:124014",
+      "cma:124013",
+      2
+    ],
+    [
+      "cma:144912",
+      "cma:103850",
+      3
+    ],
+    [
+      "cma:125238",
+      "cma:150881",
+      6
+    ],
+    [
+      "cma:151375",
+      "cma:164834",
+      5
+    ]
+  ],
+  "training_approved_images": 0,
+  "warning": "Search hits are not ground-truth labels. Review rights, cloth region, family, pattern and design groups first."
+}

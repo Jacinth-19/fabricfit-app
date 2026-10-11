@@ -121,3 +121,88 @@ byte-duplicate removal, provenance manifest, checksum audit and three passing of
 import tests. **Not completed:** full source/design review, Kaggle upload, model
 training, TFLite export, app integration or accuracy measurement. No APK or UI change
 was made by this dataset work.
+
+## 4. Expanded family/pattern acquisition — 11 October 2026
+
+We have now **executed public-image collection on GitHub Actions**, where the source
+APIs are reachable. The collector searches all 17 app categories and the six pattern
+classes; this is collection for review, not automatic supervised labelling.
+
+- Initial run [38150911287](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38150911287):
+  Cleveland **176** unique candidates, Commons **71**. The Met failed with HTTP 410
+  and collected zero; it was removed from the default/next run rather than retried.
+- Expanded run [38151481568](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38151481568):
+  Cleveland completed with **415** unique candidates, including **128** matching
+  pattern searches. This is an expanded/recollected pool, **not 415 + 176 new images**.
+  Commons also completed with **536** unique candidates, including **131** matching
+  pattern searches. Both source jobs passed, with no API/download errors in the
+  expanded run. Together the source manifests contain **951 distinct original-byte
+  hashes**, before cross-source perceptual/design deduplication and label review.
+- The initial Commons run includes actual Ghanaian wax-print cloths, worn African-
+  print dresses and northern smocks. Some Kente-print/Adinkra query results were
+  mislabelled by search relevance (woven Kente, symbol graphics, stamping equipment).
+  They remain review-only. No distinct Gonja training pool has been verified.
+- Visual triage of the 128 Cleveland pattern candidates excluded **12 non-textile
+  objects or artistic depictions**, leaving **116 for full-resolution review**.
+  Several suggested labels needed correction (e.g. a dotted cloth returned by a
+  geometric query). Triage decisions are in
+  [`datasets/cma-pattern-triage.csv`](datasets/cma-pattern-triage.csv).
+
+### Expanded Ghanaian-family search coverage
+
+| Suggested category | Commons candidate search matches |
+|---|---:|
+| Kente | 51 |
+| Kente-print | 3 |
+| Adinkra | 13 |
+| Wax print | 16 |
+| Ankara | 42 |
+| Fugu/smock | 41 |
+| Gonja | 0 |
+
+These rows overlap and include false positives; they are not approved class counts.
+The three Kente-print results were white trousers and two woven museum cloths, so
+**none establishes a usable printed-Kente class**. Search coverage for all other
+categories and patterns is recorded in the two `*-collection-audit.json` files.
+
+Visual triage of the **163 unique records matching these Ghanaian-family queries**
+excluded 24 irrelevant/unsuitable records and reserved the two existing app editorial
+photos as QA holdouts. **137 remain for full-resolution/provenance review**, including
+actual cloth/dress/smock photos; some need cloth-region cropping and related-design
+or photo-session grouping. See `datasets/commons-family-triage.csv`. Proposed corrections
+are recorded separately from upstream search labels; no automatic fabric identity
+or authenticity claim was made.
+
+There are **259 pattern-search candidate records** across the two expanded sources
+(128 Cleveland + 131 Commons). They are *not* 259 new approved pattern training images.
+The review process has already found false matches and several wrong pattern labels.
+
+### Storage and reproducibility
+
+Full review images and upstream rights evidence are in the respective **Actions
+artifacts**, not the Android assets or Git tree. Initial artifacts retain seven days;
+expanded artifacts retain 30 days. Download/retain them before expiry. Run-local
+exact deduplication does not resolve cross-source or cross-run duplicates.
+
+Both expanded manifests and 320px review thumbnails were retrieved to
+`.datasets/cma-expanded-review/` and `.datasets/commons-expanded-review/` for actual
+visual triage. These thumbnails are **not
+training-resolution originals**. The sandbox cannot download GitHub's artifact
+storage redirects; the original image artifacts are available through GitHub's UI.
+Small review bundles are exposed through unreferenced GitHub blobs linked in the
+check output; they are not a permanent archive and may be garbage-collected.
+
+Scripts: `tools/dataset/collect_public.py`, `collection_queries.json` and workflow
+`.github/workflows/collect-datasets.yml`. Both source jobs run independently; individual
+source/download failures are recorded. Zero downloaded candidates fails a source job.
+Rights checking uses per-image legal URLs / museum CC0 status, retains creator and
+source evidence, and never treats a code repository's licence as image clearance.
+
+See [all-category coverage and annotation policy](datasets/FAMILY_COVERAGE.md) and
+[unattended Kaggle observer setup](KAGGLE_MONITORING.md).
+
+**Current labelled starter count remains 803 AI4Culture metadata-filtered candidates.**
+New search candidates must pass source, image, label and design-group review before
+we increase that count. No training, dataset upload to Kaggle or model integration
+has occurred. This acquisition does not establish complete coverage of Ghanaian
+fabric traditions, and we will not invent missing class examples.

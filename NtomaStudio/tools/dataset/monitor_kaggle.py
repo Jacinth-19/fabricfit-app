@@ -92,6 +92,7 @@ def main(argv=None):
         ap.error(str(e))
     if not 1 <= args.minutes <= 300 or not 30 <= args.interval <= 300:
         ap.error('Use 1–300 minutes and 30–300 second polling intervals')
+    args.out = args.out.resolve()
     args.out.mkdir(parents=True, exist_ok=True)
     report = args.out / 'monitor-report.json'
     try:
@@ -100,7 +101,7 @@ def main(argv=None):
             raw = KaggleApi()
             raw.authenticate()
         api = VersionedKaggle(raw)
-    except Exception:
+    except (Exception, SystemExit):
         save(report, dict(kernel_version=args.ref, status='AUTH_OR_CONNECTION_ERROR',
                           note='Check the runner secret and network. No job submitted or cancelled.'))
         print('Kaggle authentication/connection failed. Check runner setup; no credentials are logged.')

@@ -1,0 +1,196 @@
+{
+  "started_at": "2026-10-11T15:29:38.775565+00:00",
+  "finished_at": "2026-10-11T15:45:37.230940+00:00",
+  "records": 536,
+  "unique_images": 536,
+  "coverage": {
+    "family": {
+      "KENTE": 51,
+      "KENTE_PRINT": 3,
+      "ADINKRA": 13,
+      "WAX": 16,
+      "ANKARA": 42,
+      "BATIK": 27,
+      "TIEDYE": 5,
+      "LACE": 26,
+      "BROCADE": 33,
+      "COTTON_PLAIN": 40,
+      "LINEN": 12,
+      "SILK": 20,
+      "CHIFFON": 25,
+      "VELVET": 15,
+      "DENIM": 41,
+      "FUGU": 41,
+      "GONJA": 0
+    },
+    "pattern": {
+      "CHECKED": 9,
+      "DOTTED": 26,
+      "FLORAL": 16,
+      "GEOMETRIC": 28,
+      "PLAID": 41,
+      "STRIPED": 13
+    }
+  },
+  "counts": {
+    "accepted_records": 536,
+    "rejected_rights_or_attribution": 745,
+    "rejected_small_image": 6
+  },
+  "request_count": 588,
+  "errors": [],
+  "near_duplicate_pairs": [
+    [
+      "commons:65819941",
+      "commons:65819958",
+      2
+    ],
+    [
+      "commons:29731377",
+      "commons:29731381",
+      2
+    ],
+    [
+      "commons:79273066",
+      "commons:186560281",
+      3
+    ],
+    [
+      "commons:79273066",
+      "commons:186639144",
+      6
+    ],
+    [
+      "commons:79273066",
+      "commons:187740531",
+      3
+    ],
+    [
+      "commons:29523923",
+      "commons:3719775",
+      5
+    ],
+    [
+      "commons:29523923",
+      "commons:187273996",
+      5
+    ],
+    [
+      "commons:83086107",
+      "commons:83086136",
+      5
+    ],
+    [
+      "commons:83086107",
+      "commons:3719775",
+      5
+    ],
+    [
+      "commons:83086107",
+      "commons:187273996",
+      5
+    ],
+    [
+      "commons:83086128",
+      "commons:83086136",
+      6
+    ],
+    [
+      "commons:83086136",
+      "commons:83086148",
+      6
+    ],
+    [
+      "commons:83086136",
+      "commons:3719775",
+      6
+    ],
+    [
+      "commons:83086136",
+      "commons:187273996",
+      6
+    ],
+    [
+      "commons:83086148",
+      "commons:3719775",
+      4
+    ],
+    [
+      "commons:83086148",
+      "commons:187273996",
+      4
+    ],
+    [
+      "commons:3719775",
+      "commons:187273996",
+      0
+    ],
+    [
+      "commons:6867215",
+      "commons:194382539",
+      6
+    ],
+    [
+      "commons:185860916",
+      "commons:186427797",
+      0
+    ],
+    [
+      "commons:185860916",
+      "commons:188456836",
+      1
+    ],
+    [
+      "commons:186036053",
+      "commons:187272324",
+      0
+    ],
+    [
+      "commons:186047972",
+      "commons:187035926",
+      0
+    ],
+    [
+      "commons:186427797",
+      "commons:188456836",
+      1
+    ],
+    [
+      "commons:186428404",
+      "commons:186499702",
+      2
+    ],
+    [
+      "commons:186560281",
+      "commons:186639144",
+      3
+    ],
+    [
+      "commons:186560281",
+      "commons:187740531",
+      0
+    ],
+    [
+      "commons:186639144",
+      "commons:187740531",
+      3
+    ],
+    [
+      "commons:186639144",
+      "commons:194382539",
+      5
+    ],
+    [
+      "commons:187213095",
+      "commons:194387796",
+      0
+    ],
+    [
+      "commons:194199866",
+      "commons:194307437",
+      0
+    ]
+  ],
+  "training_approved_images": 0,
+  "warning": "Search hits are not ground-truth labels. Review rights, cloth region, family, pattern and design groups first."
+}
