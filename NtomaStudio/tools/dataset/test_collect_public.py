@@ -60,6 +60,65 @@ class CollectorTests(unittest.TestCase):
                 fetch.assert_not_called()
             self.assertEqual(len(collector.rows), 0)
 
+    def test_known_ids_never_downloaded(self):
+        with tempfile.TemporaryDirectory() as temp:
+            collector = c.Collector(Path(temp)/'review', known_ids=['commons:123'])
+            with patch.object(collector, 'get') as fetch:
+                collector.add('family', 'KENTE', 'kente', {'key':'commons:123'})
+                fetch.assert_not_called()
+            report = collector.save({'family': {'KENTE':[]}}, 'test', final=False)
+            self.assertEqual(report['skipped_known_source_ids'], 1)
+            self.assertEqual(report['unique_images'], 0)
+
+    def test_commons_pagination_and_limit(self):
+        with tempfile.TemporaryDirectory() as temp:
+            collector = c.Collector(Path(temp)/'review', per_query=3)
+            payloads = [
+                {'query':{'pages':[{'pageid':1},{'pageid':2}]},
+                 'continue':{'continue':'gsroffset||','gsroffset':2}},
+                {'query':{'pages':[{'pageid':3},{'pageid':4}]}},
+            ]
+            responses = [unittest.mock.Mock() for _ in payloads]
+            for response, payload in zip(responses, payloads):
+                response.json.return_value = payload
+            with patch.object(collector, 'get', side_effect=responses) as fetch:
+                self.assertEqual([p['pageid'] for p in collector.commons_pages('cloth')], [1,2,3])
+            self.assertEqual(fetch.call_args_list[1].kwargs['params']['gsroffset'],2)
+            self.assertEqual(fetch.call_args_list[1].kwargs['params']['gsrlimit'],1)
+
+    def test_repeated_continuation_stops(self):
+        with tempfile.TemporaryDirectory() as temp:
+            collector = c.Collector(Path(temp)/'review', per_query=150)
+            response = unittest.mock.Mock()
+            response.json.return_value = {'query':{'pages':[{'pageid':1}]},
+                                          'continue':{'gsroffset':1,'continue':'x'}}
+            with patch.object(collector, 'get', return_value=response) as fetch:
+                self.assertEqual(len(list(collector.commons_pages('cloth'))), 2)
+                self.assertEqual(fetch.call_count, 2)
+
+    def test_cma_pagination_textile_department(self):
+        with tempfile.TemporaryDirectory() as temp:
+            collector = c.Collector(Path(temp)/'review', per_query=60)
+            first, second = unittest.mock.Mock(), unittest.mock.Mock()
+            first.json.return_value = {'data':[{'id':x} for x in range(50)]}
+            second.json.return_value = {'data':[{'id':50}]}
+            with patch.object(collector, 'get', side_effect=[first,second]) as fetch:
+                self.assertEqual(len(list(collector.cma_rows('floral'))),51)
+            self.assertEqual(fetch.call_args_list[1].kwargs['params']['skip'],50)
+            self.assertEqual(fetch.call_args_list[1].kwargs['params']['department'],'Textiles')
+
+    def test_wall_limit_preserves_report(self):
+        with tempfile.TemporaryDirectory() as temp:
+            collector = c.Collector(Path(temp)/'review')
+            collector.deadline = 0
+            with patch.object(collector.session, 'get') as fetch:
+                with self.assertRaises(c.CollectionLimit):
+                    collector.get(c.COMMONS)
+                fetch.assert_not_called()
+            report = collector.save({'family': {'KENTE':[]}}, 'test', final=False)
+            self.assertEqual(report['stop_reason'], 'wall_time_limit')
+            self.assertTrue((collector.root/'manifest.jsonl').exists())
+
 
 if __name__ == '__main__':
     unittest.main()

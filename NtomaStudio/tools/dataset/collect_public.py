@@ -53,8 +53,12 @@ def rights_id(url):
     return None
 
 
+class CollectionLimit(RuntimeError):
+    """Intentional wall-time/download cap; persist partial progress."""
+
+
 class Collector:
-    def __init__(self, root, per_query=12):
+    def __init__(self, root, per_query=12, known_ids=(), max_new=1000, minutes=30, max_per_label=1000):
         self.root = root
         root.mkdir(parents=True, exist_ok=False)
         (root / "images").mkdir()
@@ -67,12 +71,24 @@ class Collector:
         self.events = []
         self.counts = Counter()
         self.request_count = 0
+        self.known_ids = set(known_ids)
+        self.seen_known = set()
+        self.max_new = max_new
+        self.max_per_label = max_per_label
+        self.deadline = time.monotonic() + minutes * 60
+        self.stop_reason = "queries_finished"
 
     def get(self, url, **kwargs):
+        if time.monotonic() >= self.deadline:
+            self.stop_reason = "wall_time_limit"
+            raise CollectionLimit(self.stop_reason)
         self.request_count += 1
         time.sleep(1.0)
         # Limit retries and duration: unavailable sources cannot hang a whole run.
         for attempt in range(3):
+            if time.monotonic() >= self.deadline:
+                self.stop_reason = "wall_time_limit"
+                raise CollectionLimit(self.stop_reason)
             try:
                 response = self.session.get(url, timeout=(10, 35), **kwargs)
                 response.raise_for_status()
@@ -93,11 +109,17 @@ class Collector:
 
     def add(self, task, label, query, item):
         key = item["key"]
+        if key in self.known_ids:
+            self.seen_known.add(key)
+            return
         match = dict(task=task, suggested_label=label, query=query)
         if key in self.rows:
             if match not in self.rows[key]["matches"]:
                 self.rows[key]["matches"].append(match)
             return
+        if len(self.hashes) >= self.max_new:
+            self.stop_reason = "new_image_limit"
+            raise CollectionLimit(self.stop_reason)
         lic = rights_id(item.get("license_url", ""))
         if not lic or not item.get("landing_page") or not item.get("creator"):
             self.counts["rejected_rights_or_attribution"] += 1
@@ -153,13 +175,29 @@ class Collector:
         except (requests.RequestException, OSError, ValueError) as error:
             self.record_error(item["source"], query, error)
 
+    def commons_pages(self, query):
+        continuation = {}
+        seen = set()
+        returned = 0
+        while returned < self.per_query:
+            payload = self.get(COMMONS, params=dict(action="query", generator="search", gsrsearch=query,
+                gsrnamespace=6, gsrlimit=min(50, self.per_query-returned), prop="imageinfo",
+                iiprop="url|extmetadata|size|mime", iiurlwidth=1024, format="json", formatversion=2,
+                **continuation)).json()
+            if payload.get("error"):
+                raise ValueError("commons_api_error")
+            pages = payload.get("query", {}).get("pages", [])
+            for page in pages[:self.per_query-returned]:
+                returned += 1
+                yield page
+            continuation = payload.get("continue", {})
+            token = json.dumps(continuation, sort_keys=True)
+            if not pages or not continuation or token in seen:
+                break
+            seen.add(token)
+
     def commons(self, query):
-        payload = self.get(COMMONS, params=dict(action="query", generator="search", gsrsearch=query,
-            gsrnamespace=6, gsrlimit=self.per_query, prop="imageinfo", iiprop="url|extmetadata|size|mime",
-            iiurlwidth=1024, format="json", formatversion=2)).json()
-        if payload.get("error"):
-            raise ValueError("commons_api_error")
-        for page in payload.get("query", {}).get("pages", []):
+        for page in self.commons_pages(query):
             info = (page.get("imageinfo") or [{}])[0]
             ext = info.get("extmetadata", {})
             field = lambda name: plain(ext.get(name, {}).get("value", ""))
@@ -170,9 +208,19 @@ class Collector:
                        landing_page=info.get("descriptionurl"), image_url=info.get("thumburl") or info.get("url"),
                        license_url=field("LicenseUrl"), upstream_metadata=info)
 
+    def cma_rows(self, query):
+        # Museum filter excludes paintings/sculpture from textile-specific search.
+        for offset in range(0, self.per_query, 50):
+            limit = min(50, self.per_query-offset)
+            payload = self.get(CMA, params={"q": query, "has_image": 1, "cc0": 1,
+                "department": "Textiles", "skip": offset, "limit": limit}).json()
+            rows = payload.get("data", [])
+            yield from rows
+            if len(rows) < limit:
+                break
+
     def cma(self, query):
-        payload = self.get(CMA, params={"q": query, "has_image": 1, "cc0": 1, "limit": self.per_query}).json()
-        for row in payload.get("data", []):
+        for row in self.cma_rows(query):
             if row.get("share_license_status") != "CC0":
                 continue
             image = row.get("images", {}).get("web", {}).get("url")
@@ -197,7 +245,7 @@ class Collector:
                        landing_page=row.get("objectURL"), image_url=row["primaryImageSmall"],
                        license_url="https://creativecommons.org/publicdomain/zero/1.0/", upstream_metadata=row)
 
-    def save(self, queries, started):
+    def save(self, queries, started, final=True):
         with (self.root / "manifest.jsonl").open("w") as out:
             for row in self.rows.values():
                 out.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -216,6 +264,8 @@ class Collector:
         summary = dict(started_at=started, finished_at=datetime.now(timezone.utc).isoformat(),
                        records=len(self.rows), unique_images=len(unique), coverage=coverage,
                        counts=dict(self.counts), request_count=self.request_count, errors=self.events,
+                       skipped_known_source_ids=len(self.seen_known), stop_reason=self.stop_reason,
+                       per_label_cap=self.max_per_label,
                        near_duplicate_pairs=near, training_approved_images=0,
                        warning="Search hits are not ground-truth labels. Review rights, cloth region, family, pattern and design groups first.")
         (self.root / "report.json").write_text(json.dumps(summary, indent=2) + "\n")
@@ -224,13 +274,15 @@ class Collector:
         for task, labels in coverage.items():
             lines += [f"| {task} | {label} | {count} |" for label, count in labels.items()]
         lines += ["", "Counts overlap across queries/labels; do not add the rows together.",
-                  f"Source/download errors: {len(self.events)}. Near-duplicate pairs to review: {len(near)}."]
+                  f"Source/download errors: {len(self.events)}. Near-duplicate pairs to review: {len(near)}.",
+                  f"Prior source IDs skipped: {len(self.seen_known)}. Stop reason: {self.stop_reason}."]
         text = "\n".join(lines) + "\n"
         (self.root / "summary.md").write_text(text)
-        if os.environ.get("GITHUB_STEP_SUMMARY"):
+        if final and os.environ.get("GITHUB_STEP_SUMMARY"):
             with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as out:
                 out.write(text)
-        print(text)
+        if final:
+            print(text)
         return summary
 
 
@@ -240,27 +292,51 @@ def main():
     ap.add_argument("--per-query", type=int, default=10)
     ap.add_argument("--queries-per-label", type=int, default=2)
     ap.add_argument("--sources", default="commons,cma")
+    ap.add_argument("--queries", type=Path, default=HERE / "collection_queries.json")
+    ap.add_argument("--known-ids", type=Path, help="Prior source IDs; do not download them again")
+    ap.add_argument("--max-new", type=int, default=1000)
+    ap.add_argument("--minutes", type=int, default=30)
+    ap.add_argument("--task", choices=("family", "pattern"))
+    ap.add_argument("--max-per-label", type=int, default=1000)
     args = ap.parse_args()
-    if not 1 <= args.per_query <= 50 or not 1 <= args.queries_per_label <= 3:
-        ap.error("Use 1–50 hits per query and 1–3 queries per label")
+    if not 1 <= args.per_query <= 250 or not 1 <= args.queries_per_label <= 4:
+        ap.error("Use 1–250 hits per query and 1–4 queries per label")
+    if not 1 <= args.max_new <= 2000 or not 1 <= args.minutes <= 60:
+        ap.error("Use 1–2000 new images and 1–60 minutes")
     sources = args.sources.split(",")
     if set(sources) - {"commons", "cma", "met"}:
         ap.error("Unknown source")
-    queries = json.loads((HERE / "collection_queries.json").read_text())
-    collector = Collector(args.out, args.per_query)
+    if not 1 <= args.max_per_label <= 2000:
+        ap.error("Use 1–2000 images per suggested label")
+    queries = json.loads(args.queries.read_text())
+    if args.task:
+        queries = {args.task: queries[args.task]}
+    known_ids = json.loads(args.known_ids.read_text()) if args.known_ids else []
+    collector = Collector(args.out, args.per_query, known_ids, args.max_new, args.minutes, args.max_per_label)
     started = datetime.now(timezone.utc).isoformat()
     try:
-        for task, labels in queries.items():
-            for label, terms in labels.items():
-                for query in terms[:args.queries_per_label]:
+        # Breadth-first terms: don't exhaust four popular queries for one class
+        # before even attempting the rare Ghanaian categories.
+        for term_index in range(args.queries_per_label):
+            for task, labels in queries.items():
+                for label, terms in labels.items():
+                    if term_index >= len(terms):
+                        continue
+                    query = terms[term_index]
                     for source in sources:
                         try:
                             for item in getattr(collector, source)(query):
+                                matched = {row["path"] for row in collector.rows.values()
+                                    if any(m["task"] == task and m["suggested_label"] == label for m in row["matches"])}
+                                if len(matched) >= args.max_per_label:
+                                    break
                                 collector.add(task, label, query, item)
                         except (requests.RequestException, ValueError, KeyError) as error:
                             collector.record_error(source, query, error)
-                print(f"Collected suggestions for {task}/{label}; records={len(collector.rows)}", flush=True)
-                collector.save(queries, started)
+                    print(f"Collected suggestions for {task}/{label}; records={len(collector.rows)}", flush=True)
+                    collector.save(queries, started, final=False)
+    except CollectionLimit:
+        pass
     finally:
         summary = collector.save(queries, started)
     # Zero records is a failed acquisition, not a silent success.

@@ -1,0 +1,144 @@
+{
+  "pattern": {
+    "DOTTED": [
+      "incategory:\"Polka dot dresses\"",
+      "incategory:\"Red and white polka dot dresses\"",
+      "polka dot clothing",
+      "dotted textile"
+    ],
+    "CHECKED": [
+      "checked dress",
+      "checkered clothing",
+      "checked textile",
+      "checkered fabric"
+    ],
+    "PLAID": [
+      "tartan dress",
+      "plaid skirt",
+      "tartan textile",
+      "plaid clothing"
+    ],
+    "STRIPED": [
+      "striped dress",
+      "striped clothing",
+      "striped textile",
+      "striped fabric"
+    ],
+    "GEOMETRIC": [
+      "geometric print dress",
+      "geometric textile",
+      "geometric printed fabric",
+      "geometric pattern clothing"
+    ],
+    "FLORAL": [
+      "floral print dress",
+      "floral clothing",
+      "floral textile",
+      "floral printed fabric"
+    ]
+  },
+  "family": {
+    "GONJA": [
+      "Gonja cloth",
+      "Gonja smock",
+      "Daboya cloth",
+      "Gonja textile"
+    ],
+    "KENTE_PRINT": [
+      "kente printed fabric",
+      "kente print cloth",
+      "printed kente dress",
+      "kente imitation cloth"
+    ],
+    "ADINKRA": [
+      "adinkra cloth -alphabet -characters -symbols -stamp -ink",
+      "adinkra textile -canvas",
+      "adinkra clothing Ghana",
+      "adinkra fabric"
+    ],
+    "KENTE": [
+      "incategory:\"Kente cloth\"",
+      "Kente cloth Ghana",
+      "kente dress",
+      "kente woven textile"
+    ],
+    "FUGU": [
+      "incategory:\"Ghanaian smocks\"",
+      "batakari cloth",
+      "Ghana smock dress",
+      "fugu Ghana clothing"
+    ],
+    "WAX": [
+      "African wax print cloth",
+      "Ghana wax print fabric",
+      "wax print dress",
+      "African wax textile"
+    ],
+    "ANKARA": [
+      "ankara fabric",
+      "African print dress",
+      "African print clothing",
+      "ankara dress"
+    ],
+    "BATIK": [
+      "Ghana batik cloth",
+      "batik textile",
+      "batik dress",
+      "batik cloth"
+    ],
+    "TIEDYE": [
+      "Ghana tie dye cloth",
+      "tie dyed textile",
+      "tie dye dress",
+      "shibori cloth"
+    ],
+    "LACE": [
+      "lace textile",
+      "lace fabric dress",
+      "lace dress",
+      "lace collar"
+    ],
+    "BROCADE": [
+      "brocade textile",
+      "brocade fabric",
+      "brocade dress",
+      "brocade garment"
+    ],
+    "COTTON_PLAIN": [
+      "plain cotton textile",
+      "plain cotton cloth",
+      "cotton dress plain",
+      "cotton woven textile"
+    ],
+    "LINEN": [
+      "linen textile",
+      "linen cloth",
+      "linen dress",
+      "linen woven textile"
+    ],
+    "SILK": [
+      "silk textile",
+      "silk cloth",
+      "silk dress",
+      "silk woven textile"
+    ],
+    "CHIFFON": [
+      "chiffon fabric",
+      "chiffon dress",
+      "chiffon gown",
+      "chiffon garment"
+    ],
+    "VELVET": [
+      "velvet textile",
+      "velvet dress",
+      "velvet gown",
+      "velvet garment"
+    ],
+    "DENIM": [
+      "denim textile",
+      "denim jeans",
+      "denim dress",
+      "denim jacket"
+    ]
+  }
+}
