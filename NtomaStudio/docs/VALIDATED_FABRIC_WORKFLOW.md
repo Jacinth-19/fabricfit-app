@@ -64,3 +64,14 @@ Tested commit `1fb3d38`, [Actions run 38135521056](https://github.com/Jacinth-19
 - `tools/release/setup_new_app.py` automates owner-machine generation/backup/private secret setup and dispatch after new-app confirmation, refusing existing signing identities or backups.
 
 **Remaining actual blocker:** Actions secret access and environment writes both return HTTP 403 in this session. No production key, secrets or signed production AAB were created. The owner can run the one-command setup on a trusted machine or reconnect GitHub in Arena with the necessary permissions. Native review is deferred by the English-only decision, not falsely certified. Nothing was published to Play.
+
+## In-session updated-app viewer
+
+`tools/qa/serve-updated-app.py` serves a browser viewer of the actual installed-app video and seven screenshots from successful run **38135521056**, captured-files check **114460582123** (Android 33). Video trimmed to the 34-second app journey starting at 24 seconds; normal-speed interactions, no generated screens. Media is downloaded into ignored `qa-artifacts/updated-app/`, not committed.
+
+This viewer is **not a live Android emulator** and does not turn the Android app into a web app. It supports video playback and browsing real screenshots. The original synthetic dress illustration and flat/nonphotoreal previews remain explicitly labelled. The HTML, all media routes and JavaScript syntax were checked locally.
+
+```sh
+cd NtomaStudio
+python tools/qa/serve-updated-app.py --captures qa-artifacts/updated-app --port 8080
+```
