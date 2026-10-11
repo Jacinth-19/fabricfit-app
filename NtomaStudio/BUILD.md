@@ -26,4 +26,4 @@ This command **fails closed** without `NTOMA_UPLOAD_KEYSTORE`, `NTOMA_UPLOAD_STO
 
 Use the protected manual release workflow after owner configuration. See [production release instructions](docs/PRODUCTION_RELEASE.md) and [data safety notes](docs/PLAY_DATA_SAFETY.md). No production-signed bundle or Play publication is implied by a passing debug/CI build.
 
-The earlier installed fabric journey passed on commit `6ff6f1c`, Actions run [38113656244](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38113656244). SDK/signing/readiness changes require their own CI results, documented in `docs/VALIDATED_FABRIC_WORKFLOW.md`.
+The earlier installed fabric journey passed on commit `6ff6f1c`, Actions run [38113656244](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38113656244). SDK/signing/readiness changes passed on commit `f31c107`, Actions run [38133894522](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38133894522), including Android 33 and Android 36/16 KB installed tests. Details are in `docs/VALIDATED_FABRIC_WORKFLOW.md`.

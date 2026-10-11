@@ -6,10 +6,15 @@ Updated 2026-10-11. Signing automation is implemented; a real production-signed 
 
 - compileSdk/targetSdk 36; minSdk remains 24. AGP 8.10.1 / Gradle 8.11.1 / JDK 17. Kotlin and matching KSP remain 2.0.20 / 2.0.20-1.0.25: API 36 does not itself require a Kotlin upgrade.
 - Bundled-runtime dependency migrated from TensorFlow Lite 2.14 to standalone LiteRT 1.4.1 (same Interpreter API). Native ELF and APK ZIP alignment checks run in CI, with actual JNI inference on an Android 16 16 KB-page emulator.
+- CameraX upgraded to 1.4.2 after CI detected unaligned image-processing native libraries.
 - Public demo keystore removed from the current tree. Its certificate is explicitly rejected even if someone renames the file. It remains compromised/public in Git history and must never be an upload credential.
 - Release pre-build fails without credentials and an expected SHA-256 upload certificate. No demo/debug/unsigned production fallback.
 - `releaseCheck` is a separate minified, debug-signed CI variant with application ID `com.ntoma.studio.check`. Its APK/AAB are **not production upload artifacts**.
 - Manual `release.yml` creates a signed AAB and mapping file only; it never publishes to Play or uploads a keystore. Private key files are cleaned even on failure.
+
+## Verification result
+
+[Actions run 38133894522](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38133894522) passed on commit `f31c107`: builds/JVM tests, missing-signing-credential rejection, ELF/APK alignment, and all three installed tests on both Android 33 and Android 36. Android 36 captured page size: **16384 bytes**. This validates the test variants and technical fallback, not owner signing or native-language correctness.
 
 ## Required owner action (do not send passwords or keys in chat)
 

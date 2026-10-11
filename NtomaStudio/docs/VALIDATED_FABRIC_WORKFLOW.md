@@ -33,3 +33,20 @@ The assets explicitly identify the synthetic test image and flat-layout limitati
 Templates need no person photo and render the **selected image pixels**, mirrored/repeated inside a fixed silhouette. Local placement overlays also use the selected texture; neither predicts fit or reconstructs realistic drape. Local workflow does not upload images. Existing manually configured cloud **analysis** is separate and disclosed; cloud photoreal try-on is not implemented.
 
 New workflow strings in Twi/Ga/Ewe deliberately fall back to English until native-language review; localization is not complete. Original photos/fixtures from a user were not required or requested.
+
+
+## SDK, signing and localization readiness verification — 2026-10-11
+
+Tested app/tooling commit: `f31c107ca5fb11168facbb159d624faa5f688504`.
+Actions run: [38133894522](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38133894522), **success**.
+
+- `verify`: builds debug APK, instrumented test APK, R8-minified `releaseCheck` APK and AAB; JVM unit tests pass.
+- CI rejects production release pre-build when upload signing credentials are absent; no demo/unsigned production fallback.
+- All bundled ARM64/x86_64 native-library ELF LOAD segments pass 16 KB alignment; minified APK passes `zipalign -c -P 16`.
+- `app-journey (33, google_apis)`: **success**.
+- `app-journey (36, google_apis_ps16k)`: **success**; captured `device-environment.txt` confirms **16384** bytes. Captured files check `114456227539` includes PASS validation.
+- Each emulator installs and smoke-launches minified `com.ntoma.studio.check`, then runs **3 installed debug-app tests**: picker/crop/selected-pixel analysis/templates/repeat/share journey, actual LiteRT inference with non-empty predictions, and critical Twi/Ga/Ewe English fallback + two-argument quota formatting.
+- CameraX upgraded to 1.4.2 after the alignment gate detected its old image-processing JNI library. Standalone LiteRT 1.4.1 replaces TensorFlow Lite 2.14. Bundled MobileNet UINT8 outputs are masked before dequantization.
+- Six local tooling tests pass (2 localization, 4 upload-certificate verification); 15 existing Kaggle launcher tests pass locally. No remote Kaggle run occurred.
+
+**Not completed:** native-speaker approval, production upload-key installation, a real signed production AAB, Play/internal-track publishing, ARM64 physical-device validation and account-specific store requirements. `releaseCheck` artifacts are test-only and must not be uploaded as production. See [PRODUCTION_RELEASE.md](PRODUCTION_RELEASE.md) and [localization review handoff](localization/README.md).
