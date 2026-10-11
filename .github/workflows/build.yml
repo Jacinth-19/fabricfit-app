@@ -28,6 +28,8 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
       - name: Validate localization and release tooling
         run: |
           python tools/localization/check_strings.py
@@ -108,6 +110,16 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      - name: Resolve installed Android command-line tools
+        run: |
+          # Hosted runners may have a versioned directory without the 'latest' alias.
+          sdk_manager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -print -quit)
+          test -n "$sdk_manager"
+          tools_dir=$(dirname "$(dirname "$sdk_manager")")
+          if [ ! -e "$ANDROID_HOME/cmdline-tools/latest" ]; then
+            ln -s "$tools_dir" "$ANDROID_HOME/cmdline-tools/latest"
+          fi
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
       - name: Preflight system image installation with accessible diagnostics
         run: |
           mkdir -p qa-artifacts
