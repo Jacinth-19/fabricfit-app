@@ -29,6 +29,20 @@ Real photography, not generated people: the Home image shows Kente fashion at Af
 
 Both photographs are used under **CC BY-SA 4.0**, with credits and original-source links in the app. The people pictured are not presented as endorsers. [Photo sources and licences →](NtomaStudio/app/src/main/assets/editorial/CREDITS.md)
 
+## First launch: a short tour
+
+The first time you open Ntoma Studio, a five-page tour explains the app before you start:
+
+1. **Welcome to Ntoma.** What the app is for, plus the privacy note: no account is needed, and your photos stay on the device unless you ask for AI generation.
+2. **Scan or upload a fabric.** Take a photo of the material, or choose one from your gallery.
+3. **Discover designs that suit it.** The app reads colours, pattern and texture, then suggests Ghanaian and contemporary styles for women and men.
+4. **Explore outfit templates.** Your fabric is applied to flat templates, with an optional placement preview on a person photo.
+5. **Save and share your looks.** Keep favourites and share them with your tailor or friends.
+
+Swipe or tap **Next** to move through the pages. On the last page, tap **Scan my fabric** to start, or **Skip for now** to go to the app. **Skip for now** is also available on every page. To see the tour again, open Settings and choose **Show onboarding again**.
+
+The tour uses the same credited photographs as the rest of the app. It is available in English only, like the rest of this launch.
+
 ## From a photo to an outfit idea
 
 1. **Choose your starting point.** Take a photo, select one from your gallery, or try the bundled Adowa photo. You can use a fabric swatch or fabric in an existing dress.
