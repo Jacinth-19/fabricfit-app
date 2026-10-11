@@ -29,7 +29,6 @@ class ImageProcessor(private val context: Context) {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         try {
             context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
-                ?: return Outcome.Failure(AppError.InvalidImage)
         } catch (e: Exception) {
             return Outcome.Failure(AppError.InvalidImage)
         }
@@ -42,7 +41,6 @@ class ImageProcessor(private val context: Context) {
         return try {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, options) }
-            ?: return Outcome.Failure(AppError.InvalidImage)
         if (options.outWidth <= 0 || options.outHeight <= 0) return Outcome.Failure(AppError.InvalidImage)
         var sample = 1
         while (maxOf(options.outWidth, options.outHeight) / (sample * 2) >= maxEdge) sample *= 2

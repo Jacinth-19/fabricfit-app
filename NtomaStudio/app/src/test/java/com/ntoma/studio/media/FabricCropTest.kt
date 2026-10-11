@@ -12,6 +12,19 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class FabricCropTest {
+    @Test fun `picker validation and local path loading accept an actual image`() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val image = Bitmap.createBitmap(60, 90, Bitmap.Config.ARGB_8888)
+        image.eraseColor(Color.BLUE)
+        val file = java.io.File(context.cacheDir, "crop_input.png")
+        file.outputStream().use { image.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val processor = ImageProcessor(context)
+        assertTrue(processor.validate(android.net.Uri.fromFile(file)) is com.ntoma.studio.domain.model.Outcome.Success)
+        val loaded = processor.load(android.net.Uri.parse(file.absolutePath), 1600)
+        assertTrue(loaded is com.ntoma.studio.domain.model.Outcome.Success)
+        assertEquals(60, (loaded as com.ntoma.studio.domain.model.Outcome.Success).data.width)
+        file.delete()
+    }
     @Test fun `fit letterboxing maps touch to image not padding`() {
         val fit = FittedImage.inView(600, 900, 1000f, 1000f)
         assertEquals(666.6667f, fit.width, .01f)

@@ -34,7 +34,13 @@ class FabricJourneyDeviceTest {
     private val artifacts = File(context.getExternalFilesDir(null), "journey").apply { mkdirs() }
 
     private fun waitTag(tag: String) {
-        compose.waitUntil(45_000) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
+        try {
+            compose.waitUntil(45_000) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
+        } catch (e: Exception) {
+            device.dumpWindowHierarchy(File(artifacts, "failure-ui.xml"))
+            device.takeScreenshot(File(artifacts, "failure.png"))
+            throw e
+        }
     }
     private fun waitText(text: String) {
         try {
