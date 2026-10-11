@@ -37,7 +37,14 @@ class FabricJourneyDeviceTest {
         compose.waitUntil(45_000) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().isNotEmpty() }
     }
     private fun waitText(text: String) {
-        compose.waitUntil(45_000) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+        try {
+            compose.waitUntil(45_000) { compose.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty() }
+        } catch (e: Exception) {
+            compose.onRoot().printToLog("NtomaJourney")
+            device.dumpWindowHierarchy(File(artifacts, "failure-ui.xml"))
+            device.takeScreenshot(File(artifacts, "failure.png"))
+            throw e
+        }
     }
     private fun screenshot(name: String) {
         compose.waitForIdle()
@@ -63,7 +70,7 @@ class FabricJourneyDeviceTest {
             waitText(context.getString(R.string.onboarding_cta_skip))
             compose.onNodeWithText(context.getString(R.string.onboarding_cta_skip)).performClick()
             waitText(context.getString(R.string.nav_create))
-            compose.onNodeWithText(context.getString(R.string.nav_create)).performClick()
+            compose.onNodeWithContentDescription(context.getString(R.string.nav_create)).performClick()
             waitText(context.getString(R.string.create_option_gallery_title))
             screenshot("01-create")
             compose.onNodeWithText(context.getString(R.string.create_option_gallery_title)).performClick()

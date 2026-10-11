@@ -178,22 +178,16 @@ private fun StandardTab(tab: Tab, selected: Boolean, onClick: () -> Unit, modifi
 private fun CreateTab(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.offset(y = (-10).dp),
+        modifier = modifier.offset(y = (-10).dp)
+            .clickable(onClick = onClick)
+            .semantics { contentDescription = label; role = Role.Button },
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(52.dp)
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                    onClick = onClick,
-                )
-                .semantics {
-                    contentDescription = label
-                    role = Role.Button
-                },
+
         ) {
             Icon(
                 imageVector = Icons.Outlined.Add,
