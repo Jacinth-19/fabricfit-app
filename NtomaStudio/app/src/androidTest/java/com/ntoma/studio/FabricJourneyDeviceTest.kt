@@ -53,6 +53,7 @@ class FabricJourneyDeviceTest {
         }
     }
     private fun screenshot(name: String) {
+        compose.mainClock.advanceTimeBy(3000)
         compose.waitForIdle()
         // Hold real screens long enough to read in the emulator recording.
         Thread.sleep(1800)

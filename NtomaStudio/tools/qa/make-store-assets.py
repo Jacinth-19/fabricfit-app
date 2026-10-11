@@ -5,6 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 source, out = map(Path, sys.argv[1:3])
 assert (source / 'validation.txt').read_text().startswith('PASS:')
+# Early captures must show the editor, not the app splash screen.
+# The test advances Compose time before screenshots; review remains required.
 out.mkdir(parents=True, exist_ok=True)
 font_path = '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
 font = lambda size: ImageFont.truetype(font_path, size)
