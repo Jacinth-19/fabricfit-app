@@ -1,0 +1,29 @@
+{
+  "family": {
+    "KENTE": ["kente cloth", "Asante kente textile", "Ewe kente cloth"],
+    "KENTE_PRINT": ["kente printed fabric", "kente print cloth"],
+    "ADINKRA": ["adinkra cloth", "adinkra textile"],
+    "WAX": ["African wax print cloth", "Ghana wax print fabric"],
+    "ANKARA": ["ankara fabric", "African print dress"],
+    "BATIK": ["Ghana batik cloth", "batik textile"],
+    "TIEDYE": ["Ghana tie dye cloth", "tie dyed textile"],
+    "LACE": ["lace textile", "lace fabric dress"],
+    "BROCADE": ["brocade textile", "brocade fabric"],
+    "COTTON_PLAIN": ["plain cotton textile", "plain cotton cloth"],
+    "LINEN": ["linen textile", "linen cloth"],
+    "SILK": ["silk textile", "silk cloth"],
+    "CHIFFON": ["chiffon fabric", "chiffon dress"],
+    "VELVET": ["velvet textile", "velvet dress"],
+    "DENIM": ["denim textile", "denim jeans"],
+    "FUGU": ["Ghanaian smock", "batakari", "fugu Ghana clothing"],
+    "GONJA": ["Gonja cloth", "Gonja smock"]
+  },
+  "pattern": {
+    "CHECKED": ["checked textile", "checkered fabric dress"],
+    "DOTTED": ["polka dot dress", "dotted textile"],
+    "FLORAL": ["floral textile", "floral print dress"],
+    "GEOMETRIC": ["geometric textile", "geometric print dress"],
+    "PLAID": ["plaid textile", "tartan dress"],
+    "STRIPED": ["striped textile", "striped dress"]
+  }
+}
