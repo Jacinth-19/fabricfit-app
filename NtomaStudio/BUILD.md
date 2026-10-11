@@ -20,6 +20,13 @@ The Android Actions workflow builds/tests these artifacts, checks native ELF/APK
 
 English only, as approved by the owner. Twi/Ga/Ewe drafts live under `docs/localization/unreviewed/`, not in the app.
 
+## Installable test build
+
+Every successful Android workflow refresh of `verify` + the Android 33 and Android 36 device journeys publishes the debug APK to the `debug-latest` prerelease:
+https://github.com/Jacinth-19/ntoma-studio/releases/tag/debug-latest
+
+Debug-signed, package `com.ntoma.studio.debug`, not a Play artifact.
+
 ## Production signing
 
 ```sh
