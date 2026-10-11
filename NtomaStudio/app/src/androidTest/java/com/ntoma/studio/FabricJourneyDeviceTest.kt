@@ -74,7 +74,7 @@ class FabricJourneyDeviceTest {
             assertNotNull("Picker thumbnail absent: ${device.currentPackageName}", thumbnail)
             thumbnail!!.click()
             // Multi-select variants show an explicit confirmation.
-            device.findObject(By.textMatches("(?i)(add|open|select)( \\(1\\))?"))?.click()
+            device.findObject(By.text(java.util.regex.Pattern.compile("(?i)(add|open|select).*")))?.click()
             waitTag("fabric_crop_canvas")
             screenshot("02-whole-dress")
             val node = compose.onNodeWithTag("fabric_crop_canvas").fetchSemanticsNode()

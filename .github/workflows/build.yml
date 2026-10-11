@@ -84,6 +84,21 @@ jobs:
           disable-animations: true
           working-directory: NtomaStudio
           script: bash tools/qa/run-emulator-journey.sh
+      - name: Accessible emulator diagnostics
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PYDIAG'
+          import json, os
+          from pathlib import Path
+          files = list(Path('app/build/outputs/androidTest-results').rglob('*.xml'))
+          text = '\n'.join(p.read_text() for p in files)
+          log = Path('qa-artifacts/device-diagnostics.txt')
+          text += log.read_text()[-20000:] if log.exists() else 'Emulator setup failed before tests.'
+          Path('check.json').write_text(json.dumps({'name':'Emulator diagnostics', 'head_sha':os.environ['GITHUB_SHA'], 'status':'completed', 'conclusion':'failure', 'output':{'title':'App journey failure', 'summary':'Device test diagnostics', 'text':text[:60000]}}))
+          PYDIAG
+          gh api repos/${{ github.repository }}/check-runs --input check.json
       - name: Create store assets only after journey passes
         run: |
           python -m pip install Pillow==11.3.0

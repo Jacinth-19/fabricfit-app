@@ -37,15 +37,14 @@ internal fun Fabric.paletteColors(): List<Color> =
     colors.map { Color(it.argb) }.ifEmpty { FALLBACK }
 
 /**
- * Procedural swatch: renders the analysed palette using the detected pattern family, so every
- * fabric card looks like *that* fabric without bundling photos.
+ * Display the persisted selected image, not a procedural palette approximation.
  */
 @Composable
 fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
     LocalImage(uri = fabric.imageUri, contentDescription = androidx.compose.ui.res.stringResource(com.ntoma.studio.R.string.cd_fabric_image), modifier = modifier)
 }
 
-/** Flat garment illustration built from the shared geometry + the analysed palette. */
+/** Flat garment illustration using the saved fabric pixels when a fabric is selected. */
 @Composable
 fun GarmentArt(style: DressStyle, fabric: Fabric?, modifier: Modifier = Modifier) {
     if (fabric != null) {

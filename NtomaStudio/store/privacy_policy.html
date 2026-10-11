@@ -58,11 +58,13 @@ broad storage access. It does <strong>not</strong> request contacts, location, m
 call-log, accessibility or Bluetooth permissions.</p>
 
 <h2><span class="gold"></span>On-device AI</h2>
-<p>Fabric analysis and try-on previews run <strong>on your device</strong> with bundled models and are
-labelled honestly in the app (e.g. "on-device demo"). If a future version offers an optional cloud
-analysis engine, photos would be sent only to a server URL that <em>you</em> enter yourself in
-Settings, and this policy and the in-app notices would be updated to say so before that feature
-ships.</p>
+<p>Local fabric analysis, outfit templates and person-photo placement previews run on your device.
+Templates and placement previews repeat the selected image pixels in fixed outlines; they are not
+photoreal try-on or fit predictions. Fabric identification is an estimate, not a verified material label.</p>
+<p>If you explicitly enter an analysis server URL in Settings and select cloud analysis, the selected
+fabric image is sent to that endpoint. Its operator determines retention and processing; review that
+operator's policy before enabling it. No person photo is uploaded by local previews. Optional cloud
+photoreal try-on is planned but is not available in this build.</p>
 
 <h2><span class="gold"></span>Your choices &amp; deletion</h2>
 <p>Settings → Data controls → <strong>Delete my data</strong> removes the on-device database, media
