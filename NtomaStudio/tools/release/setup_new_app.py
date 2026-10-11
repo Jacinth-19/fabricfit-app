@@ -44,7 +44,7 @@ def listing(endpoint, field):
     return items
 
 
-def preflight():
+def preflight(*, configure_environment=True):
     # Test secret access BEFORE creating any key or changing environment settings.
     repo_secrets = listing("actions/secrets", "secrets")
     if any(row["name"] in SECRET_NAMES for row in repo_secrets):
@@ -68,6 +68,9 @@ def preflight():
         if not any(p["name"] == BRANCH for p in policies):
             raise RuntimeError("Production environment does not permit this session branch.")
     else:
+        if not configure_environment:
+            print("No production environment yet; full setup will create it if authorized.")
+            return
         owner = gh_json("api", "user")
         payload = {
             "reviewers": [{"type": "User", "id": owner["id"]}],
@@ -106,7 +109,7 @@ def main():
         parser.error("--backup-dir is required")
     try:
         backup = validate_backup(args.backup_dir) if args.backup_dir else None
-        preflight()
+        preflight(configure_environment=not args.preflight_only)
         if args.preflight_only:
             print("GitHub signing configuration access confirmed. No key generated.")
             return
