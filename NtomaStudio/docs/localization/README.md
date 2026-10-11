@@ -1,6 +1,8 @@
 # Native-language review handoff
 
-**Status: native-speaker review not completed.** Automated text must not be labelled a native translation. The latest unreviewed workflow drafts were removed from shipping resources; 40 strings per locale intentionally fall back to English. Existing 794 translated strings per locale are legacy text, not newly certified by this work.
+**Launch decision: English only (owner-approved 2026-10-11).** Twi/Ga/Ewe resources have been moved to `unreviewed/`, outside the Android resource tree. They are not packaged, selectable or advertised as supported Android app languages. Legacy saved language choices are normalized to English.
+
+**Status: native-speaker review deferred, not completed.** Automated text must not be labelled a native translation. The latest unreviewed workflow drafts were removed from shipping resources; all launch UI uses English. The 794 legacy strings per locale remain in archived XML, not newly certified by this work.
 
 Review all copy in `tw-review.csv`, `gaa-review.csv` and `ee-review.csv` (834 string IDs each). They contain English source, existing unverified text when present, and blank reviewer/translation/date fields. A blank translation must never be imported into resources. The CSVs are handoff files, not runtime assets.
 
@@ -19,6 +21,6 @@ python tools/localization/check_strings.py
 python -m unittest discover -s tools/localization -p 'test_*.py'
 ```
 
-Checks reject duplicate/unknown IDs and format-argument mismatches. Installed-device tests verify the critical new workflow copy and two-argument quota format resolve safely via English fallback in all three locales. These are technical checks, **not language review**.
+Checks reject duplicate/unknown IDs and format-argument mismatches. Installed-device tests verify the English-only behavior and two-argument quota format remain safe when a device or older preference selects Twi/Ga/Ewe. These are technical checks, **not language review**.
 
-`--export-review` regenerates the handoff from current resources and OVERWRITES blank review files. Do not use it on completed reviews without saving their approved records elsewhere.
+`--export-review` regenerates the handoff from current English resources and archived drafts and OVERWRITES blank review files. Do not use it on completed reviews without saving their approved records elsewhere.

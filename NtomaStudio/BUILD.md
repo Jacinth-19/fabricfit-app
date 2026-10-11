@@ -16,6 +16,10 @@ bash gradlew :app:assembleReleaseCheck :app:bundleReleaseCheck
 
 The Android Actions workflow builds/tests these artifacts, checks native ELF/APK alignment, exercises the installed debug fabric journey and LiteRT inference on Android 33 and Android 36/16 KB, and smoke-tests minified startup.
 
+## Launch language
+
+English only, as approved by the owner. Twi/Ga/Ewe drafts live under `docs/localization/unreviewed/`, not in the app.
+
 ## Production signing
 
 ```sh

@@ -1,6 +1,6 @@
 import unittest
 from collections import Counter
-from check_strings import placeholders, strings, RES, LOCALES
+from check_strings import placeholders, strings, RES, LOCALES, DRAFTS
 
 
 class StringsTest(unittest.TestCase):
@@ -13,7 +13,8 @@ class StringsTest(unittest.TestCase):
     def test_unreviewed_workflow_copy_is_not_shipped(self):
         base = strings(RES / 'values/strings.xml')
         for locale in LOCALES:
-            localized = strings(RES / f'values-{locale}/strings.xml')
+            self.assertFalse((RES / f'values-{locale}').exists())
+            localized = strings(DRAFTS / f'{locale}-strings.xml')
             for key in ('template_disclosure', 'privacy_device_body', 'edit_hint', 'tryon_quota_note'):
                 self.assertNotIn(key, localized)
                 self.assertIn(key, base)

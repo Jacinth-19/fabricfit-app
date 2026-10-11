@@ -24,9 +24,7 @@ enum class ThemeMode { LIGHT, DARK, SYSTEM }
 
 enum class LanguageOption(val tag: String, val labelRes: Int) {
     ENGLISH("en", com.ntoma.studio.R.string.settings_language_english),
-    TWI("tw", com.ntoma.studio.R.string.settings_language_twi),
-    GA("gaa", com.ntoma.studio.R.string.settings_language_ga),
-    EWE("ee", com.ntoma.studio.R.string.settings_language_ewe),
+
 }
 
 data class NotificationPreferences(

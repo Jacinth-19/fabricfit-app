@@ -373,7 +373,7 @@
     <string name="settings_language_twi">Twi</string>
     <string name="settings_language_ga">Ga</string>
     <string name="settings_language_ewe">Ewe</string>
-    <string name="settings_language_note">Twi, Ga and Ewe are in progress. Untranslated text is shown in English.</string>
+    <string name="settings_language_note">This release is available in English. Twi, Ga and Ewe will be added after native-language review.</string>
     <string name="settings_notif_processing">Processing complete</string>
     <string name="settings_notif_processing_body">Tell me when a look finishes generating.</string>
     <string name="settings_notif_recommendations">New recommendations</string>

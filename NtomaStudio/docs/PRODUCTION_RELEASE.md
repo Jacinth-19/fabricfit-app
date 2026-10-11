@@ -1,6 +1,6 @@
 # Production signing and launch gates
 
-Updated 2026-10-11. Signing automation is implemented; a real production-signed AAB has **not** been created or published.
+Updated 2026-10-11. The owner confirmed this is a **brand-new Play app** and chose an **English-only launch**. No prior upload key needs replacing. Signing automation is implemented; a real production-signed AAB has **not** been created or published.
 
 ## What changed
 
@@ -15,6 +15,19 @@ Updated 2026-10-11. Signing automation is implemented; a real production-signed 
 ## Verification result
 
 [Actions run 38133894522](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38133894522) passed on commit `f31c107`: builds/JVM tests, missing-signing-credential rejection, ELF/APK alignment, and all three installed tests on both Android 33 and Android 36. Android 36 captured page size: **16384 bytes**. This validates the test variants and technical fallback, not owner signing or native-language correctness.
+
+## One-command setup on the owner’s trusted machine
+
+Use a checkout of this branch, JDK 17 and an authenticated GitHub CLI with repository environment/Actions-secret write permissions:
+
+```sh
+python3 NtomaStudio/tools/release/setup_new_app.py --new-app \
+  --backup-dir "$HOME/ntoma-upload-private" --version-code 1 --submit
+```
+
+The script first checks access and existing configuration, then creates a protected `production` environment if absent, generates a new RSA upload key, saves an owner-only recovery backup outside Git, feeds secrets to `gh` through stdin, verifies/configures the certificate identity, and dispatches the signed-AAB build. It never publishes to Play or prints private material. Approve the environment deployment in GitHub Actions. Keep an encrypted/offline copy of the backup.
+
+If access is denied, **no key is generated**. If setup fails after creating the backup, preserve and recover that same key; do not generate another. The sandbox’s preflight still returns HTTP 403; creating a production environment here is also forbidden. Reconnect GitHub in Arena with the required access, or run the command on the owner’s machine. Do not send credentials in chat.
 
 ## Required owner action (do not send passwords or keys in chat)
 
@@ -45,7 +58,7 @@ After secrets/review protection are configured, manually run **Signed production
 
 ## Launch checks still required
 
-- Actual native-speaker review for Twi, Ga, Ewe (see `localization/README.md`). English fallback is intentional, not completed localization.
+- Native review is deferred by the owner’s English-only launch decision. Twi/Ga/Ewe resources are archived outside the app and not selectable. Review is required before adding them later.
 - A production-signed release AAB from the manual workflow and Play's own bundle/native-library validation.
 - Internal-track testing on ARM64 hardware, including 16 KB devices. CI exercises x86_64 emulator inference/alignment and minified startup, not every physical device or the full production-signed app.
 - Play Console identity, app ownership, package availability, version code, policy forms, hosted privacy-policy URL, store-copy approval and any account-specific testing prerequisites.

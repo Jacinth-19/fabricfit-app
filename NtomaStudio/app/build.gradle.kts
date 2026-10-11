@@ -30,7 +30,7 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations += listOf("en", "tw", "gaa", "ee")
+        resourceConfigurations += listOf("en")
     }
 
     signingConfigs {

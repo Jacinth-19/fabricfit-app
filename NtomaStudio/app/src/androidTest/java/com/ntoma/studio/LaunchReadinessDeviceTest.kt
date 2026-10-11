@@ -32,7 +32,7 @@ class LaunchReadinessDeviceTest {
         }
     }
 
-    @Test fun unreviewedWorkflowCopyFallsBackToEnglishInEachLocale() {
+    @Test fun englishOnlyLaunchNormalizesLegacyLanguageChoices() {
         val englishConfig = android.content.res.Configuration(context.resources.configuration).apply {
             setLocale(Locale.ENGLISH)
         }
@@ -41,8 +41,14 @@ class LaunchReadinessDeviceTest {
             val config = android.content.res.Configuration(context.resources.configuration).apply {
                 setLocale(Locale.forLanguageTag(tag))
             }
-            val localized = context.createConfigurationContext(config)
-            for (id in listOf(R.string.template_disclosure, R.string.privacy_device_body, R.string.edit_hint)) {
+            val foreignContext = context.createConfigurationContext(config)
+            context.getSharedPreferences("ntoma_locale", android.content.Context.MODE_PRIVATE)
+                .edit().putString("tag", tag).commit()
+            val localized = AppLocale.wrap(foreignContext)
+            assertEquals("en", AppLocale.currentTag(context))
+            assertEquals("en", localized.resources.configuration.locales[0].language)
+            assertEquals(listOf("en"), com.ntoma.studio.domain.model.LanguageOption.values().map { it.tag })
+            for (id in listOf(R.string.template_disclosure, R.string.privacy_device_body, R.string.edit_hint, R.string.nav_create)) {
                 assertEquals("$tag must not ship unreviewed workflow copy", english.getString(id), localized.getString(id))
             }
             assertEquals(english.getString(R.string.tryon_quota_note, 3, 5), localized.getString(R.string.tryon_quota_note, 3, 5))
