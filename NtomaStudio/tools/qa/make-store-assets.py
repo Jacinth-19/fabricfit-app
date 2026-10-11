@@ -56,7 +56,7 @@ icon = Image.open(Path(__file__).resolve().parents[2] / 'store/play_icon_512.png
 icon.resize((512, 512), Image.Resampling.LANCZOS).save(out / 'play-icon-512.png')
 (out / 'README.md').write_text('''# Validated app marketing draft
 
-Screenshots are real emulator captures framed with factual captions. The input dress is an original synthetic test illustration, not a real camera photograph. The app uses selected pixels in flat templates. These assets do not claim photoreal try-on or verified fabric recognition.
+Screenshots are real emulator captures framed with factual captions. The input is the real Adowa Kente photograph by Bright Kwame Ayisi (Kwameghana), licensed CC BY-SA 4.0. The app uses selected pixels in flat templates. These assets do not claim photoreal try-on or verified fabric recognition.
 
 Sizes: screenshots 1080×1920; feature graphic 1024×500; icon 512×512. Review copy, localization, target SDK/Play requirements, production signing and privacy policy before publication. The APK is debug-signed, not a Play submission.
 

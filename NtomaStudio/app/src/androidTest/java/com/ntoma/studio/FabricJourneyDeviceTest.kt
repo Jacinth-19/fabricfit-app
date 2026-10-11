@@ -63,7 +63,11 @@ class FabricJourneyDeviceTest {
     @Test fun selectedDressFabricFlowsToRealTextureTemplates() {
         val container = AppContainer.get(context)
         runBlocking { container.tooltips.markSeen(TooltipStore.CREATE) }
-        val fixture = context.assets.open("editorial/adowa-kente.jpg").use { BitmapFactory.decodeStream(it) }!!
+        val original = context.assets.open("editorial/adowa-kente.jpg").use { BitmapFactory.decodeStream(it) }!!
+        // Keep the real photograph under the editor's sampling threshold; compare crop
+        // dimensions against exactly the pixels inserted into MediaStore.
+        val fixture = Bitmap.createScaledBitmap(original, 600, (600f * original.height / original.width).toInt(), true)
+        original.recycle()
         val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "ntoma_test_dress.png")
             put(MediaStore.Images.Media.MIME_TYPE, "image/png")
