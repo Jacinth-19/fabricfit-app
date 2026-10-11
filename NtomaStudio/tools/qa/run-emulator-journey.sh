@@ -7,8 +7,9 @@ adb shell settings put system screen_off_timeout 600000
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
-adb shell cmd statusbar expand-notifications
-adb shell cmd statusbar collapse
+adb shell input keyevent KEYCODE_WAKEUP
+adb shell wm dismiss-keyguard
+adb shell input keyevent KEYCODE_HOME
 # Reuse the APKs already compiled and tested by the verify job.
 app_apk=$(find ci-build -name app-debug.apk -print -quit)
 test_apk=$(find ci-build -name '*androidTest.apk' -print -quit)

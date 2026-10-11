@@ -67,6 +67,7 @@ class FabricJourneyDeviceTest {
         context.contentResolver.update(uri, ContentValues().apply { put(MediaStore.Images.Media.IS_PENDING, 0) }, null, null)
         ActivityScenario.launch(MainActivity::class.java).use {
             Thread.sleep(2800)
+
             waitText(context.getString(R.string.onboarding_cta_skip))
             compose.onNodeWithText(context.getString(R.string.onboarding_cta_skip)).performClick()
             waitText(context.getString(R.string.nav_create))
