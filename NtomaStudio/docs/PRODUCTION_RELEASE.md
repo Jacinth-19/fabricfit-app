@@ -29,6 +29,10 @@ The script first checks access and existing configuration, then creates a protec
 
 If access is denied, **no key is generated**. If setup fails after creating the backup, preserve and recover that same key; do not generate another. The sandbox’s preflight still returns HTTP 403; creating a production environment here is also forbidden. Reconnect GitHub in Arena with the required access, or run the command on the owner’s machine. Do not send credentials in chat.
 
+## Latest English-only verification
+
+[Actions run 38135521056](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38135521056) passed on commit `1fb3d38`: English-only app packaging/legacy locale normalization, builds, unit tests, alignment, model inference and full installed journey on Android 33 and Android 36/16 KB. The setup script is tested with a temporary key and private backup permissions in Actions; no production key was generated.
+
 ## Required owner action (do not send passwords or keys in chat)
 
 This session's GitHub integration returned HTTP 403 on Actions secret access. It cannot inspect/create/replace signing secrets. Configure these privately in GitHub's **production environment** and enable required reviewers / restrict allowed deployment branches to `arena/5b96a1cd-ntoma-studio`.

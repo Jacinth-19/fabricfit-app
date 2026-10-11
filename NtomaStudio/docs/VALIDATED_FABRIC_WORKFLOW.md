@@ -50,3 +50,17 @@ Actions run: [38133894522](https://github.com/Jacinth-19/ntoma-studio/actions/ru
 - Six local tooling tests pass (2 localization, 4 upload-certificate verification); 15 existing Kaggle launcher tests pass locally. No remote Kaggle run occurred.
 
 **Not completed:** native-speaker approval, production upload-key installation, a real signed production AAB, Play/internal-track publishing, ARM64 physical-device validation and account-specific store requirements. `releaseCheck` artifacts are test-only and must not be uploaded as production. See [PRODUCTION_RELEASE.md](PRODUCTION_RELEASE.md) and [localization review handoff](localization/README.md).
+
+
+## English-only launch validation — owner decision 2026-10-11
+
+The owner confirmed a brand-new Play app and chose English only rather than waiting for native review.
+Tested commit `1fb3d38`, [Actions run 38135521056](https://github.com/Jacinth-19/ntoma-studio/actions/runs/38135521056): **success**.
+
+- Twi/Ga/Ewe XML is archived under `docs/localization/unreviewed/`, not packaged as app resources. English is the sole language enum, resource filter and Android locale-config entry.
+- Installed device tests normalize legacy saved Twi/Ga/Ewe preferences and foreign device locale contexts to English, including indexed quota formatting.
+- Builds/unit tests/alignment/signing fail-closed checks pass; the three installed tests pass on Android 33 and Android 36/16 KB, including model inference and the entire fabric selection/template/share workflow. Minified test variant startup passes.
+- 2 localization + 10 signing/setup tooling tests pass in Actions, including a temporary keytool-generated key with certificate verification and owner-only backup permissions. The temporary test key is never a production identity.
+- `tools/release/setup_new_app.py` automates owner-machine generation/backup/private secret setup and dispatch after new-app confirmation, refusing existing signing identities or backups.
+
+**Remaining actual blocker:** Actions secret access and environment writes both return HTTP 403 in this session. No production key, secrets or signed production AAB were created. The owner can run the one-command setup on a trusted machine or reconnect GitHub in Arena with the necessary permissions. Native review is deferred by the English-only decision, not falsely certified. Nothing was published to Play.
