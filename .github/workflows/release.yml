@@ -30,7 +30,6 @@ jobs:
       run:
         working-directory: NtomaStudio
     env:
-      NTOMA_UPLOAD_KEYSTORE: ${{ runner.temp }}/ntoma-upload.keystore
       NTOMA_UPLOAD_STORE_PASSWORD: ${{ secrets.NTOMA_UPLOAD_STORE_PASSWORD }}
       NTOMA_UPLOAD_KEY_ALIAS: ${{ secrets.NTOMA_UPLOAD_KEY_ALIAS }}
       NTOMA_UPLOAD_KEY_PASSWORD: ${{ secrets.NTOMA_UPLOAD_KEY_PASSWORD }}
@@ -62,12 +61,14 @@ jobs:
               data = base64.b64decode(source, validate=True)
           except ValueError:
               raise SystemExit('Invalid keystore encoding')
-          path = Path(os.environ['NTOMA_UPLOAD_KEYSTORE'])
+          path = Path(os.environ['RUNNER_TEMP']) / 'ntoma-upload.keystore'
+          with open(os.environ['GITHUB_ENV'], 'a') as env:
+              env.write(f'NTOMA_UPLOAD_KEYSTORE={path}\n')
           fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
           with os.fdopen(fd, 'wb') as out:
               out.write(data)
           PY
-          python tools/release/verify_upload_key.py
+          NTOMA_UPLOAD_KEYSTORE="$RUNNER_TEMP/ntoma-upload.keystore" python tools/release/verify_upload_key.py
       - name: Build and check signed production bundle
         run: |
           python tools/localization/check_strings.py
@@ -78,7 +79,7 @@ jobs:
           grep -q 'jar verified' "$RUNNER_TEMP/signature-check.txt"
       - name: Remove private signing material
         if: always()
-        run: rm -f "$NTOMA_UPLOAD_KEYSTORE"
+        run: rm -f "$RUNNER_TEMP/ntoma-upload.keystore"
       - uses: actions/upload-artifact@v4
         with:
           name: production-bundle-${{ inputs.version_code }}
