@@ -9,14 +9,20 @@ adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
 adb shell cmd statusbar expand-notifications
 adb shell cmd statusbar collapse
-# Compile before recording so footage contains the app, not Gradle waiting.
-bash gradlew :app:assembleDebug :app:assembleDebugAndroidTest
+# Reuse the APKs already compiled and tested by the verify job.
+app_apk=$(find ci-build -name app-debug.apk -print -quit)
+test_apk=$(find ci-build -name '*androidTest.apk' -print -quit)
+test -n "$app_apk" && test -n "$test_apk"
+adb install -r "$app_apk"
+adb install -r "$test_apk"
 # Actual emulator capture; no simulated app screens.
 adb shell screenrecord --size 1080x1920 --bit-rate 4000000 --time-limit 180 /sdcard/ntoma-journey.mp4 &
 recording_pid=$!
 set +e
-bash gradlew :app:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.ntoma.studio.FabricJourneyDeviceTest --stacktrace 2>&1 | tee qa-artifacts/device-diagnostics.txt
+adb shell am instrument -w -r -e class com.ntoma.studio.FabricJourneyDeviceTest com.ntoma.studio.debug.test/androidx.test.runner.AndroidJUnitRunner 2>&1 | tee qa-artifacts/device-diagnostics.txt
 result=${PIPESTATUS[0]}
+# am instrument may return zero for assertion failures: require JUnit's success marker.
+if ! grep -q 'OK (1 test)' qa-artifacts/device-diagnostics.txt; then result=1; fi
 set -e
 adb shell pkill -2 screenrecord || true
 wait "$recording_pid" || true

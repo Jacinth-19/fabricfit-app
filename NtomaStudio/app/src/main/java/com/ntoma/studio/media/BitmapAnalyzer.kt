@@ -46,7 +46,7 @@ class BitmapAnalyzer(private val context: Context) {
     fun decodeSampled(uri: Uri, maxEdge: Int): Bitmap? {
         return try {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
+        context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, options) }
         if (options.outWidth <= 0 || options.outHeight <= 0) return null
         var sample = 1
         while (maxOf(options.outWidth, options.outHeight) / (sample * 2) >= maxEdge) sample *= 2
@@ -54,7 +54,7 @@ class BitmapAnalyzer(private val context: Context) {
             inSampleSize = sample
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
-        var bitmap = context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, decode) }
+        var bitmap = context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, decode) }
             ?: return null
         val rotation = readExifRotation(uri)
         if (rotation != 0) {
@@ -72,7 +72,7 @@ class BitmapAnalyzer(private val context: Context) {
     }
 
     private fun readExifRotation(uri: Uri): Int = try {
-        context.contentResolver.openInputStream(uri)?.use { stream ->
+        context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { stream ->
             when (ExifInterface(stream).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> 90
                 ExifInterface.ORIENTATION_ROTATE_180 -> 180

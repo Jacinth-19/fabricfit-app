@@ -95,11 +95,12 @@ class OnDeviceMlClassifier(private val context: Context) {
 
     private fun decode(uri: Uri): Bitmap? {
         val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) } ?: return null
+        context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
+        if (opts.outWidth <= 0 || opts.outHeight <= 0) return null
         var sample = 1
         while (opts.outWidth / sample > 640 || opts.outHeight / sample > 640) sample *= 2
         val real = BitmapFactory.Options().apply { inSampleSize = sample }
-        return context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, real) }
+        return context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, real) }
     }
 
     private fun centerCropSquare(src: Bitmap): Bitmap {

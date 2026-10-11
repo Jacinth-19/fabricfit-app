@@ -24,11 +24,11 @@ class ImageProcessor(private val context: Context) {
     }
 
     fun validate(uri: Uri): Outcome<Uri> {
-        val type = context.contentResolver.getType(uri)
+        val type = context.contentResolver.getType(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)
         if (type != null && !type.startsWith("image/")) return Outcome.Failure(AppError.UnsupportedImage)
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         try {
-            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+            context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
                 ?: return Outcome.Failure(AppError.InvalidImage)
         } catch (e: Exception) {
             return Outcome.Failure(AppError.InvalidImage)
@@ -41,7 +41,7 @@ class ImageProcessor(private val context: Context) {
     fun load(uri: Uri, maxEdge: Int): Outcome<Bitmap> {
         return try {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
+        context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use { BitmapFactory.decodeStream(it, null, options) }
             ?: return Outcome.Failure(AppError.InvalidImage)
         if (options.outWidth <= 0 || options.outHeight <= 0) return Outcome.Failure(AppError.InvalidImage)
         var sample = 1
@@ -50,11 +50,11 @@ class ImageProcessor(private val context: Context) {
             inSampleSize = sample
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
-        val bitmap = context.contentResolver.openInputStream(uri)
+        val bitmap = context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)
             ?.use { BitmapFactory.decodeStream(it, null, opts) }
             ?: return Outcome.Failure(AppError.InvalidImage)
         if (bitmap.width == 0 || bitmap.height == 0) return Outcome.Failure(AppError.InvalidImage)
-        val orientation = context.contentResolver.openInputStream(uri)?.use {
+        val orientation = context.contentResolver.openInputStream(if (uri.scheme == null) Uri.fromFile(java.io.File(uri.toString())) else uri)?.use {
             androidx.exifinterface.media.ExifInterface(it).getAttributeInt(
                 androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION,
                 androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL,
