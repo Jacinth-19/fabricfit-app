@@ -10,7 +10,6 @@ Only explicitly approved, verified design groups count. Query matches do not.
 | DOTTED | 0 | 0 | 0 | 650 |
 | FLORAL | 0 | 0 | 0 | 650 |
 | GEOMETRIC | 0 | 0 | 0 | 650 |
-| PLAID | 0 | 0 | 0 | 650 |
 | STRIPED | 0 | 0 | 0 | 650 |
 
 Unknown/non-fabric test group gap: **1000**.

@@ -1,8 +1,10 @@
-# Taxonomy reconciliation proposal (DRAFT, needs owner sign-off)
+# Taxonomy reconciliation (APPROVED 2026-10-12 with recommended answers)
 
-Status: **proposal only.** No label file, Android enum, release target or audit
-threshold has been changed. Each decision below needs an explicit owner answer
-before any training export uses it.
+Status: **approved by owner 2026-10-12** (recommended answers accepted for all five
+questions). Applied in `release_targets.json` and the release_* keys of `label_schema.json`.
+The legacy `classes` list is retained because ingest, scrape and training code still read it.
+The Android enum is unchanged, as decided. Training code must read `release_visual_families`
+before any training run; this is not yet done.
 
 Sources reconciled: `tools/dataset/release_targets.json` (six pattern labels),
 `tools/dataset/label_schema.json` (17 legacy family classes), `docs/datasets/FAMILY_COVERAGE.md`,

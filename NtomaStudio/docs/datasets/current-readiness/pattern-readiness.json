@@ -86,26 +86,6 @@
         "gallery_test_design_groups": 100
       }
     },
-    "PLAID": {
-      "counts": {
-        "train_design_groups": 0,
-        "validation_design_groups": 0,
-        "test_design_groups": 0,
-        "target_domain_validation_design_groups": 0,
-        "target_domain_test_design_groups": 0,
-        "camera_test_design_groups": 0,
-        "gallery_test_design_groups": 0
-      },
-      "gaps": {
-        "train_design_groups": 300,
-        "validation_design_groups": 150,
-        "test_design_groups": 200,
-        "target_domain_validation_design_groups": 75,
-        "target_domain_test_design_groups": 200,
-        "camera_test_design_groups": 100,
-        "gallery_test_design_groups": 100
-      }
-    },
     "STRIPED": {
       "counts": {
         "train_design_groups": 0,

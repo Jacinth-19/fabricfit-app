@@ -27,5 +27,46 @@
     "sources": "market photography days (Makola, Kantamanto, Kejetia), weaver cooperatives (Bonwire kente, Tamale fugu), user-contributed photos with consent",
     "avoid": "screens, prints of photos, watermarked stock, near-duplicate burst frames",
     "honesty": "Do not infer fibre or authenticity from appearance. Resolve WAX/ANKARA aliases and overlapping families before training; KENTE_PRINT/GONJA unsupported until provenanced examples exist. Independent evaluation, not sample count, determines readiness."
+  },
+  "_note": "\"classes\" is the legacy 17-class collection and ingest list and is still read by ingest, scrape and train_finetune.py. The release taxonomy is in the release_* keys below. Training code must read release_visual_families before any training run.",
+  "pattern_labels": [
+    "CHECKED",
+    "DOTTED",
+    "FLORAL",
+    "GEOMETRIC",
+    "STRIPED"
+  ],
+  "release_visual_families": [
+    "KENTE",
+    "ADINKRA",
+    "WAX_ANKARA",
+    "BATIK",
+    "TIEDYE",
+    "LACE"
+  ],
+  "family_aliases": {
+    "WAX": "WAX_ANKARA",
+    "ANKARA": "WAX_ANKARA"
+  },
+  "candidate_visual_families_pending_examples": [
+    "FUGU",
+    "BROCADE"
+  ],
+  "unsupported_pending_provenance": [
+    "KENTE_PRINT",
+    "GONJA"
+  ],
+  "attributes_not_visual_families": [
+    "COTTON_PLAIN",
+    "LINEN",
+    "SILK",
+    "CHIFFON",
+    "VELVET",
+    "DENIM"
+  ],
+  "retired_pattern_labels": {
+    "PLAID": "merged into CHECKED",
+    "GRADIENT": "excluded",
+    "SOLID": "routed to unknown/non-fabric test set"
   }
 }

@@ -92,10 +92,12 @@ class ReadinessTests(unittest.TestCase):
         self.assertTrue(report['collection_budget_met'])
         self.assertFalse(report['release_ready'])
 
-    def test_family_taxonomy_unresolved(self):
+    def test_family_taxonomy_approved_zero_groups(self):
+        # Owner-approved six visual families (2026-10-12): budgets exist, but no reviewed groups.
         report = a.audit([], self.policy, 'family')
-        self.assertEqual(report['class_budgets'],{})
+        self.assertEqual(sorted(report['class_budgets']), sorted(self.policy['family_labels']))
         self.assertFalse(report['collection_budget_met'])
+        self.assertFalse(report['release_ready'])
 
 
 if __name__ == '__main__':
