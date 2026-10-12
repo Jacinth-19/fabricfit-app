@@ -93,8 +93,9 @@ jobs:
             NtomaStudio/app/build/test-results/testDebugUnitTest
 
   # Opt-in README screenshots: real emulator captures of the Heritage Luxe screens.
+  # Trigger by pushing a commit whose message contains [screens] (or manual dispatch).
   screenshots:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message || '', '[screens]')
     runs-on: ubuntu-latest
     timeout-minutes: 35
     defaults:
