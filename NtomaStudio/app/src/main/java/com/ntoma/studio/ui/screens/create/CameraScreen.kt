@@ -58,6 +58,10 @@ import androidx.navigation.NavHostController
 import com.ntoma.studio.R
 import com.ntoma.studio.ui.components.ErrorState
 import com.ntoma.studio.ui.navigation.Routes
+import com.ntoma.studio.ui.util.openFabricFlow
+import com.ntoma.studio.ui.util.rememberPhotoPicker
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -73,7 +77,22 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
     var failed by remember { mutableStateOf(false) }
     var capturing by remember { mutableStateOf(false) }
     val executor = remember { Executors.newSingleThreadExecutor() }
+    val scope = rememberCoroutineScope()
+    val snackbar = remember { androidx.compose.material3.SnackbarHostState() }
+    var mode by remember { mutableStateOf(0) } // 0 photo · 1 video (soon) · 2 scan
+    val picker = com.ntoma.studio.ui.util.rememberPhotoPicker { uri ->
+        context.openFabricFlow(
+            uri,
+            navigate = { nav.navigate(it) },
+            onError = { e -> scope.launch { snackbar.showSnackbar(context.getString(e.titleRes)) } },
+        )
+    }
+    val ivory = androidx.compose.ui.graphics.Color(0xFFF2F3F7)
 
+    androidx.compose.material3.Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = androidx.compose.ui.graphics.Color(0xFF101210),
+    ) {
     Column(
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
@@ -86,21 +105,28 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                 Icon(
                     Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.cd_back),
+                    tint = ivory,
                 )
             }
             Text(
                 stringResource(if (target == "person") R.string.tryon_photo_camera else R.string.camera_title),
                 style = MaterialTheme.typography.titleLarge,
+                color = ivory,
             )
             Spacer(Modifier.weight(1f))
             IconButton(onClick = { flashOn = !flashOn; imageCapture?.flashMode = if (flashOn) ImageCapture.FLASH_MODE_ON else ImageCapture.FLASH_MODE_OFF }) {
                 Icon(
                     if (flashOn) Icons.Filled.FlashOn else Icons.Filled.FlashOff,
                     contentDescription = stringResource(if (flashOn) R.string.camera_flash_on else R.string.camera_flash_off),
+                    tint = ivory,
                 )
             }
             IconButton(onClick = { backLens = !backLens }) {
-                Icon(Icons.Filled.Cameraswitch, contentDescription = stringResource(R.string.camera_switch_lens))
+                Icon(
+                    Icons.Filled.Cameraswitch,
+                    contentDescription = stringResource(R.string.camera_switch_lens),
+                    tint = ivory,
+                )
             }
         }
 
@@ -180,47 +206,92 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                         .padding(horizontal = 12.dp, vertical = 6.dp),
                 )
 
-                // Capture button
-                Box(
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 24.dp),
-                    contentAlignment = Alignment.Center,
+                // Heritage capture controls: Photo · Video · Scan + white shutter.
+                Column(
+                    modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 18.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    if (capturing) {
-                        CircularProgressIndicator(modifier = Modifier.size(72.dp))
-                    } else {
-                        Surface(
-                            onClick = {
-                                capture(
-                                    context = context,
-                                    imageCapture = imageCapture,
-                                    executor = executor,
-                                    onCapturing = { capturing = it },
-                                    onSaved = { file ->
-                                        nav.navigate(Routes.edit(Uri.fromFile(file).toString(), target))
-                                    },
-                                    onError = { capturing = false },
-                                )
-                            },
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .size(72.dp)
-                                .border(4.dp, MaterialTheme.colorScheme.onPrimary, CircleShape)
-                                .semantics { contentDescription = context.getString(R.string.camera_capture) },
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    androidx.compose.material.icons.Icons.Filled.CameraAlt,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimary,
-                                )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    ) {
+                        CameraModeTab(R.string.camera_mode_photo, active = mode == 0) { mode = 0 }
+                        CameraModeTab(R.string.camera_mode_video, active = false) {
+                            scope.launch {
+                                snackbar.showSnackbar(context.getString(R.string.camera_video_soon))
+                            }
+                        }
+                        CameraModeTab(R.string.camera_mode_scan, active = mode == 2) {
+                            mode = 2
+                            picker.launch(
+                                androidx.activity.result.PickVisualMediaRequest(
+                                    androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly,
+                                ),
+                            )
+                        }
+                    }
+                    Spacer(Modifier.height(14.dp))
+                    Box(contentAlignment = Alignment.Center) {
+                        if (capturing) {
+                            CircularProgressIndicator(modifier = Modifier.size(76.dp))
+                        } else {
+                            Surface(
+                                onClick = {
+                                    capture(
+                                        context = context,
+                                        imageCapture = imageCapture,
+                                        executor = executor,
+                                        onCapturing = { capturing = it },
+                                        onSaved = { file ->
+                                            nav.navigate(Routes.edit(Uri.fromFile(file).toString(), target))
+                                        },
+                                        onError = { capturing = false },
+                                    )
+                                },
+                                shape = CircleShape,
+                                color = androidx.compose.ui.graphics.Color.White,
+                                modifier = Modifier
+                                    .size(76.dp)
+                                    .border(
+                                        4.dp,
+                                        androidx.compose.ui.graphics.Color.White.copy(alpha = 0.45f),
+                                        CircleShape,
+                                    )
+                                    .semantics { contentDescription = context.getString(R.string.camera_capture) },
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        androidx.compose.material.icons.Icons.Filled.CameraAlt,
+                                        contentDescription = null,
+                                        tint = androidx.compose.ui.graphics.Color(0xFF252722),
+                                    )
+                                }
                             }
                         }
                     }
                 }
+                androidx.compose.material3.SnackbarHost(
+                    snackbar,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
             }
         }
     }
+    }
+}
+
+@Composable
+private fun CameraModeTab(label: Int, active: Boolean, onClick: () -> Unit) {
+    val gold = com.ntoma.studio.ui.theme.KenteGold
+    val dim = androidx.compose.ui.graphics.Color(0xFFB9C1D0)
+    Text(
+        stringResource(label),
+        style = MaterialTheme.typography.labelLarge,
+        color = if (active) gold else dim,
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 4.dp, vertical = 2.dp),
+    )
 }
 
 private fun focusAt(view: PreviewView, camera: Camera?, x: Float, y: Float) {

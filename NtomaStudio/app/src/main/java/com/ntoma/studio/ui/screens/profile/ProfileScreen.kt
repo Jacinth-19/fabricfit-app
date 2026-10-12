@@ -1,5 +1,8 @@
 package com.ntoma.studio.ui.screens.profile
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -8,16 +11,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,8 +50,16 @@ import androidx.navigation.NavHostController
 import com.ntoma.studio.R
 import com.ntoma.studio.ui.navigation.Routes
 import com.ntoma.studio.ui.navigation.appViewModel
+import com.ntoma.studio.ui.theme.DarkSurfaceContainerHigh
+import com.ntoma.studio.ui.theme.ForestGreen
+import com.ntoma.studio.ui.theme.KenteGold
 import kotlinx.coroutines.launch
 
+private val ProfileIvory = androidx.compose.ui.graphics.Color(0xFFF2F3F7)
+private val ProfileIvoryDim = androidx.compose.ui.graphics.Color(0xFFB9C1D0)
+private val ProfileCard = DarkSurfaceContainerHigh
+
+/** Heritage Luxe profile: deep forest surface, gold-ringed avatar, stats and menu list. */
 @Composable
 fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
     val vm: ProfileViewModel = appViewModel { c, ctx -> ProfileViewModel(c) }
@@ -51,80 +67,106 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
     val scope = rememberCoroutineScope()
     var renameOpen by remember { mutableStateOf(false) }
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .padding(padding)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
-    ) {
-        Spacer(Modifier.height(24.dp))
-        Text(stringResource(R.string.profile_title), style = MaterialTheme.typography.displayMedium)
-        Spacer(Modifier.height(16.dp))
+    Surface(modifier = Modifier.fillMaxSize(), color = ForestGreen) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
+        ) {
+            Spacer(Modifier.height(24.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.profile_title),
+                    style = MaterialTheme.typography.displayMedium,
+                    color = ProfileIvory,
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(onClick = { nav.navigate(Routes.SETTINGS) }) {
+                    Icon(
+                        Icons.Filled.Settings,
+                        contentDescription = stringResource(R.string.profile_row_settings),
+                        tint = ProfileIvory,
+                    )
+                }
+            }
+            Spacer(Modifier.height(16.dp))
 
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
-            Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.width(52.dp).height(52.dp),
+            // Identity
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .border(3.dp, KenteGold, CircleShape)
+                        .padding(3.dp)
+                        .background(ProfileCard, CircleShape),
                 ) {
-                    androidx.compose.foundation.layout.Box(contentAlignment = Alignment.Center) {
-                        Icon(
-                            Icons.Filled.Person,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
+                    Icon(
+                        Icons.Filled.Person,
+                        contentDescription = null,
+                        tint = KenteGold,
+                        modifier = Modifier.size(30.dp),
+                    )
                 }
                 Spacer(Modifier.width(14.dp))
                 Column(Modifier.weight(1f)) {
                     Text(
                         state.prefs.displayName.ifBlank { stringResource(R.string.profile_guest) },
                         style = MaterialTheme.typography.titleLarge,
+                        color = ProfileIvory,
                     )
                     Text(
                         stringResource(R.string.profile_guest_body),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = ProfileIvoryDim,
                     )
                 }
                 IconButton(onClick = { renameOpen = true }) {
-                    Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.profile_name_hint))
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = stringResource(R.string.profile_name_hint),
+                        tint = ProfileIvoryDim,
+                    )
                 }
             }
+
+            Spacer(Modifier.height(20.dp))
+            Row(Modifier.fillMaxWidth()) {
+                StatBlock(R.string.profile_stat_scans, state.fabricCount, Modifier.weight(1f))
+                StatBlock(R.string.profile_stat_favorites, state.favoriteCount, Modifier.weight(1f))
+                StatBlock(R.string.profile_stat_tryons, state.lookCount, Modifier.weight(1f))
+            }
+
+            Spacer(Modifier.height(24.dp))
+            ProfileRow(
+                icon = Icons.Filled.Checkroom,
+                label = R.string.profile_row_wardrobe,
+                onClick = { nav.navigate(Routes.WARDROBE) },
+            )
+            ProfileRow(
+                icon = Icons.Filled.Bookmark,
+                label = R.string.profile_menu_saved,
+                onClick = { nav.navigate(Routes.FAVORITES) },
+            )
+            ProfileRow(
+                icon = Icons.Filled.History,
+                label = R.string.profile_menu_history,
+                onClick = { nav.navigate(Routes.HISTORY) },
+            )
+            ProfileRow(
+                icon = Icons.Filled.Settings,
+                label = R.string.profile_row_settings,
+                onClick = { nav.navigate(Routes.SETTINGS) },
+            )
+            ProfileRow(
+                icon = Icons.Filled.HelpOutline,
+                label = R.string.profile_menu_help,
+                onClick = { nav.navigate(Routes.HELP) },
+            )
+            Spacer(Modifier.height(32.dp))
         }
-
-        Spacer(Modifier.height(16.dp))
-        Row(Modifier.fillMaxWidth()) {
-            StatCard(R.string.profile_stats_fabrics, state.fabricCount, Modifier.weight(1f))
-            Spacer(Modifier.width(10.dp))
-            StatCard(R.string.profile_stats_designs, state.designCount, Modifier.weight(1f))
-            Spacer(Modifier.width(10.dp))
-            StatCard(R.string.profile_stats_looks, state.lookCount, Modifier.weight(1f))
-        }
-
-        Spacer(Modifier.height(20.dp))
-        Text(stringResource(R.string.profile_section_activity), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(Modifier.height(6.dp))
-        ProfileRow(R.string.profile_row_history, onClick = { nav.navigate(Routes.HISTORY) })
-        ProfileRow(R.string.profile_row_measurements, onClick = { nav.navigate(Routes.MEASUREMENTS) })
-        ProfileRow(R.string.profile_row_wardrobe, onClick = { nav.navigate(Routes.WARDROBE) })
-        ProfileRow(R.string.profile_row_premium, onClick = { nav.navigate(Routes.PREMIUM) })
-
-        Spacer(Modifier.height(16.dp))
-        Text(stringResource(R.string.profile_section_preferences), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(Modifier.height(6.dp))
-        ProfileRow(R.string.profile_row_settings, onClick = { nav.navigate(Routes.SETTINGS) })
-        ProfileRow(R.string.profile_row_notifications, onClick = { nav.navigate(Routes.SETTINGS) })
-
-        Spacer(Modifier.height(16.dp))
-        Text(stringResource(R.string.profile_section_support), style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Spacer(Modifier.height(6.dp))
-        ProfileRow(R.string.profile_row_help, onClick = { nav.navigate(Routes.HELP) })
-        ProfileRow(R.string.profile_row_privacy, onClick = { nav.navigate(Routes.PRIVACY) })
-        ProfileRow(R.string.profile_row_about, onClick = { nav.navigate(Routes.ABOUT) })
-        Spacer(Modifier.height(32.dp))
     }
 
     if (renameOpen) {
@@ -149,31 +191,53 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
 }
 
 @Composable
-private fun StatCard(label: Int, value: Int, modifier: Modifier = Modifier) {
-    Card(
+private fun StatBlock(label: Int, value: Int, modifier: Modifier = Modifier) {
+    Column(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(Modifier.padding(14.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(value.toString(), style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
-            Text(stringResource(label), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSecondaryContainer)
-        }
+        Text(
+            value.toString(),
+            style = MaterialTheme.typography.headlineMedium,
+            color = KenteGold,
+        )
+        Text(
+            stringResource(label),
+            style = MaterialTheme.typography.labelMedium,
+            color = ProfileIvoryDim,
+        )
     }
 }
 
 @Composable
-private fun ProfileRow(label: Int, onClick: () -> Unit) {
-    Card(
+private fun ProfileRow(icon: ImageVector, label: Int, onClick: () -> Unit) {
+    Surface(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        shape = MaterialTheme.shapes.medium,
+        color = ProfileCard,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
     ) {
-        Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(label), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+        Row(
+            Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = KenteGold,
+                modifier = Modifier.size(22.dp),
+            )
+            Spacer(Modifier.width(14.dp))
+            Text(
+                stringResource(label),
+                style = MaterialTheme.typography.titleMedium,
+                color = ProfileIvory,
+                modifier = Modifier.weight(1f),
+            )
             Icon(
                 Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                tint = ProfileIvoryDim,
             )
         }
     }

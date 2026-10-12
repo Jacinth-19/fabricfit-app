@@ -139,11 +139,13 @@ private fun Color.darkenForOutline(): Color =
     Color(red * 0.55f, green * 0.55f, blue * 0.55f, alpha)
 
 @Composable
-fun BrandMark(modifier: Modifier = Modifier) {
+fun BrandMark(modifier: Modifier = Modifier, transparent: Boolean = false) {
     Canvas(modifier = modifier) {
         val w = size.width
         val h = size.height
-        drawRoundRect(Color(0xFF14110F), cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.18f))
+        if (!transparent) {
+            drawRoundRect(Color(0xFF14110F), cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.18f))
+        }
         val sheet = Path().apply {
             moveTo(w * 0.28f, h * 0.24f)
             lineTo(w * 0.61f, h * 0.24f)

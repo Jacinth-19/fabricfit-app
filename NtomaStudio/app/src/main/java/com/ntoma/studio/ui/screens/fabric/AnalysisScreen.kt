@@ -22,6 +22,9 @@ import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Verified
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -168,8 +171,19 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
     val state by vm.state.collectAsStateWithLifecycle()
     val fabric = state.fabric ?: return
     val context = LocalContext.current
+    var tab by remember { mutableStateOf(0) } // 0 Colors · 1 Pattern · 2 Style
 
     LazyColumn(contentPadding = PaddingValues(bottom = 32.dp)) {
+        item {
+            Row(
+                Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                AnalysisTab(R.string.analysis_tab_colors, tab == 0) { tab = 0 }
+                AnalysisTab(R.string.analysis_tab_pattern, tab == 1) { tab = 1 }
+                AnalysisTab(R.string.analysis_tab_style, tab == 2) { tab = 2 }
+            }
+        }
         item {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
@@ -188,11 +202,39 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
                                 fabric.name ?: context.getString(fabric.category.labelRes),
                                 style = MaterialTheme.typography.titleLarge,
                             )
-                            Text(
-                                stringResource(matchLabelRes(fabric.confidence)),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Surface(
+                                    shape = MaterialTheme.shapes.small,
+                                    color = com.ntoma.studio.ui.theme.SuccessGreen.copy(alpha = 0.14f),
+                                ) {
+                                    Row(
+                                        Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            stringResource(
+                                                R.string.analysis_match_chip,
+                                                (fabric.confidence * 100).roundToInt(),
+                                            ),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = com.ntoma.studio.ui.theme.SuccessGreen,
+                                        )
+                                        Spacer(Modifier.width(4.dp))
+                                        Icon(
+                                            Icons.Filled.Verified,
+                                            contentDescription = null,
+                                            tint = com.ntoma.studio.ui.theme.SuccessGreen,
+                                            modifier = Modifier.size(14.dp),
+                                        )
+                                    }
+                                }
+                                Spacer(Modifier.width(8.dp))
+                                Text(
+                                    stringResource(matchLabelRes(fabric.confidence)),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                         IconButton(onClick = vm::openRename) {
                             Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.analysis_rename_title))
@@ -222,61 +264,67 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
             }
         }
 
-        item { ResultSection(R.string.analysis_section_colors) }
-        item {
-            Row(
-                Modifier.padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-            ) {
-                fabric.colors.forEach { color ->
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        ColorDot(color)
-                        Text(
-                            stringResource(color.colorName.labelRes),
-                            style = MaterialTheme.typography.labelSmall,
-                        )
+        if (tab == 0) {
+            item { ResultSection(R.string.analysis_section_colors) }
+            item {
+                Row(
+                    Modifier.padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    fabric.colors.forEach { color ->
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            ColorDot(color)
+                            Text(
+                                stringResource(color.colorName.labelRes),
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        }
                     }
                 }
             }
         }
 
-        item { ResultSection(R.string.analysis_section_category) }
-        item {
-            Column(Modifier.padding(horizontal = 20.dp)) {
-                Text(context.getString(fabric.category.labelRes), style = MaterialTheme.typography.titleMedium)
+        if (tab == 2) {
+            item { ResultSection(R.string.analysis_section_category) }
+            item {
+                Column(Modifier.padding(horizontal = 20.dp)) {
+                    Text(context.getString(fabric.category.labelRes), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        context.getString(fabric.category.descriptionRes),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Spacer(Modifier.height(6.dp))
+                    Text(
+                        stringResource(R.string.analysis_confidence, (fabric.confidence * 100).roundToInt()),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
+        }
+
+        if (tab == 1) {
+            item { ResultSection(R.string.analysis_section_pattern) }
+            item {
                 Text(
-                    context.getString(fabric.category.descriptionRes),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    stringResource(fabric.pattern.labelRes),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(horizontal = 20.dp),
                 )
-                Spacer(Modifier.height(6.dp))
+            }
+
+            item { ResultSection(R.string.analysis_section_texture) }
+            item {
                 Text(
-                    stringResource(R.string.analysis_confidence, (fabric.confidence * 100).roundToInt()),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.primary,
+                    stringResource(fabric.texture.labelRes),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(horizontal = 20.dp),
                 )
             }
         }
 
-        item { ResultSection(R.string.analysis_section_pattern) }
-        item {
-            Text(
-                stringResource(fabric.pattern.labelRes),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 20.dp),
-            )
-        }
-
-        item { ResultSection(R.string.analysis_section_texture) }
-        item {
-            Text(
-                stringResource(fabric.texture.labelRes),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = 20.dp),
-            )
-        }
-
-        if (fabric.mlHints.isNotEmpty()) {
+        if (fabric.mlHints.isNotEmpty() && tab == 2) {
             item { ResultSection(R.string.analysis_ml_title) }
             item {
                 Column(Modifier.padding(horizontal = 20.dp)) {
@@ -311,7 +359,7 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
             }
         }
 
-        if (fabric.printCharacteristics.isNotEmpty()) {
+        if (fabric.printCharacteristics.isNotEmpty() && tab == 1) {
             item { ResultSection(R.string.analysis_section_print) }
             item {
                 Row(
@@ -325,7 +373,7 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
             }
         }
 
-        if (fabric.suggestedUses.isNotEmpty()) {
+        if (fabric.suggestedUses.isNotEmpty() && tab == 2) {
             item { ResultSection(R.string.analysis_section_uses) }
             item {
                 Row(
@@ -386,6 +434,34 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
             dismissButton = {
                 TextButton(onClick = vm::closeRename) { Text(stringResource(R.string.action_cancel)) }
             },
+        )
+    }
+}
+
+@Composable
+private fun AnalysisTab(label: Int, active: Boolean, onClick: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            stringResource(label),
+            style = MaterialTheme.typography.titleMedium,
+            color = if (active) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            },
+            modifier = Modifier.clickable(onClick = onClick).padding(vertical = 4.dp),
+        )
+        Spacer(
+            Modifier
+                .height(2.dp)
+                .width(48.dp)
+                .background(
+                    if (active) {
+                        com.ntoma.studio.ui.theme.KenteGold
+                    } else {
+                        androidx.compose.ui.graphics.Color.Transparent
+                    },
+                ),
         )
     }
 }
