@@ -9,6 +9,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 defaults:
   run:
     working-directory: NtomaStudio
@@ -29,14 +34,53 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Unit tests + debug build
-        run: ./gradlew :app:testDebugUnitTest :app:assembleDebug
+        run: |
+          set -o pipefail
+          ./gradlew :app:testDebugUnitTest :app:assembleDebug --stacktrace 2>&1 | tee build-output.txt
+
+      - name: Publish failure diagnostics
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### CI failure diagnostics ($(date -u +%FT%TZ))"
+            echo
+            echo "#### Failed unit tests (from JUnit XML)"
+            found=0
+            for f in $(ls app/build/test-results/testDebugUnitTest/*.xml 2>/dev/null); do
+              if grep -q '<failure' "$f"; then
+                found=1
+                echo "<details><summary>$(basename "$f")</summary>"
+                echo
+                echo '```'
+                grep -A 12 '<failure' "$f" | head -80
+                echo '```'
+                echo "</details>"
+              fi
+            done
+            if [ "$found" = "0" ]; then echo "_no JUnit failure records (failed before/after tests)_"; fi
+            echo
+            echo "#### Build log tail"
+            echo '```'
+            tail -c 24000 build-output.txt
+            echo '```'
+          } > diag.md
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            gh pr comment "${{ github.event.pull_request.number }}" \
+              --repo "$GITHUB_REPOSITORY" --body-file diag.md
+          else
+            cat diag.md
+          fi
 
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: NtomaStudio/app/build/reports/tests/testDebugUnitTest
+          path: |
+            NtomaStudio/app/build/reports/tests/testDebugUnitTest
+            NtomaStudio/app/build/test-results/testDebugUnitTest
 
   # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
   # macOS runners only (Linux GH runners lack KVM); trigger manually or tag a release.
