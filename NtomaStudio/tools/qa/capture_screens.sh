@@ -108,6 +108,8 @@ shot 02_home
 
 tap_node "Camera"        # raised centre camera tab
 sleep 4
+tap_node "Got it" || true   # dismiss first-run coach mark
+sleep 1
 shot 03_capture_fabric
 adb shell input keyevent KEYCODE_BACK
 sleep 2
@@ -118,6 +120,8 @@ shot 04_discover
 
 tap_node "Try On"
 sleep 2
+tap_node "Got it" || true   # dismiss first-run coach mark
+sleep 1
 shot 05_tryon
 
 tap_node "Profile"
