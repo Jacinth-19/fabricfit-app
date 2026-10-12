@@ -113,7 +113,9 @@ jobs:
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Debug APK
+      - name: Debug APK (with x86_64 natives for the emulator)
+        env:
+          SCREENSHOT_ABI: '1'
         run: ./gradlew :app:assembleDebug
 
       - name: Enable Linux emulator acceleration
@@ -133,7 +135,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: NtomaStudio
-          script: bash tools/qa/capture_screens.sh 2>&1 | tee capture.log
+          script: set -o pipefail; bash tools/qa/capture_screens.sh 2>&1 | tee capture.log; test -f qa-artifacts/screens/02_home.png
 
       - name: Publish capture log
         if: always()
