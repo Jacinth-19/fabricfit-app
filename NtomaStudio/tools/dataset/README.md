@@ -75,7 +75,7 @@ tools/dataset/
    Market/cooperative photography and consented contributions can complement public
    data; baseline acquisition is not blocked on owner-supplied original photos.
 2. **Augment**: `python3 tools/dataset/augment.py --per-image 10`
-3. **Train**: `python3 tools/dataset/train_finetune.py` (add `--smoke` first on a laptop
+3. **Train**: `python3 tools/dataset/train_finetune.py --smoke` first on a laptop (or `--dev-only` for a dev-only learning-curve run; the output is not for shipping)
    to prove the toolchain; a smoke model is a pipeline test, NEVER a shipped model).
 4. **Evaluate**: tune thresholds on validation only, then use a locked,
    design-disjoint test with real camera/gallery dresses, per-class metrics,

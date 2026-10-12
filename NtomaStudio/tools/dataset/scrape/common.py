@@ -349,7 +349,17 @@ class Staging:
 
 
 def load_classes() -> list[str]:
+    """Legacy 17-class collection list. Scrapers still use it to build search queries."""
     return json.loads(SCHEMA.read_text())["classes"]
+
+
+def load_release_schema() -> dict:
+    return json.loads(SCHEMA.read_text())
+
+
+def load_release_classes() -> list[str]:
+    """Owner-approved release visual families. Used by training exports."""
+    return json.loads(SCHEMA.read_text())["release_visual_families"]
 
 
 def log(msg: str) -> None:

@@ -36,6 +36,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scrape"))
 import common  # noqa: E402
+import taxonomy  # noqa: E402
 from PIL import Image, ImageOps  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent          # tools/dataset
@@ -52,24 +53,32 @@ BAR_CLAIM = 1000     # label_schema.json: enough raw/class before accuracy claim
 
 # --------------------------------------------------------------- loading
 
-def iter_pool(raw_dir: Path, scraped_dir: Path, classes: list[str]):
-    """Yield (class, path, source_name) for every candidate image."""
+def iter_pool(raw_dir: Path, scraped_dir: Path, classes: list[str], schema: dict | None = None):
+    """Yield (release_class, path, source_name) for every candidate image.
+
+    Legacy folders such as WAX and ANKARA are read as their release class (WAX_ANKARA).
+    Folders that are not release classes are never yielded.
+    """
+    schema = schema or common.load_release_schema()
+    image_exts = (".jpg", ".jpeg", ".png", ".webp")
     for cls in classes:
-        d = raw_dir / cls
-        if d.is_dir():
-            for f in sorted(d.iterdir()):
-                if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
-                    yield cls, f, "app"
+        for folder in taxonomy.source_folders(schema, cls):
+            d = raw_dir / folder
+            if d.is_dir():
+                for f in sorted(d.iterdir()):
+                    if f.is_file() and f.suffix.lower() in image_exts:
+                        yield cls, f, "app"
     if scraped_dir.is_dir():
         for src_dir in sorted(scraped_dir.iterdir()):
             if not src_dir.is_dir() or src_dir.name.startswith("_"):
                 continue
             for cls in classes:
-                d = src_dir / cls
-                if d.is_dir():
-                    for f in sorted(d.iterdir()):
-                        if f.is_file() and f.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
-                            yield cls, f, src_dir.name
+                for folder in taxonomy.source_folders(schema, cls):
+                    d = src_dir / folder
+                    if d.is_dir():
+                        for f in sorted(d.iterdir()):
+                            if f.is_file() and f.suffix.lower() in image_exts:
+                                yield cls, f, src_dir.name
 
 
 def load_credit_rows(scraped_dir: Path) -> dict:
@@ -160,7 +169,7 @@ def main() -> int:
     ap.add_argument("--force", action="store_true", help="overwrite an existing out dir")
     args = ap.parse_args()
 
-    classes = common.load_classes()
+    classes = common.load_release_classes()
     raw_dir, scraped_dir, out = Path(args.raw_dir), Path(args.scraped_dir), Path(args.out)
     if out.exists():
         if not args.force:
@@ -432,7 +441,7 @@ def write_data_card(out: Path, stats, per_split_count, warnings, args,
         "| class | found | kept | duplicates | conflicts | invalid | src groups | train | val | test |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
-    classes = common.load_classes()
+    classes = common.load_release_classes()
     for cls in classes:
         s, c = stats[cls], per_split_count[cls]
         lines.append(
