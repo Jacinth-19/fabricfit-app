@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import io
 import json
 import random
@@ -37,6 +38,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scrape"))
 import common  # noqa: E402
 import taxonomy  # noqa: E402
+import audit_readiness  # noqa: E402
+
+HERE = Path(__file__).resolve().parent
 from PIL import Image, ImageOps  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent          # tools/dataset
@@ -52,6 +56,27 @@ BAR_CLAIM = 1000     # label_schema.json: enough raw/class before accuracy claim
 
 
 # --------------------------------------------------------------- loading
+
+def build_manifest_index(rows, policy, task="family"):
+    """sha256 -> approved row for training exports. Ambiguous and OOD rows are excluded.
+
+    Raises SystemExit on duplicate hashes, since one image cannot belong to two groups.
+    """
+    usable, _held, errors = audit_readiness.usable_rows(rows, policy, task)
+    if errors:
+        raise SystemExit(f"manifest has {len(errors)} identity conflicts; fix them before exporting")
+    index: dict[str, dict] = {}
+    for row in usable:
+        if row["split"] == "ood_test":
+            continue                         # out-of-distribution rows have no class label
+        labels = row[f"reviewed_{task}"]
+        if len(labels) != 1:
+            continue                         # ambiguous or multi-label: never forced into one class
+        if row["sha256"] in index:
+            raise SystemExit(f"duplicate sha256 in approved manifest: {row['sha256']}")
+        index[row["sha256"]] = dict(row, _label=labels[0])
+    return index
+
 
 def iter_pool(raw_dir: Path, scraped_dir: Path, classes: list[str], schema: dict | None = None):
     """Yield (release_class, path, source_name) for every candidate image.
@@ -167,9 +192,18 @@ def main() -> int:
     ap.add_argument("--seed", type=int, default=13)
     ap.add_argument("--zip", action="store_true", help="also write <out>.zip for the web upload path")
     ap.add_argument("--force", action="store_true", help="overwrite an existing out dir")
+    ap.add_argument("--manifest", type=Path, required=True,
+                    help="reviewed approved-rows JSONL. Required: the export only includes approved images, "
+                         "with labels, groups and splits taken from the manifest")
+    # Family only for now: pattern images have no folder layout in the export yet.
+    ap.add_argument("--task", choices=("family",), default="family")
     args = ap.parse_args()
 
     classes = common.load_release_classes()
+    policy = json.loads((HERE / "release_targets.json").read_text())
+    manifest_rows = [json.loads(line) for line in args.manifest.read_text().splitlines() if line.strip()]
+    manifest_index = build_manifest_index(manifest_rows, policy, args.task)
+    print(f"approved manifest: {len(manifest_index)} single-label rows available for export")
     raw_dir, scraped_dir, out = Path(args.raw_dir), Path(args.scraped_dir), Path(args.out)
     if out.exists():
         if not args.force:
@@ -195,6 +229,15 @@ def main() -> int:
         except Exception:
             s["invalid"] += 1
             continue
+        manifest_row = None
+        if manifest_index is not None:
+            manifest_row = manifest_index.get(hashlib.sha256(data).hexdigest())
+            if manifest_row is None:
+                s["not_approved"] += 1
+                continue
+            if manifest_row["_label"] != cls:
+                s["label_mismatch"] += 1
+                continue
         img = ImageOps.exif_transpose(img)
         w, h = img.size
         if min(w, h) < args.min_side:
@@ -225,73 +268,31 @@ def main() -> int:
             "source": source,
             "dhash": dh,
             "img": img,
+            "manifest_split": manifest_row["split"] if manifest_row else None,
+            "manifest_group": manifest_row["group_id"] if manifest_row else None,
         }
         accepted.append(item)
         pool.append((dh, item))
         s["accepted"] += 1
 
-    # -- 4: near-dup groups (leak-free split) -------------------------
-    # Two rules, applied so they cannot over-merge:
-    #   a) same provenance source_key (credits row — e.g. all tiles of one
-    #      AITEX strip / all frames of one fabric roll, or all variants of
-    #      one Commons page) -> ONE split. This is the safety rule.
-    #   b) near-duplicate images (dHash <= --group-threshold) -> ONE split,
-    #      but ONLY among items WITHOUT a provenance key (raw/ pool).
-    #      Chaining keyed items visually would percolate large homogeneous
-    #      sets (e.g. plain weaves) into a single useless group.
+    # -- 4/5: reviewed groups and splits only. The legacy dHash/source heuristic split was
+    # removed: it was never reviewed, so the export takes groups and splits from the manifest.
+    warnings: list[str] = [f"manifest-gated export: {len(accepted)} approved images"]
+    for it in accepted:
+        it["gkey"] = it["manifest_group"]
     groups_by_class: dict[str, list[list[dict]]] = defaultdict(list)
     for cls in classes:
-        items = [it for it in accepted if it["class"] == cls]
-        if not items:
-            continue
-        uf = UnionFind()
-        for it in items:
-            uf.find(it["id"])
-        # a) provenance-based grouping
-        by_source: dict[str, list[dict]] = defaultdict(list)
-        for it in items:
-            row = credits_index.get((it["source"], it["class"], it["path"].name)) or {}
-            sk = (row.get("source_key") or "").split("#")[0].strip()
-            it["gkey"] = sk
-            if sk:
-                by_source[sk].append(it)
-        for same_source in by_source.values():
-            for other in same_source[1:]:
-                uf.union(same_source[0]["id"], other["id"])
-        # b) visual near-duplicate grouping for un-keyed (raw pool) items
-        unkeyed = [it for it in items if not it.get("gkey")]
-        for i, a in enumerate(unkeyed):
-            for b in unkeyed[i + 1:]:
-                if common.hamming(a["dhash"], b["dhash"]) <= args.group_threshold:
-                    uf.union(a["id"], b["id"])
         buckets: dict[str, list[dict]] = defaultdict(list)
-        for it in items:
-            buckets[uf.find(it["id"])].append(it)
-        groups_by_class[cls] = list(buckets.values())
-
-    # -- 5: stratified split by group ---------------------------------
-    warnings: list[str] = []
-    split_of: dict[str, str] = {}
-    for cls, groups in groups_by_class.items():
-        if len(groups) == 1:
-            warnings.append(f"{cls}: only 1 source group — everything goes to train (no val/test possible)")
-        elif len(groups) == 2:
-            warnings.append(f"{cls}: only 2 groups — val or test will be empty")
+        for it in accepted:
+            if it["class"] == cls:
+                buckets[it["manifest_group"]].append(it)
+        if buckets:
+            groups_by_class[cls] = list(buckets.values())
+    split_of = {it["id"]: it["manifest_split"] for it in accepted}
     n_groups = {cls: len(groups_by_class.get(cls, [])) for cls in classes}
     for cls in classes:
-        kept = stats[cls].get("accepted", 0)
-        g = n_groups[cls]
-        if g and kept > 10 * g and g < 30:
-            warnings.append(
-                f"{cls}: diversity warning — {kept} images from only {g} source groups "
-                f"(tiles/frames of the same sources). Image count OVERSTATES photo diversity; "
-                f"keep field photos coming"
-            )
-    for cls, groups in groups_by_class.items():
-        split_of.update(assign_splits(groups, rng, ratios=(1 - args.val - args.test, args.val, args.test)))
-    for cls in classes:
         if cls not in groups_by_class:
-            warnings.append(f"{cls}: NO images found in raw/ or scraped/")
+            warnings.append(f"{cls}: NO approved images in this manifest")
 
     # -- 6: write ------------------------------------------------------
     out.mkdir(parents=True)

@@ -11,10 +11,10 @@ Pipeline (mirrors how the shipped classifier integrates):
 Requires: pip install tensorflow (>=2.16). Not shipped in the APK; this is an offline
 tooling script. DO NOT replace app assets with a model trained on <1000 images/class.
 
-Usage: python3 tools/dataset/train_finetune.py [--epochs-head 8] [--epochs-fine 12] [--smoke | --dev-only]
+Usage: python3 tools/dataset/train_finetune.py [--epochs-head 8] [--epochs-fine 12] --smoke
   --smoke: tiny run (64px, 2+2 epochs) to prove the pipeline end-to-end on any machine.
-  --dev-only: full run for learning curves. Output is NOT for shipping. Folder data is not
-    yet filtered by the reviewed manifest, so no accuracy claim may be made from it.
+  Full runs are NOT available here: augmented folders are not yet linked to reviewed
+    rows. Use the manifest-gated export (prepare_kaggle.py --manifest ...) for learning curves.
 Classes are the release visual families in label_schema.json; WAX and ANKARA merge into
 WAX_ANKARA and attribute folders are never trained on.
 """
@@ -36,12 +36,10 @@ def main():
     ap.add_argument("--epochs-head", type=int, default=8)
     ap.add_argument("--epochs-fine", type=int, default=12)
     ap.add_argument("--size", type=int, default=224)
-    mode = ap.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--smoke", action="store_true")
-    mode.add_argument("--dev-only", action="store_true")
+    ap.add_argument("--smoke", action="store_true", required=True,
+                    help="pipeline check only; the model is never shipped")
     args = ap.parse_args()
-    if args.smoke:
-        args.size, args.epochs_head, args.epochs_fine = 64, 2, 2
+    args.size, args.epochs_head, args.epochs_fine = 64, 2, 2
 
     import tensorflow as tf
 
@@ -88,8 +86,7 @@ def main():
     model.fit(ds, validation_data=val, epochs=args.epochs_fine, verbose=2)
 
     loss, acc = model.evaluate(val, verbose=0)
-    print(f"validation accuracy: {acc:.3f} (loss {loss:.3f}) — smoke model" if args.smoke
-          else f"validation accuracy: {acc:.3f} (loss {loss:.3f}) — DEV ONLY, not a release metric")
+    print(f"validation accuracy: {acc:.3f} (loss {loss:.3f}) — smoke model, not a metric")
 
     OUT.mkdir(exist_ok=True)
     saved = OUT / "saved_model"
@@ -97,11 +94,10 @@ def main():
     converter = tf.lite.TFLiteConverter.from_saved_model(str(saved))
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite = converter.convert()
-    model_path = OUT / ("fabric_smoke.tflite" if args.smoke else "fabric_dev_only.tflite")
+    model_path = OUT / "fabric_smoke.tflite"
     model_path.write_bytes(tflite)
     print(f"wrote {model_path} ({len(tflite) / 1e6:.2f} MB)")
-    if args.dev_only:
-        print("DEV ONLY: not for shipping. Release needs the audit gate, held-out evaluation and device tests.")
+
 
 
 if __name__ == "__main__":

@@ -97,7 +97,7 @@ python3 tools/dataset/scrape/openverse.py --per-class 40   # optional OPENVERSE_
 python3 tools/dataset/scrape/github_repos.py  # allowlisted research repos
 python3 tools/dataset/scrape/manifest.py my_urls.csv       # explicit URLs you vouch for
 
-python3 tools/dataset/prepare_kaggle.py --kaggle-id YOURUSER/ntoma-fabric-17 --zip
+python3 tools/dataset/prepare_kaggle.py --manifest <approved.jsonl> --kaggle-id YOURUSER/ntoma-fabric-17 --zip
 kaggle datasets create -p tools/dataset/kaggle_export      # or upload the .zip
 # Kaggle Notebook → attach dataset → python3 train_on_kaggle.py --data-dir /kaggle/input/<slug>
 ```
@@ -112,3 +112,8 @@ per-image rights clearance; the newer rights-aware collector preserves review st
 - Authentic hand-woven vs machine-printed kente is a **separate task** (see
   Authente-Kente, ~88% published) — do not conflate it with category labels.
 - The demo fallback and its labelling stay in the app permanently.
+
+
+## Manifest gate
+
+`prepare_kaggle.py` refuses to run without `--manifest`. Only rows that pass `audit_readiness.usable_rows` are exported: approved, rights- and label-verified, single-label, not held for app QA, with labels, groups and splits taken from the manifest. `train_finetune.py` supports only `--smoke`, because augmented folders are not yet linked to reviewed rows.

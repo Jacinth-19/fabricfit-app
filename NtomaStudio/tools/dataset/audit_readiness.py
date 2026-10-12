@@ -17,10 +17,13 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 
 
-def audit(rows, policy, task="pattern"):
+def usable_rows(rows, policy, task="pattern"):
+    """Rows that pass every review gate and are not held by identity conflicts.
+
+    Returns (usable, held_counts, integrity_errors). Shared by the audit and the export gate.
+    """
     labels = policy[f"{task}_labels"]
     known_labels = set(labels)
-    allocations = policy["per_supported_class"]
     accepted = []
     held = defaultdict(int)
     for row in rows:
@@ -73,6 +76,13 @@ def audit(rows, policy, task="pattern"):
             integrity_errors.append({"type": "identity_conflict", "field": kind,
                                      "identity": identity, "groups": sorted(groups), "splits": sorted(splits)})
     usable = [r for r in accepted if r["group_id"] not in excluded_groups]
+    return usable, dict(held), integrity_errors
+
+
+def audit(rows, policy, task="pattern"):
+    labels = policy[f"{task}_labels"]
+    allocations = policy["per_supported_class"]
+    usable, held, integrity_errors = usable_rows(rows, policy, task)
     counts = {}
     for label in labels:
         matches = [r for r in usable if label in r[f"reviewed_{task}"]]
