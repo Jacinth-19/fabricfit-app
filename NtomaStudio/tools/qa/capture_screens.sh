@@ -24,28 +24,52 @@ app_apk=$(find app/build/outputs/apk/debug -name 'app-debug.apk' -print -quit)
 test -n "$app_apk"
 adb install -r "$app_apk"
 
+dump_ui() {
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
+  adb shell cat /sdcard/ui.xml 2>/dev/null
+}
+find_bounds() { # xml label -> bounds string
+  printf '%s' "$1" | tr '>' '\n' \
+    | grep -F "=\"$2\"" \
+    | grep -o 'bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | head -1
+}
+centre_tap() { # bounds string
+  local nums x1 y1 x2 y2
+  nums=$(printf '%s' "$1" | grep -o '[0-9]\+')
+  # shellcheck disable=SC2086
+  set -- $nums
+  x1=$1; y1=$2; x2=$3; y2=$4
+  adb shell input tap $(( (x1 + x2) / 2 )) $(( (y1 + y2) / 2 ))
+  echo "tapped at centre $(( (x1 + x2) / 2 )),$(( (y1 + y2) / 2 ))"
+}
+dismiss_anr() { # xml ; taps "Wait" on app-not-responding dialogs
+  local b
+  if printf '%s' "$1" | grep -q 'aerr_wait'; then
+    b=$(find_bounds "$1" "Wait")
+    [ -n "$b" ] && centre_tap "$b"
+    sleep 2
+    return 0
+  fi
+  return 1
+}
+
 shot() { # name
   adb shell screencap -p "/sdcard/$1.png"
   adb pull "/sdcard/$1.png" "qa-artifacts/screens/$1.png"
   echo "captured $1"
 }
 
-# Tap the centre of the UI node whose text or content-desc equals $1.
+# Tap the centre of the UI node whose text or content-desc equals $1,
+# dismissing ANR dialogs along the way.
 tap_node() { # label
-  local label="$1" attempt xml line nums x1 y1 x2 y2
-  for attempt in 1 2 3 4; do
-    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
-    xml=$(adb shell cat /sdcard/ui.xml 2>/dev/null)
-    line=$(printf '%s' "$xml" | tr '>' '\n' \
-      | grep -F "=\"$label\"" \
-      | grep -o 'bounds="\[[0-9]*,[0-9]*\]\[[0-9]*,[0-9]*\]"' | head -1)
-    if [ -n "$line" ]; then
-      nums=$(printf '%s' "$line" | grep -o '[0-9]\+')
-      # shellcheck disable=SC2086
-      set -- $nums
-      x1=$1; y1=$2; x2=$3; y2=$4
-      adb shell input tap $(( (x1 + x2) / 2 )) $(( (y1 + y2) / 2 ))
-      echo "tapped '$label' at centre $(( (x1 + x2) / 2 )),$(( (y1 + y2) / 2 ))"
+  local label="$1" attempt xml b
+  for attempt in 1 2 3 4 5 6; do
+    xml=$(dump_ui)
+    dismiss_anr "$xml" && continue
+    b=$(find_bounds "$xml" "$label")
+    if [ -n "$b" ]; then
+      centre_tap "$b"
+      echo "tapped '$label'"
       sleep 2
       return 0
     fi
@@ -55,13 +79,31 @@ tap_node() { # label
   return 1
 }
 
+# Make sure our app (onboarding or main) is the resumed window.
+ensure_app_foreground() {
+  local i xml
+  for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+    xml=$(dump_ui)
+    dismiss_anr "$xml" && continue
+    if printf '%s' "$xml" | grep -qE 'Skip for now|content-desc="Home"'; then
+      return 0
+    fi
+    adb shell am start -W -n "$PKG/$ACT" >/dev/null 2>&1 || true
+    sleep 2
+  done
+  echo "!! app never reached the foreground"
+  return 1
+}
+
 adb shell am start -W -n "$PKG/$ACT" >/dev/null 2>&1 \
   || adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
 sleep 6
+ensure_app_foreground
 shot 01_onboarding
 
 tap_node "Skip for now"
 sleep 2
+ensure_app_foreground
 shot 02_home
 
 tap_node "Camera"        # raised centre camera tab
