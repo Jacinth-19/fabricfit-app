@@ -98,7 +98,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message || '', '[screens]')
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       pull-requests: write
     timeout-minutes: 35
     defaults:
@@ -156,16 +155,6 @@ jobs:
           disable-animations: true
           working-directory: NtomaStudio
           script: bash -c 'set -o pipefail; bash tools/qa/capture_screens.sh 2>&1 | tee capture.log; test -f qa-artifacts/screens/02_home.png'
-
-      - name: Publish captured screens to the branch
-        run: |
-          if ls qa-artifacts/screens/*.png >/dev/null 2>&1; then
-            git config user.name "arena-agent"
-            git config user.email "297053741+arena-agent@users.noreply.github.com"
-            git add qa-artifacts/screens
-            git commit -m "chore: publish emulator-captured screens for README review"
-            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
-          fi
 
       - name: Publish capture log
         if: always()

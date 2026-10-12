@@ -20,3 +20,6 @@ image-search/
 # OS files
 .DS_Store
 Thumbs.db
+
+# CI scratch outputs (emulator captures, logs)
+NtomaStudio/qa-artifacts/

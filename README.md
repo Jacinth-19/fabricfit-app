@@ -21,6 +21,20 @@ lets you see yourself in the perfect look — virtually. The Android app lives i
 Bottom navigation follows the brand board: **Home · Discover · [raised gold-ringed camera] ·
 Try On · Saved · Profile**.
 
+## Screens
+
+Real captures of the app running on an Android emulator (produced by the `screenshots` CI
+job in [`.github/workflows/build.yml`](.github/workflows/build.yml); sources in
+[`NtomaStudio/docs/screens/`](NtomaStudio/docs/screens/)):
+
+| Onboarding | Home | Capture Fabric |
+|:---:|:---:|:---:|
+| <img src="NtomaStudio/docs/screens/onboarding.png" alt="Onboarding — Heritage Luxe brand screen" width="230"> | <img src="NtomaStudio/docs/screens/home.png" alt="Home — kente hero, actions and featured fabrics" width="230"> | <img src="NtomaStudio/docs/screens/capture-fabric.png" alt="Capture Fabric — take a photo, choose a photo, try a design" width="230"> |
+
+| Discover | Try On | Profile |
+|:---:|:---:|:---:|
+| <img src="NtomaStudio/docs/screens/discover.png" alt="Discover — Styles, Fabrics and Looks tabs" width="230"> | <img src="NtomaStudio/docs/screens/try-on.png" alt="Try On — photo, wearer, fabric and design pickers" width="230"> | <img src="NtomaStudio/docs/screens/profile.png" alt="Profile — guest user, stats and menu" width="230"> |
+
 ## Design system
 
 Implemented from the Heritage Luxe brand board (see
