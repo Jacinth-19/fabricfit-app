@@ -129,33 +129,30 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
                 body = R.string.recs_empty_body,
                 modifier = Modifier.weight(1f),
             )
-            else -> androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
-                columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.weight(1f),
-            ) {
-                item(span = {
-                    androidx.compose.foundation.lazy.grid.GridItemSpan(
-                        androidx.compose.foundation.lazy.grid.maxLineSpan,
-                    )
-                }) {
-                    Text(
-                        stringResource(R.string.recs_subtitle, state.filtered.size),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                items(state.filtered, key = { it.style.id }) { rec ->
-                    RecommendationCard(
-                        rec = rec,
-                        isFavorite = rec.style.id in state.favoriteStyles,
-                        onFavorite = { vm.toggleFavorite(rec.style) },
-                        onDismiss = { vm.dismiss(rec.style) },
-                        onOpen = { nav.navigate(Routes.design(rec.style.id)) },
-                        onTryOn = { nav.navigate(Routes.tryOn(fabricId, rec.style.id)) },
-                    )
+            else -> Column(Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.recs_subtitle, state.filtered.size),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                )
+                androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
+                    columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    items(state.filtered, key = { it.style.id }) { rec ->
+                        RecommendationCard(
+                            rec = rec,
+                            isFavorite = rec.style.id in state.favoriteStyles,
+                            onFavorite = { vm.toggleFavorite(rec.style) },
+                            onDismiss = { vm.dismiss(rec.style) },
+                            onOpen = { nav.navigate(Routes.design(rec.style.id)) },
+                            onTryOn = { nav.navigate(Routes.tryOn(fabricId, rec.style.id)) },
+                        )
+                    }
                 }
             }
         }
