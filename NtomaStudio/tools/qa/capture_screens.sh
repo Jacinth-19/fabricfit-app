@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Capture real device screenshots of the Heritage Luxe screens for the README.
 # Runs inside the CI emulator (1080x1920 @420dpi); pure adb, no instrumentation.
-set -euo pipefail
+set -eux
 mkdir -p qa-artifacts/screens
 
 PKG=com.ntoma.studio.debug
@@ -31,8 +31,9 @@ shot() { # name
 }
 tap() { adb shell input tap "$1" "$2"; sleep 2; }
 
-adb shell am start -W -n "$PKG/$ACT" >/dev/null
-sleep 5
+adb shell am start -W -n "$PKG/$ACT" >/dev/null 2>&1 \
+  || adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
+sleep 6
 shot 01_onboarding
 
 # Skip the pager -> Home (top-right text button)

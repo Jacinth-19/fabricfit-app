@@ -133,13 +133,33 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: NtomaStudio
-          script: bash tools/qa/capture_screens.sh
+          script: bash tools/qa/capture_screens.sh 2>&1 | tee capture.log
+
+      - name: Publish capture log
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### Emulator capture log ($(date -u +%FT%TZ))"
+            echo '```'
+            tail -c 20000 capture.log 2>/dev/null || echo "no capture.log"
+            echo '```'
+          } > diag-screens.md
+          PR=$(gh api "repos/$GITHUB_REPOSITORY/pulls?head=$GITHUB_REPOSITORY_OWNER:${GITHUB_REF_NAME}&state=open" --jq '.[0].number' || true)
+          if [ -n "$PR" ] && [ "$PR" != "null" ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file diag-screens.md
+          else
+            cat diag-screens.md
+          fi
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: readme-screens
-          path: NtomaStudio/qa-artifacts/
+          path: |
+            NtomaStudio/qa-artifacts/
+            NtomaStudio/capture.log
 
   # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
   # macOS runners only (Linux GH runners lack KVM); trigger manually or tag a release.
