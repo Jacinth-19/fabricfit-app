@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -143,10 +144,7 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    androidx.compose.foundation.lazy.grid.items(
-                        state.filtered,
-                        key = { it.style.id },
-                    ) { rec ->
+                    gridItems(state.filtered, key = { it.style.id }) { rec ->
                         RecommendationCard(
                             rec = rec,
                             isFavorite = rec.style.id in state.favoriteStyles,
