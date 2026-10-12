@@ -1,10 +1,17 @@
 name: build
 
+# Root-level workflow — GitHub only detects workflows at .github/workflows/
+# in the repository root (the Android project lives in NtomaStudio/).
+
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: NtomaStudio
 
 jobs:
   verify:
@@ -29,7 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: app/build/reports/tests/testDebugUnitTest
+          path: NtomaStudio/app/build/reports/tests/testDebugUnitTest
 
   # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
   # macOS runners only (Linux GH runners lack KVM); trigger manually or tag a release.
@@ -54,6 +61,7 @@ jobs:
           api-level: 33
           target: default
           arch: x86_64
+          working-directory: NtomaStudio
           script: >
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.ntoma.studio.data.ml.PersonSegmenterDeviceTest
