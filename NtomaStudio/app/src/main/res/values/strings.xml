@@ -600,7 +600,8 @@
 
     <!-- Catalogue: patterns -->
     <string name="pattern_striped">Striped</string>
-    <string name="pattern_checked">Checked / plaid</string>
+    <string name="pattern_checked">Checked</string>
+    <string name="pattern_plaid">Plaid</string>
     <string name="pattern_geometric">Geometric blocks</string>
     <string name="pattern_floral">Floral</string>
     <string name="pattern_organic">Organic motifs</string>

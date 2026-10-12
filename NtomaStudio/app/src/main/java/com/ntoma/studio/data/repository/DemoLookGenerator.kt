@@ -194,7 +194,7 @@ class DemoLookGenerator(
                     i++
                 }
             }
-            PatternType.CHECKED -> {
+            PatternType.CHECKED, PatternType.PLAID -> {
                 val cell = size / 4
                 for (cy in 0 until 4) for (cx in 0 until 4) {
                     paint.color = if ((cx + cy) % 2 == 0) colorAt(0) else colorAt(1)

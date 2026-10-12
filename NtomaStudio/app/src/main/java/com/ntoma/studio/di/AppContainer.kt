@@ -63,11 +63,18 @@ class AppContainer private constructor(context: Context) {
 
     val mlClassifier = com.ntoma.studio.data.ml.OnDeviceMlClassifier(appContext)
 
+    // Trained recognition models (docs/ml_roadmap.md). Optional asset pairs: until the
+    // fine-tuned TFLite models are shipped they report unavailable and the heuristic engine
+    // stays in charge — no settings toggle needed.
+    val patternClassifier = com.ntoma.studio.data.ml.PatternClassifier(appContext)
+    val familyClassifier = com.ntoma.studio.data.ml.FabricFamilyClassifier(appContext)
+
     val cloudAnalysis = com.ntoma.studio.data.remote.CloudAnalysisClient()
     val personSegmenter = com.ntoma.studio.data.ml.PersonSegmenter(appContext)
 
     val fabricAnalysis: FabricAnalysisRepository = FabricAnalysisRepositoryImpl(
         bitmapAnalyzer, database.fabricDao(), history, analytics, mlClassifier, settings, cloudAnalysis,
+        patternClassifier, familyClassifier,
     )
 
     val favorites: FavoritesRepository = FavoritesRepositoryImpl(

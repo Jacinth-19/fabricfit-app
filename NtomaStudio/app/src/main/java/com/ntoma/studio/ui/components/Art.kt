@@ -56,7 +56,7 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
                     drawRect(colors[i % colors.size], topLeft = Offset(0f, i * band), size = Size(w, band))
                 }
             }
-            PatternType.CHECKED -> {
+            PatternType.CHECKED, PatternType.PLAID -> {
                 val cell = w / 5
                 for (cy in 0 until 6) for (cx in 0 until 6) {
                     if ((cx + cy) % 2 == 0) continue

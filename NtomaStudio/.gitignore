@@ -15,6 +15,8 @@
 !demo-release.keystore
 tools/dataset/raw/
 tools/dataset/augmented/
+tools/dataset/raw_pattern/
+tools/dataset/augmented_pattern/
 tools/dataset/out/
 tools/dataset/work/
 

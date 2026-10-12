@@ -212,8 +212,8 @@ private fun FabricResult(vm: AnalysisViewModel, nav: NavHostController, onShare:
                     }
                     Text(
                         stringResource(
-                            if (fabric.engine == AnalysisEngine.ON_DEVICE_DEMO) R.string.analysis_engine_on_device_note
-                            else R.string.analysis_engine_cloud_note,
+                            if (fabric.engine == AnalysisEngine.CLOUD) R.string.analysis_engine_cloud_note
+                            else R.string.analysis_engine_on_device_note,
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

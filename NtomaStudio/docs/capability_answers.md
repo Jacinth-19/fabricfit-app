@@ -144,6 +144,28 @@ physical hardware (no KVM in this environment).
 |---|---|
 | Cloud analysis / generative try-on | Contract written **and reference server proven**; needs a production endpoint |
 | Fabric dataset collection | Pipeline + **in-app contribution flow shipped**; needs real photos (300+/class) |
-| Fine-tuned model in app | Blocked on dataset (starter baseline 0.419 macro, not shipped by design) |
+| Fine-tuned models in app | Architecture fixed (2 models, see §14); blocked on dataset (starter baseline 0.419 macro, not shipped by design) |
 | DeepLabV3 on-device (GPU/mem) | Host QA done; **instrumentation test written** — run on a phone |
 | CI first run | YAML validated locally; **runs on first GitHub push** |
+
+## 14. Recognition architecture — 2 models now, 4 later (decided 2026-10-12)
+Full decision record: `docs/ml_roadmap.md`. Summary:
+
+- **Model 1 — fabric-family classifier** (`FabricFamilyClassifier.kt`): Kente, Kente-print,
+  Ankara/wax, Adinkra, batik, lace, denim, … with confidence, and **"uncertain" instead of a
+  forced answer** (top < 0.40 or a near-tie collapses to Unknown / "Not sure yet").
+- **Model 2 — visible-pattern classifier** (`PatternClassifier.kt`): stripes, checks, plaid,
+  dots, floral, geometric (+ SOLID). Trains **first** — the newly acquired dataset labels
+  appearance, not provenance, and "striped" does not prove Kente just as floral does not
+  automatically mean Ankara.
+- **Wired today, ships empty-handed**: both classifiers load optional TFLite asset pairs and
+  stay silent until real models land — the heuristic engine remains the answer until then.
+  Verdict logic is pure and unit-tested (`FabricFamilyClassifierTest`, `PatternClassifierTest`).
+  Verdicts produced by a shipped model switch the engine label to `ON_DEVICE_TRAINED`.
+- **Later**: garment segmentation (person segmentation already shipped/QA'd) and an optional
+  cloud photoreal try-on (disclosed cloud processing; no fit/measurement promises).
+- **No AI needed**: colour extraction (image processing), template previews (compositing),
+  recommendations (rules).
+- **Tooling**: `label_schema_pattern.json` + `augment.py --task pattern` +
+  `train_finetune.py --task pattern` produce `pattern_classifier.tflite` + `pattern_labels.txt`
+  ready to drop into `app/src/main/assets/`.

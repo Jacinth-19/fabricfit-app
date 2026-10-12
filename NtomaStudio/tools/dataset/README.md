@@ -1,34 +1,51 @@
 # Fabric dataset & fine-tune pipeline
 
-The shipped classifier is MobileNetV2 (ImageNet) + GLCM + kente-strip heuristics with
-honest `ON_DEVICE_DEMO` labelling. This pipeline is the path to a **real** fabric model:
-a MobileNetV3-Small fine-tuned on labelled Ghanaian fabric photos, exported to a ~2-3 MB
-quantized TFLite model that drops into `app/src/main/assets/` behind the same interface.
+The shipped analyser is MobileNetV2 (ImageNet) + GLCM + kente-strip heuristics with
+honest `ON_DEVICE_DEMO` labelling. This pipeline is the path to the **two real recognition
+models** decided in `docs/ml_roadmap.md`:
+
+1. **Visible-pattern classifier** (stripes, checks, plaid, dots, floral, geometric, solid)
+   — **trains FIRST**, because the newly acquired dataset labels appearance, not provenance.
+2. **Fabric-family classifier** (Kente, Kente-print, Ankara/wax, Adinkra, batik, lace,
+   denim, …) — a separate model: "striped" does not prove the cloth is Kente, and floral
+   does not automatically mean Ankara. Both return confidence and may answer **uncertain**
+   instead of forcing a guess (thresholds in `TrainedModelRunner.kt`).
+
+Each is a MobileNetV3-Small fine-tuned on labelled photos, exported to a ~2-3 MB
+quantized TFLite model that drops into `app/src/main/assets/` — the app switches a model
+on automatically the day its asset pair lands (no settings toggle).
 
 ## Layout
 ```
 tools/dataset/
-  label_schema.json   17 classes incl. FUGU + GONJA, folder layout, collection rules
-  raw/<CLASS>/*.jpg   YOUR real labelled photos (not committed — see .gitignore guidance)
-  augment.py          Pillow-only augmentation: crop/rotate/perspective/jitter -> augmented/
-  train_finetune.py   Keras MobileNetV3-Small fine-tune -> quantized .tflite + val accuracy
-  ingest.py           import an app contribution zip into raw/ (validated, deduped)
-  out/                generated models (never shipped without human review)
+  label_schema.json           17 fabric families incl. FUGU + GONJA, folder layout, rules
+  label_schema_pattern.json   7 visible-pattern classes + labelling rules (plaid vs checked)
+  raw/<CLASS>/*.jpg           real fabric-FAMILY labelled photos (not committed)
+  raw_pattern/<CLASS>/*.jpg   real PATTERN labelled photos (not committed)
+  augment.py                  Pillow-only augmentation (--task fabric|pattern)
+  train_finetune.py           Keras MobileNetV3-Small fine-tune (--task fabric|pattern)
+  ingest.py                   import an app contribution zip into raw/ (validated, deduped)
+  out/                        generated models + labels files (never shipped w/o review)
 ```
 
-## Workflow
+## Workflow (pattern task first, then fabric task — same commands, swap the flags)
 1. **Collect**: 300+ photos/class minimum (1000+ before publishing accuracy claims).
    Market days at Makola/Kantamanto/Kejetia, weaver cooperatives in Bonwire (kente) and
-   Tamale (fugu), user contributions with consent. Follow `label_schema.json` guidance —
-   lighting, distance, angle and fold variety matter more than volume.
-2. **Augment**: `python3 tools/dataset/augment.py --per-image 10`
-3. **Train**: `python3 tools/dataset/train_finetune.py` (add `--smoke` first on a laptop
-   to prove the toolchain; a smoke model is a pipeline test, NEVER a shipped model).
+   Tamale (fugu), user contributions with consent — plus the newly acquired dataset for
+   the pattern task. Follow the schema guidance — lighting, distance, angle and fold
+   variety matter more than volume.
+2. **Augment**: `python3 tools/dataset/augment.py --task pattern --per-image 10`
+   (fabric task: `--task fabric`, the default).
+3. **Train**: `python3 tools/dataset/train_finetune.py --task pattern` (add `--smoke`
+   first on a laptop to prove the toolchain; a smoke model is a pipeline test, NEVER a
+   shipped model). Writes `out/pattern_finetuned.tflite` + `out/pattern_labels.txt`.
 4. **Review**: check the printed validation accuracy per class; inspect confusions
-   (KENTE vs KENTE_PRINT and FUGU vs GONJA will be the hard pairs).
-5. **Integrate**: replace the classifier asset, keep the heuristic fallback, re-run
-   `./gradlew :app:testDebugUnitTest`, and only then stop labelling results
-   `ON_DEVICE_DEMO` for the classes that genuinely improved.
+   (CHECKED vs PLAID for patterns; KENTE vs KENTE_PRINT and FUGU vs GONJA for families).
+5. **Integrate**: copy the reviewed pair into `app/src/main/assets/` as
+   `pattern_classifier.tflite` + `pattern_labels.txt` (or `fabric_family_classifier.tflite`
+   + `fabric_family_labels.txt`), keep the heuristic fallback, re-run
+   `./gradlew :app:testDebugUnitTest`. Results switch from `ON_DEVICE_DEMO` to
+   `ON_DEVICE_TRAINED` only for verdicts the shipped model actually produced.
 
 ## Web sourcing → Kaggle training (new)
 Free-licensed photos can fill the pool faster than field days alone — through a

@@ -1,0 +1,26 @@
+{
+  "task": "visible_pattern_classification",
+  "version": 1,
+  "model": "pattern_classifier.tflite (asset) + pattern_labels.txt",
+  "classes": [
+    "STRIPED", "CHECKED", "PLAID", "DOTTED", "FLORAL", "GEOMETRIC", "SOLID"
+  ],
+  "folder_layout": "raw_pattern/<CLASS_NAME>/*.jpg  (one folder per class, mirroring PatternType)",
+  "why_separate_from_fabric_family": [
+    "Appearance is not provenance: 'striped' does not prove the cloth is Kente, and 'floral' does not automatically mean Ankara.",
+    "The acquired dataset labels what a photo LOOKS like, which is exactly this task — so this model trains first.",
+    "Keeping the two classifiers separate lets the app show them, fail, and say 'uncertain' independently."
+  ],
+  "collection_guidance": {
+    "per_class_target": "300+ photos/class before training; 1000+ before claiming accuracy numbers",
+    "label_the_dominant_visible_pattern": "one class per photo; when two co-occur (stripes + dots), label the dominant one and log the mix in the filename",
+    "plaid_vs_checked": "CHECKED = simple alternating squares; PLAID = multi-colour crossed banding (kente-style/tartan-like). When unsure, prefer CHECKED.",
+    "solid_is_a_class": "plain cloths belong in SOLID — it is the honest 'no visible pattern' answer, not a reject pile",
+    "crop_to_cloth": "crop to the cloth/dress region; exclude hands, faces and backgrounds where possible (garment segmentation comes later)",
+    "avoid": "screens, prints of photos, watermarked stock, near-duplicate burst frames"
+  },
+  "uncertainty_contract": {
+    "app_thresholds": "TrainedModelRunner: top < 0.40 OR (top - second < 0.10 while top < 0.60) => reported as uncertain, never forced",
+    "labels_file": "pattern_labels.txt — one class name per line, in model output order, matching classes above"
+  }
+}
