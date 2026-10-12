@@ -1,16 +1,28 @@
 #!/usr/bin/env python3
-"""Fine-tune MobileNetV3-Small on the augmented fabric dataset -> quantized TFLite.
+"""Fine-tune MobileNetV3-Small on an augmented dataset -> quantized TFLite.
+
+Two recognition tasks share this pipeline (docs/ml_roadmap.md):
+  --task pattern (trains FIRST — the acquired dataset labels appearance):
+      augmented_pattern/<CLASS>/ (label_schema_pattern.json) -> out/pattern_*.tflite
+      shipped as assets: pattern_classifier.tflite + pattern_labels.txt
+  --task fabric:
+      augmented/<CLASS>/ (label_schema.json) -> out/fabric_*.tflite
+      shipped as assets: fabric_family_classifier.tflite + fabric_family_labels.txt
 
 Pipeline (mirrors how the shipped classifier integrates):
-  1. image_dataset_from_directory over augmented/<CLASS>/ (classes = label_schema.json order)
+  1. image_dataset_from_directory over the task's augmented dir (classes = schema order)
   2. MobileNetV3-Small, ImageNet weights, frozen backbone -> train head -> unfreeze top blocks
   3. export SavedModel -> TFLite (int8 dynamic-range quantization, ~2-3 MB)
   4. print a validation accuracy report; copy nothing into the app until a human reviews it
 
+Preprocessing contract with the app (TrainedModelRunner.kt): float32 inputs scaled to
+(px / 127.5) - 1, one output score per class in labels-file order.
+
 Requires: pip install tensorflow (>=2.16). Not shipped in the APK; this is an offline
 tooling script. DO NOT replace app assets with a model trained on <1000 images/class.
 
-Usage: python3 tools/dataset/train_finetune.py [--epochs-head 8] [--epochs-fine 12] [--smoke]
+Usage: python3 tools/dataset/train_finetune.py --task pattern|fabric [--epochs-head 8] \
+           [--epochs-fine 12] [--smoke]
   --smoke: tiny run (64px, 2+2 epochs) to prove the pipeline end-to-end on any machine.
 """
 import argparse
@@ -20,12 +32,18 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent
-AUG = ROOT / "augmented"
 OUT = ROOT / "out"
+
+TASKS = {
+    "fabric": ("label_schema.json", "augmented", "fabric"),
+    "pattern": ("label_schema_pattern.json", "augmented_pattern", "pattern"),
+}
 
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--task", choices=sorted(TASKS), default="fabric",
+                    help="which recognition model to train (pattern trains first)")
     ap.add_argument("--epochs-head", type=int, default=8)
     ap.add_argument("--epochs-fine", type=int, default=12)
     ap.add_argument("--size", type=int, default=224)
@@ -36,7 +54,11 @@ def main():
 
     import tensorflow as tf
 
-    schema_classes = json.loads((ROOT / "label_schema.json").read_text())["classes"]
+    schema_name, aug_name, model_prefix = TASKS[args.task]
+    schema_classes = json.loads((ROOT / schema_name).read_text())["classes"]
+    AUG = ROOT / aug_name
+    if not AUG.exists():
+        raise SystemExit(f"no {aug_name}/ dir — run augment.py --task {args.task} first")
     present = {p.name for p in AUG.iterdir() if p.is_dir()}
     classes = [c for c in schema_classes if c in present]
     missing = [c for c in schema_classes if c not in present]
@@ -81,16 +103,23 @@ def main():
           else f"validation accuracy: {acc:.3f} (loss {loss:.3f})")
 
     OUT.mkdir(exist_ok=True)
-    saved = OUT / "saved_model"
+    saved = OUT / f"saved_model_{args.task}"
     model.export(str(saved))
     converter = tf.lite.TFLiteConverter.from_saved_model(str(saved))
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
     tflite = converter.convert()
-    model_path = OUT / ("fabric_smoke.tflite" if args.smoke else "fabric_finetuned.tflite")
+    model_path = OUT / f"{model_prefix}{'_smoke' if args.smoke else '_finetuned'}.tflite"
     model_path.write_bytes(tflite)
-    print(f"wrote {model_path} ({len(tflite) / 1e6:.2f} MB)")
+    # Labels file in model output order — this exact file ships as the app's labels asset
+    # (fabric_family_labels.txt / pattern_labels.txt).
+    labels_path = OUT / f"{model_prefix}_labels.txt"
+    labels_path.write_text("\n".join(ds.class_names) + "\n")
+    print(f"wrote {model_path} ({len(tflite) / 1e6:.2f} MB) + {labels_path}")
     if not args.smoke:
-        print("NEXT: human review -> replace assets/fabric_classifier.tflite -> re-run app tests")
+        asset_model = {"fabric": "fabric_family_classifier.tflite",
+                       "pattern": "pattern_classifier.tflite"}[args.task]
+        print(f"NEXT: human review -> ship as assets/{asset_model} + {labels_path.name} "
+              f"-> re-run app tests")
 
 
 if __name__ == "__main__":

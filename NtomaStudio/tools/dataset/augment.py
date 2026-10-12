@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""Expand raw fabric photos into an augmented training set.
+"""Expand raw photos into an augmented training set.
 
-Reads raw/<CLASS>/*.jpg (see label_schema.json) and writes
-augmented/<CLASS>/<n>_<variant>.jpg with photorealistic, label-preserving
-transforms: random crop/scale, rotation, brightness/contrast/saturation
-jitter, mild perspective, JPEG re-compression.
+Two tasks (docs/ml_roadmap.md):
+  --task fabric  (default): raw/<CLASS>/*.jpg -> augmented/<CLASS>/ (label_schema.json)
+  --task pattern:           raw_pattern/<CLASS>/*.jpg -> augmented_pattern/<CLASS>/
+                            (label_schema_pattern.json)
+
+Writes <n>_<variant>.jpg with photorealistic, label-preserving transforms:
+random crop/scale, rotation, brightness/contrast/saturation jitter, mild
+perspective, JPEG re-compression.
 
 Pure Pillow — no deep-learning dependency, runs anywhere.
 
-Usage: python3 tools/dataset/augment.py [--per-image 10] [--size 224]
+Usage: python3 tools/dataset/augment.py [--task fabric|pattern] [--per-image 10] [--size 224]
 """
 import argparse
 import random
@@ -17,8 +21,14 @@ from pathlib import Path
 from PIL import Image, ImageEnhance, ImageOps
 
 ROOT = Path(__file__).resolve().parent
-RAW = ROOT / "raw"
-OUT = ROOT / "augmented"
+
+# Two training tasks share this pipeline (docs/ml_roadmap.md):
+#   fabric  — fabric-family classifier: raw/<CLASS> -> augmented/<CLASS>
+#   pattern — visible-pattern classifier: raw_pattern/<CLASS> -> augmented_pattern/<CLASS>
+TASK_DIRS = {
+    "fabric": ("raw", "augmented"),
+    "pattern": ("raw_pattern", "augmented_pattern"),
+}
 
 
 def jitter(img: Image.Image, rng: random.Random) -> Image.Image:
@@ -67,17 +77,22 @@ def main():
     ap.add_argument("--per-image", type=int, default=10)
     ap.add_argument("--size", type=int, default=224)
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--task", choices=sorted(TASK_DIRS), default="fabric",
+                    help="which dataset to augment (fabric family vs visible pattern)")
     args = ap.parse_args()
     rng = random.Random(args.seed)
 
-    if not RAW.exists():
-        raise SystemExit(f"no raw/ dir at {RAW} — see label_schema.json for layout")
+    raw_name, out_name = TASK_DIRS[args.task]
+    raw_dir = ROOT / raw_name
+    out_root = ROOT / out_name
+    if not raw_dir.exists():
+        raise SystemExit(f"no {raw_name}/ dir at {raw_dir} — see label_schema{_pattern if args.task == 'pattern' else ''}.json for layout")
     total = 0
-    OUT.mkdir(exist_ok=True)
-    for cls_dir in sorted(RAW.iterdir()):
+    out_root.mkdir(exist_ok=True)
+    for cls_dir in sorted(raw_dir.iterdir()):
         if not cls_dir.is_dir():
             continue
-        out_dir = OUT / cls_dir.name
+        out_dir = out_root / cls_dir.name
         out_dir.mkdir(exist_ok=True)
         for i, src in enumerate(sorted(cls_dir.glob("*.jpg")) + sorted(cls_dir.glob("*.png"))):
             base = Image.open(src).convert("RGB")
@@ -85,7 +100,7 @@ def main():
                 out = out_dir / f"{i:03d}_{v:02d}.jpg"
                 variant(base, args.size, rng).save(out, "JPEG", quality=88)
                 total += 1
-    print(f"wrote {total} augmented images to {OUT}")
+    print(f"wrote {total} augmented images ({args.task} task) to {out_root}")
 
 
 if __name__ == "__main__":

@@ -14,6 +14,7 @@ data class ProfileUiState(
     val fabricCount: Int = 0,
     val designCount: Int = 0,
     val lookCount: Int = 0,
+    val favoriteCount: Int = 0,
 )
 
 class ProfileViewModel(private val container: AppContainer) : ViewModel() {
@@ -40,6 +41,11 @@ class ProfileViewModel(private val container: AppContainer) : ViewModel() {
         viewModelScope.launch {
             container.tryOn.observeLooks().collect { list ->
                 _state.value = _state.value.copy(lookCount = list.size)
+            }
+        }
+        viewModelScope.launch {
+            container.favorites.countsFlow().collect { count ->
+                _state.value = _state.value.copy(favoriteCount = count)
             }
         }
     }

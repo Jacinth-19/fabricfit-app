@@ -2,7 +2,7 @@
 <resources>
 
     <!-- ============ App ============ -->
-    <string name="app_name">Ntoma</string>
+    <string name="app_name">Heritage Luxe</string>
     <string name="app_tagline">Turn the fabric you already own into your next look.</string>
     <string name="cd_app_logo">Ntoma logo</string>
 
@@ -41,9 +41,35 @@
     <!-- ============ Bottom navigation ============ -->
     <string name="nav_home">Home</string>
     <string name="nav_discover">Discover</string>
-    <string name="nav_create">Create</string>
+    <string name="nav_create">Camera</string>
     <string name="nav_favorites">Favourites</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_tryon">Try On</string>
     <string name="nav_profile">Profile</string>
+    <string name="brand_name">Heritage Luxe</string>
+    <string name="brand_tagline">Your fabric · Our AI · Your style</string>
+    <string name="brand_scanline">Scan. Discover. Try. Wear.</string>
+    <string name="home_hero_line1">Ghanaian Fabrics</string>
+    <string name="home_hero_line2">Timeless Style</string>
+    <string name="home_hero_cta">Discover More</string>
+    <string name="home_tile_scan">Scan Fabric</string>
+    <string name="home_tile_recs">AI Recommendations</string>
+    <string name="home_tile_tryon">Virtual Try-On</string>
+    <string name="home_featured">Featured Fabrics</string>
+    <string name="profile_stat_scans">Scans</string>
+    <string name="profile_stat_favorites">Favorites</string>
+    <string name="profile_stat_tryons">Try-Ons</string>
+    <string name="profile_menu_saved">Saved Styles</string>
+    <string name="profile_menu_history">Scan History</string>
+    <string name="profile_menu_help">Help &amp; Support</string>
+    <string name="camera_mode_photo">Photo</string>
+    <string name="camera_mode_video">Video</string>
+    <string name="camera_mode_scan">Scan</string>
+    <string name="camera_video_soon">Video capture is coming soon</string>
+    <string name="analysis_tab_colors">Colors</string>
+    <string name="analysis_tab_pattern">Pattern</string>
+    <string name="analysis_tab_style">Style</string>
+    <string name="analysis_match_chip">%1$d%% Match</string>
     <string name="cd_bottom_navigation">Main navigation</string>
 
     <!-- ============ Welcome & onboarding ============ -->
@@ -332,7 +358,7 @@
     <!-- ============ Profile ============ -->
     <string name="profile_title">Profile</string>
     <string name="profile_guest">Guest user</string>
-    <string name="profile_guest_body">You are using Ntoma without an account. Everything you save stays on this device.</string>
+    <string name="profile_guest_body">You are using Heritage Luxe without an account. Everything you save stays on this device.</string>
     <string name="profile_section_you">You</string>
     <string name="profile_section_activity">Activity</string>
     <string name="profile_section_preferences">Preferences</string>
@@ -600,7 +626,8 @@
 
     <!-- Catalogue: patterns -->
     <string name="pattern_striped">Striped</string>
-    <string name="pattern_checked">Checked / plaid</string>
+    <string name="pattern_checked">Checked</string>
+    <string name="pattern_plaid">Plaid</string>
     <string name="pattern_geometric">Geometric blocks</string>
     <string name="pattern_floral">Floral</string>
     <string name="pattern_organic">Organic motifs</string>

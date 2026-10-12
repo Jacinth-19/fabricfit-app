@@ -2,6 +2,7 @@ package com.ntoma.studio.ui.screens.recommendations
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.items as gridItems
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -128,30 +130,37 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
                 body = R.string.recs_empty_body,
                 modifier = Modifier.weight(1f),
             )
-            else -> LazyColumn(contentPadding = PaddingValues(bottom = 32.dp), modifier = Modifier.weight(1f)) {
-                item {
-                    Text(
-                        stringResource(R.string.recs_subtitle, state.filtered.size),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-                    )
-                }
-                items(state.filtered, key = { it.style.id }) { rec ->
-                    RecommendationCard(
-                        rec = rec,
-                        isFavorite = rec.style.id in state.favoriteStyles,
-                        onFavorite = { vm.toggleFavorite(rec.style) },
-                        onDismiss = { vm.dismiss(rec.style) },
-                        onOpen = { nav.navigate(Routes.design(rec.style.id)) },
-                        onTryOn = { nav.navigate(Routes.tryOn(fabricId, rec.style.id)) },
-                    )
+            else -> Column(Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.recs_subtitle, state.filtered.size),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                )
+                androidx.compose.foundation.lazy.grid.LazyVerticalGrid(
+                    columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    gridItems(state.filtered, key = { it.style.id }) { rec ->
+                        RecommendationCard(
+                            rec = rec,
+                            isFavorite = rec.style.id in state.favoriteStyles,
+                            onFavorite = { vm.toggleFavorite(rec.style) },
+                            onDismiss = { vm.dismiss(rec.style) },
+                            onOpen = { nav.navigate(Routes.design(rec.style.id)) },
+                            onTryOn = { nav.navigate(Routes.tryOn(fabricId, rec.style.id)) },
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+/** Compact 2-column card in the Heritage board style: art, heart, title, gold match chip. */
 @Composable
 private fun RecommendationCard(
     rec: Recommendation,
@@ -164,54 +173,66 @@ private fun RecommendationCard(
     val context = LocalContext.current
     Card(
         onClick = onOpen,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 6.dp),
+        modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
     ) {
-        Row(Modifier.padding(14.dp)) {
-            GarmentArt(
-                rec.style,
-                null,
-                modifier = Modifier.width(96.dp).height(120.dp),
-            )
-            Spacer(Modifier.width(14.dp))
-            Column(Modifier.weight(1f)) {
+        Column {
+            Box {
+                GarmentArt(
+                    rec.style,
+                    null,
+                    modifier = Modifier.fillMaxWidth().height(150.dp),
+                )
+                IconButton(
+                    onClick = onFavorite,
+                    modifier = Modifier.align(Alignment.TopEnd).size(36.dp),
+                ) {
+                    Icon(
+                        if (isFavorite) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
+                        contentDescription = stringResource(
+                            if (isFavorite) R.string.cd_favorite_on else R.string.cd_favorite_off,
+                        ),
+                        tint = if (isFavorite) {
+                            com.ntoma.studio.ui.theme.Burgundy
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+            }
+            Column(Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {
+                Text(
+                    context.resolveKey(rec.style.titleKey) ?: rec.style.id,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                )
+                Spacer(Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        context.resolveKey(rec.style.titleKey) ?: rec.style.id,
-                        style = MaterialTheme.typography.titleMedium,
+                        stringResource(R.string.recs_match_score, rec.score),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = com.ntoma.studio.ui.theme.BrandGold,
                         modifier = Modifier.weight(1f),
                     )
-                    IconButton(onClick = onFavorite) {
-                        Icon(
-                            if (isFavorite) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
-                            contentDescription = stringResource(
-                                if (isFavorite) R.string.cd_favorite_on else R.string.cd_favorite_off,
-                            ),
-                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                    IconButton(onClick = onDismiss) {
+                    IconButton(onClick = onDismiss, modifier = Modifier.size(28.dp)) {
                         Icon(
                             Icons.Filled.Close,
                             contentDescription = stringResource(R.string.recs_not_interested),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp),
                         )
                     }
                 }
-                Text(
-                    stringResource(R.string.recs_match_score, rec.score),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    rec.reasons.firstOrNull()?.let { context.whyText(it) }.orEmpty(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Spacer(Modifier.height(8.dp))
-                Button(onClick = onTryOn, enabled = true) {
-                    Text(stringResource(R.string.recs_try_on))
+                Spacer(Modifier.height(6.dp))
+                Button(
+                    onClick = onTryOn,
+                    modifier = Modifier.fillMaxWidth().height(36.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.recs_try_on),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
                 }
             }
         }

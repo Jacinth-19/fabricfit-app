@@ -1,0 +1,211 @@
+name: build
+
+# Root-level workflow — GitHub only detects workflows at .github/workflows/
+# in the repository root (the Android project lives in NtomaStudio/).
+
+on:
+  push:
+    branches: [main, 'arena/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+defaults:
+  run:
+    working-directory: NtomaStudio
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Unit tests + debug build
+        run: |
+          set -o pipefail
+          ./gradlew :app:testDebugUnitTest :app:assembleDebug --stacktrace 2>&1 | tee build-output.txt
+
+      - name: Publish failure diagnostics
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### CI failure diagnostics ($(date -u +%FT%TZ))"
+            echo
+            echo "#### Failed unit tests (from JUnit XML)"
+            found=0
+            for f in $(ls app/build/test-results/testDebugUnitTest/*.xml 2>/dev/null); do
+              if grep -q '<failure' "$f"; then
+                found=1
+                echo "<details><summary>$(basename "$f")</summary>"
+                echo
+                echo '```'
+                grep -A 12 '<failure' "$f" | head -80
+                echo '```'
+                echo "</details>"
+              fi
+            done
+            if [ "$found" = "0" ]; then echo "_no JUnit failure records (failed before/after tests)_"; fi
+            echo
+            echo "#### Compiler errors"
+            echo '```'
+            grep -E "^e: |error: " build-output.txt | head -40 || true
+            echo '```'
+            echo
+            echo "#### Failed tasks"
+            echo '```'
+            grep -E "FAILED|Execution failed for task" build-output.txt | head -10 || true
+            echo '```'
+            echo
+            echo "#### Build log tail"
+            echo '```'
+            tail -c 6000 build-output.txt
+            echo '```'
+          } > diag.md
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            gh pr comment "${{ github.event.pull_request.number }}" \
+              --repo "$GITHUB_REPOSITORY" --body-file diag.md
+          else
+            cat diag.md
+          fi
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            NtomaStudio/app/build/reports/tests/testDebugUnitTest
+            NtomaStudio/app/build/test-results/testDebugUnitTest
+
+  # Opt-in README screenshots: real emulator captures of the Heritage Luxe screens.
+  # Trigger by pushing a commit whose message contains [screens] (or manual dispatch).
+  screenshots:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message || '', '[screens]')
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: NtomaStudio
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Debug APK (with x86_64 natives for the emulator)
+        env:
+          SCREENSHOT_ABI: '1'
+        run: ./gradlew :app:assembleDebug
+
+      - name: Enable Linux emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Resolve installed Android command-line tools
+        run: |
+          # Hosted runners may have a versioned directory without the 'latest' alias.
+          sdk_manager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -print -quit)
+          test -n "$sdk_manager"
+          tools_dir=$(dirname "$(dirname "$sdk_manager")")
+          if [ ! -e "$ANDROID_HOME/cmdline-tools/latest" ]; then
+            ln -s "$tools_dir" "$ANDROID_HOME/cmdline-tools/latest"
+          fi
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+
+      - name: Preflight system image installation with accessible diagnostics
+        run: |
+          mkdir -p qa-artifacts
+          set -o pipefail
+          sdkmanager --install 'system-images;android-33;google_apis;x86_64' --channel=3 2>&1 | tee qa-artifacts/sdk-setup.txt
+
+      - name: Capture screens on Android 33
+        timeout-minutes: 20
+        uses: reactivecircus/android-emulator-runner@v2.37.0
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: NtomaStudio
+          script: bash -c 'set -o pipefail; bash tools/qa/capture_screens.sh 2>&1 | tee capture.log; test -f qa-artifacts/screens/02_home.png'
+
+      - name: Publish capture log
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "### Emulator capture log ($(date -u +%FT%TZ))"
+            echo '```'
+            tail -c 20000 capture.log 2>/dev/null || echo "no capture.log"
+            echo '```'
+          } > diag-screens.md
+          PR=$(gh api "repos/$GITHUB_REPOSITORY/pulls?head=$GITHUB_REPOSITORY_OWNER:${GITHUB_REF_NAME}&state=open" --jq '.[0].number' || true)
+          if [ -n "$PR" ] && [ "$PR" != "null" ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body-file diag-screens.md
+          else
+            cat diag-screens.md
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: readme-screens
+          path: |
+            NtomaStudio/qa-artifacts/
+            NtomaStudio/capture.log
+
+  # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
+  # macOS runners only (Linux GH runners lack KVM); trigger manually or tag a release.
+  device-qa:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: DeepLabV3 person-segmentation QA on emulator
+        uses: reactivecircus/android-emulator-runner@v3
+        with:
+          api-level: 33
+          target: default
+          arch: x86_64
+          working-directory: NtomaStudio
+          script: >
+            ./gradlew :app:connectedDebugAndroidTest
+            -Pandroid.testInstrumentationRunnerArguments.class=com.ntoma.studio.data.ml.PersonSegmenterDeviceTest

@@ -81,6 +81,10 @@ enum class ColorName(val labelRes: Int) {
 enum class PatternType(val labelRes: Int) {
     STRIPED(R.string.pattern_striped),
     CHECKED(R.string.pattern_checked),
+
+    /** Woven cross-pattern (kente-style tartan-like banding). Separate from [CHECKED] in the
+     *  trained pattern model; heuristic engines may still report CHECKED for both. */
+    PLAID(R.string.pattern_plaid),
     GEOMETRIC(R.string.pattern_geometric),
     FLORAL(R.string.pattern_floral),
     ORGANIC(R.string.pattern_organic),
@@ -127,6 +131,10 @@ enum class FabricCategory(val labelRes: Int, val descriptionRes: Int, val asset:
 enum class AnalysisEngine {
     /** Runs fully on-device; nothing is uploaded. */
     ON_DEVICE_DEMO,
+
+    /** On-device, but the verdict came from a trained fabric/pattern model asset (still nothing
+     *  uploaded). Used only when a shipped TFLite model actually produced the verdict. */
+    ON_DEVICE_TRAINED,
 
     /** A cloud CV backend, once configured by the operator. */
     CLOUD,

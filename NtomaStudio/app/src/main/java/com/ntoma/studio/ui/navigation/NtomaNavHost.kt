@@ -125,6 +125,7 @@ private fun NtomaNavHost(
         composable(Routes.CREATE) { CreateScreen(nav, padding) }
         composable(Routes.FAVORITES) { FavoritesScreen(nav, padding) }
         composable(Routes.PROFILE) { ProfileScreen(nav, padding) }
+        composable(Routes.TRYON_HUB) { TryOnScreen(nav, padding, fabricId = null, styleId = null, personPath = null) }
 
         composable(Routes.CAMERA_FABRIC) { CameraScreen(nav, padding, target = "fabric") }
         composable(Routes.CAMERA_PERSON) { CameraScreen(nav, padding, target = "person") }

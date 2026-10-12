@@ -11,6 +11,9 @@ object Routes {
 
     const val ONBOARDING = "onboarding"
 
+    /** Top-level Try-On hub (bottom-bar tab); opens the try-on builder with nothing preselected. */
+    const val TRYON_HUB = "tryon_hub"
+
     const val CAMERA_FABRIC = "camera/fabric"
     const val CAMERA_PERSON = "camera/person"
 
@@ -42,5 +45,5 @@ object Routes {
     fun tailor(id: String) = "tailor/$id"
     const val MEASUREMENTS = "measurements"
 
-    val TOP_LEVEL = listOf(HOME, DISCOVER, CREATE, FAVORITES, PROFILE)
+    val TOP_LEVEL = listOf(HOME, DISCOVER, CREATE, TRYON_HUB, FAVORITES, PROFILE)
 }

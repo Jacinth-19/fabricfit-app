@@ -4,12 +4,15 @@ import android.net.Uri
 import com.ntoma.studio.R
 import com.ntoma.studio.analytics.AnalyticsLogger
 import com.ntoma.studio.data.local.db.FabricDao
+import com.ntoma.studio.data.ml.FabricFamilyClassifier
 import com.ntoma.studio.data.ml.OnDeviceMlClassifier
+import com.ntoma.studio.data.ml.PatternClassifier
 import com.ntoma.studio.data.mapper.toDomain
 import com.ntoma.studio.data.mapper.toEntity
 import com.ntoma.studio.domain.model.AnalysisEngine
 import com.ntoma.studio.domain.model.AppError
 import com.ntoma.studio.domain.model.Fabric
+import com.ntoma.studio.domain.model.FabricCategory
 import com.ntoma.studio.domain.model.HistoryEvent
 import com.ntoma.studio.domain.repository.AnalysisEvent
 import com.ntoma.studio.domain.repository.FabricAnalysisRepository
@@ -35,6 +38,8 @@ class FabricAnalysisRepositoryImpl(
     private val ml: OnDeviceMlClassifier,
     private val settings: com.ntoma.studio.domain.repository.SettingsRepository,
     private val cloud: com.ntoma.studio.data.remote.CloudAnalysisClient,
+    private val patternClassifier: PatternClassifier,
+    private val familyClassifier: FabricFamilyClassifier,
 ) : FabricAnalysisRepository {
 
     override fun analyze(imageUri: String): Flow<AnalysisEvent> = flow {
@@ -83,7 +88,7 @@ class FabricAnalysisRepositoryImpl(
             ),
         )
         val local = analyzer.toFabric(signature, imageUri, AnalysisEngine.ON_DEVICE_DEMO)
-        val fabric = if (verdict != null) {
+        var fabric = if (verdict != null) {
             local.copy(
                 category = verdict.category,
                 confidence = verdict.confidence,
@@ -94,6 +99,65 @@ class FabricAnalysisRepositoryImpl(
             )
         } else {
             local.copy(mlHints = hints)
+        }
+
+        // Trained on-device models (docs/ml_roadmap.md): pattern first, then fabric family.
+        // Both are optional assets — until real models ship they return null and the heuristic
+        // signature stays the answer. A cloud verdict, when configured, outranks both.
+        // Uncertain verdicts are never forced onto the result: an unsure family collapses to
+        // UNKNOWN ("Not sure yet") and an unsure pattern leaves the heuristic answer in place.
+        if (verdict == null && (patternClassifier.available || familyClassifier.available)) {
+            val trainedBitmap = withContext(Dispatchers.Default) {
+                analyzer.decodeSampled(Uri.parse(imageUri), TRAINED_EDGE)
+            }
+            if (trainedBitmap != null) {
+                val patternVerdict = withContext(Dispatchers.Default) { patternClassifier.classify(trainedBitmap) }
+                if (patternVerdict != null) {
+                    if (patternVerdict.uncertain) {
+                        analytics.log(
+                            "pattern_model_uncertain",
+                            mapOf("top" to "%.2f".format(patternVerdict.confidence)),
+                        )
+                    } else {
+                        analytics.log(
+                            "pattern_model_applied",
+                            mapOf(
+                                "pattern" to patternVerdict.pattern.name,
+                                "confidence" to "%.2f".format(patternVerdict.confidence),
+                            ),
+                        )
+                        fabric = fabric.copy(pattern = patternVerdict.pattern)
+                    }
+                }
+                val familyVerdict = withContext(Dispatchers.Default) { familyClassifier.classify(trainedBitmap) }
+                if (familyVerdict != null) {
+                    if (familyVerdict.uncertain) {
+                        analytics.log(
+                            "family_model_uncertain",
+                            mapOf("top" to "%.2f".format(familyVerdict.confidence)),
+                        )
+                        fabric = fabric.copy(
+                            category = FabricCategory.UNKNOWN,
+                            confidence = familyVerdict.confidence,
+                            engine = AnalysisEngine.ON_DEVICE_TRAINED,
+                        )
+                    } else {
+                        analytics.log(
+                            "family_model_applied",
+                            mapOf(
+                                "category" to familyVerdict.category.name,
+                                "confidence" to "%.2f".format(familyVerdict.confidence),
+                            ),
+                        )
+                        fabric = fabric.copy(
+                            category = familyVerdict.category,
+                            confidence = familyVerdict.confidence,
+                            engine = AnalysisEngine.ON_DEVICE_TRAINED,
+                        )
+                    }
+                }
+                if (!trainedBitmap.isRecycled) trainedBitmap.recycle()
+            }
         }
         emit(AnalysisEvent.Completed(fabric))
     }
@@ -135,5 +199,8 @@ class FabricAnalysisRepositoryImpl(
 
     companion object {
         const val STAGE_MS = 380L
+
+        /** Decode edge for the trained classifiers (they rescale to their own input size). */
+        const val TRAINED_EDGE = 256
     }
 }

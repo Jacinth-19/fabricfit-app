@@ -13,7 +13,11 @@ android {
 
     defaultConfig {
         // Ship only the ABIs real target devices use; trims TFLite/AndroidX natives (~6 MB).
-        ndk { abiFilters += listOf("armeabi-v7a", "arm64-v8a") }
+        // CI builds for the x86_64 emulator screenshots add x86_64 via SCREENSHOT_ABI=1.
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            if (System.getenv("SCREENSHOT_ABI") == "1") abiFilters += "x86_64"
+        }
 
         applicationId = "com.ntoma.studio"
         minSdk = 24
