@@ -61,9 +61,19 @@ jobs:
             done
             if [ "$found" = "0" ]; then echo "_no JUnit failure records (failed before/after tests)_"; fi
             echo
+            echo "#### Compiler errors"
+            echo '```'
+            grep -E "^e: |error: " build-output.txt | head -40 || true
+            echo '```'
+            echo
+            echo "#### Failed tasks"
+            echo '```'
+            grep -E "FAILED|Execution failed for task" build-output.txt | head -10 || true
+            echo '```'
+            echo
             echo "#### Build log tail"
             echo '```'
-            tail -c 24000 build-output.txt
+            tail -c 6000 build-output.txt
             echo '```'
           } > diag.md
           if [ "${{ github.event_name }}" = "pull_request" ]; then
