@@ -53,7 +53,9 @@ scraper toolkit with hard safety rails (license gate CC0/PD/CC BY/CC BY-SA only,
 stock/marketplace blocklist, per-image `CREDITS.csv`, dHash dedup, leak-free splits):
 
 ```bash
-python3 tools/dataset/scrape/selftest.py      # offline test-suite first
+python3 tools/dataset/selftest_pipeline.py   # offline: schema/enum/asset contract checks
+                                             # + synthetic augment dry-run (Pillow only)
+python3 tools/dataset/scrape/selftest.py      # offline scraper test-suite first
 python3 tools/dataset/scrape/wikimedia.py --per-class 60
 python3 tools/dataset/scrape/openverse.py --per-class 40   # optional OPENVERSE_API_KEY
 python3 tools/dataset/scrape/github_repos.py  # allowlisted research repos

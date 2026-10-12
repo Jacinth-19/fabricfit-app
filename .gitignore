@@ -5,6 +5,9 @@
 # Keras model weights (large binary files)
 .keras/
 
+# Python virtualenvs (offline tooling)
+.venv/
+
 # Linux admin marker
 .sudo_as_admin_successful
 
