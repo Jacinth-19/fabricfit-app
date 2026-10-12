@@ -143,7 +143,10 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    items(state.filtered, key = { it.style.id }) { rec ->
+                    androidx.compose.foundation.lazy.grid.items(
+                        state.filtered,
+                        key = { it.style.id },
+                    ) { rec ->
                         RecommendationCard(
                             rec = rec,
                             isFavorite = rec.style.id in state.favoriteStyles,
