@@ -124,6 +124,23 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      - name: Resolve installed Android command-line tools
+        run: |
+          # Hosted runners may have a versioned directory without the 'latest' alias.
+          sdk_manager=$(find "$ANDROID_HOME/cmdline-tools" -path '*/bin/sdkmanager' -print -quit)
+          test -n "$sdk_manager"
+          tools_dir=$(dirname "$(dirname "$sdk_manager")")
+          if [ ! -e "$ANDROID_HOME/cmdline-tools/latest" ]; then
+            ln -s "$tools_dir" "$ANDROID_HOME/cmdline-tools/latest"
+          fi
+          echo "$ANDROID_HOME/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+
+      - name: Preflight system image installation with accessible diagnostics
+        run: |
+          mkdir -p qa-artifacts
+          set -o pipefail
+          sdkmanager --install 'system-images;android-33;google_apis;x86_64' --channel=3 2>&1 | tee qa-artifacts/sdk-setup.txt
+
       - name: Capture screens on Android 33
         timeout-minutes: 20
         uses: reactivecircus/android-emulator-runner@v2.37.0
@@ -135,7 +152,7 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: NtomaStudio
-          script: set -o pipefail; bash tools/qa/capture_screens.sh 2>&1 | tee capture.log; test -f qa-artifacts/screens/02_home.png
+          script: bash -c 'set -o pipefail; bash tools/qa/capture_screens.sh 2>&1 | tee capture.log; test -f qa-artifacts/screens/02_home.png'
 
       - name: Publish capture log
         if: always()
