@@ -61,9 +61,17 @@ class TrainedModelRunner(
     val available: Boolean get() = interpreter != null && labels.isNotEmpty()
 
     /** Softmax scores in [labels] order, or null when the model is unavailable or failed. */
-    fun classify(bitmap: Bitmap): FloatArray? = try {
+    fun classify(bitmap: Bitmap): FloatArray? {
         val interp = interpreter ?: return null
         if (labels.isEmpty()) return null
+        return try {
+            runModel(interp, bitmap)
+        } catch (t: Throwable) {
+            null
+        }
+    }
+
+    private fun runModel(interp: org.tensorflow.lite.Interpreter, bitmap: Bitmap): FloatArray {
         val scaled = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, true)
         val input = ByteBuffer.allocateDirect(inputSize * inputSize * 3 * 4)
             .order(ByteOrder.nativeOrder())
@@ -77,9 +85,7 @@ class TrainedModelRunner(
         input.rewind()
         val out = FloatArray(labels.size)
         interp.run(input, out)
-        out
-    } catch (t: Throwable) {
-        null
+        return out
     }
 
     companion object {
