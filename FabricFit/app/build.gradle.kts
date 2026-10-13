@@ -13,7 +13,11 @@ android {
 
     defaultConfig {
         // Ship only the ABIs real target devices use; trims TFLite/AndroidX natives (~6 MB).
-        ndk { abiFilters += listOf("armeabi-v7a", "arm64-v8a") }
+        // CI screenshots add x86_64 so the same debug APK runs in the Linux emulator.
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            if (System.getenv("SCREENSHOT_ABI") == "1") abiFilters += "x86_64"
+        }
 
         applicationId = "com.fabricfit.app"
         minSdk = 24
