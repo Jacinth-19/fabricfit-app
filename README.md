@@ -1,5 +1,7 @@
 # FabricFit
 
+[![build](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml/badge.svg)](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml)
+
 **Scan Your Fabric. Wear Your Style.**
 
 FabricFit is an Android app that reads the fabric you already own — kente, ankara, wax

@@ -29,17 +29,33 @@ Outputs:
 - Convenience copies at the repo root: `FabricFit-debug.apk`, `FabricFit-release.apk`, `FabricFit-release.aab`
 
 ## Verified status
-- `assembleDebug` / `assembleRelease`: **BUILD SUCCESSFUL** (only two unchecked-cast warnings remain).
-- `testDebugUnitTest`: **14/14 passing** — ColorPatternAnalyzer (solid/striped/checked classification,
-  confidence caps), RecommendationEngine (ordering, score band, reasons, tradition bonus, gender filter),
-  EntitlementRepository (free-tier daily/monthly quotas, rewarded bonus, premium bypass).
-- No emulator in this environment (`/dev/kvm` absent), so instrumented/androidTest suites and the
-  end-to-end UI journey were **not** executed on a device here.
-- The above was recorded **before** the Ntoma → FabricFit rename. The rename touched the
-  package, application ID, theme and several class names (see below); it was verified by
-  exhaustive grep + XML/TSV validation but **not** recompiled, because the toolchain
-  installer needs `dl.google.com`, which this sandbox blocks. Run
-  `./gradlew :app:testDebugUnitTest :app:assembleDebug` before shipping.
+
+CI — GitHub Actions workflow [`.github/workflows/build.yml`](../.github/workflows/build.yml),
+ubuntu-latest + JDK 17 — runs `./gradlew :app:testDebugUnitTest :app:assembleDebug` from
+`FabricFit/`. As of the FabricFit rename (commit `c058e13`, run
+[#38330695396](https://github.com/Jacinth-19/fabricfit-app/actions/runs/38330695396)) that
+job is **green** and uploads a ~33 MB debug APK plus the test reports. The JVM suite
+(68 `@Test` methods across 13 classes, Robolectric) covers ColorPatternAnalyzer,
+RecommendationEngine, EntitlementRepository, SearchIntentParser, ColorHarmonyEngine,
+OutfitSuggester, BackgroundRemover, TextureMetrics and the UI journey; **any failure fails
+the job**, so a green run means the rename compiles and the suite passes.
+
+The CI workflow previously lived at `FabricFit/.github/workflows/build.yml`, a path GitHub
+never reads, so it had never executed; it now sits in `/.github/workflows/` with
+`working-directory: FabricFit`. `gradlew` was also committed without its executable bit and
+has been set to mode 100755.
+
+**Not covered here:** `assembleRelease` (R8/minify) and the instrumented androidTest suite.
+The device-QA job is opt-in via `workflow_dispatch` (macOS runner, `reactivecircus/android-emulator-runner`)
+because it is slow and flaky by nature. Run it before a release:
+
+```bash
+gh workflow run build.yml --ref main     # verify + macOS device-qa
+```
+
+This sandbox cannot build locally: only `github.com`, `pypi.org` and the npm registry are
+reachable, so there is no JDK, no Gradle distribution, no Android SDK and no Maven Central.
+Use CI (or a dev machine) for compiles.
 
 ## Rename map (Ntoma Studio → FabricFit)
 
