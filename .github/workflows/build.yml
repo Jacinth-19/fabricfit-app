@@ -115,7 +115,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: DeepLabV3 person-segmentation QA on emulator
-        uses: reactivecircus/android-emulator-runner@v3
+        uses: reactivecircus/android-emulator-runner@v2.38.0
         with:
           api-level: 33
           target: default
@@ -144,7 +144,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
 
       - name: Capture current FabricFit app screens
-        uses: reactivecircus/android-emulator-runner@v3
+        uses: reactivecircus/android-emulator-runner@v2.38.0
         with:
           api-level: 34
           target: default
