@@ -159,27 +159,33 @@ flowchart TD
 | Legal | `legal/{doc}` | Terms, privacy policy and credits documents |
 | FabricFit Premium | `premium` | Free-tier limits explained, premium benefits, and the paywall sheet. This build ships a demo billing manager, labelled as such |
 
-### Screenshots
+### Real app UI
 
-**Not captured yet.** The repository contains the store icon, feature graphic and brand
-icon, but no app screenshots — `store/` holds only
-`play_icon_512.png`, `feature_graphic.png`, `listing.md` and `privacy_policy.html`.
+These are **unretouched screenshots of the running FabricFit Android app**, captured by
+GitHub Actions on an API 33 Pixel 2 emulator at 1080 × 1920. They are real app screens,
+not mockups; first-run coach marks were dismissed, while the empty Favorites and Fit
+Closet states are the app's genuine fresh-install experience.
 
-Play requires at least two phone screenshots (16:9 or 9:16, 320–3840 px). The shot list in
-[`docs/PLAY_DATA_SAFETY.md`](FabricFit/docs/PLAY_DATA_SAFETY.md) walks the journey:
-**Home** → **FitScan analysis** → **FitMatch AI** → **FitRoom** → **My Fit Closet**.
+<table>
+  <tr>
+    <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home screen" width="220"><br><strong>Home</strong></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/discover.png" alt="FabricFit Discover screen" width="220"><br><strong>Discover</strong></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Create screen" width="220"><br><strong>Create</strong></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Favourites screen" width="220"><br><strong>Favourites</strong></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/profile.png" alt="FabricFit Profile screen" width="220"><br><strong>Profile</strong></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/my-fit-closet.png" alt="FabricFit My Fit Closet screen" width="220"><br><strong>My Fit Closet</strong></td>
+  </tr>
+</table>
 
-To capture them on a device or emulator:
+To refresh the captures, run the manual `build.yml` workflow. Its `screenshots` job
+rebuilds the debug app, drives the emulator with
+[`tools/qa/capture_fabricfit_screens.sh`](tools/qa/capture_fabricfit_screens.sh), and
+uploads the PNGs as `fabricfit-readme-screens`.
 
-```bash
-cd FabricFit
-./gradlew :app:installDebug
-adb shell screencap -p /sdcard/fabricfit-home.png
-adb pull /sdcard/fabricfit-home.png ../store/screenshots/
-```
-
-Suggested home for the files: `store/screenshots/`, one PNG per screen, named after the
-tab or flow (`home.png`, `fitscan-analysis.png`, `fitmatch-ai.png`, `fitroom.png`,
-`my-fit-closet.png`). The weekly macOS device-QA job in
-[`.github/workflows/build.yml`](.github/workflows/build.yml) already boots an emulator,
-so screenshot capture can be automated there later.
+These README preview captures are **not** Play Store listing creatives. Play requires at
+least two phone screenshots (16:9 or 9:16, 320–3840 px); the feature-focused shot list in
+[`docs/PLAY_DATA_SAFETY.md`](FabricFit/docs/PLAY_DATA_SAFETY.md) remains
+**Home** → **FitScan analysis** → **FitMatch AI** → **FitRoom** → **My Fit Closet** and
+should be saved separately under `FabricFit/store/screenshots/`.

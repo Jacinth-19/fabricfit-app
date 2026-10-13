@@ -96,10 +96,11 @@ deadline (see `docs/PLAY_DATA_SAFETY.md`, which already flags this).
 `store/listing.md` has the short and full descriptions, categorisation and the
 screenshots checklist. Still to do:
 
-- **No phone screenshots exist yet.** `store/` holds only
-  `play_icon_512.png`, `feature_graphic.png`, `listing.md` and `privacy_policy.html`.
-  Capture Home → FitScan → FitMatch AI → FitRoom → My Fit Closet. An emulator can do this
-  now that Actions can run the macOS job, or use a physical device.
+- **No Play listing screenshots exist yet.** The README's real UI previews live in
+  `FabricFit/docs/screenshots/` (Home, Discover, Create, Favourites, Profile and My Fit Closet).
+  `store/` still holds only `play_icon_512.png`, `feature_graphic.png`, `listing.md` and
+  `privacy_policy.html`. Capture the Play-focused journey Home → FitScan → FitMatch AI →
+  FitRoom → My Fit Closet and put those listing creatives in `FabricFit/store/screenshots/`.
 - **Host the privacy policy** at a public URL and paste `store/privacy_policy.html`
   (contact address in it is `privacy@fabricfit.app`, currently a placeholder).
 - **The application ID changed**, so this is a *new* Play listing. An existing
@@ -158,9 +159,10 @@ keystore's `ntoma`/`ntomastudio` credentials.
   `ui/navigation/Destinations.kt` is declared but never referenced — onboarding is a
   state gate in `AppShell` (`onboardingCompleted`), and Settings' "Replay onboarding"
   re-arms that flag rather than navigating. Either wire it up or delete the constant.
-- **The README now documents all 29 screens** (map + tables + screenshot plan). The
-  screenshot plan is still just a plan: capture the five shots listed in
-  `docs/PLAY_DATA_SAFETY.md` and drop them in `store/screenshots/`.
+- **The README documents all 29 screens** (map + tables) and includes real API 33
+  emulator captures of the core tabs under `FabricFit/docs/screenshots/`. The separate
+  Play Store screenshot plan is still outstanding: capture the five feature shots listed
+  in `docs/PLAY_DATA_SAFETY.md` and drop them in `FabricFit/store/screenshots/`.
 - **`credits_body` keeps the etymology** ("the name comes from 'ntoma', Akan for cloth")
   in all four locales. That is intentional and reviewed — do not "fix" it.
 - Twi copy legitimately contains the word `ntoma` ("cloth"), e.g. `look_ankara_men_1`
