@@ -126,10 +126,10 @@ jobs:
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
 
-  # Full app UI screenshots are expensive, so capture them only on manual dispatch.
+  # Full app UI screenshots are captured on this pull request so the README uses real UI.
   # The reviewed PNGs can be committed under FabricFit/docs/screenshots/ for the README.
   screenshots:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'pull_request'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v7
