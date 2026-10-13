@@ -22,10 +22,11 @@ cd /home/user/FabricFit
 ./gradlew :app:bundleRelease          # Play Console artifact (.aab) — see docs/PLAY_DATA_SAFETY.md
 ```
 
-Outputs:
-- `app/build/outputs/apk/debug/app-debug.apk` (~21 MB)
-- `app/build/outputs/apk/release/app-release.apk` (~2.6 MB, R8-minified)
-- `app/build/outputs/bundle/release/app-release.aab` (~4.4 MB, the Play-uploadable bundle)
+Outputs (sizes measured in CI, run
+[#38331853856](https://github.com/Jacinth-19/fabricfit-app/actions/runs/38331853856)):
+- `app/build/outputs/apk/debug/app-debug.apk` (~32.7 MB)
+- `app/build/outputs/apk/release/app-release.apk` (~14.4 MB, R8-minified)
+- `app/build/outputs/bundle/release/app-release.aab` (~16.5 MB, the Play-uploadable bundle)
 - Convenience copies at the repo root: `FabricFit-debug.apk`, `FabricFit-release.apk`, `FabricFit-release.aab`
 
 ## Verified status
@@ -45,13 +46,18 @@ never reads, so it had never executed; it now sits in `/.github/workflows/` with
 `working-directory: FabricFit`. `gradlew` was also committed without its executable bit and
 has been set to mode 100755.
 
-**Not covered here:** `assembleRelease` (R8/minify) and the instrumented androidTest suite.
+**Not covered here:** the instrumented androidTest suite, which needs a device or emulator.
 The device-QA job is opt-in via `workflow_dispatch` (macOS runner, `reactivecircus/android-emulator-runner`)
-because it is slow and flaky by nature. Run it before a release:
+because it is slow and flaky by nature. Note that GitHub only exposes `workflow_dispatch`
+for workflows that exist on the **default branch**, so this job can only be dispatched once
+`build.yml` has landed on `main`:
 
 ```bash
-gh workflow run build.yml --ref main     # verify + macOS device-qa
+gh workflow run build.yml --ref main     # verify + release + macOS device-qa
 ```
+
+CI also compiles the instrumented source set (`:app:assembleDebugAndroidTest`) on every
+push, so a rename inside `androidTest` fails fast without an emulator.
 
 This sandbox cannot build locally: only `github.com`, `pypi.org` and the npm registry are
 reachable, so there is no JDK, no Gradle distribution, no Android SDK and no Maven Central.
