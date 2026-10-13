@@ -63,8 +63,9 @@ Deliberately **not** renamed, and why:
 - The demo keystore alias `ntoma` and store/key passwords `ntomastudio`. Those strings are
   baked into the binary `app/demo-release.keystore`; changing the Gradle config alone would
   break signing. Replace the keystore with your own upload key before a real release.
-- `https://github.com/Jacinth-19/ntoma-studio` in `tools/dataset/scrape/common.py`. Rename
-  the GitHub repository first, then update this URL.
+
+The GitHub repository was renamed too: `Jacinth-19/ntoma-studio` → **`Jacinth-19/fabricfit-app`**.
+GitHub redirects the old URL, so existing clones, links and pull requests keep working.
 
 ## Release signing
 `app/demo-release.keystore` is a throwaway demo key (storepass/keypass `ntomademo`).

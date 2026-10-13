@@ -6,7 +6,8 @@ FabricFit is an Android app that reads the fabric you already own — kente, ank
 print, lace and more — and shows you what it could become. Photograph a cloth, get
 explained outfit matches, preview a look, and carry a shareable brief to your tailor.
 
-> Renamed from **ntoma-studio** / "Ntoma Studio" — see `FabricFit/docs/brand_positioning.md`.
+> Renamed from **ntoma-studio** / "Ntoma Studio". The GitHub repository is now
+> `Jacinth-19/fabricfit-app`; see `FabricFit/docs/brand_positioning.md`.
 
 ## Feature names
 

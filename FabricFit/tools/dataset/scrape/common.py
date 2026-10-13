@@ -38,7 +38,7 @@ SCHEMA = DATASET_ROOT / "label_schema.json"
 
 DEFAULT_UA = (
     "FabricFit-FabricDatasetBot/1.0 "
-    "(+https://github.com/Jacinth-19/ntoma-studio; academic dataset collection)"
+    "(+https://github.com/Jacinth-19/fabricfit-app; academic dataset collection)"
 )
 
 CREDIT_FIELDS = [
