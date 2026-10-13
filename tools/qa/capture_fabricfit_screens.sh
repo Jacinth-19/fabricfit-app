@@ -97,13 +97,17 @@ tap_label "Discover"
 capture discover
 
 tap_label "Create"
+tap_label "Got it" # dismiss the first-run Create coach mark
 capture create
 
 tap_label "Favourites"
+tap_label "Got it" # dismiss the first-run Favourites coach mark
 capture favourites
 
 tap_label "Profile"
 capture profile
+tap_label "My Fit Closet"
+capture my-fit-closet
 
 printf 'Captured screens:\n'
 ls -lh "$OUT_DIR"
