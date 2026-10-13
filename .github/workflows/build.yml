@@ -125,3 +125,41 @@ jobs:
             chmod +x ./gradlew &&
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
+
+  # Full app UI screenshots are expensive, so capture them only on manual dispatch.
+  # The reviewed PNGs can be committed under FabricFit/docs/screenshots/ for the README.
+  screenshots:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Capture current FabricFit app screens
+        uses: reactivecircus/android-emulator-runner@v3
+        with:
+          api-level: 34
+          target: default
+          arch: x86_64
+          profile: pixel_2
+          working-directory: FabricFit
+          script: |
+            chmod +x ./gradlew
+            ./gradlew :app:assembleDebug
+            bash ../tools/qa/capture_fabricfit_screens.sh ../qa-artifacts/screens
+
+      - name: Upload real app UI screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fabricfit-readme-screens
+          path: qa-artifacts/screens/*.png
+          if-no-files-found: warn
