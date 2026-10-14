@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'arena/85eef50b-fabricfit-app']
     tags: ['v*']
   pull_request:
   # Weekly emulator sweep. Linux GitHub runners have no KVM, so the heavy
@@ -126,10 +126,13 @@ jobs:
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
 
-  # Full app UI screenshots are expensive; capture them only when requested manually.
+  # Full app UI screenshots are expensive; capture them only when requested manually
+  # (or on pushes to the arena UI-refresh branch, which is re-capturing its README art).
   # The reviewed PNGs can be committed under FabricFit/docs/screenshots/ for the README.
   screenshots:
-    if: github.event_name == 'workflow_dispatch'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/arena/85eef50b-fabricfit-app')
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
