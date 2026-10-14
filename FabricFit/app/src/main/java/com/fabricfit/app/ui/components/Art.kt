@@ -61,7 +61,7 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
                 repeat(bands) { i ->
                     val thickness = if (i % 2 == 0) band else band * 0.45f
                     drawRect(colors[i % colors.size], topLeft = Offset(0f, i * band), size = Size(w, thickness))
-                    drawRect(Color(0xFFFFFFFF, 0.10f), topLeft = Offset(0f, i * band), size = Size(w, 1f))
+                    drawRect(Color.White.copy(alpha = 0.10f), topLeft = Offset(0f, i * band), size = Size(w, 1f))
                 }
             }
             PatternType.CHECKED -> {
@@ -73,10 +73,10 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
                 }
                 // cream warp threads over the check
                 for (x in 0..5) {
-                    drawLine(Color(0xFFFDF8F2, 0.45f), Offset(x * cell, 0f), Offset(x * cell, h), 1f)
+                    drawLine(Color(0xFFFDF8F2).copy(alpha = 0.45f), Offset(x * cell, 0f), Offset(x * cell, h), 1f)
                 }
                 for (y in 0..5) {
-                    drawLine(Color(0xFFFDF8F2, 0.45f), Offset(0f, y * (h / 5f)), Offset(w, y * (h / 5f)), 1f)
+                    drawLine(Color(0xFFFDF8F2).copy(alpha = 0.45f), Offset(0f, y * (h / 5f)), Offset(w, y * (h / 5f)), 1f)
                 }
             }
             PatternType.DOTTED, PatternType.FLORAL, PatternType.ORGANIC -> {
@@ -87,14 +87,14 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
                     for (cx in 0 until 6) {
                         val center = Offset(cx * cell + cell / 2f + stagger, cy * cell + cell / 2f)
                         drawCircle(colors[(cx + cy) % colors.size], radius = cell / 3f, center = center)
-                        drawCircle(Color(0xFFFDF8F2, 0.35f), radius = cell / 8f, center = center)
+                        drawCircle(Color(0xFFFDF8F2).copy(alpha = 0.35f), radius = cell / 8f, center = center)
                     }
                 }
             }
             PatternType.GRADIENT -> {
                 drawRect(
                     brush = Brush.linearGradient(
-                        colorStops = listOf(colors.first(), colors.getOrElse(1) { colors[0] }),
+                        colorStops = listOf(0f to colors.first(), 1f to colors.getOrElse(1) { colors[0] }),
                         start = Offset(0f, 0f),
                         end = Offset(w, h),
                     ),
@@ -115,8 +115,8 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
                 val thread = h / 12f
                 drawRect(BrandGold, topLeft = Offset(0f, h / 3f), size = Size(w, thread))
                 drawRect(BrandGold, topLeft = Offset(0f, h * 2f / 3f - thread / 2f), size = Size(w, thread))
-                drawRect(Color(0xFFFDF8F2, 0.8f), topLeft = Offset(0f, h / 3f + thread), size = Size(w, 2f))
-                drawRect(Color(0xFFFDF8F2, 0.8f), topLeft = Offset(0f, h * 2f / 3f + thread / 2f), size = Size(w, 2f))
+                drawRect(Color(0xFFFDF8F2).copy(alpha = 0.8f), topLeft = Offset(0f, h / 3f + thread), size = Size(w, 2f))
+                drawRect(Color(0xFFFDF8F2).copy(alpha = 0.8f), topLeft = Offset(0f, h * 2f / 3f + thread / 2f), size = Size(w, 2f))
                 drawRect(c2, topLeft = Offset(vw * 1.15f, h / 3f), size = Size(vw * 0.7f, thread))
                 drawRect(c2, topLeft = Offset(w - vw * 1.85f, h * 2f / 3f - thread / 2f), size = Size(vw * 0.7f, thread))
             }
@@ -124,7 +124,7 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
         // cloth depth: gentle vignette toward the bottom edge
         drawRect(
             brush = Brush.verticalGradient(
-                colors = listOf(Color.Transparent, Color(0xFF000000, 0.10f)),
+                colors = listOf(Color.Transparent, Color(0xFF000000).copy(alpha = 0.10f)),
                 startY = h * 0.55f,
                 endY = h,
             ),
@@ -132,14 +132,14 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
         // diagonal sheen
         drawRect(
             brush = Brush.linearGradient(
-                colorStops = listOf(Color(0xFFFFFFFF, 0.14f), Color.Transparent),
+                colorStops = listOf(0f to Color.White.copy(alpha = 0.14f), 1f to Color.Transparent),
                 start = Offset(0f, 0f),
                 end = Offset(w * 0.7f, h * 0.5f),
             ),
         )
         // hairline frame
         drawRoundRect(
-            color = Color(0xFF000000, 0.10f),
+            color = Color(0xFF000000).copy(alpha = 0.10f),
             topLeft = Offset(0.75f, 0.75f),
             size = Size((w - 1.5f).coerceAtLeast(0f), (h - 1.5f).coerceAtLeast(0f)),
             cornerRadius = CornerRadius(w * 0.02f),
@@ -168,7 +168,7 @@ fun GarmentArt(style: DressStyle, fabric: Fabric?, modifier: Modifier = Modifier
             cornerRadius = CornerRadius(w * 0.05f),
         )
         drawRoundRect(
-            color = Color(0xFF14110F, 0.06f),
+            color = Color(0xFF14110F).copy(alpha = 0.06f),
             topLeft = Offset(w * 0.04f, h * 0.03f),
             size = Size(w * 0.92f, h * 0.94f),
             cornerRadius = CornerRadius(w * 0.05f),
@@ -176,7 +176,7 @@ fun GarmentArt(style: DressStyle, fabric: Fabric?, modifier: Modifier = Modifier
         )
         // soft shadow under the garment
         drawOval(
-            color = Color(0xFF14110F, 0.10f),
+            color = Color(0xFF14110F).copy(alpha = 0.10f),
             topLeft = Offset(w * 0.28f, h * 0.88f),
             size = Size(w * 0.44f, h * 0.06f),
         )

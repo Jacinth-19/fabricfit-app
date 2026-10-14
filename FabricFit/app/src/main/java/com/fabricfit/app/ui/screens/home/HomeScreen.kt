@@ -110,7 +110,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     Text(
                         stringResource(R.string.home_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color(0xFFFFFFFF, 0.82f),
+                        color = Color.White.copy(alpha = 0.82f),
                     )
                     Spacer(Modifier.height(18.dp))
                     Button(
@@ -131,9 +131,9 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         onClick = { picker.launch(pickImagesRequest()) },
                         modifier = Modifier.fillMaxWidth().height(54.dp),
                         shape = RoundedCornerShape(16.dp),
-                        color = Color(0xFFFFFFFF, 0.10f),
+                        color = Color.White.copy(alpha = 0.10f),
                         contentColor = BrandCream,
-                        border = BorderStroke(1.dp, Color(0xFFFFFFFF, 0.35f)),
+                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.35f)),
                     ) {
                         Row(
                             Modifier.fillMaxSize(),
@@ -154,7 +154,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                 3,
                             ),
                             style = MaterialTheme.typography.labelMedium,
-                            color = Color(0xFFFFFFFF, 0.75f),
+                            color = Color.White.copy(alpha = 0.75f),
                         )
                     }
                 }
@@ -293,10 +293,10 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         Canvas(Modifier.matchParentSize()) {
                             drawRect(
                                 brush = Brush.radialGradient(
-                                    colorStops = listOf(
-                                        Color(0xFFC8952B, 0.28f),
-                                        Color(0xFFC8952B, 0f),
-                                    ),
+                                colorStops = listOf(
+                                    0f to BrandGold.copy(alpha = 0.28f),
+                                    1f to BrandGold.copy(alpha = 0f),
+                                ),
                                     center = androidx.compose.ui.geometry.Offset(size.width * 0.95f, 0f),
                                     radius = size.width * 0.6f,
                                 ),
@@ -309,7 +309,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                             Box(
                                 Modifier
                                     .size(44.dp)
-                                    .background(Color(0xFFFFFFFF, 0.35f), androidx.compose.foundation.shape.CircleShape),
+                                    .background(Color.White.copy(alpha = 0.35f), androidx.compose.foundation.shape.CircleShape),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 Icon(

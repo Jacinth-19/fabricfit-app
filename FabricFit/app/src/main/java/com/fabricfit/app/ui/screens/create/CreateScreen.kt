@@ -92,7 +92,7 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                     Text(
                         stringResource(R.string.create_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color(0xFFFFFFFF, 0.82f),
+                        color = Color.White.copy(alpha = 0.82f),
                     )
                 }
             }

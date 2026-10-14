@@ -120,7 +120,7 @@ fun BrandPanel(
             // soft gold glow near the top-right corner
             drawRect(
                 brush = Brush.radialGradient(
-                    colorStops = listOf(Color(0xFFE4C27E, 0.38f), Color(0xFFE4C27E, 0f)),
+                    colorStops = listOf(0f to Color(0xFFE4C27E).copy(alpha = 0.38f), 1f to Color(0xFFE4C27E).copy(alpha = 0f)),
                     center = Offset(w * 0.94f, h * 0.02f),
                     radius = w * 0.8f,
                 ),
@@ -130,7 +130,7 @@ fun BrandPanel(
             var start = -h
             while (start < w + h) {
                 drawLine(
-                    color = Color(0xFFFFFFFF, 0.05f),
+                    color = Color.White.copy(alpha = 0.05f),
                     start = Offset(start, h),
                     end = Offset(start + h, 0f),
                     strokeWidth = 1.5f,
@@ -139,7 +139,7 @@ fun BrandPanel(
             }
             // one gold thread as the brand accent
             drawLine(
-                color = Color(0xFFC8952B, 0.28f),
+                color = BrandGold.copy(alpha = 0.28f),
                 start = Offset(-h * 0.25f, h),
                 end = Offset(h * 0.75f, 0f),
                 strokeWidth = 2f,
@@ -158,7 +158,7 @@ fun KenteDots(modifier: Modifier = Modifier, size: Dp = 8.dp) {
                 Modifier
                     .size(size)
                     .background(c, CircleShape)
-                    .border(1.dp, Color(0xFF14110F, 0.22f), CircleShape),
+                    .border(1.dp, Color(0xFF14110F).copy(alpha = 0.22f), CircleShape),
             )
         }
     }

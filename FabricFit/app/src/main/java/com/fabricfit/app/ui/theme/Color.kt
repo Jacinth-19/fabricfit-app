@@ -91,14 +91,14 @@ val BrandTeal = Color(0xFF1F5450)
 object BrandGradients {
     /** Deep madder diagonal, top-left to bottom-right; the base wash for hero panels. */
     fun hero(): Brush = Brush.linearGradient(
-        colorStops = listOf(Color(0xFF9A3440), Color(0xFF8C2F39), Color(0xFF5A1E25)),
+        colorStops = listOf(0f to Color(0xFF9A3440), 0.5f to Color(0xFF8C2F39), 1f to Color(0xFF5A1E25)),
         start = Offset.Zero,
         end = Offset.Infinite,
     )
 
     /** Vertical gold-to-madder tick used next to section titles. */
     fun tick(): Brush = Brush.linearGradient(
-        colorStops = listOf(BrandGold, BrandMadder),
+        colorStops = listOf(0f to BrandGold, 1f to BrandMadder),
         start = Offset.Zero,
         end = Offset(0f, 120f),
     )
