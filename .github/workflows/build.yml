@@ -198,7 +198,32 @@ jobs:
           disable-animations: true
           working-directory: FabricFit
           script: |
-            bash ../tools/qa/capture_fabricfit_screens.sh ../qa-artifacts/screens
+            # Emulator boots occasionally flake; retry the whole capture
+            # (the script resets app data, so each attempt starts clean).
+            rm -rf ../qa-artifacts/screens
+            attempt=1
+            while [ $attempt -le 3 ]; do
+              if bash ../tools/qa/capture_fabricfit_screens.sh ../qa-artifacts/screens > /tmp/cap.log 2>&1; then
+                break
+              fi
+              echo "Capture attempt $attempt failed"
+              {
+                echo "--- attempt $attempt ---"
+                tail -5 /tmp/cap.log
+              } >> /tmp/capfails.log
+              rm -rf ../qa-artifacts/screens
+              adb shell am force-stop com.fabricfit.app.debug 2>/dev/null || true
+              adb shell input keyevent KEYCODE_WAKEUP 2>/dev/null || true
+              sleep 10
+              attempt=$((attempt + 1))
+            done
+            if [ ! -s ../qa-artifacts/screens/home.png ] && [ -f /tmp/capfails.log ]; then
+              # Total capture failure: surface the last error lines as
+              # annotations (only emitted when nothing was captured).
+              while IFS= read -r l; do
+                echo "::error::capture-fail: $l"
+              done < /tmp/capfails.log
+            fi
             test -s ../qa-artifacts/screens/home.png
 
       - name: Upload real app UI screenshots
@@ -209,16 +234,12 @@ jobs:
           path: qa-artifacts/screens/
           if-no-files-found: warn
 
-      # TEMPORARY (arena session): the artifact host is unreachable from the dev
-      # sandbox and the workflow token is read-only (cannot push a branch), so the
-      # captured PNGs are base64-encoded into check-run annotations (chunked under
-      # the 50-annotation / 64KB-per-message limits) for retrieval via the Checks
-      # API. Prefix: SCREENSYNC|<file>|<chunk-index>|<base64-chunk> (index HDR =
-      # header carrying the total base64 char count). Revert after screenshots land.
       # TEMPORARY (arena session): export captured screenshots as base64
-      # check-run annotations. The run page renders only the first ~10
-      # annotations of a check run, so SYNC_FILES is limited to 2 small (480px)
-      # PNGs per run — one run per pair. Revert after the screenshots land.
+      # check-run annotations (the artifact host is unreachable from the dev
+      # sandbox and the workflow token is read-only). The run page renders only
+      # the first ~10 annotations of a check run, so SYNC_FILES is limited to 2
+      # small (480px) PNGs per run — one run per pair. Revert after the
+      # screenshots land in FabricFit/docs/screenshots.
       - name: Export screenshots via check-run annotations
         if: github.event_name == 'push'
         env:
