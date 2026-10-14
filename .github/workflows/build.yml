@@ -43,13 +43,19 @@ jobs:
           ./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest > build.log 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
-            # Surface compile errors as check-run annotations so they are readable
-            # via the Checks API when raw logs are unavailable.
-            grep -E "^e: " build.log | head -25 | while IFS= read -r line; do
-              echo "::error title=Gradle build error::$line"
-            done
-            grep -E "FAILURE|What went wrong" -A 3 build.log | head -20
-            tail -n 40 build.log
+            # Surface the failure as check-run annotations so it is readable via the
+            # Checks API when raw logs are unavailable.
+            hits=$(grep -E "^e: |error: |FAILED|What went wrong|Execution failed|Cannot resolve|Unresolved reference|unresolved" build.log | head -25)
+            if [ -n "$hits" ]; then
+              echo "$hits" | while IFS= read -r line; do
+                echo "::error title=gradle::$line"
+              done
+            else
+              tail -n 25 build.log | while IFS= read -r line; do
+                echo "::error title=gradle-tail::$line"
+              done
+            fi
+            tail -n 30 build.log
           fi
           exit "$status"
 
