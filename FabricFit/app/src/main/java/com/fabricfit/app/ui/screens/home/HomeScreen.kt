@@ -286,7 +286,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     shape = MaterialTheme.shapes.large,
                     color = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    elevation = 2.dp,
+                    shadowElevation = 2.dp,
                 ) {
                     Box(Modifier.fillMaxWidth()) {
                         Canvas(Modifier.matchParentSize()) {
