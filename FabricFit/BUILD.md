@@ -90,7 +90,10 @@ The GitHub repository was renamed too: `Jacinth-19/ntoma-studio` → **`Jacinth-
 GitHub redirects the old URL, so existing clones, links and pull requests keep working.
 
 ## Release signing
-`app/demo-release.keystore` is a throwaway demo key (storepass/keypass `ntomademo`).
+`app/demo-release.keystore` is a throwaway demo key — alias `ntoma`, store and key
+password both `ntomastudio`. These values are the ones in `app/build.gradle.kts`, and
+they are the ones CI signs with successfully. (Earlier revisions of this file and of
+`docs/PLAY_DATA_SAFETY.md` said `ntomademo`, which was simply wrong.)
 Replace `signingConfigs.release` in `app/build.gradle.kts` before any real store upload.
 Because the application ID changed to `com.fabricfit.app`, an existing `com.ntoma.studio`
 install cannot be upgraded in place.

@@ -11,6 +11,9 @@
 # Research/reference images (not app source)
 image-search/
 
+# CI emulator screenshots and logs (reviewed captures live under FabricFit/docs/screenshots/)
+qa-artifacts/
+
 # Git bundle
 *.bundle
 

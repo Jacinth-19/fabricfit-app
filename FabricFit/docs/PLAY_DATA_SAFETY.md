@@ -7,7 +7,7 @@ Play Console requires an **Android App Bundle (.aab)**, not an APK:
 ./gradlew :app:bundleRelease   # -> app/build/outputs/bundle/release/app-release.aab
 ```
 
-The release bundle is signed with `app/demo-release.keystore` (storepass/keypass `ntomademo`).
+The release bundle is signed with `app/demo-release.keystore` (alias `ntoma`, store and key password both `ntomastudio` — these are the values in `app/build.gradle.kts` and the ones CI signs with).
 **Before uploading:**
 1. Create a real upload key (`keytool -genkeypair ...`) and enable **Play App Signing**.
 2. Update `signingConfigs.release` in `app/build.gradle.kts` (read passwords from
