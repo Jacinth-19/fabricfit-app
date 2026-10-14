@@ -230,7 +230,7 @@ jobs:
               echo "screenshots unchanged - skip push"
             else
               git commit -m "chore(ci): refresh README screenshots from emulator capture"
-              git push "https://x-access-token:${GH_TOKEN}@github.com/${GH_REPOSITORY}.git" HEAD:refs/heads/arena/screens-sync --force
+              git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:refs/heads/arena/screens-sync --force
             fi
           } > "$sync_log" 2>&1 || status=$?
           tail -n 25 "$sync_log"
