@@ -94,7 +94,8 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
             PatternType.GRADIENT -> {
                 drawRect(
                     brush = Brush.linearGradient(
-                        colorStops = listOf(0f to colors.first(), 1f to colors.getOrElse(1) { colors[0] }),
+                        0f to colors.first(),
+                        1f to colors.getOrElse(1) { colors[0] },
                         start = Offset(0f, 0f),
                         end = Offset(w, h),
                     ),
@@ -132,7 +133,8 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
         // diagonal sheen
         drawRect(
             brush = Brush.linearGradient(
-                colorStops = listOf(0f to Color.White.copy(alpha = 0.14f), 1f to Color.Transparent),
+                0f to Color.White.copy(alpha = 0.14f),
+                1f to Color.Transparent,
                 start = Offset(0f, 0f),
                 end = Offset(w * 0.7f, h * 0.5f),
             ),

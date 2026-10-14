@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -293,10 +292,8 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         Canvas(Modifier.matchParentSize()) {
                             drawRect(
                                 brush = Brush.radialGradient(
-                                colorStops = listOf(
                                     0f to BrandGold.copy(alpha = 0.28f),
                                     1f to BrandGold.copy(alpha = 0f),
-                                ),
                                     center = androidx.compose.ui.geometry.Offset(size.width * 0.95f, 0f),
                                     radius = size.width * 0.6f,
                                 ),

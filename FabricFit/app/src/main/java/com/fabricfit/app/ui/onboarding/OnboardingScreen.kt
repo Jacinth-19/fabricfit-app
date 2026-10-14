@@ -63,10 +63,8 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
             .fillMaxSize()
             .background(
                 Brush.linearGradient(
-                    colorStops = listOf(
-                        0f to MaterialTheme.colorScheme.background,
-                        1f to MaterialTheme.colorScheme.surfaceContainerLow,
-                    ),
+                    0f to MaterialTheme.colorScheme.background,
+                    1f to MaterialTheme.colorScheme.surfaceContainerLow,
                     start = Offset.Zero,
                     end = Offset(0f, 1200f),
                 ),

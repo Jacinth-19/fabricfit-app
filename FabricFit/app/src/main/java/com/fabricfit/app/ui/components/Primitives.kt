@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.matchParentSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -120,7 +119,8 @@ fun BrandPanel(
             // soft gold glow near the top-right corner
             drawRect(
                 brush = Brush.radialGradient(
-                    colorStops = listOf(0f to Color(0xFFE4C27E).copy(alpha = 0.38f), 1f to Color(0xFFE4C27E).copy(alpha = 0f)),
+                    0f to Color(0xFFE4C27E).copy(alpha = 0.38f),
+                    1f to Color(0xFFE4C27E).copy(alpha = 0f),
                     center = Offset(w * 0.94f, h * 0.02f),
                     radius = w * 0.8f,
                 ),
@@ -139,7 +139,7 @@ fun BrandPanel(
             }
             // one gold thread as the brand accent
             drawLine(
-                color = BrandGold.copy(alpha = 0.28f),
+                color = Color(0xFFC8952B).copy(alpha = 0.28f),
                 start = Offset(-h * 0.25f, h),
                 end = Offset(h * 0.75f, 0f),
                 strokeWidth = 2f,
