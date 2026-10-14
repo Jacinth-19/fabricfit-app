@@ -215,7 +215,7 @@ jobs:
       # check-run annotations (the artifact host is unreachable from the dev
       # sandbox and the workflow token is read-only). The run page renders only
       # the first ~10 annotations of a check run, so SYNC_FILES is limited to 2
-      # small (480px) PNGs per run — one run per pair. Revert after the
+      # small (500px) PNGs per run — one run per pair. Revert after the
       # screenshots land in FabricFit/docs/screenshots.
       - name: Export screenshots via check-run annotations
         if: github.event_name == 'push'
@@ -223,15 +223,24 @@ jobs:
           SYNC_FILES: 'home.png create.png'
         run: |
           cd ../qa-artifacts/screens
+          # ImageMagick is not preinstalled on ubuntu-latest; install it so
+          # the resize actually happens (a silent cp fallback would push
+          # multi-MB full-res base64 into the annotations).
           magick_bin=$(command -v magick || command -v convert || true)
+          if [ -z "$magick_bin" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq imagemagick >/dev/null
+            magick_bin=$(command -v magick || command -v convert || true)
+          fi
           mkdir -p /tmp/ss
           for f in $SYNC_FILES; do
             if [ -n "$magick_bin" ]; then
-              "$magick_bin" "$f" -resize 480x -strip "/tmp/ss/$f"
+              "$magick_bin" "$f" -resize 500x -strip "/tmp/ss/$f"
             else
               cp "$f" "/tmp/ss/$f"
             fi
             b64=$(base64 -w0 "/tmp/ss/$f")
+            echo "syncing $f: raw=$(stat -c%s "/tmp/ss/$f") b64_chars=${#b64}"
             echo "::notice::SCREENSYNC|${f}|HDR|${#b64}"
             n=0
             while [ ${#b64} -gt 0 ]; do
