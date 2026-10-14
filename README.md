@@ -1,53 +1,83 @@
+<p align="center">
+  <img src="FabricFit/store/feature_graphic.png" alt="FabricFit — kente weave artwork" width="100%">
+</p>
+
 # FabricFit
 
-[![build](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml/badge.svg)](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml)
+<p align="center">
+  <strong>Scan Your Fabric. Wear Your Style.</strong>
+</p>
 
-**Scan Your Fabric. Wear Your Style.**
+<p align="center">
+  <img src="FabricFit/store/play_icon_512.png" alt="FabricFit app icon" width="72">
+</p>
 
-FabricFit is an Android app that reads the fabric you already own — kente, ankara, wax
-print, lace and more — and shows you what it could become. Photograph a cloth, get
-explained outfit matches, preview a look, and carry a shareable brief to your tailor.
+<p align="center">
+  FabricFit is an Android app that reads the fabric you already own — kente, ankara,
+  wax print, lace and more — and shows you what it could become. Photograph a cloth,
+  get explained outfit matches, preview a look, and carry a shareable brief to your tailor.
+</p>
 
-> Renamed from **ntoma-studio** / "Ntoma Studio". The GitHub repository is now
-> `Jacinth-19/fabricfit-app`; see `FabricFit/docs/brand_positioning.md`.
+<p align="center">
+  <a href="https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml"><img src="https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml/badge.svg" alt="build"></a>
+  <a href="https://kotlinlang.org"><img src="https://img.shields.io/badge/Kotlin-2.0.20-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin"></a>
+  <a href="https://developer.android.com/jetpack/compose"><img src="https://img.shields.io/badge/Jetpack%20Compose-BOM%202024.09-0B6BC2?logo=android&logoColor=white" alt="Jetpack Compose"></a>
+  <img src="https://img.shields.io/badge/minSdk-24%20(Android%207.0)-3DDC84" alt="minSdk">
+  <img src="https://img.shields.io/badge/Languages-EN%20%C2%B7%20TW%20%C2%B7%20GAA%20%C2%B7%20EE-C8952B" alt="Languages">
+</p>
 
-## Feature names
+<p align="center">
+  <a href="#what-you-get">What you get</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#brand">Brand</a> ·
+  <a href="#at-a-glance">At a glance</a> ·
+  <a href="#screens--routes">Screens &amp; routes</a> ·
+  <a href="#real-app-ui">Real app UI</a> ·
+  <a href="#developing">Developing</a>
+</p>
 
-| Feature | Name |
+---
+
+## What you get
+
+| | |
 | --- | --- |
-| Camera scanner | **FitScan** |
-| AI recommendation engine | **FitMatch AI** |
-| Virtual try-on | **FitRoom** |
-| Wardrobe & saved items | **My Fit Closet** |
+| 📸 **FitScan** — the camera scanner | Photograph or import a cloth and get its palette, pattern, texture and suggested fabric family — analysed **on-device**, no account required |
+| 🧠 **FitMatch AI** — the recommendation engine | Ranked design matches for *that* cloth, each with a match score and a plain-language reason; filter by gender and occasion |
+| 👗 **FitRoom** — virtual try-on | Your photo, the design, the fabric. Apply, watch live progress, compare before/after, save the finished look |
+| 🧺 **My Fit Closet** — wardrobe & saved items | Fabrics, designs, looks, collections and tailors you have saved — plus a shareable design brief for your tailor |
 
-## Repository layout
+## How it works
 
-```
-FabricFit/          Android app (Kotlin + Jetpack Compose), package com.fabricfit.app
-  app/              app module — UI, domain, data, on-device ML
-  docs/             brand positioning, Play readiness, device QA, research notes
-  store/            Play listing copy, icon and feature graphic, privacy policy
-  tools/            i18n packs, dataset pipeline, mock backend, icon renderer
-tools/              sandbox toolchain bootstrap
-```
+> 📷 **Photograph** the cloth → 🎨 **FitScan** reads palette, pattern & texture → 👗 **FitMatch AI** ranks the designs it suits → 🪞 **FitRoom** puts the fabric on a person → 🧵 **My Fit Closet** hands your tailor a shareable brief
 
-## Build
+## Brand
 
-```bash
-bash tools/setup_toolchain.sh
-cd FabricFit
-./gradlew :app:assembleDebug
-```
+<table>
+  <tr>
+    <td align="center" width="20%"><span style="display:inline-block;width:44px;height:44px;border-radius:10px;background:#8C2F39"></span><br><strong>Madder</strong><br><code>#8C2F39</code></td>
+    <td align="center" width="20%"><span style="display:inline-block;width:44px;height:44px;border-radius:10px;background:#C8952B"></span><br><strong>Gold</strong><br><code>#C8952B</code></td>
+    <td align="center" width="20%"><span style="display:inline-block;width:44px;height:44px;border-radius:10px;background:#1F5450"></span><br><strong>Teal</strong><br><code>#1F5450</code></td>
+    <td align="center" width="20%"><span style="display:inline-block;width:44px;height:44px;border-radius:10px;background:#FDF8F2;border:1px solid #D8C7C1"></span><br><strong>Cream</strong><br><code>#FDF8F2</code></td>
+    <td align="center" width="20%"><span style="display:inline-block;width:44px;height:44px;border-radius:10px;background:#14110F"></span><br><strong>Ink</strong><br><code>#14110F</code></td>
+  </tr>
+</table>
 
-Full instructions, verified status and release signing: `FabricFit/BUILD.md`.
+Warm neutrals with madder red, kente gold and deep teal accents. The colour scheme is
+**intentionally not dynamic-colour** — the brand reads as a fashion product, not a
+launcher theme. Hero surfaces use the "woven" gradient (madder diagonal with a gold
+glow and weave lines); see [`FabricFit/docs/brand_positioning.md`](FabricFit/docs/brand_positioning.md) for the positioning rationale.
 
-## Languages
+## At a glance
 
-English, Twi (`tw`), Ga (`gaa`) and Ewe (`ee`). Translation packs live in
-`FabricFit/tools/i18n/`; regenerate with `python3 tools/i18n/generate.py` from the
-`FabricFit` directory.
+| | |
+| --- | --- |
+| **29 screens** | 28 routes in the navigation graph plus the first-run onboarding gate |
+| **4 languages** | English, Twi (`tw`), Ga (`gaa`) and Ewe (`ee`) |
+| **On-device by default** | MobileNetV2 fabric classifier via TensorFlow Lite; an optional cloud provider is clearly labelled when it runs |
+| **Android 7.0+** | `minSdk 24` · Kotlin 2.0 · Jetpack Compose · Room · CameraX |
 
-## Screens
+## Screens & routes
 
 **29 screens**: 28 registered in the navigation graph plus the first-run onboarding gate.
 The graph has 29 route registrations because the camera serves two routes (`camera/fabric`
@@ -159,7 +189,7 @@ flowchart TD
 | Legal | `legal/{doc}` | Terms, privacy policy and credits documents |
 | FabricFit Premium | `premium` | Free-tier limits explained, premium benefits, and the paywall sheet. This build ships a demo billing manager, labelled as such |
 
-### Real app UI
+## Real app UI
 
 These are **unretouched screenshots of the running FabricFit Android app**, captured by
 GitHub Actions on an API 33 Pixel 2 emulator at 1080 × 1920. They are real app screens,
@@ -189,3 +219,41 @@ least two phone screenshots (16:9 or 9:16, 320–3840 px); the feature-focused s
 [`docs/PLAY_DATA_SAFETY.md`](FabricFit/docs/PLAY_DATA_SAFETY.md) remains
 **Home** → **FitScan analysis** → **FitMatch AI** → **FitRoom** → **My Fit Closet** and
 should be saved separately under `FabricFit/store/screenshots/`.
+
+## Developing
+
+### Repository layout
+
+```
+FabricFit/          Android app (Kotlin + Jetpack Compose), package com.fabricfit.app
+  app/              app module — UI, domain, data, on-device ML
+  docs/             brand positioning, Play readiness, device QA, research notes
+  store/            Play listing copy, icon and feature graphic, privacy policy
+  tools/            i18n packs, dataset pipeline, mock backend, icon renderer
+tools/              sandbox toolchain bootstrap
+```
+
+### Build
+
+```bash
+bash tools/setup_toolchain.sh
+cd FabricFit
+./gradlew :app:assembleDebug
+```
+
+Full instructions, verified status and release signing: `FabricFit/BUILD.md`.
+
+### Languages
+
+English, Twi (`tw`), Ga (`gaa`) and Ewe (`ee`). Translation packs live in
+`FabricFit/tools/i18n/`; regenerate with `python3 tools/i18n/generate.py` from the
+`FabricFit` directory.
+
+---
+
+<p align="center"><em>Made in Accra, Ghana 🇬🇭</em></p>
+
+> **Naming note:** FabricFit was renamed from **ntoma-studio** / "Ntoma Studio". The
+> GitHub repository is `Jacinth-19/fabricfit-app`; see
+> [`FabricFit/docs/brand_positioning.md`](FabricFit/docs/brand_positioning.md) for the
+> brand rationale.
