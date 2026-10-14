@@ -1,5 +1,7 @@
 package com.fabricfit.app.ui.screens.home
 
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,17 +21,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
-import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -40,18 +41,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.BorderStroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.shape.RoundedCornerShape
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.components.BrandPanel
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
+import com.fabricfit.app.ui.components.KenteDots
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.SectionHeader
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.theme.BrandCream
+import com.fabricfit.app.ui.theme.BrandMadder
 import com.fabricfit.app.ui.util.openFabricFlow
 import com.fabricfit.app.ui.util.rememberPhotoPicker
 import com.fabricfit.app.ui.util.timeAgo
@@ -80,41 +91,61 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 24.dp),
+            // edge-to-edge: keep the hero below the status bar
+            contentPadding = PaddingValues(
+                top = padding.calculateTopPadding(),
+                bottom = 24.dp,
+            ),
         ) {
             item {
-                Column(Modifier.padding(horizontal = 20.dp).padding(top = 28.dp)) {
+                BrandPanel(modifier = Modifier.padding(horizontal = 20.dp).padding(top = 12.dp)) {
+                    KenteDots(Modifier.padding(bottom = 14.dp))
                     Text(
                         greeting(state.prefs.displayName),
                         style = MaterialTheme.typography.displayMedium,
+                        color = BrandCream,
                     )
-                    Spacer(Modifier.height(4.dp))
+                    Spacer(Modifier.height(6.dp))
                     Text(
                         stringResource(R.string.home_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = Color(0xFFFFFFFF, 0.82f),
                     )
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(18.dp))
                     Button(
                         onClick = requestCamera,
                         modifier = Modifier.fillMaxWidth().height(54.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = BrandCream,
+                            contentColor = BrandMadder,
+                        ),
                     ) {
                         Icon(Icons.Filled.CameraAlt, contentDescription = null)
                         Spacer(Modifier.width(10.dp))
-                        Text(stringResource(R.string.home_cta_scan))
+                        Text(stringResource(R.string.home_cta_scan), fontWeight = FontWeight.SemiBold)
                     }
                     Spacer(Modifier.height(10.dp))
-                    OutlinedButton(
+                    Surface(
                         onClick = { picker.launch(pickImagesRequest()) },
                         modifier = Modifier.fillMaxWidth().height(54.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(),
+                        shape = RoundedCornerShape(16.dp),
+                        color = Color(0xFFFFFFFF, 0.10f),
+                        contentColor = BrandCream,
+                        border = BorderStroke(1.dp, Color(0xFFFFFFFF, 0.35f)),
                     ) {
-                        Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
-                        Spacer(Modifier.width(10.dp))
-                        Text(stringResource(R.string.home_cta_upload))
+                        Row(
+                            Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
+                            Spacer(Modifier.width(10.dp))
+                            Text(stringResource(R.string.home_cta_upload))
+                        }
                     }
                     if (!state.prefs.premiumEnabled) {
-                        Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(12.dp))
                         Text(
                             stringResource(
                                 R.string.home_quota_note,
@@ -122,7 +153,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                 3,
                             ),
                             style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            color = Color(0xFFFFFFFF, 0.75f),
                         )
                     }
                 }
@@ -139,13 +170,22 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                             Card(
                                 onClick = { nav.navigate(Routes.fabric(fabric.id)) },
                                 modifier = Modifier.width(150.dp),
+                                shape = MaterialTheme.shapes.medium,
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             ) {
                                 Column(Modifier.padding(10.dp)) {
-                                    FabricSwatch(
-                                        fabric,
-                                        modifier = Modifier.fillMaxWidth().height(96.dp),
-                                    )
+                                    Box(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(104.dp)
+                                            .clip(MaterialTheme.shapes.small),
+                                    ) {
+                                        FabricSwatch(
+                                            fabric,
+                                            modifier = Modifier.fillMaxSize(),
+                                        )
+                                    }
                                     Spacer(Modifier.height(8.dp))
                                     Text(
                                         fabric.name ?: context.getString(fabric.category.labelRes),
@@ -175,13 +215,15 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                             Card(
                                 onClick = { nav.navigate(Routes.design(style.id)) },
                                 modifier = Modifier.width(140.dp),
+                                shape = MaterialTheme.shapes.medium,
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             ) {
                                 Column(Modifier.padding(10.dp)) {
                                     GarmentArt(
                                         style,
                                         null,
-                                        modifier = Modifier.fillMaxWidth().height(120.dp),
+                                        modifier = Modifier.fillMaxWidth().height(128.dp),
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
@@ -202,13 +244,15 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     Card(
                         onClick = { nav.navigate(Routes.result(state.latestLook!!.id)) },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                        shape = MaterialTheme.shapes.medium,
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                     ) {
                         Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                             LocalImage(
                                 state.latestLook!!.resultImageUri,
                                 contentDescription = stringResource(R.string.cd_generated_image),
-                                modifier = Modifier.size(72.dp),
+                                modifier = Modifier.size(72.dp).clip(RoundedCornerShape(12.dp)),
                             )
                             Spacer(Modifier.width(14.dp))
                             Column(Modifier.weight(1f)) {
@@ -233,32 +277,66 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             }
 
             item {
-                Card(
+                Surface(
                     onClick = { nav.navigate(Routes.FAVORITES) },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .clip(MaterialTheme.shapes.large),
+                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    elevation = 2.dp,
                 ) {
-                    Row(
-                        Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Column(Modifier.weight(1f)) {
-                            Text(
-                                stringResource(R.string.home_section_favorites),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                            )
-                            Text(
-                                stringResource(R.string.favorites_count, state.favoriteCount),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                    Box(Modifier.fillMaxWidth()) {
+                        Canvas(Modifier.matchParentSize()) {
+                            drawRect(
+                                brush = Brush.radialGradient(
+                                    colorStops = listOf(
+                                        Color(0xFFC8952B, 0.28f),
+                                        Color(0xFFC8952B, 0f),
+                                    ),
+                                    center = androidx.compose.ui.geometry.Offset(size.width * 0.95f, 0f),
+                                    radius = size.width * 0.6f,
+                                ),
                             )
                         }
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                        )
+                        Row(
+                            Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                Modifier
+                                    .size(44.dp)
+                                    .background(Color(0xFFFFFFFF, 0.35f), androidx.compose.foundation.shape.CircleShape),
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    Icons.Filled.Bookmark,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    modifier = Modifier.size(22.dp),
+                                )
+                            }
+                            Spacer(Modifier.width(14.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.home_section_favorites),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
+                                Text(
+                                    stringResource(R.string.favorites_count, state.favoriteCount),
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                )
+                            }
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                            )
+                        }
                     }
                 }
             }
@@ -319,10 +397,15 @@ private fun TipCard(title: Int, body: Int) {
     Surface(
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
+        tonalElevation = 1.dp,
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(stringResource(title), style = MaterialTheme.typography.titleSmall)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                KenteDots(size = 7.dp)
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(title), style = MaterialTheme.typography.titleSmall)
+            }
             Spacer(Modifier.height(4.dp))
             Text(
                 stringResource(body),

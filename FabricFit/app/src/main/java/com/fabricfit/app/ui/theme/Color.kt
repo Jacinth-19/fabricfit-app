@@ -1,5 +1,7 @@
 package com.fabricfit.app.ui.theme
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -81,3 +83,26 @@ val BrandCream = Color(0xFFFDF8F2)
 val BrandGold = Color(0xFFC8952B)
 val BrandMadder = Color(0xFF8C2F39)
 val BrandTeal = Color(0xFF1F5450)
+
+/**
+ * Shared brand brushes — the "woven" gradient family used by hero panels, section ticks and
+ * decorative accents. Fixed colours so the brand artwork stays consistent in light and dark.
+ */
+object BrandGradients {
+    /** Deep madder diagonal, top-left to bottom-right; the base wash for hero panels. */
+    fun hero(): Brush = Brush.linearGradient(
+        colorStops = listOf(Color(0xFF9A3440), Color(0xFF8C2F39), Color(0xFF5A1E25)),
+        start = Offset.Zero,
+        end = Offset.Infinite,
+    )
+
+    /** Vertical gold-to-madder tick used next to section titles. */
+    fun tick(): Brush = Brush.linearGradient(
+        colorStops = listOf(BrandGold, BrandMadder),
+        start = Offset.Zero,
+        end = Offset(0f, 120f),
+    )
+
+    /** The three kente-thread colours used by the small woven-dot accent. */
+    val weaveDots: List<Color> = listOf(BrandGold, BrandCream, Color(0xFF89CDC4))
+}

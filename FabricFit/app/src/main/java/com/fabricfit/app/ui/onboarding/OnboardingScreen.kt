@@ -2,6 +2,8 @@ package com.fabricfit.app.ui.onboarding
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,21 +19,24 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fabricfit.app.R
 import com.fabricfit.app.ui.components.BrandMark
+import com.fabricfit.app.ui.components.KenteDots
 import kotlinx.coroutines.launch
 
 private data class Page(
@@ -53,7 +58,20 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
 
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.linearGradient(
+                    colorStops = listOf(
+                        MaterialTheme.colorScheme.background,
+                        MaterialTheme.colorScheme.surfaceContainerLow,
+                    ),
+                    start = Offset.Zero,
+                    end = Offset(0f, 1200f),
+                ),
+            ),
+    ) {
         Column(Modifier.fillMaxSize()) {
             Row(
                 Modifier.fillMaxWidth().padding(8.dp),
@@ -76,6 +94,8 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                 ) {
                     if (page.illustration == null) {
                         BrandMark(modifier = Modifier.size(120.dp))
+                        Spacer(Modifier.height(24.dp))
+                        KenteDots()
                     } else {
                         Image(
                             painter = painterResource(page.illustration),
@@ -108,21 +128,25 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                 }
             }
 
-            // Indicator
-            val selectedColor = MaterialTheme.colorScheme.primary
-            val unselectedColor = MaterialTheme.colorScheme.outlineVariant
+            // Indicator — the active dot stretches into a pill
             Row(
                 Modifier.fillMaxWidth().padding(8.dp),
                 horizontalArrangement = Arrangement.Center,
             ) {
                 repeat(pages.size) { i ->
+                    val selected = i == pagerState.currentPage
+                    val dotWidth by animateDpAsState(
+                        targetValue = if (selected) 22.dp else 8.dp,
+                        animationSpec = spring(dampingRatio = 0.8f),
+                        label = "pageDot",
+                    )
                     Box(
                         Modifier
-                            .padding(4.dp)
-                            .size(if (i == pagerState.currentPage) 10.dp else 7.dp)
+                            .padding(3.dp)
+                            .size(width = dotWidth, height = 8.dp)
                             .background(
-                                if (i == pagerState.currentPage) selectedColor else unselectedColor,
-                                CircleShape,
+                                if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                                RoundedCornerShape(50),
                             ),
                     )
                 }

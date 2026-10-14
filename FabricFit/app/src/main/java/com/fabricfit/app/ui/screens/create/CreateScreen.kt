@@ -1,6 +1,7 @@
 package com.fabricfit.app.ui.screens.create
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoLibrary
@@ -33,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,11 +45,15 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.ui.components.BrandPanel
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
+import com.fabricfit.app.ui.components.KenteDots
 import com.fabricfit.app.ui.components.SectionHeader
+import com.fabricfit.app.ui.components.TintedIconTile
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.theme.BrandCream
 import com.fabricfit.app.ui.util.openFabricFlow
 import com.fabricfit.app.ui.util.rememberPhotoPicker
 import com.fabricfit.app.permissions.rememberCameraPermission
@@ -77,12 +85,14 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
             item {
-                Column(Modifier.padding(horizontal = 20.dp).padding(top = 28.dp)) {
-                    Text(stringResource(R.string.create_title), style = MaterialTheme.typography.displayMedium)
+                BrandPanel(modifier = Modifier.padding(horizontal = 20.dp).padding(top = 8.dp)) {
+                    KenteDots(Modifier.padding(bottom = 14.dp))
+                    Text(stringResource(R.string.create_title), style = MaterialTheme.typography.displayMedium, color = BrandCream)
+                    Spacer(Modifier.height(6.dp))
                     Text(
                         stringResource(R.string.create_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        color = Color(0xFFFFFFFF, 0.82f),
                     )
                 }
             }
@@ -92,6 +102,8 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                     icon = Icons.Filled.CameraAlt,
                     title = R.string.create_option_camera_title,
                     body = R.string.create_option_camera_body,
+                    tint = MaterialTheme.colorScheme.primary,
+                    container = MaterialTheme.colorScheme.primaryContainer,
                     onClick = requestCamera,
                 )
             }
@@ -100,6 +112,8 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                     icon = Icons.Filled.PhotoLibrary,
                     title = R.string.create_option_gallery_title,
                     body = R.string.create_option_gallery_body,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    container = MaterialTheme.colorScheme.secondaryContainer,
                     onClick = { picker.launch(pickRequest()) },
                 )
             }
@@ -108,6 +122,8 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                     icon = Icons.Filled.Person,
                     title = R.string.create_option_person_title,
                     body = R.string.create_option_person_body,
+                    tint = MaterialTheme.colorScheme.tertiary,
+                    container = MaterialTheme.colorScheme.tertiaryContainer,
                     onClick = { nav.navigate(Routes.tryOn(null, null)) },
                 )
             }
@@ -137,10 +153,19 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                             Card(
                                 onClick = { nav.navigate(Routes.fabric(fabric.id)) },
                                 modifier = Modifier.width(140.dp),
+                                shape = MaterialTheme.shapes.medium,
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
                             ) {
                                 Column(Modifier.padding(10.dp)) {
-                                    FabricSwatch(fabric, modifier = Modifier.fillMaxWidth().height(90.dp))
+                                    Box(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .height(96.dp)
+                                            .clip(MaterialTheme.shapes.small),
+                                    ) {
+                                        FabricSwatch(fabric, modifier = Modifier.fillMaxSize())
+                                    }
                                     Spacer(Modifier.height(6.dp))
                                     Text(
                                         fabric.name ?: context.getString(fabric.category.labelRes),
@@ -193,23 +218,28 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
 }
 
 @Composable
-private fun OptionCard(icon: ImageVector, title: Int, body: Int, onClick: () -> Unit) {
+private fun OptionCard(
+    icon: ImageVector,
+    title: Int,
+    body: Int,
+    tint: Color,
+    container: Color,
+    onClick: () -> Unit,
+) {
     Card(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(vertical = 6.dp),
+        shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Row(
-            Modifier.padding(18.dp),
+            Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                icon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(Modifier.width(16.dp))
-            Column {
+            TintedIconTile(icon, tint = tint, container = container)
+            Spacer(Modifier.width(14.dp))
+            Column(Modifier.weight(1f)) {
                 Text(stringResource(title), style = MaterialTheme.typography.titleMedium)
                 Text(
                     stringResource(body),
@@ -217,6 +247,12 @@ private fun OptionCard(icon: ImageVector, title: Int, body: Int, onClick: () -> 
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+            Spacer(Modifier.width(8.dp))
+            Icon(
+                Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

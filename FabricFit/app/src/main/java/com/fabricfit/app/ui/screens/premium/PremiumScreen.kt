@@ -10,7 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -39,7 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.components.BrandPanel
+import com.fabricfit.app.ui.components.KenteDots
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.theme.BrandCream
 import kotlinx.coroutines.launch
 
 @Composable
@@ -51,17 +58,30 @@ fun PremiumScreen(nav: NavHostController, padding: PaddingValues) {
     Column(
         Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(horizontal = 20.dp),
     ) {
-        Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.cd_back))
+        BrandPanel(modifier = Modifier.padding(top = 4.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = { nav.popBackStack() }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(R.string.cd_back),
+                        tint = BrandCream,
+                    )
+                }
+                Text(
+                    stringResource(R.string.premium_title),
+                    style = MaterialTheme.typography.displayMedium,
+                    color = BrandCream,
+                    modifier = Modifier.weight(1f),
+                )
             }
-            Text(stringResource(R.string.premium_title), style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(10.dp))
+            KenteDots()
         }
 
         Text(
             stringResource(R.string.premium_pitch),
             style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(vertical = 12.dp),
         )
 
         listOf(
@@ -74,11 +94,19 @@ fun PremiumScreen(nav: NavHostController, padding: PaddingValues) {
             R.string.premium_benefit_history,
         ).forEach { res ->
             Row(Modifier.padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    Icons.Filled.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.tertiary,
-                )
+                Box(
+                    Modifier
+                        .size(30.dp)
+                        .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        Icons.Filled.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        modifier = Modifier.size(18.dp),
+                    )
+                }
                 Spacer(Modifier.width(12.dp))
                 Text(stringResource(res), style = MaterialTheme.typography.bodyLarge)
             }
