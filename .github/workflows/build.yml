@@ -215,41 +215,32 @@ jobs:
       # the 50-annotation / 64KB-per-message limits) for retrieval via the Checks
       # API. Prefix: SCREENSYNC|<file>|<chunk-index>|<base64-chunk> (index HDR =
       # header carrying the total base64 char count). Revert after screenshots land.
-      - name: Export screenshots via step summary and annotations
+      # TEMPORARY (arena session): export captured screenshots as base64
+      # check-run annotations. The run page renders only the first ~10
+      # annotations of a check run, so SYNC_FILES is limited to 2 small (480px)
+      # PNGs per run — one run per pair. Revert after the screenshots land.
+      - name: Export screenshots via check-run annotations
         if: github.event_name == 'push'
+        env:
+          SYNC_FILES: 'home.png create.png'
         run: |
           cd ../qa-artifacts/screens
           magick_bin=$(command -v magick || command -v convert || true)
           mkdir -p /tmp/ss
-          total=0
-          for f in *.png; do
+          for f in $SYNC_FILES; do
             if [ -n "$magick_bin" ]; then
-              "$magick_bin" "$f" -resize 700x -strip "/tmp/ss/$f"
+              "$magick_bin" "$f" -resize 480x -strip "/tmp/ss/$f"
             else
               cp "$f" "/tmp/ss/$f"
             fi
             b64=$(base64 -w0 "/tmp/ss/$f")
-            total=$((total + ${#b64}))
-            {
-              echo "SCREENSYNC|${f}|HDR|${#b64}"
-              n=0
-              while [ ${#b64} -gt 0 ]; do
-                chunk=${b64:0:60000}
-                b64=${b64:60000}
-                echo "SCREENSYNC|${f}|${n}|${chunk}"
-                n=$((n+1))
-              done
-            } >> /tmp/ss/payload.txt
+            echo "::notice::SCREENSYNC|${f}|HDR|${#b64}"
+            n=0
+            while [ ${#b64} -gt 0 ]; do
+              chunk=${b64:0:60000}
+              b64=${b64:60000}
+              echo "::notice::SCREENSYNC|${f}|${n}|${chunk}"
+              n=$((n+1))
+            done
           done
-          # Channel 1: job step summary — one fenced block on the job page.
-          {
-            echo '## SCREENSHOT SYNC (temporary arena channel)'
-            echo '```text'
-            cat /tmp/ss/payload.txt
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-          # Channel 2: check-run annotations (the run page renders a subset).
-          while IFS= read -r line; do
-            echo "::notice::$line"
-          done < /tmp/ss/payload.txt
-          echo "export done: total_base64_chars=${total} resized=${magick_bin:+yes}"
+          echo "export done: files=($SYNC_FILES)"
