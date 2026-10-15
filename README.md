@@ -179,10 +179,11 @@ Closet states are the app's genuine fresh-install experience.
   </tr>
 </table>
 
-To refresh the captures, run the manual `build.yml` workflow. Its `screenshots` job
-rebuilds the debug app, drives the emulator with
-[`tools/qa/capture_fabricfit_screens.sh`](tools/qa/capture_fabricfit_screens.sh), and
-uploads the PNGs as `fabricfit-readme-screens`.
+To refresh the captures, run the `build.yml` workflow via **Actions → build → Run
+workflow**. Its `screenshots` job rebuilds the debug app, boots an API 33 Pixel 2
+emulator, captures all six screens with
+[`tools/qa/capture_with_retry.sh`](tools/qa/capture_with_retry.sh) (three attempts
+with backoff), and commits the refreshed PNGs back to the branch.
 
 These README preview captures are **not** Play Store listing creatives. Play requires at
 least two phone screenshots (16:9 or 9:16, 320–3840 px); the feature-focused shot list in
