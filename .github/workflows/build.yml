@@ -126,12 +126,15 @@ jobs:
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
 
-  # Full app UI screenshots are expensive; capture them only when requested manually.
-  # The reviewed PNGs can be committed under FabricFit/docs/screenshots/ for the README.
+  # Full app UI screenshots are expensive; capture them only when requested
+  # manually via workflow_dispatch. The job commits the refreshed PNGs back
+  # to the branch that triggered the dispatch.
   screenshots:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 35
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
 
@@ -178,9 +181,11 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           working-directory: FabricFit
+          # NOTE: the runner's `script` input executes one command per line
+          # (comments are dropped, lines are split), so all retry logic lives
+          # in tools/qa/capture_with_retry.sh.
           script: |
-            bash ../tools/qa/capture_fabricfit_screens.sh ../qa-artifacts/screens
-            test -s ../qa-artifacts/screens/home.png
+            bash ../tools/qa/capture_with_retry.sh
 
       - name: Upload real app UI screenshots
         if: always()
@@ -189,3 +194,17 @@ jobs:
           name: fabricfit-readme-screens
           path: qa-artifacts/screens/
           if-no-files-found: warn
+
+      - name: Commit refreshed screenshots to branch
+        run: |
+          set -e
+          cp ../qa-artifacts/screens/*.png docs/screenshots/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots/
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: refresh README screenshots [skip ci]"
+            git push
+          else
+            echo "Screenshots unchanged, nothing to commit."
+          fi
