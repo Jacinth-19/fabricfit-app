@@ -15,16 +15,13 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Label
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Checkroom
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
@@ -53,20 +50,23 @@ internal data class Tab(
     val labelRes: Int,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector,
-)
-
-internal val tabs = listOf(
-    Tab(Routes.HOME, R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home),
-    Tab(Routes.DISCOVER, R.string.nav_discover, Icons.Filled.Explore, Icons.Outlined.Explore),
-    Tab(Routes.CREATE, R.string.nav_create, Icons.Filled.Add, Icons.Outlined.Add),
-    Tab(Routes.FAVORITES, R.string.nav_favorites, Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder),
-    Tab(Routes.PROFILE, R.string.nav_profile, Icons.Filled.Person, Icons.Outlined.Person),
+    val isCentre: Boolean = false,
 )
 
 /**
- * Enhanced bottom navigation: regular tabs get an animated pill indicator; the centre Create
- * action is a raised primary button so the app's core action reads at a glance.
+ * Heritage Luxe bottom navigation:
+ *  Home · Discover · [Camera FAB] · Try-On · Profile
+ *  The centre Camera tab is a raised Deep Forest circle with a white camera glyph
+ *  and routes to the Create / capture hub (which then leads to FitScan camera).
  */
+internal val tabs = listOf(
+    Tab(Routes.HOME, R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home),
+    Tab(Routes.DISCOVER, R.string.nav_discover, Icons.Filled.Explore, Icons.Outlined.Explore),
+    Tab(Routes.CREATE, R.string.nav_camera, Icons.Filled.CameraAlt, Icons.Filled.CameraAlt, isCentre = true),
+    Tab(Routes.FAVORITES, R.string.nav_tryon, Icons.Filled.Checkroom, Icons.Outlined.Checkroom),
+    Tab(Routes.PROFILE, R.string.nav_profile, Icons.Filled.Person, Icons.Outlined.Person),
+)
+
 @Composable
 internal fun FabricFitBottomBar(
     currentRoute: String?,
@@ -75,11 +75,10 @@ internal fun FabricFitBottomBar(
 ) {
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceContainer,
-        tonalElevation = 3.dp,
+        color = MaterialTheme.colorScheme.surface,
+        tonalElevation = 8.dp,
+        shadowElevation = 8.dp,
     ) {
-        // System bars never scale with font size; clamp so huge accessibility sizes
-        // cannot clip the five tabs.
         androidx.compose.runtime.CompositionLocalProvider(
             androidx.compose.ui.platform.LocalDensity provides
                 androidx.compose.ui.unit.Density(
@@ -88,14 +87,18 @@ internal fun FabricFitBottomBar(
                 ),
         ) {
         Row(
-            Modifier.fillMaxWidth().height(72.dp).padding(top = 6.dp),
+            Modifier
+                .fillMaxWidth()
+                .height(78.dp)
+                .padding(top = 6.dp, bottom = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Bottom,
         ) {
             tabs.forEach { tab ->
-                if (tab.route == Routes.CREATE) {
-                    CreateTab(
+                if (tab.isCentre) {
+                    CameraTab(
                         label = stringResource(tab.labelRes),
+                        selected = currentRoute == tab.route,
                         onClick = { onNavigate(tab.route) },
                         modifier = Modifier.weight(1f),
                     )
@@ -116,11 +119,11 @@ internal fun FabricFitBottomBar(
 @Composable
 private fun StandardTab(tab: Tab, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val label = stringResource(tab.labelRes)
-    val pillScale by animateFloatAsState(
-        targetValue = if (selected) 1f else 0f,
-        animationSpec = spring(dampingRatio = 0.7f),
-        label = "tabPill",
-    )
+    val tint = if (selected) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -136,54 +139,40 @@ private fun StandardTab(tab: Tab, selected: Boolean, onClick: () -> Unit, modifi
             }
             .padding(vertical = 6.dp),
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.height(28.dp),
-        ) {
-            Box(
-                Modifier
-                    .size(width = 56.dp, height = 28.dp)
-                    .background(
-                        MaterialTheme.colorScheme.secondaryContainer,
-                        RoundedCornerShape(50),
-                    )
-                    .then(
-                        Modifier.graphicsScale(pillScale),
-                    ),
-            )
-            Icon(
-                imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
-                contentDescription = null,
-                tint = if (selected) {
-                    MaterialTheme.colorScheme.onSecondaryContainer
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                },
-            )
-        }
+        Icon(
+            imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(26.dp),
+        )
         Text(
             label,
             style = MaterialTheme.typography.labelSmall,
-            color = if (selected) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            modifier = Modifier.padding(top = 2.dp),
+            color = tint,
+            modifier = Modifier.padding(top = 3.dp),
         )
     }
 }
 
 @Composable
-private fun CreateTab(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun CameraTab(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.05f else 1f,
+        animationSpec = spring(dampingRatio = 0.6f),
+        label = "cameraScale",
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.offset(y = (-10).dp),
+        modifier = modifier.offset(y = (-16).dp),
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(52.dp)
+                .size(60.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
                 .background(MaterialTheme.colorScheme.primary, CircleShape)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
@@ -196,7 +185,7 @@ private fun CreateTab(label: String, onClick: () -> Unit, modifier: Modifier = M
                 },
         ) {
             Icon(
-                imageVector = Icons.Outlined.Add,
+                imageVector = Icons.Filled.CameraAlt,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier.size(26.dp),
@@ -206,16 +195,7 @@ private fun CreateTab(label: String, onClick: () -> Unit, modifier: Modifier = M
             label,
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(top = 2.dp),
+            modifier = Modifier.padding(top = 4.dp),
         )
     }
 }
-
-private fun Modifier.graphicsScale(scale: Float): Modifier =
-    this.then(
-        Modifier.graphicsLayer {
-            scaleX = scale
-            scaleY = scale
-            alpha = scale
-        },
-    )

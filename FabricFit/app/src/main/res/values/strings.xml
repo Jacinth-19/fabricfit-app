@@ -3,7 +3,7 @@
 
     <!-- ============ App ============ -->
     <string name="app_name">FabricFit</string>
-    <string name="app_tagline">Scan Your Fabric. Wear Your Style.</string>
+    <string name="app_tagline">Scan. Discover. Try. Wear.</string>
     <string name="cd_app_logo">FabricFit logo</string>
 
     <!-- ============ Common ============ -->
@@ -42,6 +42,8 @@
     <string name="nav_home">Home</string>
     <string name="nav_discover">Discover</string>
     <string name="nav_create">Create</string>
+    <string name="nav_camera">Camera</string>
+    <string name="nav_tryon">Try-On</string>
     <string name="nav_favorites">Favourites</string>
     <string name="nav_profile">Profile</string>
     <string name="cd_bottom_navigation">Main navigation</string>
@@ -49,6 +51,9 @@
     <!-- ============ Welcome & onboarding ============ -->
     <string name="onboarding_welcome_title">Welcome to FabricFit</string>
     <string name="onboarding_welcome_body">Photograph a fabric you own and FabricFit shows you what it could become — from kaba and slit to a modern kaftan.</string>
+    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_cta_get_started">Get Started</string>
+    <string name="onboarding_cta_login">Login</string>
     <string name="onboarding_step1_title">Scan or upload a fabric</string>
     <string name="onboarding_step1_body">Take a photo of the material on your table, or choose one from your gallery. Everything starts with the cloth.</string>
     <string name="onboarding_step2_title">Discover designs that suit it</string>

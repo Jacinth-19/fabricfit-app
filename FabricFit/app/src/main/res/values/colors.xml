@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Brand accents used by artwork and the launcher icon. -->
-    <color name="fabricfit_ink">#14110F</color>
-    <color name="fabricfit_cream">#FDF8F2</color>
-    <color name="fabricfit_madder">#8C2F39</color>
-    <color name="fabricfit_gold">#C8952B</color>
-    <color name="fabricfit_teal">#1F5450</color>
+    <!-- Heritage Luxe brand — Deep Forest + Royal Gold on Warm Cream -->
+    <color name="fabricfit_ink">#1A1A1A</color>
+    <color name="fabricfit_cream">#F7F1E5</color>
+    <color name="fabricfit_madder">#7A1F2B</color>
+    <color name="fabricfit_gold">#D4A84B</color>
+    <color name="fabricfit_teal">#0F3D2E</color>
 
-    <!-- Light surface used behind the splash screen (see values-night for dark). -->
-    <color name="splash_background">#FFFBF7</color>
+    <!-- Splash screen matches the Welcome page (Deep Forest background). -->
+    <color name="splash_background">#0F3D2E</color>
 </resources>
