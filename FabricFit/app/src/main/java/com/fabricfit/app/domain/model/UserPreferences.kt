@@ -20,6 +20,22 @@ data class UserPreferences(
     val analysisEngine: AnalysisEngine = AnalysisEngine.ON_DEVICE_DEMO,
     /** Operator-configured analysis backend; blank = fully on-device. */
     val cloudBaseUrl: String = "",
+    /** Accessibility settings */
+    val accessibility: AccessibilityPreferences = AccessibilityPreferences(),
+)
+
+/**
+ * Accessibility preferences for inclusive design.
+ */
+data class AccessibilityPreferences(
+    /** Use high contrast colors for better visibility */
+    val highContrast: Boolean = false,
+    /** Reduce or disable animations for users sensitive to motion */
+    val reducedMotion: Boolean = false,
+    /** Use larger text sizes throughout the app */
+    val largeText: Boolean = false,
+    /** Enable haptic feedback on interactions */
+    val hapticFeedback: Boolean = true,
 )
 
 enum class ThemeMode { LIGHT, DARK, SYSTEM }

@@ -932,4 +932,27 @@
     <string name="contrib_delete_confirm">Delete this photo?</string>
     <string name="contrib_delete_confirm_body">The photo will be removed from your contributions.</string>
     <string name="contrib_duplicate">This photo looks like one you already contributed.</string>
+
+    <!-- ============ Enhanced Empty States ============ -->
+    <string name="empty_action_scan_fabric">Scan Your First Fabric</string>
+    <string name="empty_action_create_collection">Create a Collection</string>
+    <string name="empty_action_add_to_wardrobe">Add to Wardrobe</string>
+    <string name="empty_action_browse_designs">Browse Designs</string>
+    <string name="empty_action_start_exploring">Start Exploring</string>
+    <string name="empty_action_try_design">Try a Design</string>
+    <string name="empty_action_clear_filters">Clear Filters</string>
+    <string name="empty_secondary_learn_more">Learn More</string>
+
+    <!-- ============ Accessibility Settings ============ -->
+    <string name="accessibility_title">Accessibility</string>
+    <string name="accessibility_desc">Customize the app for your needs</string>
+    <string name="accessibility_high_contrast">High Contrast</string>
+    <string name="accessibility_high_contrast_desc">Use stronger colors for better visibility</string>
+    <string name="accessibility_reduced_motion">Reduced Motion</string>
+    <string name="accessibility_reduced_motion_desc">Minimize animations and transitions</string>
+    <string name="accessibility_large_text">Large Text</string>
+    <string name="accessibility_large_text_desc">Increase text size throughout the app</string>
+    <string name="accessibility_haptic_feedback">Haptic Feedback</string>
+    <string name="accessibility_haptic_feedback_desc">Vibrate on interactions</string>
+
 </resources>

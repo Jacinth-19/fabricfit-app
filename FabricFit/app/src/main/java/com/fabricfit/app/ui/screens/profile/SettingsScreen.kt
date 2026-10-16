@@ -100,6 +100,28 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
         SettingRow(stringResource(R.string.settings_theme), themeLabel(state.prefs.themeMode)) { themeDialog = true }
         SettingRow(stringResource(R.string.settings_language), stringResource(state.prefs.language.labelRes)) { languageDialog = true }
 
+        Section(R.string.accessibility_title)
+        NotificationRow(
+            stringResource(R.string.accessibility_high_contrast),
+            stringResource(R.string.accessibility_high_contrast_desc),
+            state.prefs.accessibility.highContrast,
+        ) { on -> vm.setAccessibility { it.copy(highContrast = on) } }
+        NotificationRow(
+            stringResource(R.string.accessibility_reduced_motion),
+            stringResource(R.string.accessibility_reduced_motion_desc),
+            state.prefs.accessibility.reducedMotion,
+        ) { on -> vm.setAccessibility { it.copy(reducedMotion = on) } }
+        NotificationRow(
+            stringResource(R.string.accessibility_large_text),
+            stringResource(R.string.accessibility_large_text_desc),
+            state.prefs.accessibility.largeText,
+        ) { on -> vm.setAccessibility { it.copy(largeText = on) } }
+        NotificationRow(
+            stringResource(R.string.accessibility_haptic_feedback),
+            stringResource(R.string.accessibility_haptic_feedback_desc),
+            state.prefs.accessibility.hapticFeedback,
+        ) { on -> vm.setAccessibility { it.copy(hapticFeedback = on) } }
+
         Section(R.string.settings_section_notifications)
         NotificationRow(
             stringResource(R.string.settings_notif_processing),
