@@ -6,6 +6,12 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -14,16 +20,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CenterFocusStrong
 import androidx.compose.material.icons.filled.Checkroom
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -31,28 +33,25 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -93,13 +92,20 @@ private val featuredFabricTiles = listOf(
 
 @Composable
 fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
+    val vm: HomeViewModel = appViewModel { c, ctx -> HomeViewModel(c) }
+    val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
-    var homeSearchQuery by remember { mutableStateOf("") }
 
     val requestCamera = rememberCameraPermission { nav.navigate(Routes.CAMERA_FABRIC) }
     val picker = rememberPhotoPicker { uri ->
+        context.openFabricFlow(
+            uri,
+            navigate = { nav.navigate(it) },
+            onError = { e -> scope.launch { snackbar.showSnackbar(context.getString(e.titleRes)) } },
+        )
+    }
 
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -114,8 +120,9 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         .padding(horizontal = 20.dp)
                         .padding(top = 14.dp),
                 ) {
-                    // Rounded search pill with live query input + handoff to Discover
+                    // Rounded search pill
                     Surface(
+                        onClick = { nav.navigate(Routes.DISCOVER) },
                         shape = RoundedCornerShape(50),
                         color = HeritageCreamBright,
                         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
@@ -133,67 +140,16 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                 Icons.Filled.Search,
                                 contentDescription = null,
                                 tint = HeritageForest,
-                                modifier = Modifier
-                                    .size(22.dp)
-                                    .clickable {
-                                        nav.navigate(Routes.discover(homeSearchQuery))
-                                    },
+                                modifier = Modifier.size(22.dp),
                             )
                             Spacer(Modifier.width(10.dp))
-                            BasicTextField(
-                                value = homeSearchQuery,
-                                onValueChange = { homeSearchQuery = it },
-                                singleLine = true,
-                                textStyle = MaterialTheme.typography.bodyMedium.copy(
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                ),
-                                cursorBrush = SolidColor(HeritageForest),
-                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                                keyboardActions = KeyboardActions(
-                                    onSearch = {
-                                        nav.navigate(Routes.discover(homeSearchQuery))
-                                    },
-                                ),
-                                modifier = Modifier.weight(1f),
-                                decorationBox = { innerTextField ->
-                                    Box(contentAlignment = Alignment.CenterStart) {
-                                        if (homeSearchQuery.isEmpty()) {
-                                            Text(
-                                                "Search fabrics, styles or keywords...",
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis,
-                                            )
-                                        }
-                                        innerTextField()
-                                    }
-                                },
+                            Text(
+                                "Search fabrics, styles or keywords...",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
-                            if (homeSearchQuery.isNotBlank()) {
-                                IconButton(
-                                    onClick = { homeSearchQuery = "" },
-                                    modifier = Modifier.size(28.dp),
-                                ) {
-                                    Icon(
-                                        Icons.Filled.Close,
-                                        contentDescription = stringResource(R.string.cd_clear_search),
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                }
-                                IconButton(
-                                    onClick = { nav.navigate(Routes.discover(homeSearchQuery)) },
-                                    modifier = Modifier.size(28.dp),
-                                ) {
-                                    Icon(
-                                        Icons.AutoMirrored.Filled.ArrowForward,
-                                        contentDescription = stringResource(R.string.discover_search_hint),
-                                        tint = HeritageForest,
-                                        modifier = Modifier.size(18.dp),
-                                    )
-                                }
-                            }
                         }
                     }
 
@@ -279,7 +235,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         Column(
                             modifier = Modifier
                                 .width(92.dp)
-                                .clickable { nav.navigate(Routes.discover(tile.title)) },
+                                .clickable { nav.navigate(Routes.DISCOVER) },
                         ) {
                             AssetImage(
                                 asset = tile.asset,
@@ -359,6 +315,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                 }
                             }
                         }
+                    }
                 }
             }
 
@@ -393,6 +350,44 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                     )
                                 }
                             }
+                        }
+                    }
+                }
+            }
+
+            if (state.latestLook != null) {
+                item { SectionHeader(R.string.home_section_continue) }
+                item {
+                    Card(
+                        onClick = { nav.navigate(Routes.result(state.latestLook!!.id)) },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                    ) {
+                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                            LocalImage(
+                                state.latestLook!!.resultImageUri,
+                                contentDescription = stringResource(R.string.cd_generated_image),
+                                modifier = Modifier.size(72.dp),
+                            )
+                            Spacer(Modifier.width(14.dp))
+                            Column(Modifier.weight(1f)) {
+                                Text(
+                                    stringResource(R.string.result_title),
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Text(
+                                    context.timeAgo(state.latestLook!!.createdAt),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
                 }
             }
 
@@ -443,12 +438,47 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     }
                 }
             }
+
+            // Quick tools row
+            item { SectionHeader(R.string.home_tools_title) }
+            item {
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    AssistChip(
+                        onClick = {
+                            val latest = state.recentFabrics.firstOrNull()
+                            if (latest != null) {
+                                nav.navigate(Routes.colorMatch(latest.id))
+                            } else {
+                                nav.navigate(Routes.CREATE)
+                            }
+                        },
+                        label = { Text(stringResource(R.string.tool_color_ideas)) },
+                    )
+                    AssistChip(
+                        onClick = { nav.navigate(Routes.WARDROBE) },
+                        label = { Text(stringResource(R.string.tool_wardrobe)) },
+                    )
+                    AssistChip(
+                        onClick = { nav.navigate(Routes.TAILORS) },
+                        label = { Text(stringResource(R.string.tool_tailors)) },
+                    )
+                    AssistChip(
+                        onClick = { nav.navigate(Routes.COLLECTIONS) },
+                        label = { Text(stringResource(R.string.tool_collections)) },
+                    )
                 }
             }
 
             item { Spacer(Modifier.height(16.dp)) }
         }
 
+        SnackbarHost(snackbar, modifier = Modifier.align(Alignment.BottomCenter).padding(padding))
+    }
 }
 
 @Composable
@@ -491,6 +521,8 @@ private fun QuickActionTile(
             )
         }
     }
+}
+
 private fun pickImagesRequest() = androidx.activity.result.PickVisualMediaRequest(
     androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.ImageOnly,
 )
