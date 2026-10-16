@@ -80,8 +80,8 @@ private data class RecommendedDressItem(
 
 private val recommendedDresses = listOf(
     RecommendedDressItem("african_gown", "Elegant Peplum Dress", "$89.00", "4.8", 124, "catalog/heritage/dress_kente_flare.jpg"),
-    RecommendedDressItem("straight_dress", "Elegant Peplum Dress", "$89.00", "4.8", 122, "catalog/heritage/dress_kente_aline.jpg"),
-    RecommendedDressItem("peplum", "Elegant Peplum Dress", "$59.00", "4.8", 79, "catalog/heritage/dress_kente_asymmetric.jpg"),
+    RecommendedDressItem("straight_dress", "Royal Kente Gown", "$89.00", "4.8", 122, "catalog/heritage/dress_kente_aline.jpg"),
+    RecommendedDressItem("peplum", "Asymmetric Peplum", "$59.00", "4.8", 79, "catalog/heritage/dress_kente_asymmetric.jpg"),
     RecommendedDressItem("kaba_slit", "Modern Kente Dress", "$78.00", "4.7", 98, "catalog/heritage/outfit_modern_kente.jpg"),
 )
 
@@ -152,16 +152,16 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                 ) {
-                    Column(Modifier.padding(18.dp)) {
+                    Column(Modifier.padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             AssetImage(
                                 asset = "catalog/heritage/swatch_kente.jpg",
                                 contentDescription = "Kente Royalty",
                                 modifier = Modifier
-                                    .size(108.dp)
-                                    .clip(RoundedCornerShape(18.dp)),
+                                    .size(92.dp)
+                                    .clip(RoundedCornerShape(16.dp)),
                             )
-                            Spacer(Modifier.width(18.dp))
+                            Spacer(Modifier.width(16.dp))
                             Column {
                                 Text(
                                     "Kente Royalty",
@@ -169,7 +169,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
-                                Spacer(Modifier.height(8.dp))
+                                Spacer(Modifier.height(6.dp))
                                 Surface(
                                     shape = RoundedCornerShape(50),
                                     color = Color(0xFF216849),
@@ -179,17 +179,17 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.SemiBold,
                                         color = Color.White,
-                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
                                     )
                                 }
                             }
                         }
 
-                        Spacer(Modifier.height(18.dp))
+                        Spacer(Modifier.height(12.dp))
 
                         // Extracted Colour Palette Circles (Forest Green, Deep Burgundy, Royal Gold, Kente Red)
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(18.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             listOf(
@@ -200,14 +200,14 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                             ).forEach { swatchColor ->
                                 Box(
                                     Modifier
-                                        .size(36.dp)
+                                        .size(32.dp)
                                         .clip(CircleShape)
                                         .background(swatchColor),
                                 )
                             }
                         }
 
-                        Spacer(Modifier.height(18.dp))
+                        Spacer(Modifier.height(12.dp))
 
                         // Segmented Pill Bar: Colors · Pattern · Style
                         Surface(
@@ -219,7 +219,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                             Row(
                                 Modifier
                                     .fillMaxWidth()
-                                    .padding(6.dp),
+                                    .padding(5.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween,
                             ) {
@@ -232,13 +232,13 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                         shadowElevation = if (selected) 1.dp else 0.dp,
                                     ) {
                                         Row(
-                                            Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+                                            Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             if (index == 0) {
                                                 Box(
                                                     Modifier
-                                                        .size(22.dp)
+                                                        .size(20.dp)
                                                         .clip(CircleShape)
                                                         .background(HeritageForest),
                                                 )
@@ -269,7 +269,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
-                        .padding(top = 20.dp, bottom = 12.dp),
+                        .padding(top = 14.dp, bottom = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -297,7 +297,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     items(recommendedDresses, key = { it.id }) { item ->
                         Column(
                             modifier = Modifier
-                                .width(142.dp)
+                                .width(136.dp)
                                 .clickable { nav.navigate(Routes.design(item.id)) },
                         ) {
                             AssetImage(
@@ -305,10 +305,10 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                 contentDescription = item.title,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(176.dp)
+                                    .height(142.dp)
                                     .clip(RoundedCornerShape(16.dp)),
                             )
-                            Spacer(Modifier.height(6.dp))
+                            Spacer(Modifier.height(5.dp))
                             Text(
                                 item.title,
                                 style = MaterialTheme.typography.labelLarge,
@@ -344,7 +344,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
 
             // Wide Gold-on-Forest CTA: View All Recommendations
             item {
-                Spacer(Modifier.height(18.dp))
+                Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = { nav.navigate(Routes.DISCOVER) },
                     shape = RoundedCornerShape(16.dp),
@@ -355,7 +355,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
-                        .height(54.dp),
+                        .height(50.dp),
                 ) {
                     Text(
                         "View All Recommendations",

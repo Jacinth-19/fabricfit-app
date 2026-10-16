@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -44,6 +45,9 @@ import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.theme.HeritageCream
+import com.fabricfit.app.ui.theme.HeritageForest
+import com.fabricfit.app.ui.theme.HeritageForestDark
 
 internal data class Tab(
     val route: String,
@@ -73,10 +77,13 @@ internal fun FabricFitBottomBar(
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isDarkChrome = currentRoute == Routes.PROFILE || currentRoute == Routes.CREATE
+    val barColor = if (isDarkChrome) HeritageForestDark else MaterialTheme.colorScheme.surface
+
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surface,
-        tonalElevation = 8.dp,
+        color = barColor,
+        tonalElevation = if (isDarkChrome) 0.dp else 8.dp,
         shadowElevation = 8.dp,
     ) {
         androidx.compose.runtime.CompositionLocalProvider(
@@ -86,43 +93,52 @@ internal fun FabricFitBottomBar(
                     fontScale = 1f,
                 ),
         ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .height(78.dp)
-                .padding(top = 6.dp, bottom = 4.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            tabs.forEach { tab ->
-                if (tab.isCentre) {
-                    CameraTab(
-                        label = stringResource(tab.labelRes),
-                        selected = currentRoute == tab.route,
-                        onClick = { onNavigate(tab.route) },
-                        modifier = Modifier.weight(1f),
-                    )
-                } else {
-                    StandardTab(
-                        tab = tab,
-                        selected = currentRoute == tab.route,
-                        onClick = { onNavigate(tab.route) },
-                        modifier = Modifier.weight(1f),
-                    )
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(78.dp)
+                    .padding(top = 6.dp, bottom = 4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Bottom,
+            ) {
+                tabs.forEach { tab ->
+                    if (tab.isCentre) {
+                        CameraTab(
+                            label = stringResource(tab.labelRes),
+                            selected = currentRoute == tab.route,
+                            darkChrome = isDarkChrome,
+                            onClick = { onNavigate(tab.route) },
+                            modifier = Modifier.weight(1f),
+                        )
+                    } else {
+                        StandardTab(
+                            tab = tab,
+                            selected = currentRoute == tab.route,
+                            darkChrome = isDarkChrome,
+                            onClick = { onNavigate(tab.route) },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
                 }
             }
-        }
         }
     }
 }
 
 @Composable
-private fun StandardTab(tab: Tab, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun StandardTab(
+    tab: Tab,
+    selected: Boolean,
+    darkChrome: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val label = stringResource(tab.labelRes)
-    val tint = if (selected) {
-        MaterialTheme.colorScheme.primary
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+    val tint = when {
+        darkChrome && selected -> Color.White
+        darkChrome -> HeritageCream.copy(alpha = 0.65f)
+        selected -> MaterialTheme.colorScheme.primary
+        else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -155,7 +171,13 @@ private fun StandardTab(tab: Tab, selected: Boolean, onClick: () -> Unit, modifi
 }
 
 @Composable
-private fun CameraTab(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun CameraTab(
+    label: String,
+    selected: Boolean,
+    darkChrome: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val scale by animateFloatAsState(
         targetValue = if (selected) 1.05f else 1f,
         animationSpec = spring(dampingRatio = 0.6f),
@@ -173,7 +195,7 @@ private fun CameraTab(label: String, selected: Boolean, onClick: () -> Unit, mod
                     scaleX = scale
                     scaleY = scale
                 }
-                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                .background(HeritageForest, CircleShape)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -187,14 +209,14 @@ private fun CameraTab(label: String, selected: Boolean, onClick: () -> Unit, mod
             Icon(
                 imageVector = Icons.Filled.CameraAlt,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = HeritageCream,
                 modifier = Modifier.size(26.dp),
             )
         }
         Text(
             label,
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = if (darkChrome) HeritageCream else MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(top = 4.dp),
         )
     }

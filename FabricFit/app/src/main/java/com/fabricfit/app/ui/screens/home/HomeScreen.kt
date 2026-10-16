@@ -162,7 +162,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(190.dp),
+                            .height(216.dp),
                     ) {
                         AssetImage(
                             asset = "catalog/heritage/hero_banner_card.jpg",
@@ -172,7 +172,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         )
                     }
 
-                    Spacer(Modifier.height(14.dp))
+                    Spacer(Modifier.height(16.dp))
 
                     // Three equal Quick-Action cards: Scan Fabric · AI Recommendations · Virtual Try-On
                     Row(
@@ -187,7 +187,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         )
                         QuickActionTile(
                             icon = Icons.Filled.AutoAwesome,
-                            label = "AI Matches",
+                            label = "AI Recommendations",
                             onClick = { nav.navigate(Routes.DISCOVER) },
                             modifier = Modifier.weight(1f),
                         )
@@ -207,7 +207,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
-                        .padding(top = 18.dp, bottom = 10.dp),
+                        .padding(top = 22.dp, bottom = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
@@ -234,7 +234,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     items(featuredFabricTiles, key = { it.title }) { tile ->
                         Column(
                             modifier = Modifier
-                                .width(86.dp)
+                                .width(92.dp)
                                 .clickable { nav.navigate(Routes.DISCOVER) },
                         ) {
                             AssetImage(
@@ -242,10 +242,10 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                 contentDescription = tile.title,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(112.dp)
+                                    .height(132.dp)
                                     .clip(RoundedCornerShape(16.dp)),
                             )
-                            Spacer(Modifier.height(6.dp))
+                            Spacer(Modifier.height(8.dp))
                             Text(
                                 tile.title,
                                 style = MaterialTheme.typography.titleSmall,
@@ -256,6 +256,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                     }
                 }
             }
+            item { Spacer(Modifier.height(18.dp)) }
 
             // 3. Recommended Outfit Styles
             if (state.recommended.isNotEmpty()) {
@@ -511,11 +512,11 @@ private fun QuickActionTile(
             Spacer(Modifier.height(8.dp))
             Text(
                 text = label,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Medium,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
         }

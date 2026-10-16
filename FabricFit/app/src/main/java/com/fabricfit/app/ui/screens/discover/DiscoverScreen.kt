@@ -83,18 +83,34 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
     val context = LocalContext.current
     var filter by remember { mutableStateOf(DiscoverFilter.ALL) }
     var query by remember { mutableStateOf("") }
+    var searchOpen by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Editorial Serif Header matching Reference Image 5 ("Outfit Recommendations")
-        Text(
-            "Outfit Recommendations",
-            style = MaterialTheme.typography.headlineLarge.copy(
-                fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Bold,
-            ),
-            color = HeritageForest,
-            modifier = Modifier.padding(horizontal = 20.dp).padding(top = 16.dp, bottom = 10.dp),
-        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(top = 12.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                "Outfit Recommendations",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                ),
+                color = HeritageForest,
+            )
+            IconButton(onClick = { searchOpen = !searchOpen }) {
+                Icon(
+                    Icons.Filled.Search,
+                    contentDescription = stringResource(R.string.discover_search_hint),
+                    tint = HeritageForest,
+                )
+            }
+        }
 
         // Filter pills container card: All · Casual · Formal · Occasion · Fabrics
         Surface(
@@ -104,7 +120,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
         ) {
-            Column(Modifier.padding(vertical = 10.dp)) {
+            Column(Modifier.padding(vertical = 8.dp)) {
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
@@ -129,32 +145,33 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
                     }
                 }
 
-                Spacer(Modifier.height(10.dp))
-
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it; vm.setQuery(it) },
-                    placeholder = { Text(stringResource(R.string.discover_search_hint)) },
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null, tint = HeritageForest) },
-                    trailingIcon = {
-                        if (query.isNotBlank()) {
-                            IconButton(onClick = { query = ""; vm.setQuery("") }) {
-                                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cd_clear_search))
+                if (searchOpen) {
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { query = it; vm.setQuery(it) },
+                        placeholder = { Text(stringResource(R.string.discover_search_hint)) },
+                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null, tint = HeritageForest) },
+                        trailingIcon = {
+                            if (query.isNotBlank()) {
+                                IconButton(onClick = { query = ""; vm.setQuery("") }) {
+                                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cd_clear_search))
+                                }
                             }
-                        }
-                    },
-                    shape = RoundedCornerShape(50),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White,
-                        focusedBorderColor = HeritageForest,
-                        unfocusedBorderColor = Color(0xFFE0D6C3),
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                )
+                        },
+                        shape = RoundedCornerShape(50),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = HeritageForest,
+                            unfocusedBorderColor = Color(0xFFE0D6C3),
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                    )
+                }
             }
         }
 
@@ -235,7 +252,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
                                         null,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .height(178.dp),
+                                            .height(166.dp),
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(

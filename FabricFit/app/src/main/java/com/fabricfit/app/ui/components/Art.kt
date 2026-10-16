@@ -215,103 +215,12 @@ fun BrandMark(modifier: Modifier = Modifier) {
  */
 @Composable
 fun HeritageLuxeMark(modifier: Modifier = Modifier) {
-    val gold = Color(0xFFD4A84B)
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-        val cx = w / 2f
-        val cy = h / 2f
-        val stroke = w * 0.07f
-
-        // Central disk — the "eye" of the mark
-        drawCircle(
-            color = gold,
-            radius = w * 0.17f,
-            center = Offset(cx, cy),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke),
-        )
-        drawCircle(
-            color = gold,
-            radius = w * 0.09f,
-            center = Offset(cx, cy),
-        )
-
-        // Vertical "spine" running top to bottom
-        drawRect(
-            color = gold,
-            topLeft = Offset(cx - stroke / 2f, h * 0.10f),
-            size = Size(stroke, h * 0.80f),
-        )
-
-        // Top crown: three prongs
-        drawRect(
-            color = gold,
-            topLeft = Offset(cx - w * 0.20f, h * 0.10f),
-            size = Size(stroke, h * 0.12f),
-        )
-        drawRect(
-            color = gold,
-            topLeft = Offset(cx + w * 0.20f - stroke, h * 0.10f),
-            size = Size(stroke, h * 0.12f),
-        )
-        // Crown connector arch
-        drawArc(
-            color = gold,
-            startAngle = 180f,
-            sweepAngle = 180f,
-            useCenter = false,
-            topLeft = Offset(cx - w * 0.20f, h * 0.05f),
-            size = Size(w * 0.40f, h * 0.18f),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke),
-        )
-
-        // Mid horizontal band across the circle
-        drawRect(
-            color = gold,
-            topLeft = Offset(w * 0.30f, cy - stroke / 2f),
-            size = Size(w * 0.40f, stroke),
-        )
-
-        // Lower crown (M-shape): chevrons pointing up and out
-        val leftCurl = Path().apply {
-            moveTo(cx - w * 0.10f, h * 0.70f)
-            cubicTo(
-                cx - w * 0.25f, h * 0.72f,
-                cx - w * 0.30f, h * 0.85f,
-                cx - w * 0.18f, h * 0.90f,
-            )
-        }
-        drawPath(leftCurl, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-        val rightCurl = Path().apply {
-            moveTo(cx + w * 0.10f, h * 0.70f)
-            cubicTo(
-                cx + w * 0.25f, h * 0.72f,
-                cx + w * 0.30f, h * 0.85f,
-                cx + w * 0.18f, h * 0.90f,
-            )
-        }
-        drawPath(rightCurl, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-
-        // Left + right curved "wings" flanking the disk
-        val leftWing = Path().apply {
-            moveTo(w * 0.16f, h * 0.25f)
-            cubicTo(
-                w * 0.08f, h * 0.40f,
-                w * 0.08f, h * 0.60f,
-                w * 0.16f, h * 0.75f,
-            )
-        }
-        drawPath(leftWing, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-        val rightWing = Path().apply {
-            moveTo(w * 0.84f, h * 0.25f)
-            cubicTo(
-                w * 0.92f, h * 0.40f,
-                w * 0.92f, h * 0.60f,
-                w * 0.84f, h * 0.75f,
-            )
-        }
-        drawPath(rightWing, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-    }
+    AssetImage(
+        asset = "catalog/heritage/monogram_gold.png",
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        modifier = modifier,
+    )
 }
 
 @Composable

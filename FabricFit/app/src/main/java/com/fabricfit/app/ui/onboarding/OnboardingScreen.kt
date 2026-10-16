@@ -111,30 +111,30 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                 }
             }
 
-            // Indicator dots
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                repeat(pages.size) { i ->
-                    val isCurrent = i == pagerState.currentPage
-                    Box(
-                        Modifier
-                            .padding(horizontal = 5.dp)
-                            .size(if (isCurrent) 10.dp else 7.dp)
-                            .clip(CircleShape)
-                            .background(
-                                when {
-                                    page.dark && isCurrent -> HeritageGold
-                                    page.dark -> HeritageGoldSoft.copy(alpha = 0.4f)
-                                    isCurrent -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.outlineVariant
-                                },
-                            ),
-                    )
+            // Indicator dots (shown on step pages 1..4)
+            if (!page.dark) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    repeat(pages.size) { i ->
+                        val isCurrent = i == pagerState.currentPage
+                        Box(
+                            Modifier
+                                .padding(horizontal = 5.dp)
+                                .size(if (isCurrent) 10.dp else 7.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isCurrent) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.outlineVariant,
+                                ),
+                        )
+                    }
                 }
+            } else {
+                Spacer(Modifier.height(14.dp))
             }
 
             // Bottom actions
@@ -243,7 +243,7 @@ private fun WelcomeDarkPage() {
             Spacer(Modifier.height(12.dp))
 
             // Brand mark — gold adinkra monogram
-            HeritageLuxeMark(modifier = Modifier.size(96.dp))
+            HeritageLuxeMark(modifier = Modifier.size(116.dp))
 
             Spacer(Modifier.height(16.dp))
 
