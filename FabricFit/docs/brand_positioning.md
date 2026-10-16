@@ -18,6 +18,8 @@ localized strings (`tw` / `gaa` / `ee`), the store listing and the docs.
 | Tech-focused | AI-Powered Ghanaian Fabric & Outfit Matching. |
 | Luxe / fashion | Where Heritage Fabric Meets Modern Fit. |
 
+
+
 `app_tagline` is the in-app line shown on the About screen, docs headers and store
 long description. It is translated in all four shipped locales.
 

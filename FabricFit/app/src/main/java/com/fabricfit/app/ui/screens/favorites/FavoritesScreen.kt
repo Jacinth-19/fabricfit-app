@@ -6,13 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +15,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Checkroom
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -38,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -59,6 +54,7 @@ import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
+import com.fabricfit.app.ui.components.ensureSampleKenteFabric
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
@@ -90,10 +86,24 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
     val vm: FavoritesViewModel = appViewModel { c, ctx -> FavoritesViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var detailTab by remember { mutableStateOf(0) }
+    var detailTab by remember { mutableIntStateOf(0) }
     val tooltips = AppContainer.get(context).tooltips
     val tooltipSeen by tooltips.seen(TooltipStore.FAVORITES).collectAsState(initial = true)
     val scope = rememberCoroutineScope()
+
+    fun launchTryOnWithStyle(styleId: String?) {
+        scope.launch {
+            val fabricId = state.fabrics.firstOrNull()?.id ?: ensureSampleKenteFabric(context)
+            nav.navigate(Routes.tryOn(fabricId, styleId ?: "african_gown"))
+        }
+    }
+
+    fun openColorMatchForScan() {
+        scope.launch {
+            val fabricId = state.fabrics.firstOrNull()?.id ?: ensureSampleKenteFabric(context)
+            nav.navigate(Routes.colorMatch(fabricId))
+        }
+    }
 
     Box(Modifier.fillMaxSize().padding(padding)) {
         LazyColumn(
@@ -162,7 +172,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                     .clip(RoundedCornerShape(16.dp)),
                             )
                             Spacer(Modifier.width(16.dp))
-                            Column {
+                            Column(Modifier.weight(1f)) {
                                 Text(
                                     "Kente Royalty",
                                     style = MaterialTheme.typography.headlineSmall,
@@ -170,40 +180,151 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                     color = MaterialTheme.colorScheme.onSurface,
                                 )
                                 Spacer(Modifier.height(6.dp))
-                                Surface(
-                                    shape = RoundedCornerShape(50),
-                                    color = Color(0xFF216849),
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
-                                    Text(
-                                        "98% Match",
-                                        style = MaterialTheme.typography.labelLarge,
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = Color.White,
-                                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
-                                    )
+                                    Surface(
+                                        shape = RoundedCornerShape(50),
+                                        color = Color(0xFF216849),
+                                    ) {
+                                        Text(
+                                            "98% Match",
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = Color.White,
+                                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 5.dp),
+                                        )
+                                    }
+                                    Surface(
+                                        onClick = { launchTryOnWithStyle("african_gown") },
+                                        shape = RoundedCornerShape(50),
+                                        color = HeritageForestDark,
+                                        border = BorderStroke(1.dp, HeritageGold.copy(alpha = 0.7f)),
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                Icons.Filled.Checkroom,
+                                                contentDescription = null,
+                                                tint = HeritageGold,
+                                                modifier = Modifier.size(14.dp),
+                                            )
+                                            Spacer(Modifier.width(4.dp))
+                                            Text(
+                                                "Try-On",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = HeritageGold,
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
 
                         Spacer(Modifier.height(12.dp))
 
-                        // Extracted Colour Palette Circles (Forest Green, Deep Burgundy, Royal Gold, Kente Red)
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            listOf(
-                                Color(0xFF144B2F),
-                                Color(0xFF611425),
-                                Color(0xFFD99B26),
-                                Color(0xFFCC292B),
-                            ).forEach { swatchColor ->
-                                Box(
-                                    Modifier
-                                        .size(32.dp)
-                                        .clip(CircleShape)
-                                        .background(swatchColor),
-                                )
+                        // Dynamic Tab Content (Colors · Pattern · Style)
+                        when (detailTab) {
+                            0 -> {
+                                // Extracted Colour Palette Circles — tapping opens ColorMatchScreen
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    listOf(
+                                        Color(0xFF144B2F),
+                                        Color(0xFF611425),
+                                        Color(0xFFD99B26),
+                                        Color(0xFFCC292B),
+                                    ).forEach { swatchColor ->
+                                        Box(
+                                            Modifier
+                                                .size(32.dp)
+                                                .clip(CircleShape)
+                                                .background(swatchColor)
+                                                .clickable { openColorMatchForScan() },
+                                        )
+                                    }
+                                    Spacer(Modifier.weight(1f))
+                                    Surface(
+                                        onClick = { openColorMatchForScan() },
+                                        shape = RoundedCornerShape(50),
+                                        color = Color(0xFFF3EFE6),
+                                        border = BorderStroke(1.dp, Color(0xFFE2DAC8)),
+                                    ) {
+                                        Row(
+                                            Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                Icons.Filled.Palette,
+                                                contentDescription = null,
+                                                tint = HeritageForest,
+                                                modifier = Modifier.size(14.dp),
+                                            )
+                                            Spacer(Modifier.width(4.dp))
+                                            Text(
+                                                stringResource(R.string.tool_color_ideas),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = HeritageForest,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            1 -> {
+                                Column {
+                                    Text(
+                                        "Striped Hand-Loom Weave · High Contrast",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = HeritageForest,
+                                    )
+                                    Spacer(Modifier.height(2.dp))
+                                    Text(
+                                        "Directional warp-and-weft repeat · Structured weight suited for sculpted bodices & flared skirts.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                            else -> {
+                                Row(
+                                    Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            "Ceremony · Wedding · Festival",
+                                            style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = HeritageForest,
+                                        )
+                                        Text(
+                                            "Best silhouettes: Peplum, A-Line Gown, Kaba & Slit",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    Spacer(Modifier.width(8.dp))
+                                    Button(
+                                        onClick = { launchTryOnWithStyle("african_gown") },
+                                        shape = RoundedCornerShape(50),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = HeritageForest,
+                                            contentColor = Color.White,
+                                        ),
+                                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                                    ) {
+                                        Text("Launch Try-On", style = MaterialTheme.typography.labelMedium)
+                                    }
+                                }
                             }
                         }
 
@@ -256,8 +377,6 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                             )
                                         }
                                     }
-                                }
-                            }
                         }
                     }
                 }
@@ -288,7 +407,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 }
             }
 
-            // Recommended Dresses Horizontal Carousel
+            // Recommended Dresses Horizontal Carousel with 1-tap Virtual Try-On badge
             item {
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 20.dp),
@@ -300,14 +419,37 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                 .width(136.dp)
                                 .clickable { nav.navigate(Routes.design(item.id)) },
                         ) {
-                            AssetImage(
-                                asset = item.asset,
-                                contentDescription = item.title,
+                            Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(142.dp)
                                     .clip(RoundedCornerShape(16.dp)),
-                            )
+                            ) {
+                                AssetImage(
+                                    asset = item.asset,
+                                    contentDescription = item.title,
+                                    modifier = Modifier.fillMaxSize(),
+                                )
+                                Surface(
+                                    onClick = { launchTryOnWithStyle(item.id) },
+                                    shape = CircleShape,
+                                    color = HeritageForestDark.copy(alpha = 0.85f),
+                                    border = BorderStroke(1.dp, HeritageGold.copy(alpha = 0.7f)),
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(6.dp)
+                                        .size(28.dp),
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            Icons.Filled.Checkroom,
+                                            contentDescription = stringResource(R.string.tryon_title),
+                                            tint = HeritageGold,
+                                            modifier = Modifier.size(15.dp),
+                                        )
+                                    }
+                                }
+                            }
                             Spacer(Modifier.height(5.dp))
                             Text(
                                 item.title,
@@ -419,11 +561,3 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
         }
 
         if (!tooltipSeen) {
-            FirstRunTooltip(
-                text = R.string.tooltip_favorites,
-                onDismiss = { scope.launch { tooltips.markSeen(TooltipStore.FAVORITES) } },
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
-        }
-    }
-}

@@ -83,7 +83,7 @@ Made in Accra, Ghana.
 
 ## Categorisation
 
-- Application type: **App** (not game)
+
 - Category: **Lifestyle** (alternative: Shopping)
 - Tags: fashion, fabric, style, tailoring, AI
 - Content rating: Everyone (IARC questionnaire — no violence, gambling or user-generated

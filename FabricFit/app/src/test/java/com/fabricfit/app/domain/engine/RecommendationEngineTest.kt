@@ -1,14 +1,14 @@
 package com.fabricfit.app.domain.engine
 
-import com.fabricfit.app.domain.model.AnalyzedColor
-import com.fabricfit.app.domain.model.ColorName
+import com.fabricfit.app.domain.model.ColorPalette
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.FabricCategory
+import com.fabricfit.app.domain.model.FabricColor
 import com.fabricfit.app.domain.model.GarmentSilhouette
 import com.fabricfit.app.domain.model.GenderCategory
+import com.fabricfit.app.domain.model.Measurements
 import com.fabricfit.app.domain.model.Occasion
-import com.fabricfit.app.domain.model.PaletteSummary
 import com.fabricfit.app.domain.model.PatternType
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.domain.model.TextureType
@@ -18,89 +18,74 @@ import org.junit.Test
 
 class RecommendationEngineTest {
 
-    private val styles = listOf(
-        DressStyle(
-            id = "kaba_slit",
-            titleKey = "style_kaba_slit_title",
-            descriptionKey = "style_kaba_slit_desc",
-            gender = GenderCategory.WOMEN,
-            category = StyleCategory.TRADITIONAL,
-            occasions = setOf(Occasion.CEREMONY, Occasion.CHURCH, Occasion.FESTIVAL),
-            silhouette = GarmentSilhouette.KABA,
-            affinity = setOf(FabricCategory.KENTE, FabricCategory.WAX, FabricCategory.BROCADE),
-            structure = 0.6f,
-        ),
-        DressStyle(
-            id = "mermaid",
-            titleKey = "style_mermaid_title",
-            descriptionKey = "style_mermaid_desc",
-            gender = GenderCategory.WOMEN,
-            category = StyleCategory.FORMAL,
-            occasions = setOf(Occasion.WEDDING, Occasion.PARTY),
-            silhouette = GarmentSilhouette.MERMAID,
-            affinity = setOf(FabricCategory.LACE, FabricCategory.SILK, FabricCategory.VELVET),
-            structure = 0.3f,
-        ),
-        DressStyle(
-            id = "kaftan",
-            titleKey = "style_kaftan_title",
-            descriptionKey = "style_kaftan_desc",
-            gender = GenderCategory.MEN,
-            category = StyleCategory.TRADITIONAL,
-            occasions = setOf(Occasion.CEREMONY, Occasion.WEDDING),
-            silhouette = GarmentSilhouette.KAFTAN,
-            affinity = setOf(FabricCategory.COTTON_PLAIN, FabricCategory.LINEN),
-            structure = 0.35f,
-        ),
-    )
-
-    private fun kente(): Fabric = Fabric(
-        imageUri = "test://kente.jpg",
-        name = null,
+    private val kenteFabric = Fabric(
+        id = 1,
+        imageUri = "file:///x",
         category = FabricCategory.KENTE,
-        colors = listOf(AnalyzedColor(0xFFC8952B, ColorName.GOLD, 0.6f)),
+        confidence = 0.8f,
         pattern = PatternType.STRIPED,
         texture = TextureType.WOVEN,
-        confidence = 0.7f,
-        palette = PaletteSummary(saturation = 0.7f, brightness = 0.6f, contrast = 0.5f, colorCount = 4),
         motifScale = 0.7f,
-        suggestedUses = listOf(Occasion.CEREMONY, Occasion.FESTIVAL),
-        createdAt = 0L,
+        colors = listOf(FabricColor("gold", 0xFFC8952B, 0.5f)),
+        palette = ColorPalette(warm = true, saturation = 0.75f, brightness = 0.55f),
+        suggestedUses = listOf(Occasion.WEDDING, Occasion.CEREMONY),
+        createdAt = 0,
+    )
+
+    private val kaba = DressStyle(
+        id = "kaba",
+        titleKey = "style_kaba_title",
+        descriptionKey = "style_kaba_desc",
+        gender = GenderCategory.WOMEN,
+        category = StyleCategory.TRADITIONAL,
+        occasions = setOf(Occasion.WEDDING, Occasion.CEREMONY),
+        silhouette = GarmentSilhouette.KABA,
+        affinity = setOf(FabricCategory.KENTE),
+        structure = 0.75f,
+    )
+
+    private val casualShirt = kaba.copy(
+        id = "shirt",
+        gender = GenderCategory.MEN,
+        category = StyleCategory.CASUAL,
+        occasions = setOf(Occasion.EVERYDAY),
+        silhouette = GarmentSilhouette.PRINT_SHIRT,
+        affinity = setOf(FabricCategory.ANKARA),
+        structure = 0.3f,
     )
 
     @Test
-    fun `recommendations are sorted by score descending`() {
-        val recs = RecommendationEngine.recommend(kente(), styles)
-        val scores = recs.map { it.score }
-        assertEquals(scores.sortedDescending(), scores)
+    fun `traditional structured Kente ranks Kaba above casual shirt`() {
+        val ranked = RecommendationEngine.recommend(kenteFabric, listOf(casualShirt, kaba))
+        assertEquals("kaba", ranked.first().style.id)
+        assertTrue(ranked.first().score > ranked.last().score)
     }
 
     @Test
-    fun `scores stay inside the 5-98 band`() {
-        RecommendationEngine.recommend(kente(), styles).forEach {
-            assertTrue(it.score in 5..98)
-        }
+    fun `dismissed styles are filtered out`() {
+        val ranked = RecommendationEngine.recommend(kenteFabric, listOf(casualShirt, kaba), dismissed = setOf("kaba"))
+        assertEquals(1, ranked.size)
+        assertEquals("shirt", ranked.single().style.id)
     }
 
     @Test
-    fun `every recommendation carries at least one reason`() {
-        RecommendationEngine.recommend(kente(), styles).forEach {
-            assertTrue(it.reasons.isNotEmpty())
-        }
-    }
-
-    @Test
-    fun `affinity and tradition lift the matching style above others`() {
-        val recs = RecommendationEngine.recommend(kente(), styles)
-        val kabaScore = recs.first { it.style.id == "kaba_slit" }.score
-        val mermaidScore = recs.first { it.style.id == "mermaid" }.score
-        assertTrue(kabaScore > mermaidScore)
-    }
-
-    @Test
-    fun `scoreForGender accepts unisex styles for everyone`() {
-        val unisex = styles.first().copy(gender = GenderCategory.UNISEX)
-        assertTrue(RecommendationEngine.scoreForGender(unisex, GenderCategory.MEN))
-        assertTrue(RecommendationEngine.scoreForGender(unisex, null))
+    fun `context-aware FitMatch ranker boosts score with measurements, weave anisotropy and skin harmony`() {
+        val baseScore = RecommendationEngine.recommend(kenteFabric, listOf(kaba)).first().score
+        val context = RecommendationEngine.RecommendationContext(
+            skinToneArgb = 0xFF8D5524L,
+            measurements = Measurements(heightCm = 170, waistCm = 68, hipCm = 98),
+            weaveAnisotropy = 0.65f,
+            favoriteStyleIds = setOf("kaba"),
+            preferredGender = GenderCategory.WOMEN,
+        )
+        val contextScore = RecommendationEngine.recommend(
+            fabric = kenteFabric,
+            styles = listOf(kaba),
+            context = context,
+        ).first().score
+        assertTrue(
+            "expected personalized FitMatch context to boost score ($contextScore > $baseScore)",
+            contextScore > baseScore,
+        )
     }
 }

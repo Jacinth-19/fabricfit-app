@@ -16,12 +16,13 @@ import kotlinx.coroutines.launch
 data class DiscoverUiState(
     val styles: List<DressStyle> = emptyList(),
     val looks: List<GeneratedLook> = emptyList(),
+    val favoriteStyleIds: Set<String> = emptySet(),
     val loaded: Boolean = false,
     val offline: Boolean = false,
     val query: String = "",
 )
 
-class DiscoverViewModel(container: AppContainer) : ViewModel() {
+class DiscoverViewModel(private val container: AppContainer) : ViewModel() {
 
     private val _state = MutableStateFlow(DiscoverUiState())
     val state: StateFlow<DiscoverUiState> = _state.asStateFlow()
@@ -37,10 +38,22 @@ class DiscoverViewModel(container: AppContainer) : ViewModel() {
                 _state.value = _state.value.copy(looks = looks)
             }
         }
+        viewModelScope.launch {
+            container.favorites.observeFavoriteStyleIds().collect { favs ->
+                _state.value = _state.value.copy(favoriteStyleIds = favs)
+            }
+        }
     }
 
     fun setQuery(q: String) {
         _state.value = _state.value.copy(query = q)
+    }
+
+    fun toggleFavoriteStyle(styleId: String) {
+        viewModelScope.launch {
+            val currentlyFav = styleId in _state.value.favoriteStyleIds
+            container.favorites.setDesignFavorite(styleId, !currentlyFav)
+        }
     }
 }
 

@@ -57,7 +57,10 @@ class FabricAnalysisRepositoryImpl(
         emit(AnalysisEvent.Stage(R.string.analysis_stage_pattern))
         delay(STAGE_MS)
         emit(AnalysisEvent.Stage(R.string.analysis_stage_styles))
-        val hints = withContext(Dispatchers.Default) { ml.classify(Uri.parse(imageUri)) }
+        val mlVerdict = withContext(Dispatchers.Default) {
+            ml.classifyWithUncertainty(Uri.parse(imageUri), signature)
+        }
+        val hints = mlVerdict.hints
 
         // Optional cloud backend: overrides category/pattern/texture when an operator configured
         // one; any failure falls back to the on-device engine and is logged honestly.
@@ -93,7 +96,11 @@ class FabricAnalysisRepositoryImpl(
                 mlHints = hints,
             )
         } else {
-            local.copy(mlHints = hints)
+            local.copy(
+                category = mlVerdict.predictedCategory ?: local.category,
+                confidence = mlVerdict.calibratedConfidence.coerceIn(0.3f, 0.8f),
+                mlHints = hints,
+            )
         }
         emit(AnalysisEvent.Completed(fabric))
     }

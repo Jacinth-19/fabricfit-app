@@ -5,6 +5,8 @@ data class UserPreferences(
     val language: LanguageOption = LanguageOption.ENGLISH,
     val notifications: NotificationPreferences = NotificationPreferences(),
     val displayName: String = "",
+    val profileBio: String = "",
+    val avatarUri: String = "",
     val stylePreference: StylePreference = StylePreference.ALL,
     /** Days to retain history; 0 = keep forever. */
     val keepHistoryDays: Int = 0,

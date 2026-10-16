@@ -22,12 +22,25 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.AnalyzedColor
+import com.fabricfit.app.domain.model.ColorName
+import com.fabricfit.app.domain.model.DesignCustomization
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
+import com.fabricfit.app.domain.model.FabricCategory
+import com.fabricfit.app.domain.model.FabricPlacement
 import com.fabricfit.app.domain.model.PatternType
+import com.fabricfit.app.domain.model.TextureType
+import com.fabricfit.app.media.garment.GarmentGeometry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
+import java.io.File
 
 private val FALLBACK = listOf(Color(0xFFD4A84B), Color(0xFF0F3D2E), Color(0xFF7A1F2B))
 
@@ -116,8 +129,6 @@ fun DressStyle.heritageReviews(): Int = when (id) {
 /**
  * Procedural swatch: renders the analysed palette using the detected pattern family, so every
  * fabric card looks like *that* fabric without bundling photos.
- */
-@Composable
 fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
     val colors = fabric.paletteColors()
     val pattern = fabric.pattern
@@ -134,45 +145,6 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
         val w = size.width
         val h = size.height
         drawRect(colors.first())
-        when (pattern) {
-            PatternType.STRIPED -> {
-                val bands = (colors.size * 2).coerceAtLeast(4)
-                val band = h / bands
-                repeat(bands) { i ->
-                    drawRect(colors[i % colors.size], topLeft = Offset(0f, i * band), size = Size(w, band))
-                }
-            }
-            PatternType.CHECKED -> {
-                val cell = w / 5
-                for (cy in 0 until 6) for (cx in 0 until 6) {
-                    if ((cx + cy) % 2 == 0) continue
-                    drawRect(colors.getOrElse(1) { colors[0] }, topLeft = Offset(cx * cell, cy * cell), size = Size(cell, cell))
-                }
-            }
-            PatternType.DOTTED, PatternType.FLORAL, PatternType.ORGANIC -> {
-                val cell = w / 5
-                for (cy in 0 until 6) for (cx in 0 until 6) {
-                    drawCircle(
-                        colors[(cx * 3 + cy) % colors.size],
-                        radius = cell / 3f,
-                        center = Offset(cx * cell + cell / 2, cy * cell + cell / 2),
-                    )
-                }
-            }
-            PatternType.GRADIENT -> {
-                drawRect(colors.getOrElse(1) { colors[0] }, topLeft = Offset(0f, h / 2), size = Size(w, h / 2))
-            }
-            else -> {
-                val cell = w / 4
-                for (cy in 0 until 5) for (cx in 0 until 5) {
-                    drawRect(
-                        colors[(cx + cy * 2) % colors.size],
-                        topLeft = Offset(cx * cell, cy * cell),
-                        size = Size(cell * 0.86f, cell * 0.86f),
-                    )
-                }
-            }
-        }
     }
 }
 
@@ -209,9 +181,6 @@ fun BrandMark(modifier: Modifier = Modifier) {
 }
 
 /**
- * Heritage Luxe adinkra-inspired monogram (from the welcome screen).
- * Symmetrical, woven, royal-gold glyph on transparent background — drop it onto
- * Deep Forest (#0F3D2E) for the splash hero.
  */
 @Composable
 fun HeritageLuxeMark(modifier: Modifier = Modifier) {
@@ -226,6 +195,90 @@ fun HeritageLuxeMark(modifier: Modifier = Modifier) {
 @Composable
 fun SwatchPreview(fabric: Fabric, modifier: Modifier = Modifier) {
     FabricSwatch(fabric = fabric, modifier = modifier.size(56.dp))
+}
+
+/**
+ * Live interactive silhouette preview that reshapes in real time when the user adjusts
+ * Sleeve, Neckline, Length, Fabric Placement, or Accent Colour in the customizer.
+ */
+@Composable
+fun CustomizedSilhouettePreview(
+    style: DressStyle,
+    fabric: Fabric?,
+    customization: DesignCustomization,
+    modifier: Modifier = Modifier,
+) {
+    val palette = fabric?.paletteColors() ?: FALLBACK
+    val primaryColor = palette.firstOrNull() ?: Color(0xFFD4A84B)
+    val secondaryColor = palette.getOrElse(1) { Color(0xFF0F3D2E) }
+    val accentColor = customization.accentArgb?.let { Color(it) } ?: palette.lastOrNull() ?: Color(0xFF7A1F2B)
+    val polys = remember(style.silhouette, customization) {
+        GarmentGeometry.shapesFor(style.silhouette, customization)
+    }
+
+    Canvas(
+        modifier = modifier
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color(0xFFF3EFE6))
+            .padding(10.dp),
+    ) {
+        val w = size.width
+        val h = size.height
+        polys.forEachIndexed { index, poly ->
+            val path = Path().apply {
+                poly.forEachIndexed { i, (nx, ny) ->
+                    val px = nx * w
+                    val py = ny * h
+                    if (i == 0) moveTo(px, py) else lineTo(px, py)
+                }
+                close()
+            }
+            val centroidY = poly.map { it.second }.average().toFloat()
+            val fill = when (customization.placement) {
+                FabricPlacement.FULL -> if (index % 2 == 0) primaryColor else secondaryColor
+                FabricPlacement.TOP_ONLY -> if (centroidY < 0.5f) primaryColor else accentColor.copy(alpha = 0.75f)
+                FabricPlacement.SKIRT_ONLY -> if (centroidY >= 0.5f) primaryColor else accentColor.copy(alpha = 0.75f)
+                FabricPlacement.PANELS -> if (index % 2 == 0) primaryColor else accentColor
+                FabricPlacement.ACCENTS -> accentColor.copy(alpha = 0.8f)
+            }
+            drawPath(path = path, color = fill)
+            drawPath(path = path, color = accentColor, style = Stroke(width = 3f))
+        }
+    }
+}
+
+/**
+ * Ensures at least one sample Kente Royalty fabric exists in the local repository so
+ * 1-tap Try-On and Colour Match flows work immediately even before a camera scan.
+ */
+suspend fun ensureSampleKenteFabric(context: android.content.Context): Long = withContext(Dispatchers.IO) {
+    val container = AppContainer.get(context)
+    val existing = container.fabricAnalysis.observeAll().first()
+    if (existing.isNotEmpty()) {
+        return@withContext existing.first().id
+    }
+    val sampleFile = File(context.filesDir, "sample_kente_royalty.jpg")
+    if (!sampleFile.exists()) {
+        context.assets.open("catalog/heritage/swatch_kente.jpg").use { input ->
+            sampleFile.outputStream().use { output -> input.copyTo(output) }
+        }
+    }
+    val sampleFabric = Fabric(
+        imageUri = sampleFile.absolutePath,
+        name = "Kente Royalty",
+        category = FabricCategory.KENTE,
+        colors = listOf(
+            AnalyzedColor(0xFF144B2FL, ColorName.GREEN, 0.34f),
+            AnalyzedColor(0xFF611425L, ColorName.RED, 0.26f),
+            AnalyzedColor(0xFFD99B26L, ColorName.GOLD, 0.24f),
+            AnalyzedColor(0xFFCC292BL, ColorName.ORANGE, 0.16f),
+        ),
+        pattern = PatternType.STRIPED,
+        texture = TextureType.WOVEN,
+        confidence = 0.98f,
+        createdAt = System.currentTimeMillis(),
+    )
+    container.fabricAnalysis.save(sampleFabric)
 }
 
 /**
@@ -264,5 +317,3 @@ fun AssetImage(
         )
     } else {
         Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh))
-    }
-}

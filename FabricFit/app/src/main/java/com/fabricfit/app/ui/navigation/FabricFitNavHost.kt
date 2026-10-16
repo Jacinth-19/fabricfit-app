@@ -121,7 +121,21 @@ private fun FabricFitNavHost(
         },
     ) {
         composable(Routes.HOME) { HomeScreen(nav, padding) }
-        composable(Routes.DISCOVER) { DiscoverScreen(nav, padding) }
+        composable(
+            Routes.DISCOVER_ROUTE_PATTERN,
+            arguments = listOf(
+                androidx.navigation.navArgument("q") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { entry ->
+            val initialQuery = entry.arguments?.getString("q")
+                ?.takeIf { it.isNotBlank() }
+                ?.let { Uri.decode(it) }
+                .orEmpty()
+            DiscoverScreen(nav, padding, initialQuery = initialQuery)
+        }
         composable(Routes.CREATE) { CreateScreen(nav, padding) }
         composable(Routes.FAVORITES) { FavoritesScreen(nav, padding) }
         composable(Routes.PROFILE) { ProfileScreen(nav, padding) }

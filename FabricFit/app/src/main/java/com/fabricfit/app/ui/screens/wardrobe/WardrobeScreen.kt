@@ -198,6 +198,62 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
                     }
                 }
             } else {
+
+                        }
+                        OutlinedButton(onClick = { showAdd = true }) {
+                            Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Text(stringResource(R.string.wardrobe_add))
+                        }
+                    }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(bottom = 24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(sampleCapsule) { (title, sub, asset) ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = com.fabricfit.app.ui.theme.HeritageCreamBright,
+                                ),
+                                shape = RoundedCornerShape(18.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                            ) {
+                                Column(Modifier.padding(10.dp)) {
+                                    com.fabricfit.app.ui.components.AssetImage(
+                                        asset = asset,
+                                        contentDescription = title,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(168.dp)
+                                            .clip(RoundedCornerShape(14.dp)),
+                                    )
+                                    Row(
+                                        Modifier.padding(top = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Column(Modifier.weight(1f)) {
+                                            Text(
+                                                title,
+                                                style = MaterialTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                            Text(
+                                                sub,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
                 Scaffold(
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     floatingActionButton = {

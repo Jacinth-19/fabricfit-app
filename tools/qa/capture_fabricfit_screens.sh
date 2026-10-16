@@ -106,6 +106,7 @@ tap_label "Got it" || true # dismiss the first-run Favourites coach mark
 capture favourites
 
 tap_label "Profile"
+
 capture profile
 tap_label "My Fit Closet"
 capture my-fit-closet

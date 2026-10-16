@@ -34,6 +34,8 @@ class SettingsRepositoryImpl(context: Context) : SettingsRepository {
         val NOTIF_UPDATES = booleanPreferencesKey("notif_updates")
         val NOTIF_INSPIRATION = booleanPreferencesKey("notif_inspiration")
         val DISPLAY_NAME = stringPreferencesKey("display_name")
+        val PROFILE_BIO = stringPreferencesKey("profile_bio")
+        val AVATAR_URI = stringPreferencesKey("avatar_uri")
         val STYLE_PREF = stringPreferencesKey("style_pref")
         val KEEP_HISTORY_DAYS = intPreferencesKey("keep_history_days")
         val PREMIUM = booleanPreferencesKey("premium_demo")
@@ -55,6 +57,8 @@ class SettingsRepositoryImpl(context: Context) : SettingsRepository {
                 inspiration = p[Keys.NOTIF_INSPIRATION] ?: false,
             ),
             displayName = p[Keys.DISPLAY_NAME].orEmpty(),
+            profileBio = p[Keys.PROFILE_BIO].orEmpty(),
+            avatarUri = p[Keys.AVATAR_URI].orEmpty(),
             stylePreference = StylePreference.values().firstOrNull { it.name == p[Keys.STYLE_PREF] } ?: StylePreference.ALL,
             keepHistoryDays = p[Keys.KEEP_HISTORY_DAYS] ?: 0,
             premiumEnabled = p[Keys.PREMIUM] ?: false,
@@ -81,6 +85,8 @@ class SettingsRepositoryImpl(context: Context) : SettingsRepository {
             p[Keys.NOTIF_UPDATES] = next.notifications.updates
             p[Keys.NOTIF_INSPIRATION] = next.notifications.inspiration
             p[Keys.DISPLAY_NAME] = next.displayName
+            p[Keys.PROFILE_BIO] = next.profileBio
+            p[Keys.AVATAR_URI] = next.avatarUri
             p[Keys.STYLE_PREF] = next.stylePreference.name
             p[Keys.KEEP_HISTORY_DAYS] = next.keepHistoryDays
             p[Keys.PREMIUM] = next.premiumEnabled
