@@ -37,7 +37,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.HistoryEvent
-import com.fabricfit.app.ui.components.EmptyState
+import com.fabricfit.app.ui.components.EnhancedEmptyState
+import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.navigation.appViewModel
@@ -82,11 +83,21 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
             }
         }
 
-        if (state.events.isEmpty()) {
-            EmptyState(
-                R.drawable.illust_empty_activity,
-                R.string.history_empty_title,
-                R.string.history_empty_body,
+        if (state.isLoading) {
+            ShimmerGrid(
+                columns = 1,
+                rows = 5,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            )
+        } else if (state.events.isEmpty()) {
+            EnhancedEmptyState(
+                illustration = R.drawable.illust_empty_activity,
+                title = R.string.history_empty_title,
+                body = R.string.history_empty_body,
+                actionLabel = R.string.empty_action_scan_fabric,
+                onAction = { nav.navigate(com.fabricfit.app.ui.navigation.Routes.CREATE) },
                 modifier = Modifier.weight(1f),
             )
         } else {

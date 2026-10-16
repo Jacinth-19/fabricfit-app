@@ -42,6 +42,7 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,6 +65,7 @@ import com.fabricfit.app.domain.model.Outfit
 import com.fabricfit.app.domain.model.WardrobeCategory
 import com.fabricfit.app.domain.model.WardrobeItem
 import com.fabricfit.app.ui.components.LocalImage
+import com.fabricfit.app.ui.components.ShimmerGrid
 import kotlinx.coroutines.launch
 
 @Composable
@@ -78,6 +80,13 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
     var showAdd by remember { mutableStateOf(false) }
     var showBuilder by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(items, outfits) {
+        if (items.isNotEmpty() || outfits.isNotEmpty()) {
+            isLoading = false
+        }
+    }
 
     Column(
         Modifier
@@ -117,7 +126,13 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
             )
         }
 
-        if (tab == 0) {
+        if (isLoading) {
+            ShimmerGrid(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            )
+        } else if (tab == 0) {
             if (items.isEmpty()) {
                 val sampleCapsule = listOf(
                     Triple("Modern Kente Dress", "Kente · Ceremony", "catalog/heritage/outfit_modern_kente.jpg"),

@@ -61,8 +61,10 @@ import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.ui.components.AssetImage
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
+import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
@@ -382,7 +384,23 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
             }
 
             // User-saved fabrics if any have been added
-            if (state.fabrics.isNotEmpty()) {
+            if (state.isLoading) {
+                item {
+                    Text(
+                        stringResource(R.string.favorites_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                    )
+                }
+                item {
+                    ShimmerGrid(
+                        columns = 1,
+                        rows = 3,
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+            } else if (state.fabrics.isNotEmpty()) {
                 item {
                     Text(
                         stringResource(R.string.favorites_title),

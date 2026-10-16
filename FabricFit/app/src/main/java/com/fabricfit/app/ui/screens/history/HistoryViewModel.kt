@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-data class HistoryUiState(val events: List<HistoryEvent> = emptyList())
+data class HistoryUiState(
+    val events: List<HistoryEvent> = emptyList(),
+    val isLoading: Boolean = true,
+)
 
 class HistoryViewModel(private val container: AppContainer) : ViewModel() {
     private val _state = MutableStateFlow(HistoryUiState())
@@ -19,7 +22,7 @@ class HistoryViewModel(private val container: AppContainer) : ViewModel() {
     init {
         viewModelScope.launch {
             container.history.observeAll().collect { events ->
-                _state.value = HistoryUiState(events)
+                _state.value = HistoryUiState(events = events, isLoading = false)
             }
         }
     }
