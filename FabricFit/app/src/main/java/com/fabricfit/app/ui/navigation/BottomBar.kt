@@ -38,19 +38,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.fabricfit.app.R
 import com.fabricfit.app.ui.theme.HeritageCream
 import com.fabricfit.app.ui.theme.HeritageForest
-import com.fabricfit.app.ui.theme.HeritageForestDark
-
-internal data class Tab(
-    val route: String,
 import com.fabricfit.app.ui.theme.HeritageForestDark
 
 internal data class Tab(
@@ -74,6 +70,10 @@ internal val tabs = listOf(
     Tab(Routes.FAVORITES, R.string.nav_tryon, Icons.Filled.Checkroom, Icons.Outlined.Checkroom),
     Tab(Routes.PROFILE, R.string.nav_profile, Icons.Filled.Person, Icons.Outlined.Person),
 )
+
+@Composable
+internal fun FabricFitBottomBar(
+    currentRoute: String?,
     onNavigate: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -87,9 +87,9 @@ internal val tabs = listOf(
         shadowElevation = 8.dp,
     ) {
         androidx.compose.runtime.CompositionLocalProvider(
-    Surface(
-        modifier = modifier,
-        color = barColor,
+            androidx.compose.ui.platform.LocalDensity provides
+                androidx.compose.ui.unit.Density(
+                    density = androidx.compose.ui.platform.LocalDensity.current.density,
                     fontScale = 1f,
                 ),
         ) {
@@ -111,11 +111,9 @@ internal val tabs = listOf(
                             modifier = Modifier.weight(1f),
                         )
                     } else {
-                        val isTabSelected = currentRoute == tab.route ||
-                            (tab.route == Routes.DISCOVER && currentRoute?.startsWith(Routes.DISCOVER) == true)
                         StandardTab(
                             tab = tab,
-                            selected = isTabSelected,
+                            selected = currentRoute == tab.route,
                             darkChrome = isDarkChrome,
                             onClick = { onNavigate(tab.route) },
                             modifier = Modifier.weight(1f),
@@ -144,22 +142,6 @@ private fun StandardTab(
     }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-private fun StandardTab(
-    tab: Tab,
-    selected: Boolean,
-    darkChrome: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val label = stringResource(tab.labelRes)
-    val tint = when {
-        darkChrome && selected -> Color.White
-        darkChrome -> HeritageCream.copy(alpha = 0.65f)
-        selected -> MaterialTheme.colorScheme.primary
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
@@ -170,6 +152,22 @@ private fun StandardTab(
                 contentDescription = label
                 role = Role.Tab
                 this.selected = selected
+            }
+            .padding(vertical = 6.dp),
+    ) {
+        Icon(
+            imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
+            contentDescription = null,
+            tint = tint,
+            modifier = Modifier.size(26.dp),
+        )
+        Text(
+            label,
+            style = MaterialTheme.typography.labelSmall,
+            color = tint,
+            modifier = Modifier.padding(top = 3.dp),
+        )
+    }
 }
 
 @Composable
@@ -183,17 +181,17 @@ private fun CameraTab(
     val scale by animateFloatAsState(
         targetValue = if (selected) 1.05f else 1f,
         animationSpec = spring(dampingRatio = 0.6f),
-            modifier = Modifier.size(26.dp),
-        )
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = tint,
-            modifier = Modifier.padding(top = 3.dp),
-        )
-    }
-}
-
+        label = "cameraScale",
+    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.offset(y = (-16).dp),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(60.dp)
+                .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                 }
@@ -201,28 +199,6 @@ private fun CameraTab(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
-) {
-    val scale by animateFloatAsState(
-        targetValue = if (selected) 1.05f else 1f,
-        animationSpec = spring(dampingRatio = 0.6f),
-        label = "cameraScale",
-    )
-    Column(
-            Icon(
-                imageVector = Icons.Filled.CameraAlt,
-                contentDescription = null,
-                tint = HeritageCream,
-                modifier = Modifier.size(26.dp),
-            )
-        }
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (darkChrome) HeritageCream else MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-    }
-
                     onClick = onClick,
                 )
                 .semantics {
