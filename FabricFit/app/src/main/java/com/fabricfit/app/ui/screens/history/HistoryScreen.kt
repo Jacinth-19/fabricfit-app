@@ -17,11 +17,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -103,38 +107,84 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
         } else {
             LazyColumn(contentPadding = PaddingValues(16.dp)) {
                 items(state.events, key = { it.id }) { event ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                    ) {
-                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            if (event.imageUri != null) {
-                                LocalImage(
-                                    event.imageUri!!,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(52.dp),
-                                )
-                                Spacer(Modifier.width(12.dp))
-                            }
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    labelFor(context, event),
-                                    style = MaterialTheme.typography.titleSmall,
-                                )
-                                Text(
-                                    context.timeAgo(event.timestamp),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            IconButton(onClick = {
-                                Haptics.tap()
+                    val dismissState = rememberDismissState(
+                        confirmValueChange = { dismissValue ->
+                            if (dismissValue == DismissValue.DismissedToStart) {
+                                Haptics.heavy()
                                 vm.delete(event.id)
-                            }) {
-                                Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
+                                true
+                            } else {
+                                false
                             }
                         }
-                    }
+                    )
+                    
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
+                        background = {
+                            Card(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer
+                                ),
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = stringResource(R.string.cd_delete_item),
+                                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        stringResource(R.string.action_delete),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelLarge,
+                                    )
+                                }
+                            }
+                        },
+                        dismissContent = {
+                            Card(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                            ) {
+                                Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    if (event.imageUri != null) {
+                                        LocalImage(
+                                            event.imageUri!!,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(52.dp),
+                                        )
+                                        Spacer(Modifier.width(12.dp))
+                                    }
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            labelFor(context, event),
+                                            style = MaterialTheme.typography.titleSmall,
+                                        )
+                                        Text(
+                                            context.timeAgo(event.timestamp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        Haptics.tap()
+                                        vm.delete(event.id)
+                                    }) {
+                                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }

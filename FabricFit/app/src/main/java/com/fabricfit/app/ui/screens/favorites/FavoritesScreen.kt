@@ -31,12 +31,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PullToRefreshContainer
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -410,44 +414,92 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     )
                 }
                 items(state.fabrics, key = { it.id }) { fabric ->
-                    Card(
-                        onClick = { nav.navigate(Routes.fabric(fabric.id)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 6.dp),
-                        colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
-                    ) {
-                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            FabricSwatch(fabric, modifier = Modifier.size(64.dp))
-                            Spacer(Modifier.width(14.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    fabric.name ?: context.getString(fabric.category.labelRes),
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                                Text(
-                                    context.timeAgo(fabric.createdAt),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            IconButton(onClick = {
-                                context.shareImagePath(
-                                    fabric.imageUri,
-                                    context.getString(
-                                        R.string.share_fabric_text,
-                                        fabric.name ?: context.getString(fabric.category.labelRes),
-                                        context.getString(fabric.pattern.labelRes),
-                                    ),
-                                )
-                            }) {
-                                Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
-                            }
-                            IconButton(onClick = { vm.unfavoriteFabric(fabric.id) }) {
-                                Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
+                    val dismissState = rememberDismissState(
+                        confirmValueChange = { dismissValue ->
+                            if (dismissValue == DismissValue.DismissedToStart) {
+                                Haptics.heavy()
+                                vm.unfavoriteFabric(fabric.id)
+                                true
+                            } else {
+                                false
                             }
                         }
-                    }
+                    )
+                    
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
+                        background = {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer
+                                ),
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = stringResource(R.string.action_remove),
+                                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        stringResource(R.string.action_remove),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelLarge,
+                                    )
+                                }
+                            }
+                        },
+                        dismissContent = {
+                            Card(
+                                onClick = { nav.navigate(Routes.fabric(fabric.id)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                                colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                            ) {
+                                Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    FabricSwatch(fabric, modifier = Modifier.size(64.dp))
+                                    Spacer(Modifier.width(14.dp))
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            fabric.name ?: context.getString(fabric.category.labelRes),
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                        Text(
+                                            context.timeAgo(fabric.createdAt),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        context.shareImagePath(
+                                            fabric.imageUri,
+                                            context.getString(
+                                                R.string.share_fabric_text,
+                                                fabric.name ?: context.getString(fabric.category.labelRes),
+                                                context.getString(fabric.pattern.labelRes),
+                                            ),
+                                        )
+                                    }) {
+                                        Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
+                                    }
+                                    IconButton(onClick = { vm.unfavoriteFabric(fabric.id) }) {
+                                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
