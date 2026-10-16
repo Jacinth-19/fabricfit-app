@@ -275,3 +275,33 @@ fun AssetImage(
         Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh))
     }
 }
+
+@Composable
+fun CustomizedSilhouettePreview(
+    style: DressStyle,
+    fabric: Fabric?,
+    customization: DesignCustomization,
+    modifier: Modifier = Modifier,
+) {
+    val palette = fabric?.paletteColors() ?: FALLBACK
+    val primaryColor = palette.firstOrNull() ?: Color(0xFFD4A84B)
+    
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color(0xFFF3EFE6)),
+        contentAlignment = Alignment.Center,
+    ) {
+        GarmentArt(
+            style = style,
+            primaryColor = primaryColor,
+            secondaryColor = palette.getOrElse(1) { Color(0xFF0F3D2E) },
+            modifier = Modifier.fillMaxSize(0.8f),
+        )
+    }
+}
+
+suspend fun ensureSampleKenteFabric(context: Context): String {
+    // Return a sample fabric ID for demo purposes
+    return "sample_kente_001"
+}

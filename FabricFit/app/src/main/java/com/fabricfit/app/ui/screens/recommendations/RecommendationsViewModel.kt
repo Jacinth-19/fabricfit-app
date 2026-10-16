@@ -64,9 +64,8 @@ class RecommendationsViewModel(
             }
         }
         viewModelScope.launch {
-            container.measurements.observe().collect { m ->
-                measurementsFlow.value = m
-            }
+            val m = container.measurements.get()
+            measurementsFlow.value = m
         }
         viewModelScope.launch {
             val allStyles = container.dressStyles.all()

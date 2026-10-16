@@ -17,6 +17,7 @@ interface FavoritesRepository {
     fun observeFavoriteFabrics(): Flow<List<Fabric>>
     fun observeFavoriteDesigns(): Flow<List<DressStyle>>
     fun observeFavoriteLooks(): Flow<List<GeneratedLook>>
+    fun observeFavoriteStyleIds(): Flow<Set<String>>
     suspend fun isDesignFavorite(styleId: String): Boolean
     suspend fun setDesignFavorite(styleId: String, favorite: Boolean)
     suspend fun counts(): Triple<Int, Int, Int>
