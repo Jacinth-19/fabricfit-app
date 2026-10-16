@@ -1,14 +1,15 @@
 package com.fabricfit.app.domain.engine
 
-import com.fabricfit.app.domain.model.ColorPalette
+import com.fabricfit.app.domain.model.AnalyzedColor
+import com.fabricfit.app.domain.model.ColorName
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.FabricCategory
-import com.fabricfit.app.domain.model.FabricColor
 import com.fabricfit.app.domain.model.GarmentSilhouette
 import com.fabricfit.app.domain.model.GenderCategory
 import com.fabricfit.app.domain.model.Measurements
 import com.fabricfit.app.domain.model.Occasion
+import com.fabricfit.app.domain.model.PaletteSummary
 import com.fabricfit.app.domain.model.PatternType
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.domain.model.TextureType
@@ -21,13 +22,14 @@ class RecommendationEngineTest {
     private val kenteFabric = Fabric(
         id = 1,
         imageUri = "file:///x",
+        name = "Test Kente",
         category = FabricCategory.KENTE,
         confidence = 0.8f,
         pattern = PatternType.STRIPED,
         texture = TextureType.WOVEN,
         motifScale = 0.7f,
-        colors = listOf(FabricColor("gold", 0xFFC8952B, 0.5f)),
-        palette = ColorPalette(warm = true, saturation = 0.75f, brightness = 0.55f),
+        colors = listOf(AnalyzedColor(0xFFC8952B, ColorName.GOLD, 0.5f)),
+        palette = PaletteSummary(saturation = 0.75f, brightness = 0.55f),
         suggestedUses = listOf(Occasion.WEDDING, Occasion.CEREMONY),
         createdAt = 0,
     )

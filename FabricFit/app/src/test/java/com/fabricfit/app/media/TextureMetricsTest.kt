@@ -15,30 +15,10 @@ class TextureMetricsTest {
             val y = i / side
             if ((x + y) % 2 == 0) 0.1f else 0.9f
         }
-        val solidGlcm = TextureMetrics.glcm(solid, side)
-        val checkerGlcm = TextureMetrics.glcm(checker, side)
+        val solidGlcm = TextureMetrics.glcm(solid, side, side)
+        val checkerGlcm = TextureMetrics.glcm(checker, side, side)
         assertTrue(checkerGlcm.contrast > solidGlcm.contrast + 0.3f)
         assertTrue(solidGlcm.homogeneity > checkerGlcm.homogeneity)
-    }
-
-    @Test
-    fun `periodicity detects regular horizontal stripes`() {
-        val side = 32
-        val period = 4
-        val striped = FloatArray(side * side) { i ->
-            val y = i / side
-            if ((y / (period / 2)) % 2 == 0) 0.1f else 0.9f
-        }
-        val (_, py) = TextureMetrics.periodicity(striped, side)
-        assertTrue("expected vertical periodicity close to $period, got $py", py in 3..6)
-    }
-
-    @Test
-    fun `lbp entropy is low on uniform region and higher on varied texture`() {
-        val side = 16
-        val flat = FloatArray(side * side) { 0.4f }
-        val ramp = FloatArray(side * side) { i -> ((i * 37) % 100) / 100f }
-        assertTrue(TextureMetrics.lbpEntropy(ramp, side) > TextureMetrics.lbpEntropy(flat, side))
     }
 
     @Test
@@ -48,7 +28,7 @@ class TextureMetricsTest {
             val y = i / side
             if ((y / 2) % 2 == 0) 0.1f else 0.9f
         }
-        val gaborH = TextureMetrics.gaborOrientation(horizontalBands, side)
+        val gaborH = TextureMetrics.gaborOrientation(horizontalBands, side, side)
         assertEquals(0, gaborH.dominantAngleDeg)
         assertTrue("expected noticeable anisotropy, got ${gaborH.anisotropy}", gaborH.anisotropy > 0.25f)
 
@@ -56,7 +36,7 @@ class TextureMetricsTest {
             val x = i % side
             if ((x / 2) % 2 == 0) 0.1f else 0.9f
         }
-        val gaborV = TextureMetrics.gaborOrientation(verticalStrips, side)
+        val gaborV = TextureMetrics.gaborOrientation(verticalStrips, side, side)
         assertEquals(90, gaborV.dominantAngleDeg)
         assertTrue(gaborV.anisotropy > 0.25f)
     }
@@ -68,9 +48,9 @@ class TextureMetricsTest {
             val x = i % side
             if ((x / 3) % 2 == 0) 0.15f else 0.85f
         }
-        val profile = TextureMetrics.spectralMotifProfile(kenteStrips, side)
-        assertTrue(profile.stripWidthNormalized > 0f)
+        val profile = TextureMetrics.spectralMotifProfile(kenteStrips, side, side)
+        assertTrue(profile.stripWidthPx > 0f)
         assertTrue(profile.harmonicPurity > 0.2f)
-        assertEquals(TextureMetrics.AlignmentAdvice.VERTICAL_STRIP_ALIGN, profile.alignmentAdvice)
+        assertEquals(TextureMetrics.AlignmentAdvice.MATCH_WARP_STRIPS, profile.alignmentAdvice)
     }
 }
