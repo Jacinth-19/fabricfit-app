@@ -28,6 +28,15 @@ import androidx.compose.ui.unit.dp
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.PatternType
+import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.AnalyzedColor
+import com.fabricfit.app.domain.model.ColorName
+import com.fabricfit.app.domain.model.DesignCustomization
+import com.fabricfit.app.domain.model.FabricCategory
+import com.fabricfit.app.domain.model.FabricPlacement
+import com.fabricfit.app.domain.model.TextureType
+import java.io.File
+import kotlinx.coroutines.flow.first
 
 private val FALLBACK = listOf(Color(0xFFD4A84B), Color(0xFF0F3D2E), Color(0xFF7A1F2B))
 
