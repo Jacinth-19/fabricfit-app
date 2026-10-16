@@ -281,7 +281,7 @@ class PersonSegmenter(private val context: Context) {
         fun backgroundPixels(person: IntArray, maskAlpha: IntArray): IntArray {
             require(person.size >= maskAlpha.size)
             return IntArray(person.size) { i ->
-                if (i >= maskAlpha.size || maskAlpha[i] <= 128) person[i] else 0
+                if (i >= maskAlpha.size || maskAlpha[i] <= 128) person[i] else (person[i] and 0x00FFFFFF)
             }
         }
 
