@@ -974,4 +974,14 @@
     <string name="share_look_text">Check out this %1$s look I created on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
     <string name="share_look_text_with_fabric">Check out this %1$s look I created with %2$s fabric on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
 
+    <!-- ============ Export ============ -->
+    <string name="export_title">Export Wardrobe</string>
+    <string name="export_pdf">Export as PDF</string>
+    <string name="export_pdf_desc">Create a catalog of your fabrics and looks</string>
+    <string name="export_image">Export as Image</string>
+    <string name="export_image_desc">Share individual fabrics with details</string>
+    <string name="export_success">Wardrobe exported successfully</string>
+    <string name="export_failed">Export failed</string>
+    <string name="export_share">Share Export</string>
+
 </resources>
