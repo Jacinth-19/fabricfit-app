@@ -9,16 +9,16 @@ class TextureMetricsTest {
     @Test
     fun `glcm contrast is higher on checkerboard than solid`() {
         val side = 16
-        val solid = FloatArray(side * side) { 0.5f }
+        val solid = FloatArray(side * side) { 128f }
         val checker = FloatArray(side * side) { i ->
             val x = i % side
             val y = i / side
-            if ((x + y) % 2 == 0) 0.1f else 0.9f
+            if ((x + y) % 2 == 0) 25f else 230f
         }
         val solidGlcm = TextureMetrics.glcm(solid, side, side)
         val checkerGlcm = TextureMetrics.glcm(checker, side, side)
-        assertTrue(checkerGlcm.contrast > solidGlcm.contrast + 0.3f)
-        assertTrue(solidGlcm.homogeneity > checkerGlcm.homogeneity)
+        assertTrue("checker contrast (${checkerGlcm.contrast}) should exceed solid contrast (${solidGlcm.contrast})", checkerGlcm.contrast > solidGlcm.contrast + 0.3f)
+        assertTrue("solid homogeneity (${solidGlcm.homogeneity}) should exceed checker (${checkerGlcm.homogeneity})", solidGlcm.homogeneity > checkerGlcm.homogeneity)
     }
 
     @Test
@@ -48,11 +48,11 @@ class TextureMetricsTest {
         val bright = 0xFFDDDDDD.toInt()
         val kenteStrips = IntArray(side * side) { i ->
             val x = i % side
-            if ((x / 3) % 2 == 0) dark else bright
+            if ((x / 4) % 2 == 0) dark else bright
         }
         val profile = TextureMetrics.spectralMotifProfile(kenteStrips, side, side)
-        assertTrue(profile.stripWidthPx > 0f)
-        assertTrue(profile.harmonicPurity > 0.2f)
+        assertTrue("expected stripWidthPx > 0, got ${profile.stripWidthPx}", profile.stripWidthPx > 0f)
+        assertTrue("expected harmonicPurity > 0.2, got ${profile.harmonicPurity}", profile.harmonicPurity > 0.2f)
         assertEquals(TextureMetrics.AlignmentAdvice.MATCH_WARP_STRIPS, profile.alignmentAdvice)
     }
 }

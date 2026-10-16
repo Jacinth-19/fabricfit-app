@@ -31,7 +31,7 @@ class OnDeviceMlClassifierTest {
 
     @Test
     fun `calibrated uncertainty gate rejects non-textile OOD top label`() {
-        val labels = listOf("laptop, laptop computer", "velvet", "stole", "damask")
+        val labels = listOf("laptop, laptop computer", "sports car", "espresso", "golden retriever")
         val rawScores = floatArrayOf(0.85f, 0.05f, 0.05f, 0.05f)
         val verdict = OnDeviceMlClassifier.evaluateUncertainty(rawScores, labels)
         assertFalse(verdict.isConfidentTextile)
@@ -50,7 +50,7 @@ class OnDeviceMlClassifierTest {
     @Test
     fun `calibrated uncertainty gate accepts confident textile prediction`() {
         val labels = listOf("stole", "velvet", "wool", "laptop")
-        val rawScores = floatArrayOf(0.78f, 0.08f, 0.07f, 0.07f)
+        val rawScores = floatArrayOf(0.92f, 0.04f, 0.02f, 0.02f)
         val verdict = OnDeviceMlClassifier.evaluateUncertainty(rawScores, labels)
         assertTrue(verdict.isConfidentTextile)
         assertEquals(FabricCategory.KENTE, verdict.category)

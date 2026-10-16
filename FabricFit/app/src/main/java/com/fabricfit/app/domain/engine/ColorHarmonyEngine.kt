@@ -105,7 +105,7 @@ object ColorHarmonyEngine {
             val isJewelCool = h in 150f..295f
             val undertoneMatch = when (undertone) {
                 SkinUndertone.WARM_GOLDEN -> if (isWarmHue || (h in 110f..165f && s > 0.35f)) 0.9f else 0.6f
-                SkinUndertone.COOL_DEEP -> if (isJewelCool || s > 0.5f) 0.9f else 0.6f
+                SkinUndertone.COOL_DEEP -> if (isJewelCool || (s > 0.5f && !isWarmHue)) 0.9f else 0.6f
                 SkinUndertone.NEUTRAL_RICH -> 0.82f
             }
             // Healthy luminance contrast between skin and garment prevents wash-out
