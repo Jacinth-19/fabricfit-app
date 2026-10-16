@@ -1,5 +1,6 @@
 package com.fabricfit.app.ui.components
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.LruCache
 import androidx.compose.foundation.Canvas
@@ -283,9 +284,6 @@ fun CustomizedSilhouettePreview(
     customization: DesignCustomization,
     modifier: Modifier = Modifier,
 ) {
-    val palette = fabric?.paletteColors() ?: FALLBACK
-    val primaryColor = palette.firstOrNull() ?: Color(0xFFD4A84B)
-    
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
@@ -294,14 +292,13 @@ fun CustomizedSilhouettePreview(
     ) {
         GarmentArt(
             style = style,
-            primaryColor = primaryColor,
-            secondaryColor = palette.getOrElse(1) { Color(0xFF0F3D2E) },
+            fabric = fabric,
             modifier = Modifier.fillMaxSize(0.8f),
         )
     }
 }
 
-suspend fun ensureSampleKenteFabric(context: Context): String {
+suspend fun ensureSampleKenteFabric(context: Context): Long {
     // Return a sample fabric ID for demo purposes
-    return "sample_kente_001"
+    return 1L
 }
