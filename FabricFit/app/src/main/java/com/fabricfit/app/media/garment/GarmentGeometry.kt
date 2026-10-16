@@ -31,11 +31,11 @@ object GarmentGeometry {
         custom: DesignCustomization,
     ): List<Poly> {
         val targetBottomY = when (custom.length) {
-            LengthOption.SHORT -> 0.72f
+            LengthOption.MINI -> 0.72f
             LengthOption.MIDI -> 0.84f
-            LengthOption.LONG -> 0.95f
+            LengthOption.MAXI -> 0.95f
             LengthOption.FLOOR -> 0.995f
-            null -> null
+            LengthOption.DEFAULT, null -> null
         }
 
         val transformed = polys.map { poly ->
@@ -45,7 +45,7 @@ object GarmentGeometry {
 
                 // 1. Neckline reshaping on upper torso vertices
                 when (custom.neckline) {
-                    NecklineOption.V_NECK -> {
+                    NecklineOption.V_NECK, NecklineOption.VNECK -> {
                         if (y < 0.08f && x in 0.44f..0.56f) {
                             y = 0.14f
                         }
@@ -67,7 +67,7 @@ object GarmentGeometry {
                             y = 0.0f
                         }
                     }
-                    NecklineOption.ROUND, null -> Unit
+                    NecklineOption.ROUND, NecklineOption.DEFAULT, null -> Unit
                 }
 
                 // 2. Sleeve reshaping on outer shoulder/arm vertices
@@ -84,7 +84,7 @@ object GarmentGeometry {
                             if (x > 0.62f) x = (x + 0.07f).coerceAtMost(0.88f)
                         }
                     }
-                    SleeveOption.SHORT, SleeveOption.THREE_QUARTER, SleeveOption.LONG, null -> Unit
+                    SleeveOption.SHORT, SleeveOption.THREE_QUARTER, SleeveOption.LONG, SleeveOption.DEFAULT, null -> Unit
                 }
 
                 // 3. Hem length scaling on lower garment vertices

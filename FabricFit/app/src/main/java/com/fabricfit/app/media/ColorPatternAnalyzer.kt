@@ -516,6 +516,7 @@ object ColorPatternAnalyzer {
         FabricCategory.LINEN -> listOf(Occasion.EVERYDAY, Occasion.OFFICE)
         FabricCategory.COTTON_PLAIN -> listOf(Occasion.EVERYDAY, Occasion.OFFICE)
         FabricCategory.FUGU, FabricCategory.GONJA -> listOf(Occasion.FESTIVAL, Occasion.CEREMONY, Occasion.EVERYDAY)
+        FabricCategory.WOOL -> listOf(Occasion.EVERYDAY, Occasion.OFFICE)
         FabricCategory.UNKNOWN -> listOf(Occasion.EVERYDAY)
     }
 }

@@ -334,6 +334,7 @@ private fun representativeFabric(cat: FabricCategory): com.fabricfit.app.domain.
         FabricCategory.FUGU -> listOf(0xFF3A4250, 0xFF14110F, 0xFFF2EFE9)
         FabricCategory.GONJA -> listOf(0xFFB8763A, 0xFFF2EFE9, 0xFF14110F)
         FabricCategory.KENTE_PRINT -> listOf(0xFFC8952B, 0xFF1F5450, 0xFF8C2F39)
+        FabricCategory.WOOL -> listOf(0xFF8B7355, 0xFFA0826D, 0xFFD4C4B7)
         FabricCategory.UNKNOWN -> listOf(0xFF9A8F86)
     }
     return com.fabricfit.app.domain.model.Fabric(
