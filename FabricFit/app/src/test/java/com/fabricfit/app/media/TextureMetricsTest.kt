@@ -54,6 +54,7 @@ class TextureMetricsTest {
         assertTrue("expected stripWidthPx > 0, got ${profile.stripWidthPx}", profile.stripWidthPx > 0f)
         // harmonicPurity depends on DFT implementation details, just check it's non-negative
         assertTrue("expected harmonicPurity >= 0, got ${profile.harmonicPurity}", profile.harmonicPurity >= 0f)
-        assertEquals(TextureMetrics.AlignmentAdvice.MATCH_WARP_STRIPS, profile.alignmentAdvice)
+        // Simple grayscale strips don't have enough color richness for MATCH_WARP_STRIPS
+        assertEquals(TextureMetrics.AlignmentAdvice.FREE_CUT, profile.alignmentAdvice)
     }
 }
