@@ -80,6 +80,12 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.concurrent.Executors
 
+enum class CaptureMode(val label: String) {
+    PHOTO("Photo"),
+    VIDEO("Video"),
+    SCAN("Scan"),
+}
+
 @Composable
 fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String) {
     val context = LocalContext.current
@@ -413,4 +419,35 @@ private fun capture(
             }
         },
     )
+}
+
+@Composable
+private fun LiveScanHudBadge(
+    signature: ColorPatternAnalyzer.FabricSignature,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(12.dp),
+        color = Color.Black.copy(alpha = 0.75f),
+        tonalElevation = 4.dp,
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = "Live Scan",
+                style = MaterialTheme.typography.labelMedium,
+                color = HeritageGold,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = signature.category?.name ?: "Analyzing...",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.White,
+            )
+        }
+    }
 }

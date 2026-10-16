@@ -77,12 +77,12 @@ private enum class DiscoverFilter(val label: String) {
 }
 
 @Composable
-fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
+fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery: String = "") {
     val vm: DiscoverViewModel = appViewModel { c, ctx -> DiscoverViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var filter by remember { mutableStateOf(DiscoverFilter.ALL) }
-    var query by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf(initialQuery) }
     var searchOpen by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
