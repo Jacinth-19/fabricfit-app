@@ -48,6 +48,7 @@ import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.ui.components.ColorDot
+import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.shareImagePath
@@ -86,7 +87,10 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
             )
             if (f != null) {
                 IconButton(onClick = {
-                    scope.launch { container.fabricAnalysis.setFavorite(f.id, !f.isFavorite) }
+                    scope.launch {
+                        Haptics.success()
+                        container.fabricAnalysis.setFavorite(f.id, !f.isFavorite)
+                    }
                 }) {
                     Icon(
                         if (f.isFavorite) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
@@ -97,6 +101,7 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                     )
                 }
                 IconButton(onClick = {
+                    Haptics.tap()
                     context.shareImagePath(
                         f.imageUri,
                         context.getString(
@@ -108,7 +113,10 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                 }) {
                     Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
                 }
-                IconButton(onClick = { confirmDelete = true }) {
+                IconButton(onClick = {
+                    Haptics.tap()
+                    confirmDelete = true
+                }) {
                     Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
                 }
             }

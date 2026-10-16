@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,9 +34,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PullToRefreshContainer
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -94,8 +98,20 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
     val tooltips = AppContainer.get(context).tooltips
     val tooltipSeen by tooltips.seen(TooltipStore.FAVORITES).collectAsState(initial = true)
     val scope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
 
-    Box(Modifier.fillMaxSize().padding(padding)) {
+    if (pullToRefreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            isRefreshing = true
+            vm.refresh {
+                isRefreshing = false
+                pullToRefreshState.endRefresh()
+            }
+        }
+    }
+
+    Box(Modifier.fillMaxSize().padding(padding).nestedScroll(pullToRefreshState.nestedScrollConnection)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
@@ -417,6 +433,11 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 }
             }
         }
+
+        PullToRefreshContainer(
+            state = pullToRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
 
         if (!tooltipSeen) {
             FirstRunTooltip(

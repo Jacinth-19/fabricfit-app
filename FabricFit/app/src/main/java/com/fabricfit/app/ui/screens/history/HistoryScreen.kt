@@ -38,6 +38,7 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.HistoryEvent
 import com.fabricfit.app.ui.components.EmptyState
+import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.resolveKey
@@ -115,7 +116,10 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
                             }
-                            IconButton(onClick = { vm.delete(event.id) }) {
+                            IconButton(onClick = {
+                                Haptics.tap()
+                                vm.delete(event.id)
+                            }) {
                                 Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
                             }
                         }

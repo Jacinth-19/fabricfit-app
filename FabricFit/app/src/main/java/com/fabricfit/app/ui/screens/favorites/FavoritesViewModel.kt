@@ -16,6 +16,7 @@ data class FavoritesUiState(
     val fabrics: List<Fabric> = emptyList(),
     val designs: List<DressStyle> = emptyList(),
     val looks: List<GeneratedLook> = emptyList(),
+    val isLoading: Boolean = true,
 )
 
 class FavoritesViewModel(private val container: AppContainer) : ViewModel() {
@@ -26,7 +27,10 @@ class FavoritesViewModel(private val container: AppContainer) : ViewModel() {
     init {
         viewModelScope.launch {
             container.favorites.observeFavoriteFabrics().collect { list ->
-                _state.value = _state.value.copy(fabrics = list)
+                _state.value = _state.value.copy(
+                    fabrics = list,
+                    isLoading = false
+                )
             }
         }
         viewModelScope.launch {
