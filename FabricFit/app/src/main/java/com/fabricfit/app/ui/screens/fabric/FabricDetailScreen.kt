@@ -50,6 +50,7 @@ import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.ui.components.ColorDot
 import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
+import com.fabricfit.app.ui.components.ZoomableImage
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.shareImagePath
 import kotlinx.coroutines.launch
@@ -133,11 +134,15 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
             ) {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
                     Column(Modifier.padding(14.dp)) {
-                        LocalImage(
-                            f.imageUri,
-                            contentDescription = stringResource(R.string.cd_fabric_image),
-                            modifier = Modifier.fillMaxWidth().height(200.dp),
-                        )
+                        ZoomableImage(
+                            modifier = Modifier.fillMaxWidth().height(200.dp)
+                        ) {
+                            LocalImage(
+                                f.imageUri,
+                                contentDescription = stringResource(R.string.cd_fabric_image),
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                         Spacer(Modifier.height(12.dp))
                         Text(context.getString(f.category.labelRes), style = MaterialTheme.typography.titleLarge)
                         Text(
