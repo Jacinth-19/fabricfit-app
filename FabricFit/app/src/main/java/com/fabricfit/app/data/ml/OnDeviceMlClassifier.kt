@@ -90,7 +90,7 @@ class OnDeviceMlClassifier(
 
     /** Top-3 ImageNet/textile predictions; empty when the model is absent or inference fails. */
     fun topHints(uri: Uri): List<MlHint> {
-        val loaded = imageProcessor.load(uri, maxDimension = 320)
+        val loaded = imageProcessor.load(uri, maxEdge = 320)
         val bmp = (loaded as? com.fabricfit.app.domain.model.Outcome.Success)?.data ?: return emptyList()
         return try {
             val ghanaianScores = runGhanaianClassifier(bmp)
@@ -101,7 +101,7 @@ class OnDeviceMlClassifier(
                     .map { i ->
                         MlHint(
                             label = ghanaianLabels[i].lowercase(),
-                            confidence = ghanaianScores[i].coerceIn(0f, 1f),
+                            score = ghanaianScores[i].coerceIn(0f, 1f),
                         )
                     }
             } else {
@@ -112,7 +112,7 @@ class OnDeviceMlClassifier(
                     .take(3)
                     .mapNotNull { i ->
                         val label = imagenetLabels.getOrNull(i)?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                        MlHint(label = label, confidence = scores[i].coerceIn(0f, 1f))
+                        MlHint(label = label, score = scores[i].coerceIn(0f, 1f))
                     }
             }
         } catch (_: Throwable) {
@@ -129,7 +129,7 @@ class OnDeviceMlClassifier(
      * [FabricSignature].
      */
     fun classifyWithUncertainty(uri: Uri, signature: FabricSignature? = null): ClassifierVerdict {
-        val loaded = imageProcessor.load(uri, maxDimension = 320)
+        val loaded = imageProcessor.load(uri, maxEdge = 320)
         val bmp = (loaded as? com.fabricfit.app.domain.model.Outcome.Success)?.data
             ?: return ClassifierVerdict(
                 hints = emptyList(),
@@ -156,7 +156,7 @@ class OnDeviceMlClassifier(
                     .map { i ->
                         MlHint(
                             label = ghanaianLabels[i].lowercase(),
-                            confidence = ghanaianScores[i].coerceIn(0f, 1f),
+                            score = ghanaianScores[i].coerceIn(0f, 1f),
                         )
                     }
             } else {
@@ -275,9 +275,9 @@ class OnDeviceMlClassifier(
 
     fun categoryBoost(hints: List<MlHint>): Pair<FabricCategory, Float>? {
         val best = hints.firstOrNull() ?: return null
-        if (best.confidence < 0.20f) return null
+        if (best.score < 0.20f) return null
         val mapped = mapLabelToCategory(best.label) ?: return null
-        return mapped to best.confidence
+        return mapped to best.score
     }
 
     companion object {
@@ -352,7 +352,7 @@ class OnDeviceMlClassifier(
 
             val hints = topIndices.take(3).mapIndexedNotNull { rank, classIdx ->
                 val label = labels.getOrNull(classIdx)?.takeIf { it.isNotBlank() } ?: return@mapIndexedNotNull null
-                MlHint(label = label, confidence = rawScores[classIdx].coerceIn(0f, 1f))
+                MlHint(label = label, score = rawScores[classIdx].coerceIn(0f, 1f))
             }
 
             val top1Label = hints.firstOrNull()?.label.orEmpty()

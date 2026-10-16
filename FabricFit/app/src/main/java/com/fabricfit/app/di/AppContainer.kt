@@ -61,7 +61,7 @@ class AppContainer private constructor(context: Context) {
     val catalog = AssetCatalogDataSource(appContext)
     val dressStyles = DressStyleRepositoryImpl(database.dressStyleDao(), catalog)
 
-    val mlClassifier = com.fabricfit.app.data.ml.OnDeviceMlClassifier(appContext)
+    val mlClassifier = com.fabricfit.app.data.ml.OnDeviceMlClassifier(appContext, imageProcessor)
 
     val cloudAnalysis = com.fabricfit.app.data.remote.CloudAnalysisClient()
     val personSegmenter = com.fabricfit.app.data.ml.PersonSegmenter(appContext)

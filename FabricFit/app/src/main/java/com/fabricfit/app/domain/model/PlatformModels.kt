@@ -104,6 +104,7 @@ enum class SleeveOption(val labelRes: Int) {
     DEFAULT(R.string.custom_sleeve_default),
     SHORT(R.string.custom_sleeve_short),
     LONG(R.string.custom_sleeve_long),
+    THREE_QUARTER(R.string.custom_sleeve_three_quarter),
     SLEEVELESS(R.string.custom_sleeve_sleeveless),
     PUFF(R.string.custom_sleeve_puff),
 }
@@ -112,8 +113,10 @@ enum class NecklineOption(val labelRes: Int) {
     DEFAULT(R.string.custom_neck_default),
     ROUND(R.string.custom_neck_round),
     VNECK(R.string.custom_neck_v),
+    V_NECK(R.string.custom_neck_v),
     HIGH(R.string.custom_neck_high),
     OFF_SHOULDER(R.string.custom_neck_off_shoulder),
+    BOAT(R.string.custom_neck_boat),
 }
 
 enum class LengthOption(val labelRes: Int) {
@@ -121,6 +124,7 @@ enum class LengthOption(val labelRes: Int) {
     MINI(R.string.custom_length_mini),
     MIDI(R.string.custom_length_midi),
     MAXI(R.string.custom_length_maxi),
+    FLOOR(R.string.custom_length_floor),
 }
 
 enum class FabricPlacement(val labelRes: Int, val descriptionRes: Int) {

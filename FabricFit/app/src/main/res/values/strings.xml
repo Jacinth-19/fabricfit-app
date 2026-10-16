@@ -773,6 +773,7 @@
     <string name="custom_sleeve_default">As shown</string>
     <string name="custom_sleeve_short">Short</string>
     <string name="custom_sleeve_long">Long</string>
+    <string name="custom_sleeve_three_quarter">Three-quarter</string>
     <string name="custom_sleeve_sleeveless">Sleeveless</string>
     <string name="custom_sleeve_puff">Puff</string>
     <string name="custom_neck_default">As shown</string>
@@ -780,10 +781,12 @@
     <string name="custom_neck_v">V-neck</string>
     <string name="custom_neck_high">High neck</string>
     <string name="custom_neck_off_shoulder">Off-shoulder</string>
+    <string name="custom_neck_boat">Boat neck</string>
     <string name="custom_length_default">As shown</string>
     <string name="custom_length_mini">Mini</string>
     <string name="custom_length_midi">Midi</string>
     <string name="custom_length_maxi">Maxi</string>
+    <string name="custom_length_floor">Floor-length</string>
     <string name="custom_place_full">Full garment</string>
     <string name="custom_place_full_desc">The fabric covers the whole design.</string>
     <string name="custom_place_top">Top only</string>
@@ -910,6 +913,8 @@
     <string name="fabric_fugu_desc">Hand-loomed narrow-strip cotton from northern Ghana, usually indigo, black and white.</string>
     <string name="fabric_gonja">Gonja cloth</string>
     <string name="fabric_gonja_desc">Northern Gonja hand-woven strips, typically ochre or brown with white and black.</string>
+    <string name="fabric_wool">Wool / Knit</string>
+    <string name="fabric_wool_desc">Wool, knitted, or cardigan-style textile.</string>
     <string name="wardrobe_remove_bg">Remove background</string>
     <string name="wardrobe_remove_bg_note">Works best on plain, even backgrounds</string>
     <string name="contrib_title">Contribute fabric photos</string>
