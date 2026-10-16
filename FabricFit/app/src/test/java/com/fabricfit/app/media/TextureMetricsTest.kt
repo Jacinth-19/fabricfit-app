@@ -54,7 +54,7 @@ class TextureMetricsTest {
         assertTrue("expected stripWidthPx > 0, got ${profile.stripWidthPx}", profile.stripWidthPx > 0f)
         // harmonicPurity depends on DFT implementation details, just check it's non-negative
         assertTrue("expected harmonicPurity >= 0, got ${profile.harmonicPurity}", profile.harmonicPurity >= 0f)
-        // alignmentAdvice is a derived value - just verify it's a valid enum
-        assertNotNull(profile.alignmentAdvice)
+        // alignmentAdvice is a derived value - just verify it's not null
+        assertTrue("alignmentAdvice should not be null", profile.alignmentAdvice != null)
     }
 }
