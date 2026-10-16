@@ -968,4 +968,10 @@
     <string name="security_biometric_premium">Protect Premium Features</string>
     <string name="security_biometric_premium_desc">Require authentication for premium features only</string>
 
+    <!-- ============ Share ============ -->
+    <string name="share_title">Share via</string>
+    <string name="share_fabric_text">Check out this %1$s fabric with %2$s pattern I found on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
+    <string name="share_look_text">Check out this %1$s look I created on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
+    <string name="share_look_text_with_fabric">Check out this %1$s look I created with %2$s fabric on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
+
 </resources>

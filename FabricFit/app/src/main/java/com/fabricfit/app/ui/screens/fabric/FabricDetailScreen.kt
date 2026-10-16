@@ -51,6 +51,7 @@ import com.fabricfit.app.ui.components.ColorDot
 import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ZoomableImage
+import com.fabricfit.app.ui.util.ShareManager
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.shareImagePath
 import kotlinx.coroutines.launch
@@ -103,13 +104,12 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                 }
                 IconButton(onClick = {
                     Haptics.tap()
-                    context.shareImagePath(
-                        f.imageUri,
-                        context.getString(
-                            R.string.share_fabric_text,
-                            f.name ?: context.getString(f.category.labelRes),
-                            context.getString(f.pattern.labelRes),
-                        ),
+                    ShareManager.shareFabric(
+                        context = context,
+                        imageUri = f.imageUri,
+                        fabricName = f.name,
+                        fabricCategory = context.getString(f.category.labelRes),
+                        fabricPattern = context.getString(f.pattern.labelRes)
                     )
                 }) {
                     Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
