@@ -129,6 +129,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.navigation.compose)
+    
+    // Google Fonts for custom branded typography
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.0")
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

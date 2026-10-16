@@ -8,31 +8,31 @@ import androidx.compose.ui.unit.sp
 
 /**
  * Editorial-leaning type ramp: tight tracking on display sizes, generous body line height.
- * System fonts keep the APK lean and text rendering crisp.
+ * Heritage Luxe branded font for display/headline styles, system fonts for body text.
  */
 val FabricFitTypography = Typography(
     displayLarge = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = HeritageLuxeFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 34.sp,
         lineHeight = 42.sp,
         letterSpacing = (-0.2).sp,
     ),
     displayMedium = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = HeritageLuxeFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 28.sp,
         lineHeight = 36.sp,
         letterSpacing = 0.sp,
     ),
     headlineLarge = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = HeritageLuxeFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
         lineHeight = 32.sp,
     ),
     headlineMedium = TextStyle(
-        fontFamily = FontFamily.Serif,
+        fontFamily = HeritageLuxeFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 21.sp,
         lineHeight = 28.sp,
