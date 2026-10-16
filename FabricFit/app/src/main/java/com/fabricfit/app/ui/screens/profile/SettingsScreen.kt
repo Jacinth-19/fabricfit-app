@@ -173,6 +173,18 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
             ContributeDialog(onDismiss = { showContribute = false })
         }
 
+        Section(R.string.security_title)
+        NotificationRow(
+            stringResource(R.string.security_biometric_lock),
+            stringResource(R.string.security_biometric_lock_desc),
+            state.prefs.security.biometricLock,
+        ) { on -> vm.setSecurity { it.copy(biometricLock = on) } }
+        NotificationRow(
+            stringResource(R.string.security_biometric_premium),
+            stringResource(R.string.security_biometric_premium_desc),
+            state.prefs.security.biometricForPremium,
+        ) { on -> vm.setSecurity { it.copy(biometricForPremium = on) } }
+
         Section(R.string.settings_section_help)
         SettingRow(stringResource(R.string.settings_help_how)) { nav.navigate(Routes.HELP) }
         SettingRow(stringResource(R.string.settings_replay_onboarding)) { vm.replayOnboarding() }

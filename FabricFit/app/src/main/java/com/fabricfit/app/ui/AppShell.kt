@@ -38,6 +38,7 @@ import com.fabricfit.app.domain.model.UserPreferences
 import com.fabricfit.app.ui.components.HeritageLuxeMark
 import com.fabricfit.app.ui.navigation.MainScaffold
 import com.fabricfit.app.ui.onboarding.OnboardingScreen
+import com.fabricfit.app.ui.screens.security.BiometricLockScreen
 import com.fabricfit.app.ui.theme.FabricFitTheme
 import com.fabricfit.app.ui.theme.HeritageCream
 import com.fabricfit.app.ui.theme.HeritageForest
@@ -47,7 +48,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * Root of the UI tree: applies theme, gates onboarding, then hosts the main navigation.
+ * Root of the UI tree: applies theme, gates onboarding and biometric lock, then hosts the main navigation.
  * Opens with a Heritage Luxe Deep Forest + Royal Gold Adinkra monogram splash that
  * transitions seamlessly into the Welcome screen or Home dashboard.
  */
@@ -61,6 +62,7 @@ fun AppShell() {
         val scope = rememberCoroutineScope()
         var pendingScan by remember { mutableStateOf(false) }
         var splashVisible by remember { mutableStateOf(true) }
+        var biometricAuthenticated by remember { mutableStateOf(false) }
 
         LaunchedEffect(Unit) {
             delay(1100)
@@ -68,7 +70,13 @@ fun AppShell() {
         }
 
         Box(Modifier.fillMaxSize()) {
-            if (!prefs.onboardingCompleted) {
+            // Show biometric lock screen if enabled and not yet authenticated
+            if (prefs.security.biometricLock && !biometricAuthenticated) {
+                BiometricLockScreen(
+                    onAuthenticated = { biometricAuthenticated = true },
+                    onFailed = { /* Stay on lock screen */ }
+                )
+            } else if (!prefs.onboardingCompleted) {
                 OnboardingScreen(
                     onFinished = { scanNow ->
                         pendingScan = scanNow

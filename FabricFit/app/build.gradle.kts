@@ -138,6 +138,10 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
+    
+    // Biometric authentication for app lock
+    implementation("androidx.biometric:biometric:1.1.0")
+    
     implementation(libs.coil.compose)
 
     implementation(libs.androidx.camera.core)

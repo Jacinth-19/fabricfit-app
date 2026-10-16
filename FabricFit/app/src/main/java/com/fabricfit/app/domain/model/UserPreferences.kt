@@ -22,6 +22,8 @@ data class UserPreferences(
     val cloudBaseUrl: String = "",
     /** Accessibility settings */
     val accessibility: AccessibilityPreferences = AccessibilityPreferences(),
+    /** Security settings */
+    val security: SecurityPreferences = SecurityPreferences(),
 )
 
 /**
@@ -36,6 +38,16 @@ data class AccessibilityPreferences(
     val largeText: Boolean = false,
     /** Enable haptic feedback on interactions */
     val hapticFeedback: Boolean = true,
+)
+
+/**
+ * Security preferences for app protection.
+ */
+data class SecurityPreferences(
+    /** Require biometric authentication to open the app */
+    val biometricLock: Boolean = false,
+    /** Require biometric for premium features only */
+    val biometricForPremium: Boolean = false,
 )
 
 enum class ThemeMode { LIGHT, DARK, SYSTEM }

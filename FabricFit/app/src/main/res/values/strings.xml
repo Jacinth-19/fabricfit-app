@@ -955,4 +955,17 @@
     <string name="accessibility_haptic_feedback">Haptic Feedback</string>
     <string name="accessibility_haptic_feedback_desc">Vibrate on interactions</string>
 
+    <!-- ============ Biometric Authentication ============ -->
+    <string name="biometric_title">Unlock FabricFit</string>
+    <string name="biometric_subtitle">Verify your identity</string>
+    <string name="biometric_description">Use your fingerprint or face to access your wardrobe</string>
+    <string name="biometric_available_strong">Fingerprint or Face ID available</string>
+    <string name="biometric_available_weak">Biometric authentication available</string>
+    <string name="biometric_not_available">Biometric authentication not available</string>
+    <string name="security_title">Security</string>
+    <string name="security_biometric_lock">App Lock</string>
+    <string name="security_biometric_lock_desc">Require biometric authentication to open app</string>
+    <string name="security_biometric_premium">Protect Premium Features</string>
+    <string name="security_biometric_premium_desc">Require authentication for premium features only</string>
+
 </resources>
