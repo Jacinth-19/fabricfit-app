@@ -42,11 +42,16 @@
     <string name="nav_home">Fie</string>
     <string name="nav_discover">Hwehwɛ</string>
     <string name="nav_create">Yɛ Foforɔ</string>
+    <string name="nav_camera">Mfoni</string>
+    <string name="nav_tryon">Sɔ hwɛ</string>
     <string name="nav_favorites">Anikora</string>
     <string name="nav_profile">Me Ho Nsɛm</string>
     <string name="cd_bottom_navigation">Akwankyerɛ titiriw</string>
     <string name="onboarding_welcome_title">Akwaaba ba FabricFit</string>
     <string name="onboarding_welcome_body">Fa ntama a wowɔ no twa mfonini na FabricFit bɛkyerɛ wo deɛ ɛbɛtumi ayɛ — efi kaba ne slit so kɔsi kaftan foforɔ so.</string>
+    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_cta_get_started">Fi ase</string>
+    <string name="onboarding_cta_login">Kɔ mu</string>
     <string name="onboarding_step1_title">Twa ntama mfonini anaa fa kɔ mu</string>
     <string name="onboarding_step1_body">Fa wo ntama no twa mfonini, anaa fa bi fi wo mfonini korabea. Ntama no so na biribiara fi.</string>
     <string name="onboarding_step2_title">Hu adwene a ɛfata</string>

@@ -119,26 +119,82 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
 
         if (tab == 0) {
             if (items.isEmpty()) {
-                Column(
-                    Modifier.fillMaxSize().padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-                ) {
-                    Text(
-                        stringResource(R.string.wardrobe_empty_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        stringResource(R.string.wardrobe_empty_body),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                    )
-                    OutlinedButton(onClick = { showAdd = true }) {
-                        Text(stringResource(R.string.wardrobe_add))
+                val sampleCapsule = listOf(
+                    Triple("Modern Kente Dress", "Kente · Ceremony", "catalog/heritage/outfit_modern_kente.jpg"),
+                    Triple("Elegant Peplum Set", "Kente · Formal", "catalog/heritage/outfit_elegant_peplum.jpg"),
+                    Triple("Royal Kente Maxi", "Kente · Wedding", "catalog/heritage/outfit_maxi_dress.jpg"),
+                    Triple("Heritage Two-Piece", "Kente · Occasion", "catalog/heritage/outfit_twopiece_set.jpg"),
+                )
+                Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth().padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Column(Modifier.weight(1f)) {
+                            Text(
+                                "Heritage Wardrobe Capsule",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                            Text(
+                                stringResource(R.string.wardrobe_empty_body),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        OutlinedButton(onClick = { showAdd = true }) {
+                            Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Text(stringResource(R.string.wardrobe_add))
+                        }
+                    }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(bottom = 24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(sampleCapsule) { (title, sub, asset) ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = com.fabricfit.app.ui.theme.HeritageCreamBright,
+                                ),
+                                shape = RoundedCornerShape(18.dp),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                            ) {
+                                Column(Modifier.padding(10.dp)) {
+                                    com.fabricfit.app.ui.components.AssetImage(
+                                        asset = asset,
+                                        contentDescription = title,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(168.dp)
+                                            .clip(RoundedCornerShape(14.dp)),
+                                    )
+                                    Row(
+                                        Modifier.padding(top = 8.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Column(Modifier.weight(1f)) {
+                                            Text(
+                                                title,
+                                                style = MaterialTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                            )
+                                            Text(
+                                                sub,
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             } else {

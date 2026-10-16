@@ -42,11 +42,16 @@
     <string name="nav_home">Aƒeme</string>
     <string name="nav_discover">Di</string>
     <string name="nav_create">Wɔ yeye</string>
+    <string name="nav_camera">Fotoɖemɔ̃</string>
+    <string name="nav_tryon">Do kpɔ</string>
     <string name="nav_favorites">Lɔlɔ̃nuwo</string>
     <string name="nav_profile">Nye Ŋuti</string>
     <string name="cd_bottom_navigation">Zɔzɔ vevitɔ</string>
     <string name="onboarding_welcome_title">Woezɔ loo, FabricFit</string>
     <string name="onboarding_welcome_body">Ɖe avɔ si le asiwò ƒe nɔnɔmeɖeɖe, eye FabricFit afia nu si wòate ŋu azu wò — tso kaba kɔ ɛɖɛ dzi va se ɖe kaftan yeye dzi.</string>
+    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_cta_get_started">Dze egɔme</string>
+    <string name="onboarding_cta_login">Ge ɖe eme</string>
     <string name="onboarding_step1_title">Ɖe avɔ alo tsɔe ɖo ɖa</string>
     <string name="onboarding_step1_body">Ɖe avɔ si le kplɔ̃a dzi la ƒe nɔnɔmeɖeɖe, alo tiae tso wò nɔnɔmeɖeɖewo me. Avɔ la dzie nuwo katã dze egɔme tso.</string>
     <string name="onboarding_step2_title">Kpɔ ɖoɖo siwo sɔ kplii</string>

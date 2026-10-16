@@ -89,19 +89,20 @@ capture() {
   echo "Captured: $OUT_DIR/${name}.png"
 }
 
-# Fresh app data starts at the first-run gate. Skip it to capture the real screens.
+# Capture the Heritage Luxe Welcome screen first, then skip to Home.
+capture welcome
 tap_label "Skip for now"
 capture home
 
 tap_label "Discover"
 capture discover
 
-tap_label "Create"
-tap_label "Got it" # dismiss the first-run Create coach mark
+tap_label "Camera"
+tap_label "Got it" || true # dismiss the first-run Create coach mark
 capture create
 
-tap_label "Favourites"
-tap_label "Got it" # dismiss the first-run Favourites coach mark
+tap_label "Try-On"
+tap_label "Got it" || true # dismiss the first-run Favourites coach mark
 capture favourites
 
 tap_label "Profile"

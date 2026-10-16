@@ -42,11 +42,16 @@
     <string name="nav_home">Shia</string>
     <string name="nav_discover">Yitso</string>
     <string name="nav_create">Ŋwɛɛ nɔŋ nɔ</string>
+    <string name="nav_camera">Kameramɔ</string>
+    <string name="nav_tryon">Ka kpɔ</string>
     <string name="nav_favorites">Suɔmɔi</string>
     <string name="nav_profile">Mi he mɔɔ</string>
     <string name="cd_bottom_navigation">Kpɔɔmɔ kɛ yɔ</string>
     <string name="onboarding_welcome_title">O ba FabricFit mli</string>
     <string name="onboarding_welcome_body">Kɛ o ntama shishifɔɔ ni oye, ni FabricFit ba ŋwɛɛ o mɔ ni mli baaŋ — kɛjɛ kaba kɛ slit mli ya kaftan nɔŋ nɔ.</string>
+    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_cta_get_started">Je shishi</string>
+    <string name="onboarding_cta_login">Bote mli</string>
     <string name="onboarding_step1_title">Kɛ ntama shishifɔɔ anaa tsɔ mli</string>
     <string name="onboarding_step1_body">Kɛ o ntama shishifɔɔ, anaa kɛ ba mli kɛjɛ o shishifɔɔ kɛ mli. Ntama nɔŋ ji mɔ fɛɛ shishifɔɔ.</string>
     <string name="onboarding_step2_title">Kɛ susumɔi ni naa lɛ</string>
