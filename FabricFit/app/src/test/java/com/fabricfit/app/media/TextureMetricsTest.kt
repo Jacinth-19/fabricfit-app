@@ -44,9 +44,11 @@ class TextureMetricsTest {
     @Test
     fun `spectral motif profile extracts strip width and alignment advice`() {
         val side = 32
-        val kenteStrips = FloatArray(side * side) { i ->
+        val dark = 0xFF222222.toInt()
+        val bright = 0xFFDDDDDD.toInt()
+        val kenteStrips = IntArray(side * side) { i ->
             val x = i % side
-            if ((x / 3) % 2 == 0) 0.15f else 0.85f
+            if ((x / 3) % 2 == 0) dark else bright
         }
         val profile = TextureMetrics.spectralMotifProfile(kenteStrips, side, side)
         assertTrue(profile.stripWidthPx > 0f)
