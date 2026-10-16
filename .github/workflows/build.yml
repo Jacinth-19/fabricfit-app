@@ -2,7 +2,7 @@ name: build
 
 on:
   push:
-    branches: [main, 'arena/a6bdbdef-fabricfit-app']
+    branches: [main]
     tags: ['v*']
   pull_request:
   # Weekly emulator sweep. Linux GitHub runners have no KVM, so the heavy
@@ -130,11 +130,7 @@ jobs:
   # manually via workflow_dispatch. The job commits the refreshed PNGs back
   # to the branch that triggered the dispatch.
   screenshots:
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' &&
-       github.ref == 'refs/heads/arena/a6bdbdef-fabricfit-app' &&
-       github.actor != 'github-actions[bot]')
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
