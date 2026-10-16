@@ -51,6 +51,7 @@ import com.fabricfit.app.domain.model.CollectionItemType
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.GeneratedLook
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.navigation.Routes
@@ -122,13 +123,14 @@ fun CollectionDetailScreen(
         }
 
         if (tabItems.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(32.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    text = stringResource(R.string.collections_empty_body),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+            EnhancedEmptyState(
+                illustration = R.drawable.illust_empty_collection,
+                title = R.string.collections_empty_title,
+                body = R.string.collections_empty_body,
+                actionLabel = R.string.empty_action_browse_designs,
+                onAction = { nav.navigate(Routes.DISCOVER) },
+                modifier = Modifier.fillMaxSize(),
+            )
         } else {
             Column(
                 Modifier

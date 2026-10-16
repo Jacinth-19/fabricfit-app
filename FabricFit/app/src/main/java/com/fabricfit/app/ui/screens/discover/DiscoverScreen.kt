@@ -56,9 +56,10 @@ import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.CardSkeleton
-import com.fabricfit.app.ui.components.EmptyState
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
+import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
@@ -215,7 +216,11 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
             }
         } else {
             if (!state.loaded) {
-                Column(Modifier.padding(20.dp)) { CardSkeleton(); Spacer(Modifier.height(16.dp)); CardSkeleton() }
+                ShimmerGrid(
+                    columns = 2,
+                    rows = 4,
+                    modifier = Modifier.padding(16.dp)
+                )
             } else {
                 val baseStyles = smartFilterStyles(state.styles, q, context)
                 val styles = when (filter) {
@@ -226,10 +231,12 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                     DiscoverFilter.FABRICS -> baseStyles
                 }
                 if (styles.isEmpty()) {
-                    EmptyState(
-                        R.drawable.illust_empty_collection,
-                        R.string.discover_empty_search,
-                        R.string.discover_empty_search_body,
+                    EnhancedEmptyState(
+                        illustration = R.drawable.illust_empty_collection,
+                        title = R.string.discover_empty_search,
+                        body = R.string.discover_empty_search_body,
+                        actionLabel = R.string.empty_action_clear_filters,
+                        onAction = { vm.setQuery("") },
                         modifier = Modifier.weight(1f),
                     )
                 } else {

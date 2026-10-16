@@ -40,9 +40,10 @@ import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.GenderCategory
 import com.fabricfit.app.domain.model.Occasion
 import com.fabricfit.app.domain.model.Recommendation
-import com.fabricfit.app.ui.components.EmptyState
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
+import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import androidx.compose.foundation.layout.size
@@ -121,11 +122,19 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
         }
 
         when {
-            !state.loaded -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally).padding(32.dp))
-            state.filtered.isEmpty() -> EmptyState(
+            !state.loaded -> ShimmerGrid(
+                columns = 1,
+                rows = 3,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            )
+            state.filtered.isEmpty() -> EnhancedEmptyState(
                 illustration = R.drawable.illust_empty_collection,
                 title = R.string.recs_empty_title,
                 body = R.string.recs_empty_body,
+                actionLabel = R.string.empty_action_clear_filters,
+                onAction = { vm.clearFilters() },
                 modifier = Modifier.weight(1f),
             )
             else -> LazyColumn(contentPadding = PaddingValues(bottom = 32.dp), modifier = Modifier.weight(1f)) {
