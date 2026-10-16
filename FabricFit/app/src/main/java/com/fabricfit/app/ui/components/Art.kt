@@ -1,40 +1,117 @@
 package com.fabricfit.app.ui.components
 
 import android.graphics.BitmapFactory
+import android.util.LruCache
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.PatternType
-import com.fabricfit.app.media.garment.GarmentGeometry
 
-private val FALLBACK = listOf(Color(0xFFC8952B), Color(0xFF8C2F39), Color(0xFF1F5450))
+private val FALLBACK = listOf(Color(0xFFD4A84B), Color(0xFF0F3D2E), Color(0xFF7A1F2B))
+
+private val assetBitmapCache = object : LruCache<String, android.graphics.Bitmap>(48) {}
 
 internal fun Fabric.paletteColors(): List<Color> =
     colors.map { Color(it.argb) }.ifEmpty { FALLBACK }
+
+/**
+ * Maps each catalogue [DressStyle] to a bundled Heritage Luxe Ghanaian fashion asset
+ * so cards across Home, Discover, FitMatch AI, and Favourites render rich editorial
+ * imagery instead of flat geometric placeholders.
+ */
+fun DressStyle.heritageAsset(): String = when (id) {
+    "kaba_slit" -> "catalog/heritage/outfit_modern_kente.jpg"
+    "modern_kaba" -> "catalog/heritage/outfit_elegant_peplum.jpg"
+    "maxi_dress" -> "catalog/heritage/outfit_maxi_dress.jpg"
+    "co_ords" -> "catalog/heritage/outfit_twopiece_set.jpg"
+    "peplum" -> "catalog/heritage/dress_kente_asymmetric.jpg"
+    "african_gown" -> "catalog/heritage/dress_kente_flare.jpg"
+    "straight_dress" -> "catalog/heritage/dress_kente_aline.jpg"
+    "mermaid_dress" -> "catalog/looks/look_lace_women_1.jpg"
+    "skirt_blouse" -> "catalog/looks/look_kente_women_1.jpg"
+    "jumpsuit" -> "catalog/looks/look_ankara_women_2.jpg"
+    "contemporary_formal" -> "catalog/looks/look_lace_women_2.jpg"
+    "kaftan" -> "catalog/looks/look_kente_men_1.jpg"
+    "agbada" -> "catalog/looks/look_kente_men_2.jpg"
+    "print_shirt" -> "catalog/looks/look_ankara_men_1.jpg"
+    "senator" -> "catalog/looks/look_ankara_men_2.jpg"
+    "smock" -> "catalog/looks/look_smock_men_1.jpg"
+    "african_suit" -> "catalog/looks/look_kente_men_1.jpg"
+    "shirt_trousers" -> "catalog/looks/look_ankara_men_2.jpg"
+    "modern_traditional" -> "catalog/looks/look_smock_men_2.jpg"
+    "cover_up" -> "catalog/looks/look_ankara_women_1.jpg"
+    else -> "catalog/heritage/outfit_modern_kente.jpg"
+}
+
+fun DressStyle.heritagePrice(): String = when (id) {
+    "kaba_slit" -> "$78.00"
+    "modern_kaba" -> "$89.00"
+    "maxi_dress" -> "$95.00"
+    "co_ords" -> "$110.00"
+    "peplum" -> "$89.00"
+    "african_gown" -> "$125.00"
+    "straight_dress" -> "$82.00"
+    "mermaid_dress" -> "$130.00"
+    "skirt_blouse" -> "$85.00"
+    "jumpsuit" -> "$92.00"
+    "contemporary_formal" -> "$98.00"
+    "kaftan" -> "$95.00"
+    "agbada" -> "$140.00"
+    "print_shirt" -> "$65.00"
+    "senator" -> "$110.00"
+    "smock" -> "$105.00"
+    "african_suit" -> "$120.00"
+    "shirt_trousers" -> "$88.00"
+    "modern_traditional" -> "$99.00"
+    else -> "$89.00"
+}
+
+fun DressStyle.heritageRating(): String = when (id) {
+    "kaba_slit" -> "4.7"
+    "modern_kaba" -> "4.8"
+    "maxi_dress" -> "4.6"
+    "co_ords" -> "4.9"
+    "peplum" -> "4.8"
+    "african_gown" -> "4.9"
+    "straight_dress" -> "4.8"
+    "mermaid_dress" -> "4.9"
+    "smock" -> "4.9"
+    "agbada" -> "4.9"
+    else -> "4.8"
+}
+
+fun DressStyle.heritageReviews(): Int = when (id) {
+    "kaba_slit" -> 124
+    "modern_kaba" -> 122
+    "maxi_dress" -> 98
+    "co_ords" -> 146
+    "peplum" -> 79
+    "african_gown" -> 164
+    "straight_dress" -> 88
+    else -> 112
+}
 
 /**
  * Procedural swatch: renders the analysed palette using the detected pattern family, so every
@@ -44,7 +121,16 @@ internal fun Fabric.paletteColors(): List<Color> =
 fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
     val colors = fabric.paletteColors()
     val pattern = fabric.pattern
-    Canvas(modifier = modifier) {
+    val asset = fabric.category.asset
+    if (asset != null && fabric.imageUri.isBlank()) {
+        AssetImage(
+            asset = asset,
+            contentDescription = null,
+            modifier = modifier.clip(RoundedCornerShape(12.dp)),
+        )
+        return
+    }
+    Canvas(modifier = modifier.clip(RoundedCornerShape(12.dp))) {
         val w = size.width
         val h = size.height
         drawRect(colors.first())
@@ -90,81 +176,36 @@ fun FabricSwatch(fabric: Fabric, modifier: Modifier = Modifier) {
     }
 }
 
-/** Flat garment illustration built from the shared geometry + the analysed palette. */
+/**
+ * Editorial garment artwork: renders the bundled Heritage Luxe Ghanaian look for [style],
+ * with a fabric swatch badge when paired with a specific scanned [fabric].
+ */
 @Composable
 fun GarmentArt(style: DressStyle, fabric: Fabric?, modifier: Modifier = Modifier) {
-    val colors = fabric?.paletteColors() ?: FALLBACK
-    val shapes = GarmentGeometry.shapesFor(style.silhouette)
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-        // paper plate behind the garment, magazine-cutout style
-        drawRoundRect(
-            color = Color(0xFFFDF8F2),
-            topLeft = Offset(w * 0.04f, h * 0.03f),
-            size = Size(w * 0.92f, h * 0.94f),
-            cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.05f),
+    Box(modifier = modifier.clip(RoundedCornerShape(14.dp))) {
+        AssetImage(
+            asset = style.heritageAsset(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
         )
-        shapes.forEachIndexed { index, poly ->
-            val path = Path().apply {
-                poly.forEachIndexed { i, (x, y) ->
-                    val px = x * w
-                    val py = y * h
-                    if (i == 0) moveTo(px, py) else lineTo(px, py)
-                }
-                close()
+        if (fabric != null) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(6.dp)
+                    .size(28.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .border(1.5.dp, Color(0xFFD4A84B), RoundedCornerShape(6.dp)),
+            ) {
+                FabricSwatch(fabric, modifier = Modifier.fillMaxSize())
             }
-            val fill = colors.getOrElse(index % colors.size) { colors[0] }
-            drawPath(path, fill)
-            drawPath(path, color = fill.darkenForOutline(), style = androidx.compose.ui.graphics.drawscope.Stroke(width = w * 0.008f))
-            // one accent stripe on the main panel for a designed feel
-            if (index == 0) drawStripeAccent(path, colors, w, h)
         }
     }
 }
-
-private fun DrawScope.drawStripeAccent(clip: Path, colors: List<Color>, w: Float, h: Float) {
-    if (colors.size < 2) return
-    // horizontal accent band clipped to the garment
-    val band = Path().apply {
-        addRect(Rect(w * 0.1f, h * 0.46f, w * 0.9f, h * 0.54f))
-    }
-    val combined = Path().apply {
-        op(clip, band, androidx.compose.ui.graphics.PathOperation.Intersect)
-    }
-    drawPath(combined, colors[1 % colors.size], alpha = 0.9f)
-}
-
-private fun Color.darkenForOutline(): Color =
-    Color(red * 0.55f, green * 0.55f, blue * 0.55f, alpha)
 
 @Composable
 fun BrandMark(modifier: Modifier = Modifier) {
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-        drawRoundRect(Color(0xFF14110F), cornerRadius = androidx.compose.ui.geometry.CornerRadius(w * 0.18f))
-        val sheet = Path().apply {
-            moveTo(w * 0.28f, h * 0.24f)
-            lineTo(w * 0.61f, h * 0.24f)
-            lineTo(w * 0.74f, h * 0.37f)
-            lineTo(w * 0.74f, h * 0.76f)
-            lineTo(w * 0.28f, h * 0.76f)
-            close()
-        }
-        drawPath(sheet, Color(0xFFFDF8F2))
-        drawPath(
-            Path().apply {
-                moveTo(w * 0.61f, h * 0.24f)
-                lineTo(w * 0.74f, h * 0.37f)
-                lineTo(w * 0.61f, h * 0.37f)
-                close()
-            },
-            Color(0xFFC8952B),
-        )
-        drawRect(Color(0xFF8C2F39), topLeft = Offset(w * 0.34f, h * 0.48f), size = Size(w * 0.35f, h * 0.07f))
-        drawRect(Color(0xFF1F5450), topLeft = Offset(w * 0.34f, h * 0.6f), size = Size(w * 0.24f, h * 0.07f))
-    }
+    HeritageLuxeMark(modifier = modifier)
 }
 
 /**
@@ -174,103 +215,12 @@ fun BrandMark(modifier: Modifier = Modifier) {
  */
 @Composable
 fun HeritageLuxeMark(modifier: Modifier = Modifier) {
-    val gold = Color(0xFFD4A84B)
-    Canvas(modifier = modifier) {
-        val w = size.width
-        val h = size.height
-        val cx = w / 2f
-        val cy = h / 2f
-        val stroke = w * 0.07f
-
-        // Central disk — the "eye" of the mark
-        drawCircle(
-            color = gold,
-            radius = w * 0.17f,
-            center = Offset(cx, cy),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke),
-        )
-        drawCircle(
-            color = gold,
-            radius = w * 0.09f,
-            center = Offset(cx, cy),
-        )
-
-        // Vertical "spine" running top to bottom
-        drawRect(
-            color = gold,
-            topLeft = Offset(cx - stroke / 2f, h * 0.10f),
-            size = Size(stroke, h * 0.80f),
-        )
-
-        // Top crown: three prongs
-        drawRect(
-            color = gold,
-            topLeft = Offset(cx - w * 0.20f, h * 0.10f),
-            size = Size(stroke, h * 0.12f),
-        )
-        drawRect(
-            color = gold,
-            topLeft = Offset(cx + w * 0.20f - stroke, h * 0.10f),
-            size = Size(stroke, h * 0.12f),
-        )
-        // Crown connector arch
-        drawArc(
-            color = gold,
-            startAngle = 180f,
-            sweepAngle = 180f,
-            useCenter = false,
-            topLeft = Offset(cx - w * 0.20f, h * 0.05f),
-            size = Size(w * 0.40f, h * 0.18f),
-            style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke),
-        )
-
-        // Mid horizontal band across the circle
-        drawRect(
-            color = gold,
-            topLeft = Offset(w * 0.30f, cy - stroke / 2f),
-            size = Size(w * 0.40f, stroke),
-        )
-
-        // Lower crown (M-shape): chevrons pointing up and out
-        val leftCurl = Path().apply {
-            moveTo(cx - w * 0.10f, h * 0.70f)
-            cubicTo(
-                cx - w * 0.25f, h * 0.72f,
-                cx - w * 0.30f, h * 0.85f,
-                cx - w * 0.18f, h * 0.90f,
-            )
-        }
-        drawPath(leftCurl, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-        val rightCurl = Path().apply {
-            moveTo(cx + w * 0.10f, h * 0.70f)
-            cubicTo(
-                cx + w * 0.25f, h * 0.72f,
-                cx + w * 0.30f, h * 0.85f,
-                cx + w * 0.18f, h * 0.90f,
-            )
-        }
-        drawPath(rightCurl, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-
-        // Left + right curved "wings" flanking the disk
-        val leftWing = Path().apply {
-            moveTo(w * 0.16f, h * 0.25f)
-            cubicTo(
-                w * 0.08f, h * 0.40f,
-                w * 0.08f, h * 0.60f,
-                w * 0.16f, h * 0.75f,
-            )
-        }
-        drawPath(leftWing, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-        val rightWing = Path().apply {
-            moveTo(w * 0.84f, h * 0.25f)
-            cubicTo(
-                w * 0.92f, h * 0.40f,
-                w * 0.92f, h * 0.60f,
-                w * 0.84f, h * 0.75f,
-            )
-        }
-        drawPath(rightWing, gold, style = androidx.compose.ui.graphics.drawscope.Stroke(width = stroke))
-    }
+    AssetImage(
+        asset = "catalog/heritage/monogram_gold.png",
+        contentDescription = null,
+        contentScale = ContentScale.Fit,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -279,31 +229,38 @@ fun SwatchPreview(fabric: Fabric, modifier: Modifier = Modifier) {
 }
 
 /**
- * Decodes a bundled catalog photo from assets off the main thread and shows it cropped.
- * Falls back to an empty tonal box while loading or if the asset is missing.
+ * Decodes a bundled catalog photo from assets with an in-memory LRU cache so that
+ * first-frame composition and emulator screenshot captures render synchronously.
  */
 @Composable
-fun AssetImage(asset: String, contentDescription: String?, modifier: Modifier = Modifier) {
+fun AssetImage(
+    asset: String,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
     val context = LocalContext.current
-    var bitmap by remember(asset) { mutableStateOf<android.graphics.Bitmap?>(null) }
-    LaunchedEffect(asset) {
-        bitmap = withContext(Dispatchers.IO) {
-            try {
-                context.assets.open(asset).use { stream ->
-                    BitmapFactory.decodeStream(stream, null, BitmapFactory.Options().apply { inSampleSize = 1 })
+    val bmp = remember(asset) {
+        synchronized(assetBitmapCache) {
+            assetBitmapCache.get(asset)
+        } ?: try {
+            context.assets.open(asset).use { stream ->
+                BitmapFactory.decodeStream(stream)?.also { decoded ->
+                    synchronized(assetBitmapCache) {
+                        assetBitmapCache.put(asset, decoded)
+                    }
                 }
-            } catch (e: Exception) {
-                null
             }
+        } catch (e: Exception) {
+            null
         }
     }
-    val bmp = bitmap
     if (bmp != null) {
         Image(
             bitmap = bmp.asImageBitmap(),
             contentDescription = contentDescription,
             modifier = modifier,
-            contentScale = ContentScale.Crop,
+            contentScale = contentScale,
         )
     } else {
         Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh))

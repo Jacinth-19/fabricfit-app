@@ -1,5 +1,8 @@
 package com.fabricfit.app.ui.screens.discover
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,120 +12,275 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.FabricCategory
+import com.fabricfit.app.domain.model.StyleCategory
+import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.CardSkeleton
 import com.fabricfit.app.ui.components.EmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
-import com.fabricfit.app.ui.components.LocalImage
+import com.fabricfit.app.ui.components.heritagePrice
+import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.theme.HeritageCreamBright
+import com.fabricfit.app.ui.theme.HeritageForest
+import com.fabricfit.app.ui.theme.HeritageGold
 import com.fabricfit.app.ui.util.resolveKey
+
+private enum class DiscoverFilter(val label: String) {
+    ALL("All"),
+    CASUAL("Casual"),
+    FORMAL("Formal"),
+    OCCASION("Occasion"),
+    FABRICS("Fabrics"),
+}
 
 @Composable
 fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
     val vm: DiscoverViewModel = appViewModel { c, ctx -> DiscoverViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var tab by remember { mutableStateOf(0) }
+    var filter by remember { mutableStateOf(DiscoverFilter.ALL) }
     var query by remember { mutableStateOf("") }
+    var searchOpen by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
-        Text(
-            stringResource(R.string.discover_title),
-            style = MaterialTheme.typography.displayMedium,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp),
-        )
-        OutlinedTextField(
-            value = query,
-            onValueChange = { query = it; vm.setQuery(it) },
-            placeholder = { Text(stringResource(R.string.discover_search_hint)) },
-            leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-            trailingIcon = {
-                if (query.isNotBlank()) {
-                    IconButton(onClick = { query = ""; vm.setQuery("") }) {
-                        Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cd_clear_search))
+        // Editorial Serif Header matching Reference Image 5 ("Outfit Recommendations")
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .padding(top = 12.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Text(
+                "Outfit Recommendations",
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                ),
+                color = HeritageForest,
+            )
+            IconButton(onClick = { searchOpen = !searchOpen }) {
+                Icon(
+                    Icons.Filled.Search,
+                    contentDescription = stringResource(R.string.discover_search_hint),
+                    tint = HeritageForest,
+                )
+            }
+        }
+
+        // Filter pills container card: All · Casual · Formal · Occasion · Fabrics
+        Surface(
+            shape = RoundedCornerShape(22.dp),
+            color = HeritageCreamBright,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        ) {
+            Column(Modifier.padding(vertical = 8.dp)) {
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    DiscoverFilter.values().forEach { item ->
+                        val selected = filter == item
+                        Surface(
+                            onClick = { filter = item },
+                            shape = RoundedCornerShape(50),
+                            color = if (selected) HeritageForest else Color(0xFFEDE7DA),
+                        ) {
+                            Text(
+                                text = item.label,
+                                style = MaterialTheme.typography.labelLarge,
+                                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                                color = if (selected) Color.White else MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.padding(horizontal = 18.dp, vertical = 9.dp),
+                            )
+                        }
                     }
                 }
-            },
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            singleLine = true,
-        )
-        Spacer(Modifier.height(8.dp))
-        PrimaryTabRow(selectedTabIndex = tab) {
-            listOf(R.string.discover_tab_styles, R.string.discover_tab_fabrics, R.string.discover_tab_looks).forEachIndexed { i, res ->
-                Tab(selected = tab == i, onClick = { tab = i }, text = { Text(stringResource(res)) })
+
+                if (searchOpen) {
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { query = it; vm.setQuery(it) },
+                        placeholder = { Text(stringResource(R.string.discover_search_hint)) },
+                        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null, tint = HeritageForest) },
+                        trailingIcon = {
+                            if (query.isNotBlank()) {
+                                IconButton(onClick = { query = ""; vm.setQuery("") }) {
+                                    Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.cd_clear_search))
+                                }
+                            }
+                        },
+                        shape = RoundedCornerShape(50),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
+                            focusedBorderColor = HeritageForest,
+                            unfocusedBorderColor = Color(0xFFE0D6C3),
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                    )
+                }
             }
         }
 
         val q = query.trim()
-        when (tab) {
-            0 -> {
-                if (!state.loaded) {
-                    Column(Modifier.padding(20.dp)) { CardSkeleton(); Spacer(Modifier.height(16.dp)); CardSkeleton() }
+        if (filter == DiscoverFilter.FABRICS) {
+            val cats = FabricCategory.values().filter {
+                q.isEmpty() || context.getString(it.labelRes).contains(q, ignoreCase = true)
+            }
+            LazyColumn(contentPadding = PaddingValues(16.dp)) {
+                items(cats.toList()) { cat ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
+                        colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                    ) {
+                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                            val catAsset = cat.asset
+                            if (catAsset != null) {
+                                AssetImage(
+                                    asset = catAsset,
+                                    contentDescription = stringResource(cat.labelRes),
+                                    modifier = Modifier
+                                        .width(64.dp)
+                                        .height(64.dp)
+                                        .clip(RoundedCornerShape(12.dp)),
+                                )
+                            } else {
+                                FabricSwatch(representativeFabric(cat), modifier = Modifier.width(64.dp).height(64.dp))
+                            }
+                            Spacer(Modifier.width(14.dp))
+                            Column {
+                                Text(stringResource(cat.labelRes), style = MaterialTheme.typography.titleMedium)
+                                Text(
+                                    stringResource(cat.descriptionRes),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            if (!state.loaded) {
+                Column(Modifier.padding(20.dp)) { CardSkeleton(); Spacer(Modifier.height(16.dp)); CardSkeleton() }
+            } else {
+                val baseStyles = smartFilterStyles(state.styles, q, context)
+                val styles = when (filter) {
+                    DiscoverFilter.ALL -> orderFeaturedFirst(baseStyles)
+                    DiscoverFilter.CASUAL -> baseStyles.filter { it.category == StyleCategory.CASUAL }
+                    DiscoverFilter.FORMAL -> baseStyles.filter { it.category == StyleCategory.FORMAL }
+                    DiscoverFilter.OCCASION -> baseStyles.filter { it.category == StyleCategory.TRADITIONAL }
+                    DiscoverFilter.FABRICS -> baseStyles
+                }
+                if (styles.isEmpty()) {
+                    EmptyState(
+                        R.drawable.illust_empty_collection,
+                        R.string.discover_empty_search,
+                        R.string.discover_empty_search_body,
+                        modifier = Modifier.weight(1f),
+                    )
                 } else {
-                    val styles = smartFilterStyles(state.styles, q, context)
-                    if (styles.isEmpty()) {
-                        EmptyState(
-                            R.drawable.illust_empty_collection,
-                            R.string.discover_empty_search,
-                            R.string.discover_empty_search_body,
-                            modifier = Modifier.weight(1f),
-                        )
-                    } else {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            contentPadding = PaddingValues(16.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                        ) {
-                            items(styles, key = { it.id }) { style ->
-                                Card(
-                                    onClick = { nav.navigate(Routes.design(style.id)) },
-                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                                ) {
-                                    Column(Modifier.padding(10.dp)) {
-                                        GarmentArt(style, null, modifier = Modifier.fillMaxWidth().height(140.dp))
-                                        Spacer(Modifier.height(6.dp))
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(14.dp),
+                    ) {
+                        items(styles, key = { it.id }) { style ->
+                            Card(
+                                onClick = { nav.navigate(Routes.design(style.id)) },
+                                shape = RoundedCornerShape(18.dp),
+                                colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                            ) {
+                                Column(Modifier.padding(10.dp)) {
+                                    GarmentArt(
+                                        style,
+                                        null,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(166.dp),
+                                    )
+                                    Spacer(Modifier.height(8.dp))
+                                    Text(
+                                        displayTitleFor(style, context),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.SemiBold,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                    )
+                                    Spacer(Modifier.height(3.dp))
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
                                         Text(
-                                            context.resolveKey(style.titleKey) ?: style.id,
+                                            style.heritagePrice(),
                                             style = MaterialTheme.typography.titleSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onSurface,
                                         )
+                                        Spacer(Modifier.width(8.dp))
+                                        Icon(
+                                            Icons.Filled.Star,
+                                            contentDescription = null,
+                                            tint = HeritageGold,
+                                            modifier = Modifier.size(15.dp),
+                                        )
+                                        Spacer(Modifier.width(3.dp))
                                         Text(
-                                            stringResource(style.gender.labelRes),
-                                            style = MaterialTheme.typography.labelSmall,
+                                            style.heritageRating(),
+                                            style = MaterialTheme.typography.bodySmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
@@ -132,86 +290,29 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
                     }
                 }
             }
-            1 -> {
-                val cats = FabricCategory.values().filter {
-                    q.isEmpty() || context.getString(it.labelRes).contains(q, ignoreCase = true)
-                }
-                val offline = remember { !context.isOnline() }
-                LazyColumn(contentPadding = PaddingValues(16.dp)) {
-                    if (offline) {
-                        item {
-                            Text(
-                                stringResource(R.string.discover_offline_note),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(bottom = 8.dp),
-                            )
-                        }
-                    }
-                    items(cats.toList()) { cat ->
-                        Card(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                        ) {
-                            Row(Modifier.padding(12.dp)) {
-                                val catAsset = cat.asset
-                                if (catAsset != null) {
-                                    com.fabricfit.app.ui.components.AssetImage(
-                                        asset = catAsset,
-                                        contentDescription = stringResource(cat.labelRes),
-                                        modifier = Modifier
-                                            .width(64.dp).height(64.dp)
-                                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(12.dp)),
-                                    )
-                                } else {
-                                    FabricSwatch(representativeFabric(cat), modifier = Modifier.width(64.dp).height(64.dp))
-                                }
-                                Spacer(Modifier.width(14.dp))
-                                Column {
-                                    Text(stringResource(cat.labelRes), style = MaterialTheme.typography.titleMedium)
-                                    Text(
-                                        stringResource(cat.descriptionRes),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            2 -> {
-                val looks = state.looks.filter { q.isEmpty() }
-                if (looks.isEmpty()) {
-                    EmptyState(
-                        R.drawable.illust_empty_looks,
-                        R.string.empty_looks_title,
-                        R.string.empty_looks_body,
-                        modifier = Modifier.weight(1f),
-                        actionLabel = R.string.create_option_person_title,
-                        onAction = { nav.navigate(Routes.tryOn(null, null)) },
-                    )
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        items(looks, key = { it.id }) { look ->
-                            Card(onClick = { nav.navigate(Routes.result(look.id)) }) {
-                                LocalImage(
-                                    look.resultImageUri,
-                                    contentDescription = stringResource(R.string.cd_generated_image),
-                                    modifier = Modifier.fillMaxWidth().height(180.dp),
-                                )
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
+}
+
+private fun orderFeaturedFirst(
+    styles: List<com.fabricfit.app.domain.model.DressStyle>,
+): List<com.fabricfit.app.domain.model.DressStyle> {
+    val priority = listOf("kaba_slit", "modern_kaba", "maxi_dress", "co_ords", "peplum", "african_gown")
+    val byId = styles.associateBy { it.id }
+    val featured = priority.mapNotNull { byId[it] }
+    val rest = styles.filter { it.id !in priority }
+    return featured + rest
+}
+
+private fun displayTitleFor(
+    style: com.fabricfit.app.domain.model.DressStyle,
+    context: android.content.Context,
+): String = when (style.id) {
+    "kaba_slit" -> "Modern Kente Dress"
+    "modern_kaba" -> "Elegant Peplum Dress"
+    "maxi_dress" -> "Maxi Dress"
+    "co_ords" -> "Two-Piece Set"
+    else -> context.resolveKey(style.titleKey) ?: style.id
 }
 
 /** Builds a display-only swatch for the fabric library without pretending to be a scan. */

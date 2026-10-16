@@ -12,7 +12,9 @@ localized strings (`tw` / `gaa` / `ee`), the store listing and the docs.
 
 | Use | Line |
 | --- | --- |
-| **Primary (shipped in `app_tagline`)** | Scan Your Fabric. Wear Your Style. |
+| **Primary (shipped in `app_tagline`)** | Scan. Discover. Try. Wear. |
+| **Brand edition (`onboarding_brand_heritage_luxe`)** | Heritage Luxe |
+| **Home editorial banner** | Ghanaian Fabrics · Timeless Style |
 | Tech-focused | AI-Powered Ghanaian Fabric & Outfit Matching. |
 | Luxe / fashion | Where Heritage Fabric Meets Modern Fit. |
 

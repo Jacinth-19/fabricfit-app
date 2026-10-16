@@ -79,7 +79,7 @@ Made in Accra, Ghana.
 | --- | --- | --- |
 | App icon (512×512) | `store/play_icon_512.png` | wordmark-free mark, unchanged by the rename |
 | Feature graphic (1024×500) | `store/feature_graphic.png` | FabricFit wordmark + primary tagline |
-| Phone screenshots | *to capture* | Home → FitScan analysis → FitMatch AI → FitRoom → My Fit Closet |
+| Phone screenshots (1080×1920) | `docs/screenshots/{welcome,home,create,favourites,discover,profile,my-fit-closet}.png` | Welcome → Home → Capture Fabric → Scan Results → Outfit Recommendations → Profile → My Fit Closet |
 
 ## Categorisation
 

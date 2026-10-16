@@ -2,11 +2,11 @@ package com.fabricfit.app.ui.onboarding
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -28,14 +27,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.HeritageLuxeMark
 import com.fabricfit.app.ui.theme.HeritageCream
 import com.fabricfit.app.ui.theme.HeritageForest
@@ -71,29 +73,30 @@ private val pages = listOf(
 fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
-    val pageIndex by remember { androidx.compose.runtime.derivedStateOf { pagerState.currentPage } }
+    val pageIndex by remember { derivedStateOf { pagerState.currentPage } }
     val page = pages[pageIndex]
 
     val bgColor = if (page.dark) HeritageForest else MaterialTheme.colorScheme.background
-    val contentColor = if (page.dark) HeritageCream else MaterialTheme.colorScheme.onBackground
 
     Surface(modifier = Modifier.fillMaxSize(), color = bgColor) {
         Column(Modifier.fillMaxSize()) {
-            // Skip (hidden on the dark welcome page where we show proper buttons)
-            if (!page.dark) {
-                Row(
-                    Modifier.fillMaxWidth().padding(8.dp),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    TextButton(onClick = { onFinished(false) }) {
-                        Text(
-                            stringResource(R.string.onboarding_cta_skip),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
+            // Top bar with "Skip for now" accessible on all pages
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                TextButton(onClick = { onFinished(false) }) {
+                    Text(
+                        stringResource(R.string.onboarding_cta_skip),
+                        color = if (page.dark) {
+                            HeritageGoldSoft.copy(alpha = 0.85f)
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        },
+                    )
                 }
-            } else {
-                Spacer(Modifier.height(28.dp))
             }
 
             HorizontalPager(
@@ -102,46 +105,47 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
             ) { index ->
                 val p = pages[index]
                 if (p.dark) {
-                    WelcomeDarkPage(p)
+                    WelcomeDarkPage()
                 } else {
                     LightPage(p)
                 }
             }
 
-            // Indicator dots
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                repeat(pages.size) { i ->
-                    val isCurrent = i == pagerState.currentPage
-                    Box(
-                        Modifier
-                            .padding(horizontal = 5.dp)
-                            .size(if (isCurrent) 10.dp else 7.dp)
-                            .clip(CircleShape)
-                            .background(
-                                when {
-                                    page.dark && isCurrent -> HeritageGold
-                                    page.dark -> HeritageGoldSoft.copy(alpha = 0.4f)
-                                    isCurrent -> MaterialTheme.colorScheme.primary
-                                    else -> MaterialTheme.colorScheme.outlineVariant
-                                },
-                            ),
-                    )
+            // Indicator dots (shown on step pages 1..4)
+            if (!page.dark) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    repeat(pages.size) { i ->
+                        val isCurrent = i == pagerState.currentPage
+                        Box(
+                            Modifier
+                                .padding(horizontal = 5.dp)
+                                .size(if (isCurrent) 10.dp else 7.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (isCurrent) MaterialTheme.colorScheme.primary
+                                    else MaterialTheme.colorScheme.outlineVariant,
+                                ),
+                        )
+                    }
                 }
+            } else {
+                Spacer(Modifier.height(14.dp))
             }
 
             // Bottom actions
             Column(
-                Modifier.padding(horizontal = 24.dp).padding(bottom = 28.dp),
+                Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 28.dp),
             ) {
                 val last = pagerState.currentPage == pages.size - 1
                 when {
                     page.dark -> {
-                        // Heritage Luxe welcome: primary "Get Started" + outlined "Login"
                         Button(
                             onClick = {
                                 scope.launch {
@@ -150,7 +154,7 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(58.dp),
+                                .height(56.dp),
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFF1B4D3B),
@@ -162,17 +166,17 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                                 style = MaterialTheme.typography.titleMedium,
                             )
                         }
-                        Spacer(Modifier.height(14.dp))
+                        Spacer(Modifier.height(12.dp))
                         OutlinedButton(
                             onClick = { onFinished(false) },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(58.dp),
+                                .height(56.dp),
                             shape = RoundedCornerShape(50),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = HeritageGoldSoft,
                             ),
-                            border = androidx.compose.foundation.BorderStroke(
+                            border = BorderStroke(
                                 1.5.dp,
                                 HeritageGoldSoft.copy(alpha = 0.6f),
                             ),
@@ -187,7 +191,9 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                     last -> {
                         Button(
                             onClick = { onFinished(true) },
-                            modifier = Modifier.fillMaxWidth().height(54.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp),
                             shape = RoundedCornerShape(50),
                         ) {
                             Text(stringResource(R.string.onboarding_cta_scan))
@@ -201,7 +207,9 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                                     pagerState.scrollToPage(pagerState.currentPage + 1)
                                 }
                             },
-                            modifier = Modifier.fillMaxWidth().height(54.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(54.dp),
                             shape = RoundedCornerShape(50),
                         ) {
                             Text(stringResource(R.string.onboarding_next))
@@ -214,94 +222,67 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
 }
 
 @Composable
-private fun WelcomeDarkPage(page: Page) {
-    Box(Modifier.fillMaxSize()) {
-        // Deep forest gradient background
-        Box(
-            Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(
-                            HeritageForestDark,
-                            HeritageForest,
-                            Color(0xFF083023),
-                        ),
+private fun WelcomeDarkPage() {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        HeritageForestDark,
+                        HeritageForest,
+                        Color(0xFF083023),
                     ),
                 ),
-        )
-
+            ),
+    ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 32.dp),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(48.dp))
+            Spacer(Modifier.height(12.dp))
 
             // Brand mark — gold adinkra monogram
-            HeritageLuxeMark(modifier = Modifier.size(110.dp))
+            HeritageLuxeMark(modifier = Modifier.size(116.dp))
 
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(16.dp))
 
             // Wordmark — "Heritage Luxe" in royal gold serif
             Text(
                 stringResource(R.string.onboarding_brand_heritage_luxe),
                 fontFamily = FontFamily.Serif,
-                fontWeight = FontWeight.Normal,
-                fontSize = 56.sp,
+                fontWeight = FontWeight.Bold,
+                fontSize = 44.sp,
                 color = HeritageGold,
                 textAlign = TextAlign.Center,
-                lineHeight = 60.sp,
+                lineHeight = 48.sp,
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
 
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(10.dp))
 
-            // Tagline
+            // Tagline — "Scan. Discover. Try. Wear."
             Text(
                 stringResource(R.string.app_tagline),
-                style = MaterialTheme.typography.headlineSmall.copy(
+                style = MaterialTheme.typography.titleLarge.copy(
                     fontFamily = FontFamily.SansSerif,
                     fontWeight = FontWeight.Normal,
                 ),
                 color = HeritageCream,
                 textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 24.dp),
             )
 
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(20.dp))
 
-            // Decorative fabric illustration placeholder — woven pattern bands
-            FabricStackDecoration()
-
-            Spacer(Modifier.height(24.dp))
-        }
-    }
-}
-
-/** Stylised stacked Kente/Ankara folds in brand tones, drawn as Compose shapes. */
-@Composable
-private fun BoxScope.FabricStackDecoration() {
-    // (Decorative bands are deliberately abstract — they sit above the CTA zone
-    // and echo the folded-cloth hero from the mockup without bundling bitmaps.)
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter),
-        horizontalArrangement = Arrangement.spacedBy((-24).dp),
-    ) {
-        listOf(
-            listOf(HeritageGold, Color(0xFFB83227), HeritageForest),
-            listOf(Color(0xFFB83227), HeritageGold, HeritageForest),
-            listOf(HeritageForest, HeritageGold, Color(0xFF7A1F2B)),
-        ).forEach { colors ->
-            Box(
-                Modifier
-                    .weight(1f)
-                    .height(70.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(
-                        Brush.horizontalGradient(colors),
-                    ),
+            // Stacked Kente textile folds hero
+            AssetImage(
+                asset = "catalog/heritage/hero_kente_folds.jpg",
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
             )
         }
     }
@@ -310,7 +291,9 @@ private fun BoxScope.FabricStackDecoration() {
 @Composable
 private fun LightPage(page: Page) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 32.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
