@@ -14,7 +14,7 @@
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Heritage Luxe</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="210"><br><sub><strong>Home Dashboard</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="210"><br><sub><strong>FitScan · Capture Fabric</strong></sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Scan Results" width="210"><br><sub><strong>FitScan · Scan Results</strong></sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Try-On and saved looks" width="210"><br><sub><strong>FitRoom · Try-On &amp; Saved</strong></sub></td>
   </tr>
 </table>
 
