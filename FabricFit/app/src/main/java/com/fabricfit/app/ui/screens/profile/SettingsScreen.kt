@@ -155,6 +155,12 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
             if (on) requestNotification()
             vm.setNotifications { it.copy(inspiration = on) }
         }
+        
+        // Link to detailed notification preferences
+        SettingRow(
+            stringResource(R.string.notification_preferences_title),
+            onClick = { nav.navigate(Routes.NOTIFICATION_PREFERENCES) }
+        )
 
         Section(R.string.settings_section_analysis)
         SettingRow(stringResource(R.string.settings_engine), stringResource(R.string.settings_engine_demo)) { engineDialog = true }
