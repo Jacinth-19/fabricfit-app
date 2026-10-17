@@ -71,16 +71,21 @@ import com.fabricfit.app.domain.model.SleeveOption
 import com.fabricfit.app.domain.repository.GenderHint
 import com.fabricfit.app.domain.repository.TryOnState
 import com.fabricfit.app.permissions.rememberCameraPermission
+import com.fabricfit.app.ui.components.CustomizedSilhouettePreview
 import com.fabricfit.app.ui.components.ErrorState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
+import com.fabricfit.app.ui.components.ensureSampleKenteFabric
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.rememberPhotoPicker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import com.fabricfit.app.ui.util.resolveKey
 
 @Composable
@@ -141,8 +146,28 @@ fun TryOnScreen(
                                 modifier = Modifier.fillMaxWidth().height(200.dp),
                             )
                             Spacer(Modifier.height(8.dp))
-                            OutlinedButton(onClick = { picker.launch(pickReq()) }) {
-                                Text(stringResource(R.string.tryon_photo_replace))
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                OutlinedButton(onClick = { picker.launch(pickReq()) }) {
+                                    Text(stringResource(R.string.tryon_photo_replace))
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        scope.launch {
+                                            val samplePath = withContext(Dispatchers.IO) {
+                                                val out = File(context.cacheDir, "sample_model_portrait.jpg")
+                                                if (!out.exists()) {
+                                                    context.assets.open("catalog/heritage/outfit_modern_kente.jpg").use { input ->
+                                                        out.outputStream().use { output -> input.copyTo(output) }
+                                                    }
+                                                }
+                                                out.absolutePath
+                                            }
+                                            vm.setPerson(samplePath)
+                                        }
+                                    },
+                                ) {
+                                    Text("Sample Model")
+                                }
                             }
                         } else {
                             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -157,7 +182,10 @@ fun TryOnScreen(
                                 }
                             }
                             Spacer(Modifier.height(12.dp))
-                            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Row(
+                                modifier = Modifier.horizontalScroll(rememberScrollState()),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
                                 Button(onClick = requestCamera) {
                                     Icon(Icons.Filled.CameraAlt, contentDescription = null)
                                     Spacer(Modifier.width(6.dp))
@@ -167,6 +195,26 @@ fun TryOnScreen(
                                     Icon(Icons.Filled.PhotoLibrary, contentDescription = null)
                                     Spacer(Modifier.width(6.dp))
                                     Text(stringResource(R.string.tryon_photo_gallery))
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        scope.launch {
+                                            val samplePath = withContext(Dispatchers.IO) {
+                                                val out = File(context.cacheDir, "sample_model_portrait.jpg")
+                                                if (!out.exists()) {
+                                                    context.assets.open("catalog/heritage/outfit_modern_kente.jpg").use { input ->
+                                                        out.outputStream().use { output -> input.copyTo(output) }
+                                                    }
+                                                }
+                                                out.absolutePath
+                                            }
+                                            vm.setPerson(samplePath)
+                                        }
+                                    },
+                                ) {
+                                    Icon(Icons.Filled.Person, contentDescription = null)
+                                    Spacer(Modifier.width(6.dp))
+                                    Text("Sample Model")
                                 }
                             }
                         }
@@ -205,12 +253,24 @@ fun TryOnScreen(
             item { StepLabel(R.string.tryon_fabric_current) }
             item {
                 if (state.fabrics.isEmpty()) {
-                    Text(
-                        stringResource(R.string.empty_fabrics_body),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                    )
+                    Column(Modifier.padding(horizontal = 20.dp)) {
+                        Text(
+                            stringResource(R.string.empty_fabrics_body),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        OutlinedButton(
+                            onClick = {
+                                scope.launch {
+                                    val id = ensureSampleKenteFabric(context)
+                                    vm.setFabric(id)
+                                }
+                            },
+                        ) {
+                            Text("Use Sample Kente Fabric")
+                        }
+                    }
                 } else {
                     LazyRow(
                         contentPadding = PaddingValues(horizontal = 20.dp),
@@ -275,10 +335,53 @@ fun TryOnScreen(
             // Step 5: customization — only controls the selected design supports
             item {
                 val style = state.styles.firstOrNull { it.id == state.styleId }
+                val activeFabric = state.fabrics.firstOrNull { it.id == state.fabricId }
                 if (style != null) {
                     val support = CustomizationSupport.forSilhouette(style.silhouette)
                     Column(Modifier.padding(horizontal = 20.dp)) {
                         StepLabel(R.string.customizer_title)
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                            ),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                CustomizedSilhouettePreview(
+                                    style = style,
+                                    fabric = activeFabric,
+                                    customization = state.customization,
+                                    modifier = Modifier.width(88.dp).height(116.dp),
+                                )
+                                Spacer(Modifier.width(14.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        context.resolveKey(style.titleKey) ?: style.id,
+                                        style = MaterialTheme.typography.titleSmall,
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        buildList {
+                                            state.customization.sleeve?.let { add(context.getString(it.labelRes)) }
+                                            state.customization.neckline?.let { add(context.getString(it.labelRes)) }
+                                            state.customization.length?.let { add(context.getString(it.labelRes)) }
+                                            add(context.getString(state.customization.placement.labelRes))
+                                        }.joinToString(" · "),
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                    Spacer(Modifier.height(4.dp))
+                                    Text(
+                                        stringResource(state.customization.placement.descriptionRes),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                            }
+                        }
                         if (CustomControl.SLEEVE in support) {
                             CustomChipRow(stringResource(R.string.customizer_sleeve)) {
                                 SleeveOption.entries.forEach { opt ->

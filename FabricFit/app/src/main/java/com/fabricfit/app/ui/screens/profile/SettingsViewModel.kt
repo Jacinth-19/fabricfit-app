@@ -5,8 +5,10 @@ import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.AccessibilityPreferences
 import com.fabricfit.app.domain.model.LanguageOption
 import com.fabricfit.app.domain.model.NotificationPreferences
+import com.fabricfit.app.domain.model.SecurityPreferences
 import com.fabricfit.app.domain.model.ThemeMode
 import com.fabricfit.app.domain.model.UserPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -69,6 +71,14 @@ class SettingsViewModel(private val container: AppContainer, context: Context) :
 
     fun setDataSaver(enabled: Boolean) = viewModelScope.launch {
         container.settings.update { it.copy(dataSaver = enabled) }
+    }
+
+    fun setAccessibility(transform: (AccessibilityPreferences) -> AccessibilityPreferences) = viewModelScope.launch {
+        container.settings.update { it.copy(accessibility = transform(it.accessibility)) }
+    }
+
+    fun setSecurity(transform: (SecurityPreferences) -> SecurityPreferences) = viewModelScope.launch {
+        container.settings.update { it.copy(security = transform(it.security)) }
     }
 
     fun resetPersonalization() = viewModelScope.launch {

@@ -56,9 +56,10 @@ import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.CardSkeleton
-import com.fabricfit.app.ui.components.EmptyState
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
+import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
@@ -77,12 +78,12 @@ private enum class DiscoverFilter(val label: String) {
 }
 
 @Composable
-fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
+fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery: String = "") {
     val vm: DiscoverViewModel = appViewModel { c, ctx -> DiscoverViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var filter by remember { mutableStateOf(DiscoverFilter.ALL) }
-    var query by remember { mutableStateOf("") }
+    var query by remember { mutableStateOf(initialQuery) }
     var searchOpen by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
@@ -215,7 +216,11 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
             }
         } else {
             if (!state.loaded) {
-                Column(Modifier.padding(20.dp)) { CardSkeleton(); Spacer(Modifier.height(16.dp)); CardSkeleton() }
+                ShimmerGrid(
+                    columns = 2,
+                    rows = 4,
+                    modifier = Modifier.padding(16.dp)
+                )
             } else {
                 val baseStyles = smartFilterStyles(state.styles, q, context)
                 val styles = when (filter) {
@@ -226,10 +231,12 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues) {
                     DiscoverFilter.FABRICS -> baseStyles
                 }
                 if (styles.isEmpty()) {
-                    EmptyState(
-                        R.drawable.illust_empty_collection,
-                        R.string.discover_empty_search,
-                        R.string.discover_empty_search_body,
+                    EnhancedEmptyState(
+                        illustration = R.drawable.illust_empty_collection,
+                        title = R.string.discover_empty_search,
+                        body = R.string.discover_empty_search_body,
+                        actionLabel = R.string.empty_action_clear_filters,
+                        onAction = { vm.setQuery("") },
                         modifier = Modifier.weight(1f),
                     )
                 } else {
@@ -334,6 +341,7 @@ private fun representativeFabric(cat: FabricCategory): com.fabricfit.app.domain.
         FabricCategory.FUGU -> listOf(0xFF3A4250, 0xFF14110F, 0xFFF2EFE9)
         FabricCategory.GONJA -> listOf(0xFFB8763A, 0xFFF2EFE9, 0xFF14110F)
         FabricCategory.KENTE_PRINT -> listOf(0xFFC8952B, 0xFF1F5450, 0xFF8C2F39)
+        FabricCategory.WOOL -> listOf(0xFF8B7355, 0xFFA0826D, 0xFFD4C4B7)
         FabricCategory.UNKNOWN -> listOf(0xFF9A8F86)
     }
     return com.fabricfit.app.domain.model.Fabric(

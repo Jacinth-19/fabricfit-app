@@ -38,6 +38,17 @@ import com.fabricfit.app.ui.screens.collections.CollectionsScreen
 import com.fabricfit.app.ui.screens.collections.CollectionDetailScreen
 import com.fabricfit.app.ui.screens.colormatch.ColorMatchScreen
 import com.fabricfit.app.ui.screens.measurements.MeasurementsScreen
+import com.fabricfit.app.ui.screens.community.CommunityScreen
+import com.fabricfit.app.ui.screens.community.UserProfileScreen
+import com.fabricfit.app.ui.screens.community.GalleryDetailScreen
+import com.fabricfit.app.ui.screens.community.ChallengeDetailScreen
+import com.fabricfit.app.ui.screens.community.CreatePostScreen
+import com.fabricfit.app.ui.screens.search.SearchScreen
+import com.fabricfit.app.ui.screens.settings.NotificationPreferencesScreen
+import com.fabricfit.app.ui.screens.admin.AdminModerationScreen
+import com.fabricfit.app.ui.screens.tailors.TailorsScreen
+import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
+import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
 import com.fabricfit.app.ui.screens.tailors.TailorsScreen
 import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
 import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
@@ -121,7 +132,21 @@ private fun FabricFitNavHost(
         },
     ) {
         composable(Routes.HOME) { HomeScreen(nav, padding) }
-        composable(Routes.DISCOVER) { DiscoverScreen(nav, padding) }
+        composable(
+            Routes.DISCOVER_ROUTE_PATTERN,
+            arguments = listOf(
+                androidx.navigation.navArgument("q") {
+                    type = NavType.StringType
+                    defaultValue = ""
+                },
+            ),
+        ) { entry ->
+            val initialQuery = entry.arguments?.getString("q")
+                ?.takeIf { it.isNotBlank() }
+                ?.let { Uri.decode(it) }
+                .orEmpty()
+            DiscoverScreen(nav, padding, initialQuery = initialQuery)
+        }
         composable(Routes.CREATE) { CreateScreen(nav, padding) }
         composable(Routes.FAVORITES) { FavoritesScreen(nav, padding) }
         composable(Routes.PROFILE) { ProfileScreen(nav, padding) }
@@ -258,5 +283,30 @@ private fun FabricFitNavHost(
             )
         }
         composable(Routes.MEASUREMENTS) { MeasurementsScreen(nav, padding) }
+        
+        // Phase-7 Community
+        composable(Routes.COMMUNITY) { CommunityScreen(nav, padding) }
+        composable(
+            "user/{userId}",
+            arguments = listOf(androidx.navigation.navArgument("userId") { type = NavType.StringType }),
+        ) { entry ->
+            UserProfileScreen(nav, padding, userId = entry.arguments?.getString("userId").orEmpty())
+        }
+        composable(
+            "gallery/{itemId}",
+            arguments = listOf(androidx.navigation.navArgument("itemId") { type = NavType.StringType }),
+        ) { entry ->
+            GalleryDetailScreen(nav, padding, itemId = entry.arguments?.getString("itemId").orEmpty())
+        }
+        composable(
+            "challenge/{challengeId}",
+            arguments = listOf(androidx.navigation.navArgument("challengeId") { type = NavType.StringType }),
+        ) { entry ->
+            ChallengeDetailScreen(nav, padding, challengeId = entry.arguments?.getString("challengeId").orEmpty())
+        }
+        composable(Routes.CREATE_POST) { CreatePostScreen(nav, padding) }
+        composable(Routes.SEARCH) { SearchScreen(nav, padding) }
+        composable(Routes.NOTIFICATION_PREFERENCES) { NotificationPreferencesScreen(nav, padding) }
+        composable(Routes.ADMIN_MODERATION) { AdminModerationScreen(nav, padding) }
     }
 }

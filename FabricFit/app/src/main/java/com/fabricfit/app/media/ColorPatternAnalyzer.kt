@@ -35,6 +35,10 @@ object ColorPatternAnalyzer {
         val suggestedUses: List<Occasion>,
         val glcm: TextureMetrics.Glcm = TextureMetrics.Glcm(0f, 1f, 1f, 0f),
         val strips: TextureMetrics.StripSignal = TextureMetrics.StripSignal(0f, 0f, true, 0),
+        val gabor: TextureMetrics.GaborOrientationProfile =
+            TextureMetrics.GaborOrientationProfile(0.25f, 0.25f, 0.25f, 0.25f, 0, 0f, 0.5f),
+        val spectral: TextureMetrics.SpectralMotifProfile =
+            TextureMetrics.SpectralMotifProfile(0f, 0f, 0f, 0f, TextureMetrics.AlignmentAdvice.FREE_CUT),
     )
 
     fun analyze(pixels: IntArray, width: Int, height: Int): FabricSignature {
@@ -142,6 +146,8 @@ object ColorPatternAnalyzer {
 
         val glcm = TextureMetrics.glcm(lum, width, height)
         val strips = TextureMetrics.kenteStrips(pixels, width, height)
+        val gabor = TextureMetrics.gaborOrientation(lum, width, height)
+        val spectral = TextureMetrics.spectralMotifProfile(pixels, width, height)
 
         val texture = classifyTexture(lum, width, height, edgeDensity, meanSat, meanLum / 255f, glcm)
 
@@ -172,6 +178,8 @@ object ColorPatternAnalyzer {
             suggestedUses = usesFor(category),
             glcm = glcm,
             strips = strips,
+            gabor = gabor,
+            spectral = spectral,
         )
     }
 
@@ -508,6 +516,7 @@ object ColorPatternAnalyzer {
         FabricCategory.LINEN -> listOf(Occasion.EVERYDAY, Occasion.OFFICE)
         FabricCategory.COTTON_PLAIN -> listOf(Occasion.EVERYDAY, Occasion.OFFICE)
         FabricCategory.FUGU, FabricCategory.GONJA -> listOf(Occasion.FESTIVAL, Occasion.CEREMONY, Occasion.EVERYDAY)
+        FabricCategory.WOOL -> listOf(Occasion.EVERYDAY, Occasion.OFFICE)
         FabricCategory.UNKNOWN -> listOf(Occasion.EVERYDAY)
     }
 }

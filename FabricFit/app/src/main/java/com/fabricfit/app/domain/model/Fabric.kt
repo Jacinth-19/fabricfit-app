@@ -121,6 +121,7 @@ enum class FabricCategory(val labelRes: Int, val descriptionRes: Int, val asset:
     KENTE_PRINT(R.string.fabric_kente_print, R.string.fabric_kente_print_desc, "catalog/fabrics/kente_print.jpg"),
     FUGU(R.string.fabric_fugu, R.string.fabric_fugu_desc),
     GONJA(R.string.fabric_gonja, R.string.fabric_gonja_desc),
+    WOOL(R.string.fabric_wool, R.string.fabric_wool_desc),
     UNKNOWN(R.string.fabric_unknown, R.string.fabric_unknown_desc),
 }
 

@@ -160,35 +160,49 @@ flowchart TD
     HOME --> PROF[Profile]
 
     CREATE --> CAMF[Camera · fabric]
-    CREATE --> GAL[Gallery picker]
-    CREATE --> CAMP[Camera · person]
-    CAMF --> EDIT[Edit image]
-    GAL --> EDIT
-    EDIT --> ANA[FitScan analysis]
-    ANA --> FAB[Fabric detail]
+  tools/            i18n packs (en, tw, gaa, ee), dataset pipeline, mock backend
+tools/              sandbox toolchain bootstrap & emulator screenshot capture scripts
+```
 
-    FAB --> MATCH[FitMatch AI]
-    FAB --> TRY[FitRoom]
-    FAB --> COL[Colour ideas]
-    MATCH --> DES[Design detail]
-    DES --> TRY
-    CAMP --> TRY
-    DISC --> DES
-    TRY --> RES[Generated look]
+## Build & Verify
 
-    HOME --> WARD[My Fit Closet]
-    HOME --> COLL[Collections]
-    COLL --> CDET[Collection detail]
-    HOME --> TL[Tailors and designers]
-    TL --> TDET[Tailor detail]
-    HOME --> PREM[FabricFit Premium]
+```bash
+bash tools/setup_toolchain.sh
+cd FabricFit
+./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+```
 
-    PROF --> HIST[History]
-    PROF --> SET[Settings]
-    PROF --> MEAS[My measurements]
-    PROF --> INFO[Help · Privacy · About · Legal]
+Full build instructions, release signing, and verification notes: [`FabricFit/BUILD.md`](FabricFit/BUILD.md).
+
+## Ghanaian Languages (`i18n`)
+
+FabricFit ships with full string translations in **English**, **Twi (`tw`)**, **Ga (`gaa`)**, and **Ewe (`ee`)**. Translation packs live in `FabricFit/tools/i18n/`; validate and regenerate XML resources with:
+
+```bash
+cd FabricFit
+python3 tools/i18n/generate.py
+```
+
+---
+
+## Taglines
+
     SET --> DATA[Data controls]
 ```
+
+---
+
+## AI & Machine Learning Architecture
+
+FabricFit pairs an offline-first on-device computer-vision and ML pipeline with an optional cloud backend contract:
+
+| # | AI / ML Capability | Bundled `.tflite` Assets (`app/src/main/assets/`) | Core Implementation | What It Computes |
+| --- | --- | --- | --- | --- |
+| **1** | **Ghanaian Textile Classifier with OOD Uncertainty** | • `ghanaian_fabric_classifier.tflite` (`85.5 KB`, `[1,128,128,3] -> [1,17]`)<br>• `ghanaian_fabric_labels.txt` (17 classes)<br>• `mobilenet_v2_1.0_224_quant.tflite` (`3.5 MB`, `[1,224,224,3] -> [1,1001]`) | `OnDeviceMlClassifier.kt` & `FabricAnalysisRepositoryImpl.kt` | • Dedicated 17-class Ghanaian & West African textile classifier (`ADINKRA`, `ANKARA`, `BATIK`, `BROCADE`, `CHIFFON`, `COTTON_PLAIN`, `DENIM`, `FUGU`, `GONJA`, `KENTE`, `KENTE_PRINT`, `LACE`, `LINEN`, `SILK`, `TIEDYE`, `VELVET`, `WAX`).<br>• Temperature-scaled softmax, normalized Shannon entropy ($H / \ln K$), top-1/top-2 margin gating, and out-of-distribution (`NON_TEXTILE_DOMINANT`) rejection via MobileNetV2. |
+| **2** | **Multi-Scale Weave & Motif Periodicity Analyzer** | • `weave_motif_extractor.tflite` (`16.1 KB`, `[1,128,128,3] -> [1,6]`) | `TextureMetrics.kt`, `ColorPatternAnalyzer.kt` & `OnDeviceMlClassifier.kt` | • 24-filter Gabor directional conv bank (`0°`, `45°`, `90°`, `135°` across 3 wavelengths) + `gaborOrientation(...)` (`GaborOrientationProfile`).<br>• `spectralMotifProfile(...)` (`SpectralMotifProfile`): 1D DFT autocorrelation harmonic purity, normalized strip width, motif repeat pitch (`repeatX`, `repeatY`), and tailoring `AlignmentAdvice`. |
+| **3** | **Human Parsing & Skin-Tone Segmentation** | • `selfie_segmentation.tflite` (`243.7 KB`, MediaPipe `[1,256,256,3] -> [1,256,256,1]`)<br>• `human_parsing_5class.tflite` (`35.8 KB`, `[1,128,128,3] -> [1,128,128,5]`)<br>• `deeplabv3_257_mv.tflite` (`2.7 MB`, `[1,257,257,3] -> [1,257,257,21]`) | `PersonSegmenter.kt` & `ColorHarmonyEngine.kt` | • Fuses MediaPipe Selfie Segmentation, DeepLabV3, and the 5-class human parser (`BACKGROUND`, `HEAD_AND_FACE`, `UPPER_GARMENT`, `LOWER_GARMENT`, `SKIN_EXPOSED`).<br>• Extracts wearer `dominantSkinArgb` and `SkinUndertone` (`WARM_GOLDEN`, `COOL_DEEP`, `NEUTRAL_RICH`) for `ColorHarmonyEngine.skinHarmonyScore(...)` & `suggestForWearer(...)`. |
+| **4** | **Texture-Preserving Cloth Warper for Virtual Try-On** | • `cloth_warper_shading.tflite` (`11.9 KB`, `[1,64,64,4] -> [1,64,64,3]`) | `DemoLookGenerator.kt`, `GarmentGeometry.kt` & `CloudAnalysisClient.kt` | • Seamless `160×160` mirror-tiled real fabric swatch extraction (`loadRealFabricTextureOrFallback`), dynamic sleeve/neckline/length polygon reshaping, 3D cylindrical + neural fold shading (`predictClothShadingMap`), head/face pixel preservation, and `POST v1/tryon` cloud VTON contract. |
+| **5** | **Context-Aware FitMatch AI Ranker** | • `fitmatch_ranker.tflite` (`6.5 KB`, `[1,16] -> [1,1]`) | `RecommendationEngine.kt` & `RecommendationsViewModel.kt` | • 16-feature neural ranker MLP (`buildFeatureVector`) fused with `RecommendationContext` (fabric structure, wearer skin-tone harmony, `Measurements` waist-to-hip & height proportions, Gabor weave anisotropy, and session favorite style affinity). |
 
 ---
 

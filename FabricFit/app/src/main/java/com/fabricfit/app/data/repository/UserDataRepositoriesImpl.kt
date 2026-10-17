@@ -35,6 +35,9 @@ class FavoritesRepositoryImpl(
     override fun observeFavoriteLooks(): Flow<List<GeneratedLook>> =
         lookDao.observeFavorites().map { it.map(LookEntityMapper) }
 
+    override fun observeFavoriteStyleIds(): Flow<Set<String>> =
+        styleDao.observeFavorites().map { list -> list.map { it.id }.toSet() }
+
     override suspend fun isDesignFavorite(styleId: String): Boolean = styleDao.isFavorite(styleId) > 0
 
     override suspend fun setDesignFavorite(styleId: String, favorite: Boolean) {

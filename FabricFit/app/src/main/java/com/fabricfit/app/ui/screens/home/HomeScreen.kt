@@ -64,6 +64,7 @@ import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.SectionHeader
+import com.fabricfit.app.ui.components.ShimmerCard
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
@@ -319,7 +320,19 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                 }
             }
 
-            if (state.recentFabrics.isNotEmpty()) {
+            if (state.isLoading) {
+                item { SectionHeader(R.string.home_section_recent_fabrics) }
+                item {
+                    LazyRow(
+                        contentPadding = PaddingValues(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        items(3) {
+                            ShimmerCard(modifier = Modifier.width(150.dp))
+                        }
+                    }
+                }
+            } else if (state.recentFabrics.isNotEmpty()) {
                 item { SectionHeader(R.string.home_section_recent_fabrics) }
                 item {
                     LazyRow(

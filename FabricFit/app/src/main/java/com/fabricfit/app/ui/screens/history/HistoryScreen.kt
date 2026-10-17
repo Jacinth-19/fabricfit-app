@@ -1,5 +1,7 @@
 package com.fabricfit.app.ui.screens.history
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,14 +16,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,14 +46,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.HistoryEvent
-import com.fabricfit.app.ui.components.EmptyState
+import com.fabricfit.app.ui.components.EnhancedEmptyState
+import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.resolveKey
+import com.fabricfit.app.ui.util.shareImagePath
 import com.fabricfit.app.ui.util.timeAgo
 import kotlinx.coroutines.launch
 
-@kotlin.OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@kotlin.OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
     val vm: HistoryViewModel = appViewModel { c, ctx -> HistoryViewModel(c) }
@@ -52,6 +64,7 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
     val context = LocalContext.current
     var confirmClear by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
+    var expandedMenuId by remember { mutableStateOf<Long?>(null) }
     val scope = rememberCoroutineScope()
 
     Column(Modifier.fillMaxSize().padding(padding)) {
@@ -81,45 +94,145 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
             }
         }
 
-        if (state.events.isEmpty()) {
-            EmptyState(
-                R.drawable.illust_empty_activity,
-                R.string.history_empty_title,
-                R.string.history_empty_body,
+        if (state.isLoading) {
+            ShimmerGrid(
+                columns = 1,
+                rows = 5,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.dp)
+            )
+        } else if (state.events.isEmpty()) {
+            EnhancedEmptyState(
+                illustration = R.drawable.illust_empty_activity,
+                title = R.string.history_empty_title,
+                body = R.string.history_empty_body,
+                actionLabel = R.string.empty_action_scan_fabric,
+                onAction = { nav.navigate(com.fabricfit.app.ui.navigation.Routes.CREATE) },
                 modifier = Modifier.weight(1f),
             )
         } else {
             LazyColumn(contentPadding = PaddingValues(16.dp)) {
                 items(state.events, key = { it.id }) { event ->
-                    Card(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                    ) {
-                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            if (event.imageUri != null) {
-                                LocalImage(
-                                    event.imageUri!!,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(52.dp),
-                                )
-                                Spacer(Modifier.width(12.dp))
-                            }
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    labelFor(context, event),
-                                    style = MaterialTheme.typography.titleSmall,
-                                )
-                                Text(
-                                    context.timeAgo(event.timestamp),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            IconButton(onClick = { vm.delete(event.id) }) {
-                                Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
+                    val dismissState = rememberDismissState(
+                        confirmValueChange = { dismissValue ->
+                            if (dismissValue == DismissValue.DismissedToStart) {
+                                Haptics.heavy()
+                                vm.delete(event.id)
+                                true
+                            } else {
+                                false
                             }
                         }
-                    }
+                    )
+                    
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
+                        background = {
+                            Card(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer
+                                ),
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = stringResource(R.string.cd_delete_item),
+                                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        stringResource(R.string.action_delete),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelLarge,
+                                    )
+                                }
+                            }
+                        },
+                        dismissContent = {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 5.dp)
+                                    .combinedClickable(
+                                        onClick = { /* Navigate to detail if needed */ },
+                                        onLongClick = {
+                                            Haptics.tap()
+                                            expandedMenuId = event.id
+                                        }
+                                    ),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                            ) {
+                                Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    if (event.imageUri != null) {
+                                        LocalImage(
+                                            event.imageUri!!,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(52.dp),
+                                        )
+                                        Spacer(Modifier.width(12.dp))
+                                    }
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            labelFor(context, event),
+                                            style = MaterialTheme.typography.titleSmall,
+                                        )
+                                        Text(
+                                            context.timeAgo(event.timestamp),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        Haptics.tap()
+                                        vm.delete(event.id)
+                                    }) {
+                                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
+                                    }
+                                }
+                            }
+                            
+                            DropdownMenu(
+                                expanded = expandedMenuId == event.id,
+                                onDismissRequest = { expandedMenuId = null }
+                            ) {
+                                if (event.imageUri != null) {
+                                    DropdownMenuItem(
+                                        text = { Text(stringResource(R.string.action_share)) },
+                                        onClick = {
+                                            expandedMenuId = null
+                                            context.shareImagePath(
+                                                event.imageUri!!,
+                                                labelFor(context, event)
+                                            )
+                                        },
+                                        leadingIcon = {
+                                            Icon(Icons.Filled.Share, contentDescription = null)
+                                        }
+                                    )
+                                }
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.action_delete)) },
+                                    onClick = {
+                                        expandedMenuId = null
+                                        Haptics.heavy()
+                                        vm.delete(event.id)
+                                    },
+                                    leadingIcon = {
+                                        Icon(Icons.Filled.Delete, contentDescription = null)
+                                    }
+                                )
+                            }
+                        }
+                    )
                 }
             }
         }

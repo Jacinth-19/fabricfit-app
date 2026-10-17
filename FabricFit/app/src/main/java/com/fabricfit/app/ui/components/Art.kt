@@ -1,5 +1,6 @@
 package com.fabricfit.app.ui.components
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.util.LruCache
 import androidx.compose.foundation.Canvas
@@ -28,6 +29,15 @@ import androidx.compose.ui.unit.dp
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.PatternType
+import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.AnalyzedColor
+import com.fabricfit.app.domain.model.ColorName
+import com.fabricfit.app.domain.model.DesignCustomization
+import com.fabricfit.app.domain.model.FabricCategory
+import com.fabricfit.app.domain.model.FabricPlacement
+import com.fabricfit.app.domain.model.TextureType
+import java.io.File
+import kotlinx.coroutines.flow.first
 
 private val FALLBACK = listOf(Color(0xFFD4A84B), Color(0xFF0F3D2E), Color(0xFF7A1F2B))
 
@@ -265,4 +275,30 @@ fun AssetImage(
     } else {
         Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh))
     }
+}
+
+@Composable
+fun CustomizedSilhouettePreview(
+    style: DressStyle,
+    fabric: Fabric?,
+    customization: DesignCustomization,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color(0xFFF3EFE6)),
+        contentAlignment = Alignment.Center,
+    ) {
+        GarmentArt(
+            style = style,
+            fabric = fabric,
+            modifier = Modifier.fillMaxSize(0.8f),
+        )
+    }
+}
+
+suspend fun ensureSampleKenteFabric(context: Context): Long {
+    // Return a sample fabric ID for demo purposes
+    return 1L
 }

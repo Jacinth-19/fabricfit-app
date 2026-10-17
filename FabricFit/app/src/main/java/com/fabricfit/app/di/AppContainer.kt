@@ -61,7 +61,7 @@ class AppContainer private constructor(context: Context) {
     val catalog = AssetCatalogDataSource(appContext)
     val dressStyles = DressStyleRepositoryImpl(database.dressStyleDao(), catalog)
 
-    val mlClassifier = com.fabricfit.app.data.ml.OnDeviceMlClassifier(appContext)
+    val mlClassifier = com.fabricfit.app.data.ml.OnDeviceMlClassifier(appContext, imageProcessor)
 
     val cloudAnalysis = com.fabricfit.app.data.remote.CloudAnalysisClient()
     val personSegmenter = com.fabricfit.app.data.ml.PersonSegmenter(appContext)
@@ -99,6 +99,32 @@ class AppContainer private constructor(context: Context) {
         analytics,
         settings,
     )
+
+    // Community features
+    val community: com.fabricfit.app.data.repository.CommunityRepository =
+        com.fabricfit.app.data.repository.CommunityRepository(
+            userDao = database.communityUserDao(),
+            galleryDao = database.galleryItemDao(),
+            commentDao = database.commentDao(),
+            likeDao = database.likeDao(),
+            challengeDao = database.styleChallengeDao(),
+            entryDao = database.challengeEntryDao(),
+        )
+
+    // Search features
+    val search: com.fabricfit.app.data.repository.SearchRepository =
+        com.fabricfit.app.data.repository.SearchRepository(
+            galleryDao = database.galleryItemDao(),
+            userDao = database.communityUserDao(),
+            challengeDao = database.styleChallengeDao(),
+            recentSearchDao = database.recentSearchDao(),
+        )
+
+    // Report/Moderation features
+    val reports: com.fabricfit.app.data.repository.ReportRepository =
+        com.fabricfit.app.data.repository.ReportRepository(
+            reportDao = database.reportDao(),
+        )
 
     companion object {
         @Volatile

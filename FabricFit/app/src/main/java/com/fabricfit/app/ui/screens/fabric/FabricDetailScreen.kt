@@ -48,7 +48,10 @@ import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.ui.components.ColorDot
+import com.fabricfit.app.ui.util.Haptics
 import com.fabricfit.app.ui.components.LocalImage
+import com.fabricfit.app.ui.components.ZoomableImage
+import com.fabricfit.app.ui.util.ShareManager
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.shareImagePath
 import kotlinx.coroutines.launch
@@ -86,7 +89,10 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
             )
             if (f != null) {
                 IconButton(onClick = {
-                    scope.launch { container.fabricAnalysis.setFavorite(f.id, !f.isFavorite) }
+                    scope.launch {
+                        Haptics.success()
+                        container.fabricAnalysis.setFavorite(f.id, !f.isFavorite)
+                    }
                 }) {
                     Icon(
                         if (f.isFavorite) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
@@ -97,18 +103,21 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                     )
                 }
                 IconButton(onClick = {
-                    context.shareImagePath(
-                        f.imageUri,
-                        context.getString(
-                            R.string.share_fabric_text,
-                            f.name ?: context.getString(f.category.labelRes),
-                            context.getString(f.pattern.labelRes),
-                        ),
+                    Haptics.tap()
+                    ShareManager.shareFabric(
+                        context = context,
+                        imageUri = f.imageUri,
+                        fabricName = f.name,
+                        fabricCategory = context.getString(f.category.labelRes),
+                        fabricPattern = context.getString(f.pattern.labelRes)
                     )
                 }) {
                     Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
                 }
-                IconButton(onClick = { confirmDelete = true }) {
+                IconButton(onClick = {
+                    Haptics.tap()
+                    confirmDelete = true
+                }) {
                     Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
                 }
             }
@@ -125,11 +134,15 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
             ) {
                 Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
                     Column(Modifier.padding(14.dp)) {
-                        LocalImage(
-                            f.imageUri,
-                            contentDescription = stringResource(R.string.cd_fabric_image),
-                            modifier = Modifier.fillMaxWidth().height(200.dp),
-                        )
+                        ZoomableImage(
+                            modifier = Modifier.fillMaxWidth().height(200.dp)
+                        ) {
+                            LocalImage(
+                                f.imageUri,
+                                contentDescription = stringResource(R.string.cd_fabric_image),
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                         Spacer(Modifier.height(12.dp))
                         Text(context.getString(f.category.labelRes), style = MaterialTheme.typography.titleLarge)
                         Text(

@@ -42,6 +42,7 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Collection
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.navigation.Routes
 import kotlinx.coroutines.launch
 
@@ -82,30 +83,14 @@ fun CollectionsScreen(nav: NavHostController, padding: PaddingValues) {
         }
 
         if (collections.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.collections_empty_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stringResource(R.string.collections_empty_body),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
-                OutlinedButton(onClick = { showCreate = true; createName = "" }) {
-                    Text(stringResource(R.string.collections_create))
-                }
-            }
+            EnhancedEmptyState(
+                illustration = R.drawable.illust_empty_collection,
+                title = R.string.collections_empty_title,
+                body = R.string.collections_empty_body,
+                actionLabel = R.string.collections_create,
+                onAction = { showCreate = true; createName = "" },
+                modifier = Modifier.fillMaxSize()
+            )
         } else {
             LazyColumn(
                 Modifier.fillMaxSize(),

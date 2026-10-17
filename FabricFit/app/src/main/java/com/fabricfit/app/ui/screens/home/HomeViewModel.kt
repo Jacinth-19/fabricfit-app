@@ -20,6 +20,7 @@ data class HomeUiState(
     val latestLook: GeneratedLook? = null,
     val favoriteCount: Int = 0,
     val analysesLeft: Int = 3,
+    val isLoading: Boolean = true,
 )
 
 class HomeViewModel(container: AppContainer) : ViewModel() {
@@ -35,7 +36,10 @@ class HomeViewModel(container: AppContainer) : ViewModel() {
         }
         viewModelScope.launch {
             container.fabricAnalysis.observeAll().collect { fabrics ->
-                _state.value = _state.value.copy(recentFabrics = fabrics.take(3))
+                _state.value = _state.value.copy(
+                    recentFabrics = fabrics.take(3),
+                    isLoading = false
+                )
             }
         }
         viewModelScope.launch {

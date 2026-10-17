@@ -5,6 +5,8 @@ data class UserPreferences(
     val language: LanguageOption = LanguageOption.ENGLISH,
     val notifications: NotificationPreferences = NotificationPreferences(),
     val displayName: String = "",
+    val profileBio: String = "",
+    val avatarUri: String = "",
     val stylePreference: StylePreference = StylePreference.ALL,
     /** Days to retain history; 0 = keep forever. */
     val keepHistoryDays: Int = 0,
@@ -18,6 +20,34 @@ data class UserPreferences(
     val analysisEngine: AnalysisEngine = AnalysisEngine.ON_DEVICE_DEMO,
     /** Operator-configured analysis backend; blank = fully on-device. */
     val cloudBaseUrl: String = "",
+    /** Accessibility settings */
+    val accessibility: AccessibilityPreferences = AccessibilityPreferences(),
+    /** Security settings */
+    val security: SecurityPreferences = SecurityPreferences(),
+)
+
+/**
+ * Accessibility preferences for inclusive design.
+ */
+data class AccessibilityPreferences(
+    /** Use high contrast colors for better visibility */
+    val highContrast: Boolean = false,
+    /** Reduce or disable animations for users sensitive to motion */
+    val reducedMotion: Boolean = false,
+    /** Use larger text sizes throughout the app */
+    val largeText: Boolean = false,
+    /** Enable haptic feedback on interactions */
+    val hapticFeedback: Boolean = true,
+)
+
+/**
+ * Security preferences for app protection.
+ */
+data class SecurityPreferences(
+    /** Require biometric authentication to open the app */
+    val biometricLock: Boolean = false,
+    /** Require biometric for premium features only */
+    val biometricForPremium: Boolean = false,
 )
 
 enum class ThemeMode { LIGHT, DARK, SYSTEM }

@@ -7,6 +7,7 @@ import com.fabricfit.app.domain.engine.RecommendationEngine
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.GenderCategory
+import com.fabricfit.app.domain.model.Measurements
 import com.fabricfit.app.domain.model.Occasion
 import com.fabricfit.app.domain.model.Recommendation
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,12 +31,12 @@ class RecommendationsViewModel(
     private val fabricId: Long,
 ) : ViewModel() {
 
-    private val allRecs = MutableStateFlow<List<Recommendation>>(emptyList())
     private val fabricFlow = MutableStateFlow<Fabric?>(null)
     private val genderFlow = MutableStateFlow<GenderCategory?>(null)
     private val occasionsFlow = MutableStateFlow<Set<Occasion>>(emptySet())
     private val favoritesFlow = MutableStateFlow<Set<String>>(emptySet())
     private val dismissedFlow = MutableStateFlow<Set<String>>(emptySet())
+    private val measurementsFlow = MutableStateFlow(Measurements())
     private val allLooksFlow = MutableStateFlow<List<com.fabricfit.app.domain.model.InspirationLook>>(emptyList())
 
     private val _state = MutableStateFlow(RecsUiState())
@@ -43,11 +44,7 @@ class RecommendationsViewModel(
 
     init {
         viewModelScope.launch {
-            val fabric = container.fabricAnalysis.get(fabricId)
-            fabricFlow.value = fabric
-            if (fabric != null) {
-                allRecs.value = RecommendationEngine.recommend(fabric, container.dressStyles.all())
-            }
+            fabricFlow.value = container.fabricAnalysis.get(fabricId)
         }
         viewModelScope.launch {
             allLooksFlow.value = try {
@@ -67,17 +64,47 @@ class RecommendationsViewModel(
             }
         }
         viewModelScope.launch {
-            combine(allRecs, fabricFlow, genderFlow, occasionsFlow, favoritesFlow, dismissedFlow, allLooksFlow) { values ->
+            val m = container.measurements.get()
+            measurementsFlow.value = m
+        }
+        viewModelScope.launch {
+            val allStyles = container.dressStyles.all()
+            combine(
+                fabricFlow,
+                genderFlow,
+                occasionsFlow,
+                favoritesFlow,
+                dismissedFlow,
+                measurementsFlow,
+                allLooksFlow,
+            ) { values ->
+                val fabric = values[0] as Fabric?
+                val gender = values[1] as GenderCategory?
                 @Suppress("UNCHECKED_CAST")
-                val recs = values[0] as List<Recommendation>
-                val fabric = values[1] as Fabric?
-                val gender = values[2] as GenderCategory?
-                val occasions = values[3] as Set<Occasion>
-                val favs = values[4] as Set<String>
+                val occasions = values[2] as Set<Occasion>
                 @Suppress("UNCHECKED_CAST")
-                val dismissed = values[5] as Set<String>
+                val favs = values[3] as Set<String>
+                @Suppress("UNCHECKED_CAST")
+                val dismissed = values[4] as Set<String>
+                val measurements = values[5] as Measurements
                 @Suppress("UNCHECKED_CAST")
                 val allLooks = values[6] as List<com.fabricfit.app.domain.model.InspirationLook>
+
+                val recs = if (fabric != null) {
+                    RecommendationEngine.recommend(
+                        fabric = fabric,
+                        styles = allStyles,
+                        dismissed = dismissed,
+                        context = RecommendationEngine.RecommendationContext(
+                            measurements = measurements,
+                            favoriteStyleIds = favs,
+                            preferredGender = gender,
+                        ),
+                    )
+                } else {
+                    emptyList()
+                }
+
                 RecsUiState(
                     fabric = fabric,
                     looks = allLooks.filter { look ->
@@ -88,8 +115,7 @@ class RecommendationsViewModel(
                     occasions = occasions,
                     favoriteStyles = favs,
                     filtered = recs.filter { rec ->
-                        rec.style.id !in dismissed &&
-                            (gender == null || rec.style.gender == gender || rec.style.gender == GenderCategory.UNISEX) &&
+                        (gender == null || rec.style.gender == gender || rec.style.gender == GenderCategory.UNISEX) &&
                             (occasions.isEmpty() || rec.style.occasions.intersect(occasions).isNotEmpty())
                     },
                 )

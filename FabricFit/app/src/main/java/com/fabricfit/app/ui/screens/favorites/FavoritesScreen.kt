@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -26,16 +27,24 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DismissDirection
+import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PullToRefreshContainer
 import androidx.compose.material3.Surface
+import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,9 +65,14 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.ui.components.AnimatedBottomSheet
 import com.fabricfit.app.ui.components.AssetImage
+import com.fabricfit.app.ui.components.BottomSheetAction
+import com.fabricfit.app.ui.components.BottomSheetDivider
+import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
+import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
@@ -68,6 +82,31 @@ import com.fabricfit.app.ui.theme.HeritageGold
 import com.fabricfit.app.ui.util.shareImagePath
 import com.fabricfit.app.ui.util.timeAgo
 import kotlinx.coroutines.launch
+
+/**
+ * Sort options for favorites list.
+ */
+enum class SortOption(
+    val labelRes: Int,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+) {
+    NEWEST(
+        R.string.sort_newest,
+        Icons.Filled.Star,
+    ),
+    OLDEST(
+        R.string.sort_oldest,
+        Icons.Filled.Star,
+    ),
+    NAME_A_Z(
+        R.string.sort_name_az,
+        Icons.Filled.Star,
+    ),
+    NAME_Z_A(
+        R.string.sort_name_za,
+        Icons.Filled.Star,
+    ),
+}
 
 private data class RecommendedDressItem(
     val id: String,
@@ -94,8 +133,25 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
     val tooltips = AppContainer.get(context).tooltips
     val tooltipSeen by tooltips.seen(TooltipStore.FAVORITES).collectAsState(initial = true)
     val scope = rememberCoroutineScope()
+    var isRefreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+    
+    // Sort & Filter bottom sheet state
+    var showFilterSheet by remember { mutableStateOf(false) }
+    var sortBy by remember { mutableStateOf(SortOption.NEWEST) }
+    var filterCategory by remember { mutableStateOf<String?>(null) }
 
-    Box(Modifier.fillMaxSize().padding(padding)) {
+    if (pullToRefreshState.isRefreshing) {
+        LaunchedEffect(true) {
+            isRefreshing = true
+            vm.refresh {
+                isRefreshing = false
+                pullToRefreshState.endRefresh()
+            }
+        }
+    }
+
+    Box(Modifier.fillMaxSize().padding(padding).nestedScroll(pullToRefreshState.nestedScrollConnection)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
@@ -122,6 +178,14 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f),
                     )
+                    // Filter button
+                    IconButton(onClick = { showFilterSheet = true }) {
+                        Icon(
+                            Icons.Filled.FilterList,
+                            contentDescription = stringResource(R.string.action_filter),
+                            tint = if (filterCategory != null || sortBy != SortOption.NEWEST) HeritageGold else MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
                     Surface(
                         onClick = { nav.navigate(Routes.PROFILE) },
                         shape = CircleShape,
@@ -366,7 +430,23 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
             }
 
             // User-saved fabrics if any have been added
-            if (state.fabrics.isNotEmpty()) {
+            if (state.isLoading) {
+                item {
+                    Text(
+                        stringResource(R.string.favorites_title),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                    )
+                }
+                item {
+                    ShimmerGrid(
+                        columns = 1,
+                        rows = 3,
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+            } else if (state.fabrics.isNotEmpty()) {
                 item {
                     Text(
                         stringResource(R.string.favorites_title),
@@ -376,47 +456,100 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     )
                 }
                 items(state.fabrics, key = { it.id }) { fabric ->
-                    Card(
-                        onClick = { nav.navigate(Routes.fabric(fabric.id)) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 6.dp),
-                        colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
-                    ) {
-                        Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                            FabricSwatch(fabric, modifier = Modifier.size(64.dp))
-                            Spacer(Modifier.width(14.dp))
-                            Column(Modifier.weight(1f)) {
-                                Text(
-                                    fabric.name ?: context.getString(fabric.category.labelRes),
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                                Text(
-                                    context.timeAgo(fabric.createdAt),
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                            IconButton(onClick = {
-                                context.shareImagePath(
-                                    fabric.imageUri,
-                                    context.getString(
-                                        R.string.share_fabric_text,
-                                        fabric.name ?: context.getString(fabric.category.labelRes),
-                                        context.getString(fabric.pattern.labelRes),
-                                    ),
-                                )
-                            }) {
-                                Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
-                            }
-                            IconButton(onClick = { vm.unfavoriteFabric(fabric.id) }) {
-                                Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
+                    val dismissState = rememberDismissState(
+                        confirmValueChange = { dismissValue ->
+                            if (dismissValue == DismissValue.DismissedToStart) {
+                                Haptics.heavy()
+                                vm.unfavoriteFabric(fabric.id)
+                                true
+                            } else {
+                                false
                             }
                         }
-                    }
+                    )
+                    
+                    SwipeToDismiss(
+                        state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
+                        background = {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer
+                                ),
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 20.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Delete,
+                                        contentDescription = stringResource(R.string.action_remove),
+                                        tint = MaterialTheme.colorScheme.onErrorContainer,
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        stringResource(R.string.action_remove),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.labelLarge,
+                                    )
+                                }
+                            }
+                        },
+                        dismissContent = {
+                            Card(
+                                onClick = { nav.navigate(Routes.fabric(fabric.id)) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 20.dp, vertical = 6.dp),
+                                colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                            ) {
+                                Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                    FabricSwatch(fabric, modifier = Modifier.size(64.dp))
+                                    Spacer(Modifier.width(14.dp))
+                                    Column(Modifier.weight(1f)) {
+                                        Text(
+                                            fabric.name ?: context.getString(fabric.category.labelRes),
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                        Text(
+                                            context.timeAgo(fabric.createdAt),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    IconButton(onClick = {
+                                        context.shareImagePath(
+                                            fabric.imageUri,
+                                            context.getString(
+                                                R.string.share_fabric_text,
+                                                fabric.name ?: context.getString(fabric.category.labelRes),
+                                                context.getString(fabric.pattern.labelRes),
+                                            ),
+                                        )
+                                    }) {
+                                        Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
+                                    }
+                                    IconButton(onClick = { vm.unfavoriteFabric(fabric.id) }) {
+                                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
+                                    }
+                                }
+                            }
+                        }
+                    )
                 }
             }
         }
+
+        PullToRefreshContainer(
+            state = pullToRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
 
         if (!tooltipSeen) {
             FirstRunTooltip(
@@ -424,6 +557,85 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 onDismiss = { scope.launch { tooltips.markSeen(TooltipStore.FAVORITES) } },
                 modifier = Modifier.align(Alignment.TopCenter),
             )
+        }
+    }
+    
+    // Sort & Filter Bottom Sheet
+    AnimatedBottomSheet(
+        visible = showFilterSheet,
+        onDismiss = { showFilterSheet = false },
+        title = stringResource(R.string.filter_title),
+    ) {
+        // Sort options
+        Text(
+            text = stringResource(R.string.filter_sort_by),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        
+        SortOption.values().forEach { option ->
+            BottomSheetAction(
+                icon = {
+                    Icon(
+                        option.icon,
+                        contentDescription = null,
+                        tint = if (sortBy == option) HeritageGold else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
+                label = stringResource(option.labelRes),
+                onClick = {
+                    sortBy = option
+                    showFilterSheet = false
+                },
+            )
+            Spacer(Modifier.height(4.dp))
+        }
+        
+        BottomSheetDivider()
+        
+        // Category filters
+        Text(
+            text = stringResource(R.string.filter_category),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        
+        BottomSheetAction(
+            icon = {
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = null,
+                    tint = if (filterCategory == null) HeritageGold else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            },
+            label = stringResource(R.string.filter_all_categories),
+            onClick = {
+                filterCategory = null
+                showFilterSheet = false
+            },
+        )
+        Spacer(Modifier.height(4.dp))
+        
+        listOf("Kente", "Ankara", "Lace", "Chiffon").forEach { category ->
+            BottomSheetAction(
+                icon = {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = if (filterCategory == category) HeritageGold else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
+                label = category,
+                onClick = {
+                    filterCategory = category
+                    showFilterSheet = false
+                },
+            )
+            Spacer(Modifier.height(4.dp))
         }
     }
 }

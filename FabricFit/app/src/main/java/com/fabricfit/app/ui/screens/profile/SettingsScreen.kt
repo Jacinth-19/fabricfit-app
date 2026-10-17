@@ -100,6 +100,28 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
         SettingRow(stringResource(R.string.settings_theme), themeLabel(state.prefs.themeMode)) { themeDialog = true }
         SettingRow(stringResource(R.string.settings_language), stringResource(state.prefs.language.labelRes)) { languageDialog = true }
 
+        Section(R.string.accessibility_title)
+        NotificationRow(
+            stringResource(R.string.accessibility_high_contrast),
+            stringResource(R.string.accessibility_high_contrast_desc),
+            state.prefs.accessibility.highContrast,
+        ) { on -> vm.setAccessibility { it.copy(highContrast = on) } }
+        NotificationRow(
+            stringResource(R.string.accessibility_reduced_motion),
+            stringResource(R.string.accessibility_reduced_motion_desc),
+            state.prefs.accessibility.reducedMotion,
+        ) { on -> vm.setAccessibility { it.copy(reducedMotion = on) } }
+        NotificationRow(
+            stringResource(R.string.accessibility_large_text),
+            stringResource(R.string.accessibility_large_text_desc),
+            state.prefs.accessibility.largeText,
+        ) { on -> vm.setAccessibility { it.copy(largeText = on) } }
+        NotificationRow(
+            stringResource(R.string.accessibility_haptic_feedback),
+            stringResource(R.string.accessibility_haptic_feedback_desc),
+            state.prefs.accessibility.hapticFeedback,
+        ) { on -> vm.setAccessibility { it.copy(hapticFeedback = on) } }
+
         Section(R.string.settings_section_notifications)
         NotificationRow(
             stringResource(R.string.settings_notif_processing),
@@ -133,6 +155,12 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
             if (on) requestNotification()
             vm.setNotifications { it.copy(inspiration = on) }
         }
+        
+        // Link to detailed notification preferences
+        SettingRow(
+            stringResource(R.string.notification_preferences_title),
+            onClick = { nav.navigate(Routes.NOTIFICATION_PREFERENCES) }
+        )
 
         Section(R.string.settings_section_analysis)
         SettingRow(stringResource(R.string.settings_engine), stringResource(R.string.settings_engine_demo)) { engineDialog = true }
@@ -150,6 +178,25 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
         if (showContribute) {
             ContributeDialog(onDismiss = { showContribute = false })
         }
+
+        Section(R.string.security_title)
+        NotificationRow(
+            stringResource(R.string.security_biometric_lock),
+            stringResource(R.string.security_biometric_lock_desc),
+            state.prefs.security.biometricLock,
+        ) { on -> vm.setSecurity { it.copy(biometricLock = on) } }
+        NotificationRow(
+            stringResource(R.string.security_biometric_premium),
+            stringResource(R.string.security_biometric_premium_desc),
+            state.prefs.security.biometricForPremium,
+        ) { on -> vm.setSecurity { it.copy(biometricForPremium = on) } }
+
+        // Admin section (for moderators/admins)
+        Section(R.string.settings_section_admin)
+        SettingRow(
+            stringResource(R.string.admin_moderation_dashboard),
+            stringResource(R.string.admin_moderation_desc),
+        ) { nav.navigate(Routes.ADMIN_MODERATION) }
 
         Section(R.string.settings_section_help)
         SettingRow(stringResource(R.string.settings_help_how)) { nav.navigate(Routes.HELP) }

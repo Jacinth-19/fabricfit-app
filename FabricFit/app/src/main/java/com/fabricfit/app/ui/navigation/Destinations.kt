@@ -5,6 +5,7 @@ import android.net.Uri
 object Routes {
     const val HOME = "home"
     const val DISCOVER = "discover"
+    const val DISCOVER_ROUTE_PATTERN = "discover?q={q}"
     const val CREATE = "create"
     const val FAVORITES = "favorites"
     const val PROFILE = "profile"
@@ -14,6 +15,10 @@ object Routes {
     const val CAMERA_FABRIC = "camera/fabric"
     const val CAMERA_PERSON = "camera/person"
 
+    fun discover(query: String? = null): String {
+        val trimmed = query?.trim().orEmpty()
+        return if (trimmed.isEmpty()) DISCOVER else "discover?q=${Uri.encode(trimmed)}"
+    }
     fun edit(uri: String, target: String) = "edit/${Uri.encode(uri)}/$target"
     fun analysis(uri: String) = "analysis/${Uri.encode(uri)}"
     fun fabric(id: Long) = "fabric/$id"
@@ -42,5 +47,15 @@ object Routes {
     fun tailor(id: String) = "tailor/$id"
     const val MEASUREMENTS = "measurements"
 
-    val TOP_LEVEL = listOf(HOME, DISCOVER, CREATE, FAVORITES, PROFILE)
+    // Phase-7 Community destinations
+    const val COMMUNITY = "community"
+    fun userProfile(userId: String) = "user/$userId"
+    fun galleryDetail(itemId: String) = "gallery/$itemId"
+    fun challenge(challengeId: String) = "challenge/$challengeId"
+    const val CREATE_POST = "create/post"
+    const val SEARCH = "search"
+    const val NOTIFICATION_PREFERENCES = "settings/notifications"
+    const val ADMIN_MODERATION = "admin/moderation"
+
+    val TOP_LEVEL = listOf(HOME, DISCOVER, DISCOVER_ROUTE_PATTERN, CREATE, FAVORITES, PROFILE)
 }

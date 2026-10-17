@@ -1,17 +1,22 @@
 package com.fabricfit.app.media
 
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
- * Second-generation vision signals, still pure Kotlin and fully unit-testable:
+ * Second- and third-generation vision signals, pure Kotlin and fully unit-testable:
  *
- *  - GLCM texture statistics (contrast / homogeneity / energy / correlation) back the texture
- *    label with standard co-occurrence measures instead of blur-noise alone.
- *  - A woven-strip detector for kente: periodic banding along one axis plus a multi-hue band
- *    palette. It raises or lowers KENTE confidence and honestly flags "printed" lookalikes.
+ *  - GLCM texture statistics (contrast / homogeneity / energy / correlation).
+ *  - Kente woven-strip detector: periodic banding along one axis plus a multi-hue band palette.
+ *  - Multi-orientation Gabor / directional edge energy (0°, 45°, 90°, 135°) measuring weave
+ *    anisotropy and orthogonal warp/weft balance vs. organic diagonal flow.
+ *  - Spectral motif & tailoring alignment analyser measuring strip repeat, harmonic purity,
+ *    and cut-alignment advice for Ghanaian seamstresses/tailors.
  */
 object TextureMetrics {
 
@@ -31,6 +36,40 @@ object TextureMetrics {
         val horizontalAxis: Boolean,
         /** Distinct hue families with >= 8% share. */
         val hueBandCount: Int,
+    )
+
+    enum class AlignmentAdvice {
+        /** Strong periodic warp/weft bands — align strips across seams (Kente, Fugu, Gonja). */
+        MATCH_WARP_STRIPS,
+        /** Large repeating central motifs — center medallions on bodice/skirt panels (Ankara/Adinkra). */
+        CENTER_LARGE_MOTIF,
+        /** High directional sheen/pile — cut all panels in the same nap direction (Velvet, Silk, Brocade). */
+        DIRECTIONAL_NAP,
+        /** Isotropic or solid weave — panels can be nested freely for minimal cloth waste. */
+        FREE_CUT,
+    }
+
+    data class GaborOrientationProfile(
+        /** Normalized filter energy at 0° (horizontal weft), 45°, 90° (vertical warp), 135°. */
+        val energy0: Float,
+        val energy45: Float,
+        val energy90: Float,
+        val energy135: Float,
+        /** Dominant orientation in degrees: 0, 45, 90, or 135. */
+        val dominantAngleDeg: Int,
+        /** 0..1 — directional concentration of the weave or print. */
+        val anisotropy: Float,
+        /** 0..1 — ratio of orthogonal (0° + 90°) energy to total energy (high on woven looms). */
+        val warpWeftBalance: Float,
+    )
+
+    data class SpectralMotifProfile(
+        val stripWidthPx: Float,
+        val motifRepeatX: Float,
+        val motifRepeatY: Float,
+        /** 0..1 — fundamental vs. harmonic spectral peak sharpness. */
+        val harmonicPurity: Float,
+        val alignmentAdvice: AlignmentAdvice,
     )
 
     /** Grey-level co-occurrence over offsets (1,0) and (0,1), symmetrised. */
@@ -63,7 +102,6 @@ object TextureMetrics {
                 energy += p * p
             }
         }
-        // correlation
         var mi = 0.0
         var mj = 0.0
         for (i in 0 until levels) for (j in 0 until levels) {
@@ -91,6 +129,132 @@ object TextureMetrics {
             energy = energy.toFloat().coerceIn(0f, 1f),
             correlation = corr.toFloat().coerceIn(-1f, 1f),
         )
+    }
+
+    /**
+     * Multi-orientation Gabor-inspired directional filter response at 0°, 45°, 90°, and 135°.
+     * Distinguishes orthogonal hand-loom weaves (0°/90°) from twill/diagonal/organic motifs.
+     */
+    fun gaborOrientation(lum: FloatArray, w: Int, h: Int): GaborOrientationProfile {
+        if (w < 4 || h < 4 || lum.size < w * h) {
+            return GaborOrientationProfile(0.25f, 0.25f, 0.25f, 0.25f, 0, 0f, 0.5f)
+        }
+        var e0 = 0.0
+        var e45 = 0.0
+        var e90 = 0.0
+        var e135 = 0.0
+        for (y in 1 until h - 1) {
+            for (x in 1 until w - 1) {
+                val i = y * w + x
+                // 0°: horizontal lines (vertical gradient dy)
+                val g0 = abs((lum[(y + 1) * w + x] - lum[(y - 1) * w + x]) * 0.5f)
+                // 90°: vertical strips (horizontal gradient dx)
+                val g90 = abs((lum[y * w + (x + 1)] - lum[y * w + (x - 1)]) * 0.5f)
+                // 45°: main diagonal
+                val g45 = abs((lum[(y + 1) * w + (x + 1)] - lum[(y - 1) * w + (x - 1)]) * 0.3535f)
+                // 135°: anti-diagonal
+                val g135 = abs((lum[(y + 1) * w + (x - 1)] - lum[(y - 1) * w + (x + 1)]) * 0.3535f)
+                e0 += g0 * g0
+                e90 += g90 * g90
+                e45 += g45 * g45
+                e135 += g135 * g135
+            }
+        }
+        val total = (e0 + e45 + e90 + e135).coerceAtLeast(1e-6)
+        val n0 = (e0 / total).toFloat()
+        val n45 = (e45 / total).toFloat()
+        val n90 = (e90 / total).toFloat()
+        val n135 = (e135 / total).toFloat()
+
+        val energies = listOf(0 to n0, 45 to n45, 90 to n90, 135 to n135)
+        val best = energies.maxBy { it.second }
+        val minE = energies.minOf { it.second }
+        val anisotropy = if (total < 1.0) 0f else ((best.second - minE) / (best.second + minE).coerceAtLeast(1e-5f)).coerceIn(0f, 1f)
+        val warpWeft = if (total < 1.0) 0.5f else (n0 + n90).coerceIn(0f, 1f)
+
+        return GaborOrientationProfile(
+            energy0 = n0,
+            energy45 = n45,
+            energy90 = n90,
+            energy135 = n135,
+            dominantAngleDeg = best.first,
+            anisotropy = anisotropy,
+            warpWeftBalance = warpWeft,
+        )
+    }
+
+    /**
+     * Spectral DFT harmonic periodicity & motif scale extractor along both axes.
+     */
+    fun spectralMotifProfile(
+        pixels: IntArray,
+        w: Int,
+        h: Int,
+    ): SpectralMotifProfile {
+        val strips = kenteStrips(pixels, w, h)
+        val lum = FloatArray(pixels.size) { i ->
+            val p = pixels[i]
+            ((p shr 16 and 0xFF) * 0.299f) + ((p shr 8 and 0xFF) * 0.587f) + ((p and 0xFF) * 0.114f)
+        }
+        val gabor = gaborOrientation(lum, w, h)
+        val (pxX, strX) = periodStrength(lum, w, h, horizontal = true)
+        val (pxY, strY) = periodStrength(lum, w, h, horizontal = false)
+        val purity = spectralHarmonicPurity(lum, w, h, horizontal = strX >= strY)
+
+        val advice = when {
+            strips.stripScore >= 0.48f || (max(strX, strY) > 0.65f && gabor.warpWeftBalance > 0.62f) ->
+                AlignmentAdvice.MATCH_WARP_STRIPS
+            max(pxX, pxY) >= min(w, h) * 0.25f ->
+                AlignmentAdvice.CENTER_LARGE_MOTIF
+            gabor.anisotropy > 0.55f ->
+                AlignmentAdvice.DIRECTIONAL_NAP
+            else ->
+                AlignmentAdvice.FREE_CUT
+        }
+
+        return SpectralMotifProfile(
+            stripWidthPx = if (strips.periodPx > 0f) strips.periodPx / 2f else 0f,
+            motifRepeatX = pxX,
+            motifRepeatY = pxY,
+            harmonicPurity = purity,
+            alignmentAdvice = advice,
+        )
+    }
+
+    private fun spectralHarmonicPurity(lum: FloatArray, w: Int, h: Int, horizontal: Boolean): Float {
+        val profile = if (horizontal) {
+            FloatArray(w) { x ->
+                var s = 0f
+                for (y in 0 until h) s += lum[y * w + x]
+                s / h
+            }
+        } else {
+            FloatArray(h) { y ->
+                var s = 0f
+                for (x in 0 until w) s += lum[y * w + x]
+                s / w
+            }
+        }
+        val n = profile.size
+        if (n < 8) return 0f
+        val mean = profile.average().toFloat()
+        val maxK = (n / 2).coerceAtMost(32)
+        var maxPower = 0.0
+        var totalPower = 0.0
+        for (k in 1..maxK) {
+            var re = 0.0
+            var im = 0.0
+            val omega = 2.0 * PI * k / n
+            for (t in 0 until n) {
+                val v = profile[t] - mean
+                re += v * cos(omega * t)
+                im -= v * sin(omega * t)
+            }
+            val p = re * re + im * im
+            totalPower += p
+            if (p > maxPower) maxPower = p
+        }
+        return if (totalPower < 1e-3) 0f else (maxPower / totalPower).toFloat().coerceIn(0f, 1f)
     }
 
     /**
