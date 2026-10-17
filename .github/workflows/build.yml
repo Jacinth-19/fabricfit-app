@@ -2,7 +2,9 @@ name: build
 
 on:
   push:
-    branches: [main]
+    # Feature branches are built too, so a branch can be validated (and have its
+    # screenshots refreshed) without opening a pull request first.
+    branches: [main, "arena/**"]
     tags: ['v*']
   pull_request:
   # Weekly emulator sweep. Linux GitHub runners have no KVM, so the heavy
@@ -39,9 +41,16 @@ jobs:
       # assembleDebugAndroidTest compiles the instrumented source set, so a
       # package/class rename there is caught without needing an emulator.
       - name: Unit tests, debug build, instrumented-test compile
-        run: >-
-          ./gradlew :app:testDebugUnitTest :app:assembleDebug
-          :app:assembleDebugAndroidTest
+        run: |
+          set -o pipefail
+          ./gradlew :app:testDebugUnitTest :app:assembleDebug \
+            :app:assembleDebugAndroidTest --console=plain 2>&1 | tee verify-gradle.log
+
+      # Job logs need a login to read; annotations are visible on the public run
+      # page, so the reason for a red build is obvious without opening the log.
+      - name: Annotate the Gradle failure
+        if: failure()
+        run: python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log
 
       - name: Upload test reports
         if: always()
@@ -161,11 +170,14 @@ jobs:
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
 
-  # Full app UI screenshots are expensive; capture them only when requested
-  # manually via workflow_dispatch. The job commits the refreshed PNGs back
-  # to the branch that triggered the dispatch.
+  # Full app UI screenshots are expensive; capture them on demand only:
+  # manual dispatch, or a push whose commit message contains "[screenshots]".
+  # The job commits the refreshed PNGs back to the branch that triggered it.
   screenshots:
-    if: github.event_name == 'workflow_dispatch'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+       contains(github.event.head_commit.message, '[screenshots]'))
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
