@@ -144,9 +144,6 @@ dependencies {
     
     implementation(libs.coil.compose)
     
-    // Image cropping and editing
-    implementation("com.github.yalantis:ucrop:2.2.8")
-    
     // Rich text formatting with markdown
     implementation("io.noties.markwon:core:4.6.2")
     implementation("io.noties.markwon:editor:4.6.2")
@@ -160,9 +157,6 @@ dependencies {
     
     // ExoPlayer for video playback
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")
-    
-    // FFmpeg for video processing (compression, trimming, thumbnails)
-    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

@@ -1,6 +1,5 @@
 package com.fabricfit.app.ui.screens.community
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -196,11 +195,11 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                     val thumbnail = VideoProcessor.generateThumbnail(context, selectedVideoUri)
                     videoThumbnail = thumbnail
                     
-                    // Compress video
-                    val compressedVideo = VideoProcessor.compressVideo(context, selectedVideoUri, quality = 70)
+                    // Stage the video in the app cache for publishing
+                    val preparedVideo = VideoProcessor.prepareForUpload(context, selectedVideoUri)
                     
-                    if (compressedVideo != null) {
-                        mediaUri = Uri.fromFile(compressedVideo)
+                    if (preparedVideo != null) {
+                        mediaUri = Uri.fromFile(preparedVideo)
                         mediaType = MediaType.VIDEO
                     }
                 } catch (e: Exception) {
@@ -245,15 +244,18 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     // Rich text editor
     val markwon = rememberMarkwon()
 
-    // uCrop launcher
-    val uCropLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val uri = ImageEditor.parseResult(result.resultCode, result.data)
-        if (uri != null) {
-            imageUri = uri
+    // Crop the attached image to a chosen aspect ratio on a background thread
+    // (see ImageEditor for why this no longer launches an external cropper).
+    val cropLauncher: (Uri, ImageEditor.AspectRatio) -> Unit = { uri, ratio ->
+        scope.launch {
+            val cropped = ImageEditor.cropToCache(context, uri, ratio)
+            if (cropped != null) {
+                imageUri = cropped
+                imageEditorState.setEditedUri(cropped)
+            } else {
+                imageEditorState.cancelEditing()
+            }
         }
-        imageEditorState.cancelEditing()
     }
 
     // Dropdown states
@@ -521,16 +523,9 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                     selectedRatio = imageEditorState.selectedAspectRatio,
                                     onRatioSelected = { ratio ->
                                         imageEditorState.setAspectRatio(ratio)
-                                        // Launch uCrop with selected aspect ratio
+                                        // Crop to the selected aspect ratio
                                         imageEditorState.originalUri?.let { uri ->
-                                            val activity = context as? Activity
-                                            if (activity != null) {
-                                                ImageEditor.launchEditor(
-                                                    activity = activity,
-                                                    sourceUri = uri,
-                                                    aspectRatio = ratio,
-                                                )
-                                            }
+                                            cropLauncher(uri, ratio)
                                         }
                                     },
                                 )
