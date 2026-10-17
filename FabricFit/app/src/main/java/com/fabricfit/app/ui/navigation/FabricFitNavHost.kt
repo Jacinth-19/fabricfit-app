@@ -45,6 +45,7 @@ import com.fabricfit.app.ui.screens.community.ChallengeDetailScreen
 import com.fabricfit.app.ui.screens.community.CreatePostScreen
 import com.fabricfit.app.ui.screens.search.SearchScreen
 import com.fabricfit.app.ui.screens.settings.NotificationPreferencesScreen
+import com.fabricfit.app.ui.screens.admin.AdminModerationScreen
 import com.fabricfit.app.ui.screens.tailors.TailorsScreen
 import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
 import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
@@ -306,5 +307,6 @@ private fun FabricFitNavHost(
         composable(Routes.CREATE_POST) { CreatePostScreen(nav, padding) }
         composable(Routes.SEARCH) { SearchScreen(nav, padding) }
         composable(Routes.NOTIFICATION_PREFERENCES) { NotificationPreferencesScreen(nav, padding) }
+        composable(Routes.ADMIN_MODERATION) { AdminModerationScreen(nav, padding) }
     }
 }

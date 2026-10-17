@@ -191,6 +191,13 @@ fun SettingsScreen(nav: NavHostController, padding: PaddingValues) {
             state.prefs.security.biometricForPremium,
         ) { on -> vm.setSecurity { it.copy(biometricForPremium = on) } }
 
+        // Admin section (for moderators/admins)
+        Section(R.string.settings_section_admin)
+        SettingRow(
+            stringResource(R.string.admin_moderation_dashboard),
+            stringResource(R.string.admin_moderation_desc),
+        ) { nav.navigate(Routes.ADMIN_MODERATION) }
+
         Section(R.string.settings_section_help)
         SettingRow(stringResource(R.string.settings_help_how)) { nav.navigate(Routes.HELP) }
         SettingRow(stringResource(R.string.settings_replay_onboarding)) { vm.replayOnboarding() }

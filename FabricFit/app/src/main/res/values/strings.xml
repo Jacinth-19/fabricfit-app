@@ -1152,5 +1152,10 @@
     <string name="report_details_description">Description</string>
     <string name="report_details_date">Report Date</string>
     <string name="report_details_status">Status</string>
+    
+    <!-- Admin Settings -->
+    <string name="settings_section_admin">Admin</string>
+    <string name="admin_moderation_dashboard">Moderation Dashboard</string>
+    <string name="admin_moderation_desc">Review reported content</string>
 
 </resources>
