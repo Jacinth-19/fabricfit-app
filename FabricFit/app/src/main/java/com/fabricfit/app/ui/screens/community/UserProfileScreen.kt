@@ -23,10 +23,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +40,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +61,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.BlockedUser
 import com.fabricfit.app.domain.model.CommunityUser
 import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.ui.components.EnhancedEmptyState
@@ -78,9 +87,19 @@ class UserProfileViewModel(
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    private val _isBlocked = MutableStateFlow(false)
+    val isBlocked: StateFlow<Boolean> = _isBlocked.asStateFlow()
+
     init {
         loadUser()
         loadGallery()
+        checkIfBlocked()
+    }
+
+    private fun checkIfBlocked() {
+        viewModelScope.launch {
+            _isBlocked.value = container.blockedUsers.isUserBlocked(userId)
+        }
     }
 
     private fun loadUser() {
@@ -109,6 +128,28 @@ class UserProfileViewModel(
             _user.value = container.community.getUser(userId)
         }
     }
+
+    fun toggleBlock() {
+        viewModelScope.launch {
+            val currentUser = _user.value ?: return@launch
+            if (_isBlocked.value) {
+                // Unblock
+                container.blockedUsers.unblockUser(userId)
+                _isBlocked.value = false
+            } else {
+                // Block
+                container.blockedUsers.blockUser(
+                    com.fabricfit.app.domain.model.BlockedUser(
+                        userId = userId,
+                        username = currentUser.username,
+                        displayName = currentUser.displayName,
+                        avatarUrl = currentUser.avatarUrl,
+                    )
+                )
+                _isBlocked.value = true
+            }
+        }
+    }
 }
 
 // Screen
@@ -118,6 +159,10 @@ fun UserProfileScreen(nav: NavHostController, padding: PaddingValues, userId: St
     val user by vm.user.collectAsStateWithLifecycle()
     val galleryItems by vm.galleryItems.collectAsStateWithLifecycle()
     val isLoading by vm.isLoading.collectAsStateWithLifecycle()
+    val isBlocked by vm.isBlocked.collectAsStateWithLifecycle()
+    
+    var showMenu by remember { mutableStateOf(false) }
+    var showBlockDialog by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Top bar
@@ -140,6 +185,60 @@ fun UserProfileScreen(nav: NavHostController, padding: PaddingValues, userId: St
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier.weight(1f),
+            )
+            
+            // More options menu
+            Box {
+                IconButton(onClick = { showMenu = true }) {
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        contentDescription = "More options",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                    )
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false },
+                ) {
+                    DropdownMenuItem(
+                        text = { 
+                            Text(
+                                if (isBlocked) stringResource(R.string.action_unblock) 
+                                else stringResource(R.string.action_block)
+                            ) 
+                        },
+                        onClick = {
+                            showMenu = false
+                            if (isBlocked) {
+                                vm.toggleBlock()
+                            } else {
+                                showBlockDialog = true
+                            }
+                        },
+                    )
+                }
+            }
+        }
+        
+        // Block confirmation dialog
+        if (showBlockDialog && user != null) {
+            AlertDialog(
+                onDismissRequest = { showBlockDialog = false },
+                title = { Text(stringResource(R.string.block_confirm_title)) },
+                text = { Text(stringResource(R.string.block_confirm_message, user!!.displayName)) },
+                confirmButton = {
+                    Button(onClick = {
+                        vm.toggleBlock()
+                        showBlockDialog = false
+                    }) {
+                        Text(stringResource(R.string.action_block))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showBlockDialog = false }) {
+                        Text(stringResource(R.string.action_cancel))
+                    }
+                },
             )
         }
 
