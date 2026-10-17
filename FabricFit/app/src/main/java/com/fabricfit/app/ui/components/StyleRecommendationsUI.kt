@@ -42,6 +42,7 @@ import coil.request.ImageRequest
 import com.fabricfit.app.domain.model.OutfitRecommendation
 import com.fabricfit.app.domain.model.SimilarUser
 import com.fabricfit.app.domain.model.StyleProfile
+import com.fabricfit.app.domain.model.StyleAffinity
 import com.fabricfit.app.domain.model.StyleWardrobeItem
 
 /**

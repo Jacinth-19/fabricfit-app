@@ -45,7 +45,7 @@ data class CompleteTheLookSuggestion(
  */
 data class StyleProfile(
     val userId: String,
-    val dominantStyles: List<StylePreference>,
+    val dominantStyles: List<StyleAffinity>,
     val favoriteColors: List<ColorPreference>,
     val wardrobeSize: Int,
     val mostWornTypes: List<ClothingType>,

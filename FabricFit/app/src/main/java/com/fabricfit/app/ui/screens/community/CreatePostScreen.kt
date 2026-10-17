@@ -92,6 +92,7 @@ import com.fabricfit.app.ui.components.rememberMarkwon
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.ImageEditor
 import com.fabricfit.app.ui.util.rememberImageEditorState
+import com.fabricfit.app.ui.util.resolveKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -571,7 +572,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                                 imageUri?.let { uri ->
                                                     // Load bitmap and apply filters
                                                     val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-                                                        context.contentResolver, Uri.parse(uri)
+                                                        context.contentResolver, uri
                                                     )
                                                     filteredBitmap = ImageFilterProcessor.applyFilters(
                                                         bitmap, brightness, contrast, saturation
@@ -582,7 +583,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                                 contrast = it
                                                 imageUri?.let { uri ->
                                                     val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-                                                        context.contentResolver, Uri.parse(uri)
+                                                        context.contentResolver, uri
                                                     )
                                                     filteredBitmap = ImageFilterProcessor.applyFilters(
                                                         bitmap, brightness, contrast, saturation
@@ -593,7 +594,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                                 saturation = it
                                                 imageUri?.let { uri ->
                                                     val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-                                                        context.contentResolver, Uri.parse(uri)
+                                                        context.contentResolver, uri
                                                     )
                                                     filteredBitmap = ImageFilterProcessor.applyFilters(
                                                         bitmap, brightness, contrast, saturation
@@ -834,8 +835,8 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                         onExpandedChange = { styleMenuExpanded = it },
                     ) {
                         OutlinedTextField(
-                            value = styles.find { it.id == selectedStyleId }?.let { 
-                                context.getString(it.titleKey) 
+                            value = styles.find { it.id == selectedStyleId }?.let {
+                                context.resolveKey(it.titleKey) ?: it.id
                             } ?: "",
                             onValueChange = {},
                             readOnly = true,
@@ -859,7 +860,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                             )
                             styles.forEach { style ->
                                 DropdownMenuItem(
-                                    text = { Text(context.getString(style.titleKey)) },
+                                    text = { Text(context.resolveKey(style.titleKey) ?: style.id) },
                                     onClick = {
                                         selectedStyleId = style.id
                                         styleMenuExpanded = false

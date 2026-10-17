@@ -79,6 +79,7 @@ import com.fabricfit.app.ui.util.shareImagePath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 // ViewModel
@@ -125,12 +126,12 @@ class GalleryDetailViewModel(
     }
 
     private suspend fun loadFabrics(fabricIds: List<Long>) {
-        val allFabrics = container.fabricAnalysis.getAll()
+        val allFabrics = container.fabricAnalysis.observeAll().first()
         _fabrics.value = allFabrics.filter { it.id in fabricIds }
     }
 
     private suspend fun loadStyle(styleId: String) {
-        _style.value = container.dressStyles.getById(styleId)
+        _style.value = container.dressStyles.byId(styleId)
     }
 
     private fun loadComments() {
@@ -216,10 +217,11 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
             ) {
                 // Full media display (image or video)
                 item {
-                    if (item!!.mediaType == MediaType.VIDEO && item.videoUrl != null) {
+                    val current = item
+                    if (current != null && current.mediaType == MediaType.VIDEO && current.videoUrl != null) {
                         // Video player
                         InlineVideoPlayer(
-                            videoUri = item.videoUrl!!,
+                            videoUri = current.videoUrl,
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
