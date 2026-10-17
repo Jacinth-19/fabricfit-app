@@ -59,22 +59,24 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
-import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.onboarding.HERITAGE_AVATAR_PRESETS
+import com.fabricfit.app.ui.onboarding.ProfileAvatarImage
+import com.fabricfit.app.ui.onboarding.ProfileIdentityDialog
 import com.fabricfit.app.ui.theme.HeritageCream
 import com.fabricfit.app.ui.theme.HeritageForestDark
 import com.fabricfit.app.ui.theme.HeritageGold
-import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
     val vm: ProfileViewModel = appViewModel { c, ctx -> ProfileViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
-    var renameOpen by remember { mutableStateOf(false) }
+    var editProfileOpen by remember { mutableStateOf(false) }
 
     val displayName = state.prefs.displayName.ifBlank { "Ama Serwaa" }
+    val profileBio = state.prefs.profileBio.ifBlank { "Fashion Lover" }
+    val avatarUri = state.prefs.avatarUri.ifBlank { HERITAGE_AVATAR_PRESETS.first() }
     val scansCount = state.fabricCount
     val favsCount = state.favoriteCount
     val tryOnsCount = state.lookCount
@@ -117,16 +119,21 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AssetImage(
-                asset = "catalog/heritage/avatar_ama_serwaa.jpg",
+            ProfileAvatarImage(
+                avatarUri = avatarUri,
                 contentDescription = displayName,
                 modifier = Modifier
                     .size(84.dp)
                     .clip(CircleShape)
-                    .border(2.dp, HeritageGold.copy(alpha = 0.6f), CircleShape),
+                    .border(2.dp, HeritageGold.copy(alpha = 0.6f), CircleShape)
+                    .clickable { editProfileOpen = true },
             )
             Spacer(Modifier.width(18.dp))
-            Column(Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { editProfileOpen = true },
+            ) {
                 Text(
                     displayName,
                     style = MaterialTheme.typography.headlineMedium,
@@ -135,12 +142,12 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
-                    "Fashion Lover",
+                    profileBio,
                     style = MaterialTheme.typography.bodyLarge,
                     color = HeritageCream.copy(alpha = 0.72f),
                 )
             }
-            IconButton(onClick = { renameOpen = true }) {
+            IconButton(onClick = { editProfileOpen = true }) {
                 Icon(
                     Icons.Filled.Edit,
                     contentDescription = stringResource(R.string.profile_name_hint),
@@ -254,22 +261,23 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
         Spacer(Modifier.height(32.dp))
     }
 
-    if (renameOpen) {
-        var text by remember { mutableStateOf(state.prefs.displayName) }
-        AlertDialog(
-            onDismissRequest = { renameOpen = false },
-            title = { Text(stringResource(R.string.profile_name_hint)) },
-            text = {
-                OutlinedTextField(value = text, onValueChange = { text = it }, singleLine = true)
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    scope.launch { vm.setName(text) }
-                    renameOpen = false
-                }) { Text(stringResource(R.string.action_save)) }
-            },
-            dismissButton = {
-                TextButton(onClick = { renameOpen = false }) { Text(stringResource(R.string.action_cancel)) }
+    if (editProfileOpen) {
+        ProfileIdentityDialog(
+            title = stringResource(R.string.profile_title),
+            confirmLabel = stringResource(R.string.action_save),
+            initialName = displayName,
+            initialBio = profileBio,
+            initialAvatarUri = avatarUri,
+            initialStylePreference = state.prefs.stylePreference,
+            onDismiss = { editProfileOpen = false },
+            onConfirm = { name, bio, chosenAvatar, stylePref ->
+                editProfileOpen = false
+                vm.updateProfile(
+                    name = name.ifBlank { "Ama Serwaa" },
+                    bio = bio.ifBlank { "Fashion Lover" },
+                    avatarUri = chosenAvatar,
+                    stylePreference = stylePref,
+                )
             },
         )
     }

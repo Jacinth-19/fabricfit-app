@@ -34,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
@@ -73,10 +74,12 @@ import com.fabricfit.app.ui.components.FirstRunTooltip
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.components.ensureSampleKenteFabric
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.onboarding.ProfileAvatarImage
 import com.fabricfit.app.ui.theme.HeritageCreamBright
 import com.fabricfit.app.ui.theme.HeritageForest
 import com.fabricfit.app.ui.theme.HeritageForestDark
@@ -265,9 +268,31 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 }
             }
 
-            // Main Scan Result Card: Kente Royalty · 98% Match + 4 Palette Dots + Colors/Pattern/Style tabs
+            // Main Scan Result Card: dynamic latest scan or Kente Royalty · 98% Match + 4 Palette Dots + Colors/Pattern/Style tabs
             item {
+                val activeFabric = state.latestFabric
+                val bannerTitle = activeFabric?.let {
+                    it.name?.takeIf { n -> n.isNotBlank() } ?: context.getString(it.category.labelRes)
+                } ?: "Kente Royalty"
+                val matchPercent = activeFabric?.let {
+                    (it.confidence * 100).toInt().coerceIn(78, 99)
+                } ?: 98
+                val paletteSwatches = activeFabric?.colors?.take(4)?.map { Color(it.argb) }
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: listOf(
+                        Color(0xFF144B2F),
+                        Color(0xFF611425),
+                        Color(0xFFD99B26),
+                        Color(0xFFCC292B),
+                    )
+
                 Card(
+                    onClick = {
+                        scope.launch {
+                            val id = activeFabric?.id ?: ensureSampleKenteFabric(context)
+                            nav.navigate(Routes.fabric(id))
+                        }
+                    },
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -277,20 +302,31 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 ) {
                     Column(Modifier.padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            AssetImage(
-                                asset = "catalog/heritage/swatch_kente.jpg",
-                                contentDescription = "Kente Royalty",
-                                modifier = Modifier
-                                    .size(92.dp)
-                                    .clip(RoundedCornerShape(16.dp)),
-                            )
+                            if (activeFabric != null) {
+                                FabricSwatch(
+                                    activeFabric,
+                                    modifier = Modifier
+                                        .size(92.dp)
+                                        .clip(RoundedCornerShape(16.dp)),
+                                )
+                            } else {
+                                AssetImage(
+                                    asset = "catalog/heritage/swatch_kente.jpg",
+                                    contentDescription = bannerTitle,
+                                    modifier = Modifier
+                                        .size(92.dp)
+                                        .clip(RoundedCornerShape(16.dp)),
+                                )
+                            }
                             Spacer(Modifier.width(16.dp))
-                            Column {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    "Kente Royalty",
+                                    bannerTitle,
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                                 Spacer(Modifier.height(6.dp))
                                 Surface(
@@ -298,7 +334,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                     color = Color(0xFF216849),
                                 ) {
                                     Text(
-                                        "98% Match",
+                                        "$matchPercent% Match",
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.SemiBold,
                                         color = Color.White,
@@ -310,23 +346,54 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
 
                         Spacer(Modifier.height(12.dp))
 
-                        // Extracted Colour Palette Circles (Forest Green, Deep Burgundy, Royal Gold, Kente Red)
+                        // Extracted Colour Palette Circles + Quick Action Pills (Try-On / Colour Match)
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            listOf(
-                                Color(0xFF144B2F),
-                                Color(0xFF611425),
-                                Color(0xFFD99B26),
-                                Color(0xFFCC292B),
-                            ).forEach { swatchColor ->
-                                Box(
-                                    Modifier
-                                        .size(32.dp)
-                                        .clip(CircleShape)
-                                        .background(swatchColor),
-                                )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                paletteSwatches.forEach { swatchColor ->
+                                    Box(
+                                        Modifier
+                                            .size(30.dp)
+                                            .clip(CircleShape)
+                                            .background(swatchColor),
+                                    )
+                                }
+                            }
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                OutlinedButton(
+                                    onClick = {
+                                        scope.launch {
+                                            val id = activeFabric?.id ?: ensureSampleKenteFabric(context)
+                                            nav.navigate(Routes.colorMatch(id))
+                                        }
+                                    },
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp),
+                                ) {
+                                    Text("Colour Match", style = MaterialTheme.typography.labelSmall)
+                                }
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            val id = activeFabric?.id ?: ensureSampleKenteFabric(context)
+                                            nav.navigate(Routes.tryOn(id, null))
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = HeritageForest,
+                                        contentColor = Color.White,
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp),
+                                ) {
+                                    Text("Try-On", style = MaterialTheme.typography.labelSmall)
+                                }
                             }
                         }
 
@@ -386,8 +453,18 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                         Spacer(Modifier.height(8.dp))
                         Text(
                             text = when (detailTab) {
-                                0 -> "Palette: Forest Green · Deep Burgundy · Royal Gold · Kente Red"
-                                1 -> "Pattern: Hand-woven Ashanti strip geometry · High contrast"
+                                0 -> if (activeFabric != null) {
+                                    "Palette: " + activeFabric.colors.take(4).joinToString(" · ") {
+                                        context.getString(it.name.labelRes)
+                                    }
+                                } else {
+                                    "Palette: Forest Green · Deep Burgundy · Royal Gold · Kente Red"
+                                }
+                                1 -> if (activeFabric != null) {
+                                    "Pattern: ${context.getString(activeFabric.pattern.labelRes)} · ${context.getString(activeFabric.texture.labelRes)}"
+                                } else {
+                                    "Pattern: Hand-woven Ashanti strip geometry · High contrast"
+                                }
                                 else -> "Best matches: Kaba & Slit · Elegant Peplum · Royal Gown"
                             },
                             style = MaterialTheme.typography.bodySmall,

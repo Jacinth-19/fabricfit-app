@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,13 +21,20 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +43,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +62,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.FabricCategory
+import com.fabricfit.app.domain.model.GenderCategory
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.CardSkeleton
@@ -77,14 +87,38 @@ private enum class DiscoverFilter(val label: String) {
     FABRICS("Fabrics"),
 }
 
+private enum class DiscoverSort(val label: String) {
+    FEATURED("Best Match"),
+    TRENDING("Trending"),
+    POPULAR("Popular"),
+    NEWEST("Newest"),
+}
+
+private enum class GenderFilter(val label: String) {
+    ALL("All"),
+    WOMEN("Women"),
+    MEN("Men"),
+}
+
 @Composable
 fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery: String = "") {
     val vm: DiscoverViewModel = appViewModel { c, ctx -> DiscoverViewModel(c) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var filter by remember { mutableStateOf(DiscoverFilter.ALL) }
+    var genderFilter by remember { mutableStateOf(GenderFilter.ALL) }
+    var sortMode by remember { mutableStateOf(DiscoverSort.FEATURED) }
+    var sortMenuOpen by remember { mutableStateOf(false) }
     var query by remember { mutableStateOf(initialQuery) }
-    var searchOpen by remember { mutableStateOf(false) }
+    var searchOpen by remember { mutableStateOf(initialQuery.isNotBlank()) }
+
+    LaunchedEffect(initialQuery) {
+        if (initialQuery.isNotBlank()) {
+            query = initialQuery
+            searchOpen = true
+            vm.setQuery(initialQuery)
+        }
+    }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Editorial Serif Header matching Reference Image 5 ("Outfit Recommendations")
@@ -176,6 +210,68 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
             }
         }
 
+        // Secondary row: Gender filter chips + Sort selector
+        if (filter != DiscoverFilter.FABRICS) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    GenderFilter.entries.forEach { g ->
+                        FilterChip(
+                            selected = genderFilter == g,
+                            onClick = { genderFilter = g },
+                            label = { Text(g.label, style = MaterialTheme.typography.labelSmall) },
+                        )
+                    }
+                }
+                Box {
+                    Surface(
+                        onClick = { sortMenuOpen = true },
+                        shape = RoundedCornerShape(50),
+                        color = HeritageCreamBright,
+                        border = BorderStroke(1.dp, Color(0xFFE0D6C3)),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                Icons.Outlined.SwapVert,
+                                contentDescription = null,
+                                tint = HeritageForest,
+                                modifier = Modifier.size(16.dp),
+                            )
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                sortMode.label,
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.Medium,
+                                color = HeritageForest,
+                            )
+                        }
+                    }
+                    DropdownMenu(
+                        expanded = sortMenuOpen,
+                        onDismissRequest = { sortMenuOpen = false },
+                    ) {
+                        DiscoverSort.entries.forEach { mode ->
+                            DropdownMenuItem(
+                                text = { Text(mode.label) },
+                                onClick = {
+                                    sortMode = mode
+                                    sortMenuOpen = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
         val q = query.trim()
         if (filter == DiscoverFilter.FABRICS) {
             val cats = FabricCategory.values().filter {
@@ -184,6 +280,11 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
             LazyColumn(contentPadding = PaddingValues(16.dp)) {
                 items(cats.toList()) { cat ->
                     Card(
+                        onClick = {
+                            query = cat.name.lowercase()
+                            vm.setQuery(query)
+                            filter = DiscoverFilter.ALL
+                        },
                         modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
                         colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
                     ) {
@@ -222,13 +323,25 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                     modifier = Modifier.padding(16.dp)
                 )
             } else {
-                val baseStyles = smartFilterStyles(state.styles, q, context)
-                val styles = when (filter) {
+                val baseStyles = smartFilterStyles(state.styles, q, context).filter { s ->
+                    when (genderFilter) {
+                        GenderFilter.ALL -> true
+                        GenderFilter.WOMEN -> s.gender == GenderCategory.WOMEN || s.gender == GenderCategory.UNISEX
+                        GenderFilter.MEN -> s.gender == GenderCategory.MEN || s.gender == GenderCategory.UNISEX
+                    }
+                }
+                val categoryFiltered = when (filter) {
                     DiscoverFilter.ALL -> orderFeaturedFirst(baseStyles)
                     DiscoverFilter.CASUAL -> baseStyles.filter { it.category == StyleCategory.CASUAL }
                     DiscoverFilter.FORMAL -> baseStyles.filter { it.category == StyleCategory.FORMAL }
                     DiscoverFilter.OCCASION -> baseStyles.filter { it.category == StyleCategory.TRADITIONAL }
                     DiscoverFilter.FABRICS -> baseStyles
+                }
+                val styles = when (sortMode) {
+                    DiscoverSort.FEATURED -> categoryFiltered
+                    DiscoverSort.TRENDING -> categoryFiltered.sortedByDescending { it.trending }
+                    DiscoverSort.POPULAR -> categoryFiltered.sortedByDescending { it.popularity }
+                    DiscoverSort.NEWEST -> categoryFiltered.sortedByDescending { it.addedAt }
                 }
                 if (styles.isEmpty()) {
                     EnhancedEmptyState(
@@ -236,7 +349,12 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                         title = R.string.discover_empty_search,
                         body = R.string.discover_empty_search_body,
                         actionLabel = R.string.empty_action_clear_filters,
-                        onAction = { vm.setQuery("") },
+                        onAction = {
+                            query = ""
+                            genderFilter = GenderFilter.ALL
+                            filter = DiscoverFilter.ALL
+                            vm.setQuery("")
+                        },
                         modifier = Modifier.weight(1f),
                     )
                 } else {
@@ -247,6 +365,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                         verticalArrangement = Arrangement.spacedBy(14.dp),
                     ) {
                         items(styles, key = { it.id }) { style ->
+                            val isFav = style.id in state.favoriteStyleIds
                             Card(
                                 onClick = { nav.navigate(Routes.design(style.id)) },
                                 shape = RoundedCornerShape(18.dp),
@@ -254,13 +373,33 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
                             ) {
                                 Column(Modifier.padding(10.dp)) {
-                                    GarmentArt(
-                                        style,
-                                        null,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(166.dp),
-                                    )
+                                    Box {
+                                        GarmentArt(
+                                            style,
+                                            null,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(166.dp),
+                                        )
+                                        Surface(
+                                            onClick = { vm.toggleFavorite(style.id) },
+                                            shape = CircleShape,
+                                            color = Color.White.copy(alpha = 0.88f),
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(8.dp)
+                                                .size(32.dp),
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Icon(
+                                                    imageVector = if (isFav) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                                                    contentDescription = stringResource(R.string.cd_favorite_toggle),
+                                                    tint = if (isFav) HeritageGold else HeritageForest,
+                                                    modifier = Modifier.size(18.dp),
+                                                )
+                                            }
+                                        }
+                                    }
                                     Spacer(Modifier.height(8.dp))
                                     Text(
                                         displayTitleFor(style, context),

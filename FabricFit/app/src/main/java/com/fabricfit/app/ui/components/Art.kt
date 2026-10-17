@@ -23,9 +23,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.fabricfit.app.data.engine.GarmentGeometry
+import com.fabricfit.app.data.engine.SampleFabrics
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.PatternType
@@ -284,17 +287,57 @@ fun CustomizedSilhouettePreview(
     customization: DesignCustomization,
     modifier: Modifier = Modifier,
 ) {
+    val palette = fabric?.paletteColors() ?: FALLBACK
+    val shapes = remember(style.silhouette, customization) {
+        GarmentGeometry.shapesFor(style.silhouette, customization)
+    }
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(14.dp))
             .background(Color(0xFFF3EFE6)),
         contentAlignment = Alignment.Center,
     ) {
-        GarmentArt(
-            style = style,
-            fabric = fabric,
-            modifier = Modifier.fillMaxSize(0.8f),
+        AssetImage(
+            asset = style.heritageAsset(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
         )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xBB0F3D2E)),
+        )
+        Canvas(modifier = Modifier.fillMaxSize().padding(12.dp)) {
+            val w = size.width
+            val h = size.height
+            val primaryColor = palette.first()
+            val accentColor = palette.getOrElse(1) { Color(0xFFD4A84B) }
+
+            shapes.forEachIndexed { idx, polygon ->
+                if (polygon.size >= 3) {
+                    val path = Path().apply {
+                        moveTo(polygon[0].first * w, polygon[0].second * h)
+                        for (i in 1 until polygon.size) {
+                            lineTo(polygon[i].first * w, polygon[i].second * h)
+                        }
+                        close()
+                    }
+                    val fillColor = when (customization.placement) {
+                        FabricPlacement.ALL_OVER -> if (idx == 0) primaryColor.copy(alpha = 0.78f) else accentColor.copy(alpha = 0.72f)
+                        FabricPlacement.BODICE_ONLY -> if (idx == 0) primaryColor.copy(alpha = 0.82f) else Color(0xFFFBF8F1).copy(alpha = 0.55f)
+                        FabricPlacement.SKIRT_ONLY -> if (idx == 0) Color(0xFFFBF8F1).copy(alpha = 0.55f) else primaryColor.copy(alpha = 0.82f)
+                        FabricPlacement.TRIM_CUFFS -> Color(0xFFFBF8F1).copy(alpha = 0.45f)
+                        FabricPlacement.YOKE_HEM -> if (idx % 2 == 0) primaryColor.copy(alpha = 0.75f) else accentColor.copy(alpha = 0.65f)
+                    }
+                    drawPath(path = path, color = fillColor)
+                    drawPath(
+                        path = path,
+                        color = Color(0xFFD4A84B),
+                        style = Stroke(width = 2.dp.toPx()),
+                    )
+                }
+            }
+        }
     }
 }
 
