@@ -163,7 +163,6 @@ class PersonSegmenter(private val context: Context) {
                     outPx[y * DEEPLAB_SIZE + x] = if (isPerson) Color.BLACK else Color.TRANSPARENT
                 }
             }
-            if (personCount < DEEPLAB_SIZE * DEEPLAB_SIZE / 30) return null
             maskSmall.setPixels(outPx, 0, DEEPLAB_SIZE, 0, 0, DEEPLAB_SIZE, DEEPLAB_SIZE)
             Bitmap.createScaledBitmap(maskSmall, targetWidth, targetHeight, true)
         } catch (_: Throwable) {
@@ -281,7 +280,13 @@ class PersonSegmenter(private val context: Context) {
         fun backgroundPixels(person: IntArray, maskAlpha: IntArray): IntArray {
             require(person.size >= maskAlpha.size)
             return IntArray(person.size) { i ->
-                if (i >= maskAlpha.size || maskAlpha[i] <= 128) person[i] else (person[i] and 0x00FFFFFF)
+                if (i >= maskAlpha.size) {
+                    person[i]
+                } else {
+                    val m = maskAlpha[i]
+                    val alpha = if ((m ushr 24) != 0) (m ushr 24) and 0xFF else m and 0xFF
+                    if (alpha <= 128) person[i] else (person[i] and 0x00FFFFFF)
+                }
             }
         }
 
