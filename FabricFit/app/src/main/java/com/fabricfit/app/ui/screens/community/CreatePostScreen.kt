@@ -40,6 +40,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -55,10 +56,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -112,7 +115,8 @@ class CreatePostViewModel(private val container: AppContainer) : ViewModel() {
 
     private fun loadFabrics() {
         viewModelScope.launch {
-            _fabrics.value = container.fabricAnalysis.getAll()
+            // The repository exposes a hot Flow; keep the state in step with it.
+            container.fabricAnalysis.observeAll().collect { list -> _fabrics.value = list }
         }
     }
 
@@ -173,6 +177,15 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var selectedFabricIds by remember { mutableStateOf<List<Long>>(emptyList()) }
     var selectedStyleId by remember { mutableStateOf<String?>(null) }
 
+    // Media state
+    var mediaUri by remember { mutableStateOf<Uri?>(null) }
+    var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
+    var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
+    var isProcessingVideo by remember { mutableStateOf(false) }
+
+    // Image editing state
+    val imageEditorState = rememberImageEditorState()
+
     // Media pickers
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -218,12 +231,6 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
         // For now, we'll just use gallery picker
     }
 
-    // Media state
-    var mediaUri by remember { mutableStateOf<Uri?>(null) }
-    var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
-    var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
-    var isProcessingVideo by remember { mutableStateOf(false) }
-    
     // Image filter state
     var showImageFilters by remember { mutableStateOf(false) }
     var brightness by remember { mutableStateOf(0f) }
@@ -237,8 +244,6 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var trimStartTime by remember { mutableStateOf(0L) }
     var trimEndTime by remember { mutableStateOf(0L) }
     
-    // Image editing state
-    val imageEditorState = rememberImageEditorState()
     var showAspectRatioSelector by remember { mutableStateOf(false) }
     
     // Rich text editor

@@ -27,14 +27,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
-import com.fabricfit.app.domain.model.NotificationPreferences
+import com.fabricfit.app.domain.model.CommunityNotificationPreferences
 
 /**
  * Screen for managing notification preferences.
  */
 @Composable
 fun NotificationPreferencesScreen(nav: NavHostController, padding: PaddingValues) {
-    var preferences by remember { mutableStateOf(NotificationPreferences()) }
+    var preferences by remember { mutableStateOf(CommunityNotificationPreferences()) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Top bar

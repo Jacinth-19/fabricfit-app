@@ -96,7 +96,7 @@ class AdminModerationViewModel(
 
     fun takeActionOnReport(reportId: String) {
         viewModelScope.launch {
-            container.reports.updateReportStatus(reportId, ReportStatus.ACTION_TAKEN)
+            container.reports.updateReportStatus(reportId, ReportStatus.RESOLVED)
         }
     }
 
@@ -112,7 +112,7 @@ class AdminModerationViewModel(
     fun bulkTakeAction() {
         viewModelScope.launch {
             _state.value.selectedReportIds.forEach { reportId ->
-                container.reports.updateReportStatus(reportId, ReportStatus.ACTION_TAKEN)
+                container.reports.updateReportStatus(reportId, ReportStatus.RESOLVED)
             }
             clearSelection()
         }
@@ -125,9 +125,9 @@ class AdminModerationViewModel(
         return when (filter) {
             ReportFilter.ALL -> reports
             ReportFilter.PENDING -> reports.filter { it.status == ReportStatus.PENDING }
-            ReportFilter.REVIEWED -> reports.filter { it.status == ReportStatus.REVIEWED }
+            ReportFilter.REVIEWED -> reports.filter { it.status == ReportStatus.UNDER_REVIEW }
             ReportFilter.DISMISSED -> reports.filter { it.status == ReportStatus.DISMISSED }
-            ReportFilter.ACTION_TAKEN -> reports.filter { it.status == ReportStatus.ACTION_TAKEN }
+            ReportFilter.ACTION_TAKEN -> reports.filter { it.status == ReportStatus.RESOLVED }
         }
     }
 }

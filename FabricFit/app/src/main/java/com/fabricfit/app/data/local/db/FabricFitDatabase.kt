@@ -26,8 +26,9 @@ import androidx.room.RoomDatabase
         ChallengeEntryEntity::class,
         RecentSearchEntity::class,
         ReportEntity::class,
+        BlockedUserEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false,
 )
 abstract class FabricFitDatabase : RoomDatabase() {
@@ -49,4 +50,5 @@ abstract class FabricFitDatabase : RoomDatabase() {
     abstract fun challengeEntryDao(): ChallengeEntryDao
     abstract fun recentSearchDao(): RecentSearchDao
     abstract fun reportDao(): ReportDao
+    abstract fun blockedUserDao(): BlockedUserDao
 }

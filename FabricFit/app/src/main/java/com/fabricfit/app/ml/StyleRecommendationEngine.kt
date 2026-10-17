@@ -5,9 +5,9 @@ import com.fabricfit.app.domain.model.ColorPreference
 import com.fabricfit.app.domain.model.CompleteTheLookSuggestion
 import com.fabricfit.app.domain.model.OutfitRecommendation
 import com.fabricfit.app.domain.model.SimilarUser
-import com.fabricfit.app.domain.model.StylePreference
+import com.fabricfit.app.domain.model.StyleAffinity
 import com.fabricfit.app.domain.model.StyleProfile
-import com.fabricfit.app.domain.model.WardrobeItem
+import com.fabricfit.app.domain.model.StyleWardrobeItem
 import kotlin.random.Random
 
 /**
@@ -41,7 +41,7 @@ class StyleRecommendationEngine {
      * Generate outfit recommendations based on user's wardrobe.
      */
     fun generateOutfitRecommendations(
-        wardrobe: List<WardrobeItem>,
+        wardrobe: List<StyleWardrobeItem>,
         occasion: String? = null,
         limit: Int = 5,
     ): List<OutfitRecommendation> {
@@ -92,11 +92,11 @@ class StyleRecommendationEngine {
      * Generate "Complete the Look" suggestions for a specific item.
      */
     fun generateCompleteTheLook(
-        currentItem: WardrobeItem,
-        wardrobe: List<WardrobeItem>,
+        currentItem: StyleWardrobeItem,
+        wardrobe: List<StyleWardrobeItem>,
         limit: Int = 3,
     ): CompleteTheLookSuggestion {
-        val suggestedItems = mutableListOf<WardrobeItem>()
+        val suggestedItems = mutableListOf<StyleWardrobeItem>()
         
         // Find complementary items
         val complementaryTypes = getComplementaryTypes(currentItem.type)
@@ -120,12 +120,12 @@ class StyleRecommendationEngine {
     /**
      * Analyze user's wardrobe and generate style profile.
      */
-    fun analyzeWardrobe(wardrobe: List<WardrobeItem>, userId: String): StyleProfile {
+    fun analyzeWardrobe(wardrobe: List<StyleWardrobeItem>, userId: String): StyleProfile {
         // Analyze styles
         val styleCounts = wardrobe.groupingBy { it.style }.eachCount()
         val totalItems = wardrobe.size.toFloat()
         val dominantStyles = styleCounts.map { (style, count) ->
-            StylePreference(
+            StyleAffinity(
                 style = style,
                 percentage = count / totalItems,
                 itemCount = count,
@@ -195,7 +195,7 @@ class StyleRecommendationEngine {
     /**
      * Determine outfit style based on items.
      */
-    private fun determineOutfitStyle(items: List<WardrobeItem>): String {
+    private fun determineOutfitStyle(items: List<StyleWardrobeItem>): String {
         val styles = items.map { it.style }
         return styles.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: "Casual"
     }
@@ -203,7 +203,7 @@ class StyleRecommendationEngine {
     /**
      * Calculate outfit confidence score.
      */
-    private fun calculateOutfitConfidence(items: List<WardrobeItem>): Float {
+    private fun calculateOutfitConfidence(items: List<StyleWardrobeItem>): Float {
         // Check color compatibility
         val colors = items.map { it.color }
         val colorScore = if (colors.size >= 2) {
@@ -259,7 +259,7 @@ class StyleRecommendationEngine {
     /**
      * Calculate style match score.
      */
-    private fun calculateStyleMatch(current: WardrobeItem, suggested: List<WardrobeItem>): Float {
+    private fun calculateStyleMatch(current: StyleWardrobeItem, suggested: List<StyleWardrobeItem>): Float {
         if (suggested.isEmpty()) return 0f
         
         val styleMatches = suggested.count { isStyleCompatible(current.style, it.style) }
@@ -293,7 +293,7 @@ class StyleRecommendationEngine {
     /**
      * Calculate overall style score.
      */
-    private fun calculateStyleScore(wardrobe: List<WardrobeItem>, styles: List<StylePreference>): Float {
+    private fun calculateStyleScore(wardrobe: List<StyleWardrobeItem>, styles: List<StyleAffinity>): Float {
         // Based on variety, balance, and completeness
         val varietyScore = (styles.size / 5.0f).coerceAtMost(1.0f)
         val balanceScore = if (styles.isNotEmpty()) {
@@ -306,7 +306,7 @@ class StyleRecommendationEngine {
     /**
      * Generate style tips based on wardrobe analysis.
      */
-    private fun generateStyleTips(wardrobe: List<WardrobeItem>, styles: List<StylePreference>): List<String> {
+    private fun generateStyleTips(wardrobe: List<StyleWardrobeItem>, styles: List<StyleAffinity>): List<String> {
         val tips = mutableListOf<String>()
         
         if (wardrobe.size < 10) {
@@ -343,11 +343,11 @@ class StyleRecommendationEngine {
         }
     }
     
-    private fun generateRecommendationReason(items: List<WardrobeItem>, style: String): String {
+    private fun generateRecommendationReason(items: List<StyleWardrobeItem>, style: String): String {
         return "This $style combination works well together with complementary colors and styles."
     }
     
-    private fun generateCompleteTheLookReason(current: WardrobeItem, suggested: List<WardrobeItem>): String {
+    private fun generateCompleteTheLookReason(current: StyleWardrobeItem, suggested: List<StyleWardrobeItem>): String {
         return "These items complement your ${current.name.lowercase()} with matching style and colors."
     }
 }

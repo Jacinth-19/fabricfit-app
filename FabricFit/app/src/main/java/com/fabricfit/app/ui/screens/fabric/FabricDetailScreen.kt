@@ -48,7 +48,7 @@ import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.ui.components.ColorDot
-import com.fabricfit.app.ui.util.Haptics
+import com.fabricfit.app.ui.util.rememberHapticFeedback
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ZoomableImage
 import com.fabricfit.app.ui.util.ShareManager
@@ -67,6 +67,7 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
     var showCollections by remember { mutableStateOf(false) }
     var showEdit by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val haptics = rememberHapticFeedback()
     val collections by AppContainer.get(context).collections.observeCollections()
         .collectAsState(initial = emptyList<com.fabricfit.app.domain.model.Collection>())
 
@@ -90,7 +91,7 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
             if (f != null) {
                 IconButton(onClick = {
                     scope.launch {
-                        Haptics.success()
+                        haptics.success()
                         container.fabricAnalysis.setFavorite(f.id, !f.isFavorite)
                     }
                 }) {
@@ -103,7 +104,7 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                     )
                 }
                 IconButton(onClick = {
-                    Haptics.tap()
+                    haptics.tap()
                     ShareManager.shareFabric(
                         context = context,
                         imageUri = f.imageUri,
@@ -115,7 +116,7 @@ fun FabricDetailScreen(nav: NavHostController, padding: PaddingValues, fabricId:
                     Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
                 }
                 IconButton(onClick = {
-                    Haptics.tap()
+                    haptics.tap()
                     confirmDelete = true
                 }) {
                     Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))

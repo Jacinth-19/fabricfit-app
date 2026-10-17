@@ -9,8 +9,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
  * Example usage of PullToRefreshWrapper with a LazyColumn.
@@ -40,13 +42,13 @@ fun PullToRefreshExample(
 ) {
     var isRefreshing by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
-    
+    val scope = rememberCoroutineScope()
+
     PullToRefreshWrapper(
         isRefreshing = isRefreshing,
         onRefresh = {
             isRefreshing = true
-            // Simulate network call
-            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            scope.launch {
                 onRefresh()
                 isRefreshing = false
             }

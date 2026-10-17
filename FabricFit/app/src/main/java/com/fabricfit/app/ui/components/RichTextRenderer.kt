@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import io.noties.markwon.Markwon
-import io.noties.markwon.MarkwonPlugin
+import io.noties.markwon.AbstractMarkwonPlugin
 import io.noties.markwon.core.MarkwonTheme
 import io.noties.markwon.html.HtmlPlugin
 import io.noties.markwon.linkify.LinkifyPlugin
@@ -45,7 +45,7 @@ fun rememberMarkwon(): Markwon {
         Markwon.builder(context)
             .usePlugin(HtmlPlugin.create())
             .usePlugin(LinkifyPlugin.create())
-            .usePlugin(object : MarkwonPlugin {
+            .usePlugin(object : AbstractMarkwonPlugin() {
                 override fun configureTheme(builder: MarkwonTheme.Builder) {
                     builder
                         .headingBreakHeight(0)

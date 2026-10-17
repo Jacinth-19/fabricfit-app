@@ -71,18 +71,22 @@ class SearchRepository(
         
         return allPosts
             .filter { post ->
+                // Tags and fabric ids are comma-separated columns on the entity.
+                val postTags = parseCsv(post.tags)
+                val postFabricIds = parseCsv(post.fabricIds).mapNotNull { it.toLongOrNull() }
+
                 // Text search
                 val matchesQuery = post.title.lowercase().contains(query) ||
                     post.description.lowercase().contains(query) ||
-                    post.tags.any { it.lowercase().contains(query) }
+                    postTags.any { it.lowercase().contains(query) }
 
                 // Filter by tags
                 val matchesTags = filters.selectedTags.isEmpty() ||
-                    post.tags.any { it in filters.selectedTags }
+                    postTags.any { it in filters.selectedTags }
 
                 // Filter by fabrics
                 val matchesFabrics = filters.selectedFabrics.isEmpty() ||
-                    post.fabricIds.any { it in filters.selectedFabrics }
+                    postFabricIds.any { it in filters.selectedFabrics }
 
                 // Filter by date range
                 val matchesDate = matchesDateRange(post.createdAt, filters.dateRange)
@@ -142,12 +146,12 @@ class SearchRepository(
      */
     private suspend fun searchTags(query: String): List<SearchResult> {
         val allPosts = galleryDao.getAll()
-        val allTags = allPosts.flatMap { it.tags }.distinct()
+        val allTags = allPosts.flatMap { parseCsv(it.tags) }.distinct()
         
         return allTags
             .filter { it.lowercase().contains(query) }
             .map { tag ->
-                val postCount = allPosts.count { tag in it.tags }
+                val postCount = allPosts.count { tag in parseCsv(it.tags) }
                 SearchResult(
                     id = tag,
                     type = SearchResultType.TAG,
@@ -312,6 +316,10 @@ class SearchRepository(
      */
     suspend fun getAllTags(): List<String> {
         val allPosts = galleryDao.getAll()
-        return allPosts.flatMap { it.tags }.distinct().sorted()
+        return allPosts.flatMap { parseCsv(it.tags) }.distinct().sorted()
     }
+
+    /** Split the comma-separated columns the community tables use for lists. */
+    private fun parseCsv(value: String): List<String> =
+        value.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 }

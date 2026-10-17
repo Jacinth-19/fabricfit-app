@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -164,6 +165,7 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
     val style by vm.style.collectAsStateWithLifecycle()
     val isLoading by vm.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val markwon = rememberMarkwon()
     
     // Report dialog state
@@ -528,15 +530,17 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
         ReportDialog(
             onDismiss = { showReportDialog = false },
             onSubmit = { reportType, description ->
-                // Submit report
+                // Submit report (the repository call is suspending)
                 val container = AppContainer.get(context)
-                container.reports.submitReport(
-                    reportedUserId = item!!.userId,
-                    contentType = com.fabricfit.app.domain.model.ReportedContentType.GALLERY_ITEM,
-                    contentId = item!!.id,
-                    reportType = reportType,
-                    description = description,
-                )
+                scope.launch {
+                    container.reports.submitReport(
+                        reportedUserId = item!!.userId,
+                        contentType = com.fabricfit.app.domain.model.ReportedContentType.GALLERY_ITEM,
+                        contentId = item!!.id,
+                        reportType = reportType,
+                        description = description,
+                    )
+                }
                 showReportDialog = false
                 // Show success message
                 android.widget.Toast.makeText(

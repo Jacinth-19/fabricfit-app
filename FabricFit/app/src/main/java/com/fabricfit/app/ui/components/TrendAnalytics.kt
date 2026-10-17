@@ -255,6 +255,7 @@ fun WhatsHotSection(
     }
 }
 
+@Composable
 private fun getRankColor(rank: Int): Color {
     return when (rank) {
         1 -> Color(0xFFFFD700) // Gold

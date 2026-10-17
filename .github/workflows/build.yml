@@ -76,7 +76,15 @@ jobs:
             echo
             python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log --markdown
           } > /tmp/gradle-failure.md
-          gh pr comment "$pr" --body-file /tmp/gradle-failure.md
+          # Update the previous failure comment instead of spamming the PR.
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments?per_page=100" \
+            --jq '[.[] | select(.body | startswith("### ❌ Gradle:"))] | last | .id // empty')
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" \
+              -F body=@/tmp/gradle-failure.md > /dev/null
+          else
+            gh pr comment "$pr" --body-file /tmp/gradle-failure.md
+          fi
 
       - name: Upload test reports
         if: always()

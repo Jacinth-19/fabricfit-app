@@ -428,9 +428,9 @@ private fun ReportDetailDialog(
 private fun getStatusColor(status: ReportStatus): Color {
     return when (status) {
         ReportStatus.PENDING -> Color(0xFFFF9800) // Orange
-        ReportStatus.REVIEWED -> Color(0xFF2196F3) // Blue
+        ReportStatus.UNDER_REVIEW -> Color(0xFF2196F3) // Blue
         ReportStatus.DISMISSED -> Color(0xFF9E9E9E) // Gray
-        ReportStatus.ACTION_TAKEN -> Color(0xFF4CAF50) // Green
+        ReportStatus.RESOLVED -> Color(0xFF4CAF50) // Green
     }
 }
 

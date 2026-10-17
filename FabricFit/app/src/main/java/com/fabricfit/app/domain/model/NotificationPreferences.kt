@@ -3,7 +3,7 @@ package com.fabricfit.app.domain.model
 /**
  * User preferences for push notifications.
  */
-data class NotificationPreferences(
+data class CommunityNotificationPreferences(
     val likesEnabled: Boolean = true,
     val commentsEnabled: Boolean = true,
     val followsEnabled: Boolean = true,

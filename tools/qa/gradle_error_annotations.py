@@ -32,8 +32,8 @@ SECTION_LIMIT = 25
 
 # GitHub truncates a single annotation message at ~4 KB.
 ANNOTATION_BUDGET = 1400
-# A PR comment may be up to 64 KB; stay well under it.
-MARKDOWN_BUDGET = 30000
+# A PR comment may be up to 64 KB; stay just under it.
+MARKDOWN_BUDGET = 60000
 
 
 def escape(text: str) -> str:
