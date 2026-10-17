@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
@@ -61,7 +62,9 @@ import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.domain.model.MediaType
+import com.fabricfit.app.domain.model.ReportedContentType
 import com.fabricfit.app.ui.components.FabricSwatch
+import com.fabricfit.app.ui.components.ReportDialog
 import com.fabricfit.app.ui.components.RichTextRenderer
 import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.ZoomableImage
@@ -162,6 +165,9 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
     val isLoading by vm.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val markwon = rememberMarkwon()
+    
+    // Report dialog state
+    var showReportDialog by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Top bar
@@ -329,6 +335,18 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                                 Icon(
                                     Icons.Filled.Share,
                                     contentDescription = stringResource(R.string.action_share),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.size(28.dp),
+                                )
+                            }
+                            
+                            IconButton(onClick = {
+                                // Show report dialog
+                                showReportDialog = true
+                            }) {
+                                Icon(
+                                    Icons.Filled.Flag,
+                                    contentDescription = stringResource(R.string.action_report),
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.size(28.dp),
                                 )
@@ -503,6 +521,31 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
             // Add comment bar at bottom
             CommentInput(onSubmit = { vm.addComment(it) })
         }
+    }
+    
+    // Report dialog
+    if (showReportDialog && item != null) {
+        ReportDialog(
+            onDismiss = { showReportDialog = false },
+            onSubmit = { reportType, description ->
+                // Submit report
+                val container = AppContainer.get(context)
+                container.reports.submitReport(
+                    reportedUserId = item!!.userId,
+                    contentType = com.fabricfit.app.domain.model.ReportedContentType.GALLERY_ITEM,
+                    contentId = item!!.id,
+                    reportType = reportType,
+                    description = description,
+                )
+                showReportDialog = false
+                // Show success message
+                android.widget.Toast.makeText(
+                    context,
+                    context.getString(R.string.report_success),
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            },
+        )
     }
 }
 
