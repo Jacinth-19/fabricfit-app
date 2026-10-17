@@ -42,6 +42,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,6 +60,10 @@ import coil.request.ImageRequest
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.SearchResult
 import com.fabricfit.app.domain.model.SearchResultType
+import com.fabricfit.app.ui.components.SearchAutocomplete
+import com.fabricfit.app.ui.components.SearchSuggestion
+import com.fabricfit.app.ui.components.SearchSuggestionGenerator
+import com.fabricfit.app.ui.components.SuggestionType
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import kotlinx.coroutines.launch
@@ -111,6 +116,47 @@ fun SearchScreen(nav: NavHostController, padding: PaddingValues) {
                 Icon(
                     Icons.Filled.FilterList,
                     contentDescription = stringResource(R.string.action_filter),
+                )
+            }
+        }
+
+        // Search autocomplete suggestions
+        if (state.query.length >= 1) {
+            val suggestions = remember(state.query, state.recentSearches) {
+                SearchSuggestionGenerator.generateSuggestions(
+                    query = state.query,
+                    recentSearches = state.recentSearches.map { it.query },
+                    popularTags = listOf("fashion", "style", "outfit", "design", "fabric"),
+                    users = listOf("jane_designer", "mike_stylist", "sarah_fashion"),
+                )
+            }
+            
+            if (suggestions.isNotEmpty()) {
+                SearchAutocomplete(
+                    suggestions = suggestions,
+                    onSuggestionClick = { suggestion ->
+                        when (suggestion.type) {
+                            SuggestionType.RECENT_SEARCH -> {
+                                vm.updateQuery(suggestion.text)
+                                vm.performSearch()
+                            }
+                            SuggestionType.TAG -> {
+                                val tagName = suggestion.text.removePrefix("#")
+                                vm.updateQuery("#$tagName")
+                                vm.performSearch()
+                            }
+                            SuggestionType.USER -> {
+                                val username = suggestion.text.removePrefix("@")
+                                vm.updateQuery("@$username")
+                                vm.performSearch()
+                            }
+                            SuggestionType.POST -> {
+                                vm.updateQuery(suggestion.text)
+                                vm.performSearch()
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
             }
         }
