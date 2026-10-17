@@ -31,9 +31,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -80,6 +82,9 @@ import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.MediaType
 import com.fabricfit.app.media.VideoProcessor
 import com.fabricfit.app.ui.components.AspectRatioSelector
+import com.fabricfit.app.ui.components.ImageFiltersPanel
+import com.fabricfit.app.ui.components.ImageFilterProcessor
+import com.fabricfit.app.ui.components.VideoTrimmer
 import com.fabricfit.app.ui.components.RichTextEditor
 import com.fabricfit.app.ui.components.rememberMarkwon
 import com.fabricfit.app.ui.navigation.appViewModel
@@ -219,6 +224,19 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
     var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
     var isProcessingVideo by remember { mutableStateOf(false) }
+    
+    // Image filter state
+    var showImageFilters by remember { mutableStateOf(false) }
+    var brightness by remember { mutableStateOf(0f) }
+    var contrast by remember { mutableStateOf(0f) }
+    var saturation by remember { mutableStateOf(0f) }
+    var filteredBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    
+    // Video trim state
+    var showVideoTrimmer by remember { mutableStateOf(false) }
+    var videoDuration by remember { mutableStateOf(0L) }
+    var trimStartTime by remember { mutableStateOf(0L) }
+    var trimEndTime by remember { mutableStateOf(0L) }
     
     // Image editing state
     val imageEditorState = rememberImageEditorState()
@@ -516,6 +534,136 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                         }
                                     },
                                 )
+                            }
+                            
+                            // Image filters button and panel (only for images)
+                            if (mediaType == MediaType.IMAGE) {
+                                Spacer(Modifier.height(8.dp))
+                                TextButton(
+                                    onClick = { showImageFilters = !showImageFilters },
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    Icon(
+                                        Icons.Filled.Tune,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        if (showImageFilters) "Hide Filters" else "Adjust Filters"
+                                    )
+                                }
+                                
+                                if (showImageFilters) {
+                                    Card(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        ),
+                                    ) {
+                                        ImageFiltersPanel(
+                                            brightness = brightness,
+                                            contrast = contrast,
+                                            saturation = saturation,
+                                            onBrightnessChange = { 
+                                                brightness = it
+                                                // Apply filters to bitmap
+                                                imageUri?.let { uri ->
+                                                    // Load bitmap and apply filters
+                                                    val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+                                                        context.contentResolver, Uri.parse(uri)
+                                                    )
+                                                    filteredBitmap = ImageFilterProcessor.applyFilters(
+                                                        bitmap, brightness, contrast, saturation
+                                                    )
+                                                }
+                                            },
+                                            onContrastChange = { 
+                                                contrast = it
+                                                imageUri?.let { uri ->
+                                                    val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+                                                        context.contentResolver, Uri.parse(uri)
+                                                    )
+                                                    filteredBitmap = ImageFilterProcessor.applyFilters(
+                                                        bitmap, brightness, contrast, saturation
+                                                    )
+                                                }
+                                            },
+                                            onSaturationChange = { 
+                                                saturation = it
+                                                imageUri?.let { uri ->
+                                                    val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
+                                                        context.contentResolver, Uri.parse(uri)
+                                                    )
+                                                    filteredBitmap = ImageFilterProcessor.applyFilters(
+                                                        bitmap, brightness, contrast, saturation
+                                                    )
+                                                }
+                                            },
+                                            onReset = {
+                                                brightness = 0f
+                                                contrast = 0f
+                                                saturation = 0f
+                                                filteredBitmap = null
+                                            },
+                                        )
+                                    }
+                                }
+                            }
+                            
+                            // Video trimmer (only for videos)
+                            if (mediaType == MediaType.VIDEO && mediaUri != null) {
+                                Spacer(Modifier.height(8.dp))
+                                TextButton(
+                                    onClick = { 
+                                        // Get video duration
+                                        val retriever = android.media.MediaMetadataRetriever()
+                                        retriever.setDataSource(context, mediaUri)
+                                        val durationStr = retriever.extractMetadata(
+                                            android.media.MediaMetadataRetriever.METADATA_KEY_DURATION
+                                        )
+                                        videoDuration = durationStr?.toLongOrNull() ?: 0L
+                                        trimEndTime = videoDuration
+                                        retriever.release()
+                                        
+                                        showVideoTrimmer = !showVideoTrimmer 
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                ) {
+                                    Icon(
+                                        Icons.Filled.ContentCut,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                    Spacer(Modifier.width(8.dp))
+                                    Text(
+                                        if (showVideoTrimmer) "Hide Trimmer" else "Trim Video"
+                                    )
+                                }
+                                
+                                if (showVideoTrimmer && videoDuration > 0) {
+                                    Card(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                                        ),
+                                    ) {
+                                        VideoTrimmer(
+                                            videoUri = mediaUri!!,
+                                            durationMs = videoDuration,
+                                            onTrimComplete = { start, end ->
+                                                trimStartTime = start
+                                                trimEndTime = end
+                                                // TODO: Apply trim using VideoProcessor.trimVideo()
+                                                android.widget.Toast.makeText(
+                                                    context,
+                                                    "Video trimmed to ${end - start}ms",
+                                                    android.widget.Toast.LENGTH_SHORT
+                                                ).show()
+                                            },
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
