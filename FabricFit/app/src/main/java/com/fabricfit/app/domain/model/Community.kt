@@ -17,6 +17,14 @@ data class CommunityUser(
 )
 
 /**
+ * Media type for gallery items.
+ */
+enum class MediaType {
+    IMAGE,
+    VIDEO,
+}
+
+/**
  * User-generated style gallery item.
  */
 data class GalleryItem(
@@ -27,6 +35,10 @@ data class GalleryItem(
     val title: String,
     val description: String = "",
     val imageUrl: String,
+    val mediaType: MediaType = MediaType.IMAGE,
+    val videoUrl: String? = null,
+    val videoDuration: Long? = null,
+    val thumbnailUrl: String? = null,
     val fabricIds: List<Long> = emptyList(),
     val styleId: String? = null,
     val tags: List<String> = emptyList(),

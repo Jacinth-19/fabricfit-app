@@ -157,6 +157,12 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+    
+    // ExoPlayer for video playback
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+    
+    // FFmpeg for video processing (compression, trimming, thumbnails)
+    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

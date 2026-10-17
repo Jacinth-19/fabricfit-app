@@ -26,6 +26,10 @@ data class GalleryItemEntity(
     val title: String,
     val description: String = "",
     val imageUrl: String,
+    val mediaType: String = "IMAGE",
+    val videoUrl: String? = null,
+    val videoDuration: Long? = null,
+    val thumbnailUrl: String? = null,
     val fabricIds: String = "", // Comma-separated
     val styleId: String? = null,
     val tags: String = "", // Comma-separated

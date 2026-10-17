@@ -1106,4 +1106,18 @@
     <string name="channel_challenges">Challenges</string>
     <string name="channel_challenges_description">Notifications about style challenges and contests</string>
 
+    <!-- Video Support -->
+    <string name="media_type_image">Image</string>
+    <string name="media_type_video">Video</string>
+    <string name="video_select">Select Video</string>
+    <string name="video_processing">Processing video...</string>
+    <string name="video_compressing">Compressing video...</string>
+    <string name="video_generating_thumbnail">Generating thumbnail...</string>
+    <string name="video_duration_format">%d:%02d</string>
+    <string name="video_trim">Trim Video</string>
+    <string name="video_trim_start">Start Time</string>
+    <string name="video_trim_end">End Time</string>
+    <string name="video_preview">Preview</string>
+    <string name="video_upload">Upload Video</string>
+
 </resources>
