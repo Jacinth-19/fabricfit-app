@@ -283,7 +283,7 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                             profileBio = bio.trim().ifBlank { "Fashion Lover" },
                             avatarUri = avatarUri,
                             stylePreference = stylePref,
-                            onboardingDone = true,
+                            onboardingCompleted = true,
                         )
                     }
                     onFinished(false)
@@ -436,7 +436,7 @@ fun ProfileIdentityDialog(
                 }
 
                 Text(
-                    text = stringResource(R.string.profile_preference_title),
+                    text = "Style Preference",
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

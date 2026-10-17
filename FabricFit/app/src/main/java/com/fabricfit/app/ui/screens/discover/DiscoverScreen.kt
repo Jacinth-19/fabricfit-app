@@ -72,6 +72,7 @@ import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
+import com.fabricfit.app.ui.components.heritageReviews
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
@@ -339,9 +340,9 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                 }
                 val styles = when (sortMode) {
                     DiscoverSort.FEATURED -> categoryFiltered
-                    DiscoverSort.TRENDING -> categoryFiltered.sortedByDescending { it.trending }
-                    DiscoverSort.POPULAR -> categoryFiltered.sortedByDescending { it.popularity }
-                    DiscoverSort.NEWEST -> categoryFiltered.sortedByDescending { it.addedAt }
+                    DiscoverSort.TRENDING -> categoryFiltered.sortedByDescending { it.heritageRating() }
+                    DiscoverSort.POPULAR -> categoryFiltered.sortedByDescending { it.heritageReviews() }
+                    DiscoverSort.NEWEST -> categoryFiltered.reversed()
                 }
                 if (styles.isEmpty()) {
                     EnhancedEmptyState(
@@ -382,7 +383,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                                                 .height(166.dp),
                                         )
                                         Surface(
-                                            onClick = { vm.toggleFavorite(style.id) },
+                                            onClick = { vm.toggleFavoriteStyle(style.id) },
                                             shape = CircleShape,
                                             color = Color.White.copy(alpha = 0.88f),
                                             modifier = Modifier
@@ -393,7 +394,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                                             Box(contentAlignment = Alignment.Center) {
                                                 Icon(
                                                     imageVector = if (isFav) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                                    contentDescription = stringResource(R.string.cd_favorite_toggle),
+                                                    contentDescription = "Save Style",
                                                     tint = if (isFav) HeritageGold else HeritageForest,
                                                     modifier = Modifier.size(18.dp),
                                                 )

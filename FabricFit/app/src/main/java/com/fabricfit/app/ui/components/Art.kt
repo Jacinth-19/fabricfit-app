@@ -27,9 +27,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.fabricfit.app.data.engine.GarmentGeometry
-import com.fabricfit.app.data.engine.SampleFabrics
 import com.fabricfit.app.domain.model.DressStyle
+import com.fabricfit.app.media.garment.GarmentGeometry
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.PatternType
 import com.fabricfit.app.di.AppContainer
@@ -323,11 +322,11 @@ fun CustomizedSilhouettePreview(
                         close()
                     }
                     val fillColor = when (customization.placement) {
-                        FabricPlacement.ALL_OVER -> if (idx == 0) primaryColor.copy(alpha = 0.78f) else accentColor.copy(alpha = 0.72f)
-                        FabricPlacement.BODICE_ONLY -> if (idx == 0) primaryColor.copy(alpha = 0.82f) else Color(0xFFFBF8F1).copy(alpha = 0.55f)
+                        FabricPlacement.FULL -> if (idx == 0) primaryColor.copy(alpha = 0.78f) else accentColor.copy(alpha = 0.72f)
+                        FabricPlacement.TOP_ONLY -> if (idx == 0) primaryColor.copy(alpha = 0.82f) else Color(0xFFFBF8F1).copy(alpha = 0.55f)
                         FabricPlacement.SKIRT_ONLY -> if (idx == 0) Color(0xFFFBF8F1).copy(alpha = 0.55f) else primaryColor.copy(alpha = 0.82f)
-                        FabricPlacement.TRIM_CUFFS -> Color(0xFFFBF8F1).copy(alpha = 0.45f)
-                        FabricPlacement.YOKE_HEM -> if (idx % 2 == 0) primaryColor.copy(alpha = 0.75f) else accentColor.copy(alpha = 0.65f)
+                        FabricPlacement.ACCENTS -> Color(0xFFFBF8F1).copy(alpha = 0.45f)
+                        FabricPlacement.PANELS -> if (idx % 2 == 0) primaryColor.copy(alpha = 0.75f) else accentColor.copy(alpha = 0.65f)
                     }
                     drawPath(path = path, color = fillColor)
                     drawPath(

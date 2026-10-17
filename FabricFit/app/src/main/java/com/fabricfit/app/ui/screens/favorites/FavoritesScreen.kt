@@ -270,7 +270,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
 
             // Main Scan Result Card: dynamic latest scan or Kente Royalty · 98% Match + 4 Palette Dots + Colors/Pattern/Style tabs
             item {
-                val activeFabric = state.latestFabric
+                val activeFabric = state.fabrics.firstOrNull()
                 val bannerTitle = activeFabric?.let {
                     it.name?.takeIf { n -> n.isNotBlank() } ?: context.getString(it.category.labelRes)
                 } ?: "Kente Royalty"
