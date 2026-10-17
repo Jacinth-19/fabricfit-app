@@ -42,6 +42,7 @@ import com.fabricfit.app.ui.screens.community.CommunityScreen
 import com.fabricfit.app.ui.screens.community.UserProfileScreen
 import com.fabricfit.app.ui.screens.community.GalleryDetailScreen
 import com.fabricfit.app.ui.screens.community.ChallengeDetailScreen
+import com.fabricfit.app.ui.screens.community.CreatePostScreen
 import com.fabricfit.app.ui.screens.tailors.TailorsScreen
 import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
 import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
@@ -300,5 +301,6 @@ private fun FabricFitNavHost(
         ) { entry ->
             ChallengeDetailScreen(nav, padding, challengeId = entry.arguments?.getString("challengeId").orEmpty())
         }
+        composable(Routes.CREATE_POST) { CreatePostScreen(nav, padding) }
     }
 }
