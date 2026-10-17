@@ -5,6 +5,7 @@ import com.fabricfit.app.data.local.db.CommentEntity
 import com.fabricfit.app.data.local.db.CommunityUserEntity
 import com.fabricfit.app.data.local.db.GalleryItemEntity
 import com.fabricfit.app.data.local.db.LikeEntity
+import com.fabricfit.app.data.local.db.RecentSearchEntity
 import com.fabricfit.app.data.local.db.StyleChallengeEntity
 import com.fabricfit.app.domain.model.ChallengeEntry
 import com.fabricfit.app.domain.model.Comment
@@ -13,6 +14,7 @@ import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.domain.model.Like
 import com.fabricfit.app.domain.model.Occasion
+import com.fabricfit.app.domain.model.RecentSearch
 import com.fabricfit.app.domain.model.StyleChallenge
 
 // CommunityUser mappers
@@ -179,4 +181,15 @@ fun ChallengeEntry.toEntity() = ChallengeEntryEntity(
     submissionDate = submissionDate,
     voteCount = voteCount,
     isVoted = isVoted,
+)
+
+// RecentSearch mappers
+fun RecentSearchEntity.toDomain() = RecentSearch(
+    query = query,
+    timestamp = timestamp,
+)
+
+fun RecentSearch.toEntity() = RecentSearchEntity(
+    query = query,
+    timestamp = timestamp,
 )

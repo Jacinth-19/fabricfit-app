@@ -1024,4 +1024,14 @@
     <string name="style_used">Style Used</string>
     <string name="user_profile_not_found">User not found</string>
 
+    <!-- Search -->
+    <string name="search_hint">Search posts, users, tags…</string>
+    <string name="search_recent">Recent Searches</string>
+    <string name="search_no_recent">No recent searches</string>
+    <string name="search_no_results">No results found</string>
+    <string name="action_clear_all">Clear All</string>
+    <string name="action_apply">Apply</string>
+    <string name="filter_date_range">Date Range</string>
+    <string name="filter_tags">Tags</string>
+
 </resources>

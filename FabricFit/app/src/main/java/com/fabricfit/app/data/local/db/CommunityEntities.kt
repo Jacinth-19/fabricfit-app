@@ -82,3 +82,9 @@ data class ChallengeEntryEntity(
     val voteCount: Int = 0,
     val isVoted: Boolean = false,
 )
+
+@Entity(tableName = "recent_searches")
+data class RecentSearchEntity(
+    @PrimaryKey val query: String,
+    val timestamp: Long = System.currentTimeMillis(),
+)

@@ -53,6 +53,7 @@ object Routes {
     fun galleryDetail(itemId: String) = "gallery/$itemId"
     fun challenge(challengeId: String) = "challenge/$challengeId"
     const val CREATE_POST = "create/post"
+    const val SEARCH = "search"
 
     val TOP_LEVEL = listOf(HOME, DISCOVER, DISCOVER_ROUTE_PATTERN, CREATE, FAVORITES, PROFILE)
 }

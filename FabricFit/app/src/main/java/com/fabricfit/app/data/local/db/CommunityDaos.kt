@@ -12,6 +12,9 @@ interface CommunityUserDao {
     @Query("SELECT * FROM community_users ORDER BY username ASC")
     fun observeAll(): Flow<List<CommunityUserEntity>>
 
+    @Query("SELECT * FROM community_users ORDER BY username ASC")
+    suspend fun getAll(): List<CommunityUserEntity>
+
     @Query("SELECT * FROM community_users WHERE id = :id")
     suspend fun getById(id: String): CommunityUserEntity?
 
@@ -38,6 +41,9 @@ interface CommunityUserDao {
 interface GalleryItemDao {
     @Query("SELECT * FROM gallery_items ORDER BY createdAt DESC")
     fun observeAll(): Flow<List<GalleryItemEntity>>
+
+    @Query("SELECT * FROM gallery_items ORDER BY createdAt DESC")
+    suspend fun getAll(): List<GalleryItemEntity>
 
     @Query("SELECT * FROM gallery_items WHERE id = :id")
     suspend fun getById(id: String): GalleryItemEntity?
@@ -108,6 +114,9 @@ interface StyleChallengeDao {
     @Query("SELECT * FROM style_challenges ORDER BY startDate DESC")
     fun observeAll(): Flow<List<StyleChallengeEntity>>
 
+    @Query("SELECT * FROM style_challenges ORDER BY startDate DESC")
+    suspend fun getAll(): List<StyleChallengeEntity>
+
     @Query("SELECT * FROM style_challenges WHERE isActive = 1 ORDER BY endDate ASC")
     fun observeActive(): Flow<List<StyleChallengeEntity>>
 
@@ -143,4 +152,19 @@ interface ChallengeEntryDao {
 
     @Query("DELETE FROM challenge_entries WHERE id = :id")
     suspend fun delete(id: String)
+}
+
+@Dao
+interface RecentSearchDao {
+    @Query("SELECT * FROM recent_searches ORDER BY timestamp DESC LIMIT 10")
+    fun observeRecent(): Flow<List<RecentSearchEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(search: RecentSearchEntity)
+
+    @Query("DELETE FROM recent_searches WHERE query = :query")
+    suspend fun delete(query: String)
+
+    @Query("DELETE FROM recent_searches")
+    suspend fun deleteAll()
 }

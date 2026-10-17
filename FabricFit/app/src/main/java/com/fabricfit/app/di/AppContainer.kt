@@ -111,6 +111,15 @@ class AppContainer private constructor(context: Context) {
             entryDao = database.challengeEntryDao(),
         )
 
+    // Search features
+    val search: com.fabricfit.app.data.repository.SearchRepository =
+        com.fabricfit.app.data.repository.SearchRepository(
+            galleryDao = database.galleryItemDao(),
+            userDao = database.communityUserDao(),
+            challengeDao = database.styleChallengeDao(),
+            recentSearchDao = database.recentSearchDao(),
+        )
+
     companion object {
         @Volatile
         private var instance: AppContainer? = null
