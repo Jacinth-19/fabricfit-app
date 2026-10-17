@@ -130,8 +130,8 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     
-    // Google Fonts for custom branded typography
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.0")
+    // Google Fonts for custom branded typography (version comes from the Compose BOM)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

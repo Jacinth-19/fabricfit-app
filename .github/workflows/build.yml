@@ -62,6 +62,8 @@ jobs:
   release:
     needs: verify
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
 
@@ -79,19 +81,52 @@ jobs:
 
       # Signed with the throwaway demo key committed in app/demo-release.keystore.
       - name: Minified release APK + Play bundle
-        run: ./gradlew :app:assembleRelease :app:bundleRelease
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleRelease :app:bundleRelease --console=plain 2>&1 \
+            | tee release-gradle.log
+
+      - name: Annotate the Gradle failure
+        if: failure()
+        run: python3 ../tools/qa/gradle_error_annotations.py release-gradle.log
 
       - name: Upload release APK
+        if: success()
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-release-apk
           path: FabricFit/app/build/outputs/apk/release/app-release.apk
 
       - name: Upload Play bundle
+        if: success()
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-release-aab
           path: FabricFit/app/build/outputs/bundle/release/app-release.aab
+
+      # Artifacts expire and need an Actions login to download, so the release
+      # build is also attached to a GitHub Release for one-click install.
+      - name: Publish release APK + bundle to GitHub Releases
+        if: >-
+          success() && (github.event_name == 'workflow_dispatch' ||
+          startsWith(github.ref, 'refs/tags/v'))
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          version=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle.kts | head -1)
+          tag="v${version:-1.0.0}"
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "dist/fabricfit-${tag}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "dist/fabricfit-${tag}.aab"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/* --clobber
+          else
+            gh release create "$tag" dist/* \
+              --title "FabricFit ${tag}" \
+              --notes "Signed release build produced by GitHub Actions run ${GITHUB_RUN_ID}."
+          fi
+          echo "Published $tag"
 
   # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
   # macOS runners only (Linux GH runners lack KVM). Fires on manual dispatch,
