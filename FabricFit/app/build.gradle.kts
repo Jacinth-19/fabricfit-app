@@ -149,6 +149,9 @@ dependencies {
     implementation("io.noties.markwon:editor:4.6.2")
     implementation("io.noties.markwon:html:4.6.2")
     implementation("io.noties.markwon:linkify:4.6.2")
+    // Markwon's HTML <strike> handler reaches into the GFM strikethrough
+    // extension; ship it so R8 does not strip (or fail on) the reference.
+    implementation("com.atlassian.commonmark:commonmark-ext-gfm-strikethrough:0.13.0")
     
     // Firebase Cloud Messaging for push notifications
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
