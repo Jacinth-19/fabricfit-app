@@ -970,8 +970,6 @@
 
     <!-- ============ Share ============ -->
     <string name="share_title">Share via</string>
-    <string name="share_fabric_text">Check out this %1$s fabric with %2$s pattern I found on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
-    <string name="share_look_text">Check out this %1$s look I created on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
     <string name="share_look_text_with_fabric">Check out this %1$s look I created with %2$s fabric on FabricFit! 🎨✨ #FabricFit #GhanaianFashion</string>
 
     <!-- ============ Export ============ -->
@@ -1009,7 +1007,6 @@
     <string name="action_comment">Comment</string>
     <string name="action_follow">Follow</string>
     <string name="action_unfollow">Unfollow</string>
-    <string name="action_share">Share</string>
     <string name="challenge_participants">%d participants</string>
     <string name="challenge_join">Join Challenge</string>
     <string name="challenge_submit">Submit Entry</string>
@@ -1030,7 +1027,6 @@
     <string name="search_no_recent">No recent searches</string>
     <string name="search_no_results">No results found</string>
     <string name="action_clear_all">Clear All</string>
-    <string name="action_apply">Apply</string>
     <string name="filter_date_range">Date Range</string>
     <string name="filter_tags">Tags</string>
 
@@ -1145,8 +1141,6 @@
     <string name="admin_no_reports">No reports to review</string>
     <string name="admin_dismiss">Dismiss</string>
     <string name="admin_take_action">Take Action</string>
-    <string name="action_clear">Clear</string>
-    <string name="action_close">Close</string>
     <string name="report_details_reported_user">Reported User</string>
     <string name="report_details_content_type">Content Type</string>
     <string name="report_details_description">Description</string>
