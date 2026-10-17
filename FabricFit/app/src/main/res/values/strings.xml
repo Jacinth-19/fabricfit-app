@@ -1034,4 +1034,12 @@
     <string name="filter_date_range">Date Range</string>
     <string name="filter_tags">Tags</string>
 
+    <!-- Image Editing -->
+    <string name="action_edit">Edit</string>
+    <string name="image_aspect_ratio">Aspect Ratio</string>
+    <string name="image_edit_title">Edit Image</string>
+    <string name="image_crop">Crop</string>
+    <string name="image_rotate">Rotate</string>
+    <string name="image_reset">Reset</string>
+
 </resources>

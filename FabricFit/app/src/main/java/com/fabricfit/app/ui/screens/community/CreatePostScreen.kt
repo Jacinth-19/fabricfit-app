@@ -1,5 +1,6 @@
 package com.fabricfit.app.ui.screens.community
 
+import android.app.Activity
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -71,7 +73,10 @@ import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
+import com.fabricfit.app.ui.components.AspectRatioSelector
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.util.ImageEditor
+import com.fabricfit.app.ui.util.rememberImageEditorState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -164,6 +169,21 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     ) { bitmap ->
         // In production, save bitmap to file and get URI
         // For now, we'll just use gallery picker
+    }
+
+    // Image editing state
+    val imageEditorState = rememberImageEditorState()
+    var showAspectRatioSelector by remember { mutableStateOf(false) }
+
+    // uCrop launcher
+    val uCropLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val uri = ImageEditor.parseResult(result.resultCode, result.data)
+        if (uri != null) {
+            imageUri = uri
+        }
+        imageEditorState.cancelEditing()
     }
 
     // Dropdown states
@@ -279,35 +299,86 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                             }
                         }
                     } else {
-                        Box {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(imageUri)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(1.5f)
-                                    .clip(RoundedCornerShape(12.dp)),
-                            )
-                            IconButton(
-                                onClick = { imageUri = null },
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(8.dp),
-                            ) {
-                                Surface(
-                                    shape = RoundedCornerShape(50),
-                                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                        Column {
+                            Box {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(imageUri)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1.5f)
+                                        .clip(RoundedCornerShape(12.dp)),
+                                )
+                                // Edit button
+                                IconButton(
+                                    onClick = {
+                                        imageUri?.let { uri ->
+                                            imageEditorState.setOriginalUri(uri)
+                                            showAspectRatioSelector = true
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .padding(8.dp),
                                 ) {
-                                    Icon(
-                                        Icons.Filled.Close,
-                                        contentDescription = "Remove photo",
-                                        modifier = Modifier.padding(8.dp),
-                                    )
+                                    Surface(
+                                        shape = RoundedCornerShape(50),
+                                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.Edit,
+                                            contentDescription = stringResource(R.string.action_edit),
+                                            modifier = Modifier.padding(8.dp),
+                                        )
+                                    }
                                 }
+                                // Remove button
+                                IconButton(
+                                    onClick = { 
+                                        imageUri = null
+                                        showAspectRatioSelector = false
+                                    },
+                                    modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(8.dp),
+                                ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(50),
+                                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.Close,
+                                            contentDescription = "Remove photo",
+                                            modifier = Modifier.padding(8.dp),
+                                        )
+                                    }
+                                }
+                            }
+
+                            // Aspect ratio selector
+                            if (showAspectRatioSelector) {
+                                Spacer(Modifier.height(12.dp))
+                                AspectRatioSelector(
+                                    selectedRatio = imageEditorState.selectedAspectRatio,
+                                    onRatioSelected = { ratio ->
+                                        imageEditorState.setAspectRatio(ratio)
+                                        // Launch uCrop with selected aspect ratio
+                                        imageEditorState.originalUri?.let { uri ->
+                                            val activity = context as? Activity
+                                            if (activity != null) {
+                                                ImageEditor.launchEditor(
+                                                    activity = activity,
+                                                    sourceUri = uri,
+                                                    aspectRatio = ratio,
+                                                )
+                                            }
+                                        }
+                                    },
+                                )
                             }
                         }
                     }
