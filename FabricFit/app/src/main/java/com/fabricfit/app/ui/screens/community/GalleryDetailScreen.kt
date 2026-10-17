@@ -60,11 +60,13 @@ import com.fabricfit.app.domain.model.Comment
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.GalleryItem
+import com.fabricfit.app.domain.model.MediaType
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.RichTextRenderer
 import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.ZoomableImage
 import com.fabricfit.app.ui.components.rememberMarkwon
+import com.fabricfit.app.ui.screens.videoplayer.InlineVideoPlayer
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageGold
@@ -204,23 +206,32 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(bottom = 24.dp),
             ) {
-                // Full image with zoom
+                // Full media display (image or video)
                 item {
-                    ZoomableImage(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(400.dp)
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                    ) {
-                        AsyncImage(
-                            model = ImageRequest.Builder(context)
-                                .data(item!!.imageUrl)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = item!!.title,
-                            contentScale = ContentScale.Fit,
-                            modifier = Modifier.fillMaxSize(),
+                    if (item!!.mediaType == MediaType.VIDEO && item.videoUrl != null) {
+                        // Video player
+                        InlineVideoPlayer(
+                            videoUri = item.videoUrl!!,
+                            modifier = Modifier.fillMaxWidth()
                         )
+                    } else {
+                        // Image with zoom
+                        ZoomableImage(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(400.dp)
+                                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                        ) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(item!!.imageUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = item!!.title,
+                                contentScale = ContentScale.Fit,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        }
                     }
                 }
 
