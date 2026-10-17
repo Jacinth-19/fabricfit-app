@@ -426,7 +426,6 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 }
 
                 // Fabrics used section
-                val fabrics by vm.fabrics.collectAsStateWithLifecycle()
                 if (fabrics.isNotEmpty()) {
                     item {
                         Column(
@@ -477,7 +476,6 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 }
 
                 // Style used section
-                val style by vm.style.collectAsStateWithLifecycle()
                 if (style != null) {
                     item {
                         Column(
