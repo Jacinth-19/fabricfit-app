@@ -78,8 +78,7 @@ Every frame below is an **unretouched capture of the running app**, taken on an
 **API 33 emulator at 1080 × 1920** by the `screenshots` job in
 [`.github/workflows/build.yml`](.github/workflows/build.yml): the debug APK is
 installed, the first-run onboarding is dismissed, each bottom-nav tab is opened
-by tapping its real label, the wardrobe is seeded through the add-item dialog,
-and `adb screencap` writes the frame straight into
+by tapping its real label, and `adb screencap` writes the frame straight into
 [`FabricFit/docs/screenshots/`](FabricFit/docs/screenshots/). No mockups, no
 photo editing — if the UI changes, the pictures change with it on the next run.
 
@@ -99,7 +98,7 @@ photo editing — if the UI changes, the pictures change with it on the next run
 <p align="center">
   <img src="FabricFit/docs/screenshots/my-fit-closet.png" alt="My Fit Closet" width="225"><br>
   <strong>7. My Fit Closet (Heritage Wardrobe Capsule)</strong><br>
-  <sub>Wardrobe grid with the items added in-app, plus the outfit builder &amp; tailor-brief export</sub>
+  <sub>Items / Outfits tabs, the add-item CTA and the starter capsule grid on first run</sub>
 </p>
 
 ---
@@ -121,9 +120,9 @@ adb install -r fabricfit-v1.0.0.apk
 | What | Where it comes from | Notes |
 | --- | --- | --- |
 | **Release APK** (`fabricfit-v1.0.0.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
-| **Release bundle** (`fabricfit-v1.0.0.aab`) | same release | The artefact you would upload to the Play Console. |
-| **Debug APK** | run → artefact `fabricfit-debug-apk` | `com.fabricfit.app.debug`, debuggable, for testers without a release key. |
-| **Instrumented test report** | run → artefact `test-reports` | Unit-test and lint output for the run. |
+| **Release bundle** (`fabricfit-v1.0.0.aab`) | same release | The artifact you would upload to the Play Console. |
+| **Debug APK** | run → artifact `fabricfit-debug-apk` | `com.fabricfit.app.debug`, debuggable, for testers without a release key. |
+| **Instrumented test report** | run → artifact `test-reports` | Unit-test and lint output for the run. |
 
 > **Signing** — the release build is signed with the throwaway demo keystore
 > committed at `FabricFit/app/demo-release.keystore`, so it installs on any
@@ -139,7 +138,7 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 | Job | Trigger | What it does |
 | --- | --- | --- |
 | `verify` | every push & PR (paths under `FabricFit/**`) | `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`, then uploads the debug APK and test reports. Gradle failures are annotated inline on the commit. |
-| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8, uploads both artefacts, and publishes them to the `v*` GitHub Release on tags or manual dispatch. |
+| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8, uploads both artifacts, and publishes them to the `v*` GitHub Release on tags or manual dispatch. |
 | `device-qa` | manual, weekly, or on `v*` tags | macOS runner with KVM: boots an API 35 emulator and runs the DeepLabV3 instrumented test. |
 | `screenshots` | manual dispatch, or any push whose commit message contains `[screenshots]` | Boots an API 33 emulator, drives the app, and commits fresh PNGs to `FabricFit/docs/screenshots/`. |
 
@@ -148,7 +147,7 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 git commit --allow-empty -m "chore: refresh screenshots [screenshots]" && git push
 ```
 
-
+---
 
 ## UI/UX Reference Mockups & Screen-by-Screen Breakdown
 
