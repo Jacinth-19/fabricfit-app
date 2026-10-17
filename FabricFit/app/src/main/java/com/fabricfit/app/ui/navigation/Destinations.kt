@@ -54,6 +54,7 @@ object Routes {
     fun challenge(challengeId: String) = "challenge/$challengeId"
     const val CREATE_POST = "create/post"
     const val SEARCH = "search"
+    const val NOTIFICATION_PREFERENCES = "settings/notifications"
 
     val TOP_LEVEL = listOf(HOME, DISCOVER, DISCOVER_ROUTE_PATTERN, CREATE, FAVORITES, PROFILE)
 }

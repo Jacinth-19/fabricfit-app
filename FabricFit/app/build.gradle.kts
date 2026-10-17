@@ -152,6 +152,11 @@ dependencies {
     implementation("io.noties.markwon:editor:4.6.2")
     implementation("io.noties.markwon:html:4.6.2")
     implementation("io.noties.markwon:linkify:4.6.2")
+    
+    // Firebase Cloud Messaging for push notifications
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-analytics-ktx")
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

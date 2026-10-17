@@ -1071,4 +1071,39 @@
     <string name="description_label">Description</string>
     <string name="description_placeholder">Tell us about your style… (supports markdown)</string>
 
+    <!-- Push Notifications -->
+    <string name="notification_preferences_title">Notification Preferences</string>
+    <string name="notification_category_social">Social Interactions</string>
+    <string name="notification_category_community">Community</string>
+    <string name="notification_category_other">Other</string>
+    <string name="notification_pref_likes">Likes</string>
+    <string name="notification_pref_likes_desc">When someone likes your post</string>
+    <string name="notification_pref_comments">Comments</string>
+    <string name="notification_pref_comments_desc">When someone comments on your post</string>
+    <string name="notification_pref_follows">New Followers</string>
+    <string name="notification_pref_follows_desc">When someone follows you</string>
+    <string name="notification_pref_mentions">Mentions</string>
+    <string name="notification_pref_mentions_desc">When someone mentions you</string>
+    <string name="notification_pref_challenges">Challenges</string>
+    <string name="notification_pref_challenges_desc">Updates about style challenges</string>
+    <string name="notification_pref_email">Email Notifications</string>
+    <string name="notification_pref_email_desc">Receive notifications via email</string>
+    <string name="notification_preferences_info">Changes are saved automatically. Push notifications require an internet connection.</string>
+    <string name="notification_like_title">%s liked your post</string>
+    <string name="notification_like_body">Check out who appreciated your style!</string>
+    <string name="notification_comment_title">%s commented on your post</string>
+    <string name="notification_comment_body">See what they said about your style</string>
+    <string name="notification_follow_title">%s started following you</string>
+    <string name="notification_follow_body">You have a new follower!</string>
+    <string name="notification_challenge_title">Style Challenge Update</string>
+    <string name="notification_challenge_body">New activity in %s</string>
+    <string name="channel_likes">Likes</string>
+    <string name="channel_likes_description">Notifications when someone likes your posts</string>
+    <string name="channel_comments">Comments</string>
+    <string name="channel_comments_description">Notifications when someone comments on your posts</string>
+    <string name="channel_follows">Followers</string>
+    <string name="channel_follows_description">Notifications when someone follows you</string>
+    <string name="channel_challenges">Challenges</string>
+    <string name="channel_challenges_description">Notifications about style challenges and contests</string>
+
 </resources>
