@@ -1106,6 +1106,13 @@
     <string name="channel_challenges">Challenges</string>
     <string name="channel_challenges_description">Notifications about style challenges and contests</string>
 
+    <!-- Image Filters -->
+    <string name="image_filters_title">Image Filters</string>
+    <string name="filter_brightness">Brightness</string>
+    <string name="filter_contrast">Contrast</string>
+    <string name="filter_saturation">Saturation</string>
+    <string name="filter_reset">Reset</string>
+
     <!-- Video Support -->
     <string name="media_type_image">Image</string>
     <string name="media_type_video">Video</string>
@@ -1119,5 +1126,31 @@
     <string name="video_trim_end">End Time</string>
     <string name="video_preview">Preview</string>
     <string name="video_upload">Upload Video</string>
+    <string name="video_trim_title">Trim Video</string>
+    <string name="video_trim_duration">Duration: %s</string>
+    <string name="video_trim_reset">Reset</string>
+    <string name="video_trim_apply">Apply Trim</string>
+
+    <!-- Blocked Users -->
+    <string name="blocked_users_empty">No blocked users</string>
+    <string name="action_unblock">Unblock</string>
+    <string name="unblock_confirm_title">Unblock User</string>
+    <string name="unblock_confirm_message">Are you sure you want to unblock %s?</string>
+    <string name="action_block">Block</string>
+    <string name="block_confirm_title">Block User</string>
+    <string name="block_confirm_message">Are you sure you want to block %s? They will no longer be able to interact with you.</string>
+
+    <!-- Admin Moderation -->
+    <string name="admin_moderation_title">Moderation Dashboard</string>
+    <string name="admin_no_reports">No reports to review</string>
+    <string name="admin_dismiss">Dismiss</string>
+    <string name="admin_take_action">Take Action</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_close">Close</string>
+    <string name="report_details_reported_user">Reported User</string>
+    <string name="report_details_content_type">Content Type</string>
+    <string name="report_details_description">Description</string>
+    <string name="report_details_date">Report Date</string>
+    <string name="report_details_status">Status</string>
 
 </resources>
