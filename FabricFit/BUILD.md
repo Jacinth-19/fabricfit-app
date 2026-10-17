@@ -46,14 +46,13 @@ never reads, so it had never executed; it now sits in `/.github/workflows/` with
 `working-directory: FabricFit`. `gradlew` was also committed without its executable bit and
 has been set to mode 100755.
 
-**Not covered here:** the instrumented androidTest suite, which needs a device or emulator.
-The device-QA job is opt-in via `workflow_dispatch` (macOS runner, `reactivecircus/android-emulator-runner`)
-because it is slow and flaky by nature. Note that GitHub only exposes `workflow_dispatch`
-for workflows that exist on the **default branch**, so this job can only be dispatched once
-`build.yml` has landed on `main`:
+**Not covered in `verify`:** the instrumented `androidTest` execution, which needs an emulator.
+The `device-qa` job is opt-in (manual `workflow_dispatch`, weekly schedule, or `v*` release tags)
+and runs on `ubuntu-latest` with KVM acceleration (`reactivecircus/android-emulator-runner@v2.38.0`)
+and `SCREENSHOT_ABI=1` so the debug APK bundles `x86_64` TFLite native libraries:
 
 ```bash
-gh workflow run build.yml --ref main     # verify + release + macOS device-qa
+gh workflow run build.yml --ref main     # verify + release + Linux KVM device-qa
 ```
 
 CI also compiles the instrumented source set (`:app:assembleDebugAndroidTest`) on every
@@ -90,10 +89,14 @@ The GitHub repository was renamed too: `Jacinth-19/ntoma-studio` → **`Jacinth-
 GitHub redirects the old URL, so existing clones, links and pull requests keep working.
 
 ## Release signing
-`app/demo-release.keystore` is a throwaway demo key — alias `ntoma`, store and key
-password both `ntomastudio`. These values are the ones in `app/build.gradle.kts`, and
-they are the ones CI signs with successfully. (Earlier revisions of this file and of
-`docs/PLAY_DATA_SAFETY.md` said `ntomademo`, which was simply wrong.)
-Replace `signingConfigs.release` in `app/build.gradle.kts` before any real store upload.
+`signingConfigs.release` in `app/build.gradle.kts` reads `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`,
+`KEY_ALIAS`, and `KEY_PASSWORD` from Gradle properties (`-PKEYSTORE_FILE=…`) or environment
+variables. When unset, it falls back to the throwaway demo key committed at
+`app/demo-release.keystore` (alias `ntoma`, store and key password `ntomastudio`), so local
+and CI builds always produce an installable release APK out of the box.
+
+In GitHub Actions, the `release` job decodes an optional `KEYSTORE_BASE64` secret into
+`app/upload.keystore` and passes `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` to
+Gradle; configure those four repository secrets before publishing to a store.
 Because the application ID changed to `com.fabricfit.app`, an existing `com.ntoma.studio`
 install cannot be upgraded in place.

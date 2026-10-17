@@ -7,13 +7,18 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+fun Project.signingValue(name: String, fallback: String): String =
+    (findProperty(name) as? String)?.takeIf { it.isNotBlank() }
+        ?: System.getenv(name)?.takeIf { it.isNotBlank() }
+        ?: fallback
+
 android {
     namespace = "com.fabricfit.app"
     compileSdk = 34
 
     defaultConfig {
         // Ship only the ABIs real target devices use; trims TFLite/AndroidX natives (~6 MB).
-        // CI screenshots add x86_64 so the same debug APK runs in the Linux emulator.
+        // CI emulator jobs (device-qa, screenshots) set SCREENSHOT_ABI=1 to add x86_64.
         ndk {
             abiFilters += listOf("armeabi-v7a", "arm64-v8a")
             if (System.getenv("SCREENSHOT_ABI") == "1") abiFilters += "x86_64"
@@ -30,13 +35,13 @@ android {
     }
 
     signingConfigs {
-        create("demo") {
-            // Debug-style signing so `assembleRelease` produces an installable artifact in CI.
-            // A real upload key belongs in Play Console / your keystore, never in the repo.
-            storeFile = file("demo-release.keystore")
-            storePassword = "ntomastudio"
-            keyAlias = "ntoma"
-            keyPassword = "ntomastudio"
+        create("release") {
+            // Supply your upload key via -PKEYSTORE_FILE=… / env vars; when unset, falls back
+            // to the committed demo keystore so CI builds still produce an installable APK.
+            storeFile = file(signingValue("KEYSTORE_FILE", "demo-release.keystore"))
+            storePassword = signingValue("KEYSTORE_PASSWORD", "ntomastudio")
+            keyAlias = signingValue("KEY_ALIAS", "ntoma")
+            keyPassword = signingValue("KEY_PASSWORD", "ntomastudio")
         }
     }
 
@@ -50,7 +55,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("demo")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
