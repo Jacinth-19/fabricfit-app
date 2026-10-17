@@ -53,9 +53,17 @@ fun RichTextEditor(
     minLines: Int = 3,
     maxLines: Int = 10,
     enabled: Boolean = true,
+    users: List<com.fabricfit.app.domain.model.CommunityUser> = emptyList(),
+    onMentionSearch: (String) -> Unit = {},
 ) {
     val editor = remember(markwon) { MarkwonEditor.create(markwon) }
     var textSelection by remember { mutableStateOf(0..0) }
+    var cursorPosition by remember { mutableStateOf(0) }
+    
+    // Detect current mention being typed
+    val currentMention = remember(value, cursorPosition) {
+        MentionsParser.getCurrentMention(value, cursorPosition)
+    }
 
     Column(modifier = modifier) {
         // Formatting toolbar
@@ -75,6 +83,7 @@ fun RichTextEditor(
             value = value,
             onValueChange = { newValue ->
                 onValueChange(newValue)
+                cursorPosition = newValue.length
             },
             label = if (label.isNotEmpty()) {
                 { Text(label) }
@@ -87,6 +96,33 @@ fun RichTextEditor(
             maxLines = maxLines,
             enabled = enabled,
         )
+
+        // Mentions autocomplete
+        if (currentMention != null) {
+            // Trigger search for users matching the mention
+            onMentionSearch(currentMention)
+            
+            val filteredUsers = users.filter { user ->
+                user.username.startsWith(currentMention, ignoreCase = true) ||
+                user.displayName.contains(currentMention, ignoreCase = true)
+            }
+            
+            if (filteredUsers.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(4.dp))
+                MentionsAutocomplete(
+                    users = filteredUsers,
+                    onUserSelected = { user ->
+                        val (newText, newCursor) = MentionsParser.insertMention(
+                            text = value,
+                            cursorPosition = cursorPosition,
+                            user = user,
+                        )
+                        onValueChange(newText)
+                        cursorPosition = newCursor
+                    },
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(4.dp))
 
