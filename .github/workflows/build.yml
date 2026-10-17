@@ -7,9 +7,8 @@ on:
     branches: [main, "arena/**"]
     tags: ['v*']
   pull_request:
-  # Weekly emulator sweep. Linux GitHub runners have no KVM, so the heavy
-  # device-QA job runs on macOS; a schedule keeps it exercised without anyone
-  # remembering to click "Run workflow".
+  # Weekly emulator sweep on Linux with KVM acceleration; a schedule keeps
+  # device-qa exercised without anyone remembering to click "Run workflow".
   schedule:
     - cron: '0 6 * * 1'
   workflow_dispatch:
@@ -122,8 +121,22 @@ jobs:
       - name: Make the Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      # Signed with the throwaway demo key committed in app/demo-release.keystore.
+      # Decode an upload keystore when KEYSTORE_BASE64 is configured in repo
+      # secrets; otherwise app/build.gradle.kts falls back to demo-release.keystore.
+      - name: Decode release keystore (optional)
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > app/upload.keystore
+            echo "KEYSTORE_FILE=upload.keystore" >> "$GITHUB_ENV"
+          fi
+
       - name: Minified release APK + Play bundle
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           set -o pipefail
           ./gradlew :app:assembleRelease :app:bundleRelease --console=plain 2>&1 \
@@ -171,15 +184,17 @@ jobs:
           fi
           echo "Published $tag"
 
-  # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
-  # macOS runners only (Linux GH runners lack KVM). Fires on manual dispatch,
-  # on the weekly schedule, and when a release tag (v*) is pushed.
+  # Opt-in device QA: run the DeepLabV3 instrumented test on a KVM-accelerated
+  # Linux emulator. Fires on manual dispatch, on the weekly schedule, when a
+  # release tag (v*) is pushed, or when the commit message contains "[device-qa]".
   device-qa:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'schedule' ||
-      startsWith(github.ref, 'refs/tags/v')
-    runs-on: macos-latest
+      startsWith(github.ref, 'refs/tags/v') ||
+      (github.event_name == 'push' &&
+       contains(github.event.head_commit.message, '[device-qa]'))
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
@@ -192,17 +207,40 @@ jobs:
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
+      - name: Enable Linux emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: DeepLabV3 person-segmentation QA on emulator
         uses: reactivecircus/android-emulator-runner@v2.38.0
+        env:
+          SCREENSHOT_ABI: '1'
         with:
           api-level: 33
           target: default
           arch: x86_64
           working-directory: FabricFit
           script: >
+            export SCREENSHOT_ABI=1 &&
             chmod +x ./gradlew &&
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
+
+      - name: Annotate instrumented test failures
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import pathlib, xml.etree.ElementTree as ET
+          for xml in pathlib.Path("app/build/outputs/androidTest-results").rglob("*.xml"):
+              tree = ET.parse(xml)
+              for tc in tree.iter("testcase"):
+                  for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                      msg = (f.text or f.attrib.get("message", "")).strip()
+                      esc = msg.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+                      print(f"::error::{tc.attrib.get('classname')}.{tc.attrib.get('name')}: {esc[:1400]}")
+          PY
 
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".

@@ -7,4 +7,8 @@
     <cache-path
         name="fabricfit_cache"
         path="shared/" />
+    <!-- Wardrobe PDF exports written by ExportManager to getExternalFilesDir(null). -->
+    <external-files-path
+        name="fabricfit_exports"
+        path="." />
 </paths>

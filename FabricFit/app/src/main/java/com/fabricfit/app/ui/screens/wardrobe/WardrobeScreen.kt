@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.DeleteOutline
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
@@ -61,13 +62,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.Fabric
+import com.fabricfit.app.domain.model.GeneratedLook
 import com.fabricfit.app.domain.model.Outfit
 import com.fabricfit.app.domain.model.WardrobeCategory
 import com.fabricfit.app.domain.model.WardrobeItem
+import com.fabricfit.app.export.ExportManager
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.util.sharePdfFile
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
@@ -77,6 +84,10 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
         .collectAsState(initial = emptyList<WardrobeItem>())
     val outfits by container.wardrobe.observeOutfits()
         .collectAsState(initial = emptyList<Outfit>())
+    val fabrics by container.fabricAnalysis.observeAll()
+        .collectAsState(initial = emptyList<Fabric>())
+    val looks by container.tryOn.observeLooks()
+        .collectAsState(initial = emptyList<GeneratedLook>())
     var tab by remember { mutableStateOf(0) }
     var showAdd by remember { mutableStateOf(false) }
     var showBuilder by remember { mutableStateOf(false) }
@@ -113,7 +124,23 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.weight(1f),
             )
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        val pdf = withContext(Dispatchers.IO) {
+                            ExportManager.exportWardrobeToPdf(context, fabrics, looks)
+                        }
+                        context.sharePdfFile(pdf, context.getString(R.string.export_title))
+                    }
+                },
+            ) {
+                Icon(
+                    Icons.Outlined.Share,
+                    contentDescription = stringResource(R.string.export_pdf),
+                )
+            }
         }
 
         TabRow(selectedTabIndex = tab) {
