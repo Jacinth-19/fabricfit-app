@@ -455,7 +455,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                             text = when (detailTab) {
                                 0 -> if (activeFabric != null) {
                                     "Palette: " + activeFabric.colors.take(4).joinToString(" · ") {
-                                        context.getString(it.name.labelRes)
+                                        context.getString(it.colorName.labelRes)
                                     }
                                 } else {
                                     "Palette: Forest Green · Deep Burgundy · Royal Gold · Kente Red"
