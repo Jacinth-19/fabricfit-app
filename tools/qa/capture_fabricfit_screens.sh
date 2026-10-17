@@ -64,6 +64,75 @@ if matches:
 ' "$label" <<< "$xml"
 }
 
+find_node() {
+  local mode="$1" xml="$2"
+  python3 -c '
+import re
+import sys
+import xml.etree.ElementTree as ET
+
+mode = sys.argv[1]
+try:
+    root = ET.parse(sys.stdin).getroot()
+except ET.ParseError:
+    raise SystemExit(0)
+
+boxes = []
+for node in root.iter("node"):
+    match = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", node.get("bounds", ""))
+    if not match:
+        continue
+    x1, y1, x2, y2 = map(int, match.groups())
+    width, height = x2 - x1, y2 - y1
+    cx, cy = (x1 + x2) // 2, (y1 + y2) // 2
+    if mode == "edit" and node.get("class", "").endswith("EditText"):
+        boxes.append((0, cy, cx, cy))            # top-most text field
+    elif mode == "fab" and node.get("clickable") == "true":
+        if node.get("text") or node.get("content-desc"):
+            continue
+        # a small, unlabelled button in the lower right = the Scaffold FAB
+        if 70 <= width <= 240 and 70 <= height <= 240 and cx > 540 and 900 < cy < 1740:
+            boxes.append((0, -cy, cx, cy))       # bottom-most candidate
+
+if not boxes:
+    raise SystemExit(0)
+boxes.sort()
+_, _, cx, cy = boxes[0]
+print(f"{cx} {cy}")
+' "$mode" <<< "$xml"
+}
+
+tap_node() {
+  local mode="$1" attempt xml point
+  for attempt in $(seq 1 10); do
+    xml="$(dump_ui)"
+    point="$(find_node "$mode" "$xml")"
+    if [[ -n "$point" ]]; then
+      # shellcheck disable=SC2086
+      adb shell input tap $point
+      echo "Tapped node[$mode] ($point)"
+      sleep 1.5
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Could not find node: $mode" >&2
+  return 1
+}
+
+# Seed a wardrobe item through the real UI so the My Fit Closet capture is not
+# a blank empty state. The first item is added from the empty-state button, the
+# rest from the Scaffold FAB.
+add_wardrobe_item() {
+  local name="$1"
+  tap_label "Add clothing item" || tap_node fab || return 0
+  tap_node edit || return 0
+  adb shell input text "$name"
+  sleep 0.5
+  tap_label "Save" || return 0
+  sleep 1.5
+}
+
 tap_label() {
   local label="$1" attempt xml point
   for attempt in $(seq 1 15); do
@@ -110,6 +179,11 @@ tap_label "Profile"
 
 capture profile
 tap_label "My Fit Closet"
+add_wardrobe_item Kente
+add_wardrobe_item Ankara
+add_wardrobe_item Adinkra
+add_wardrobe_item Batik
+sleep 1.5
 capture my-fit-closet
 
 printf 'Captured screens:\n'
