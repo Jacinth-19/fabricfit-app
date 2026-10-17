@@ -984,4 +984,15 @@
     <string name="export_failed">Export failed</string>
     <string name="export_share">Share Export</string>
 
+    <!-- ============ Sort & Filter ============ -->
+    <string name="action_filter">Filter</string>
+    <string name="filter_title">Sort &amp; Filter</string>
+    <string name="filter_sort_by">Sort by</string>
+    <string name="filter_category">Category</string>
+    <string name="filter_all_categories">All Categories</string>
+    <string name="sort_newest">Newest First</string>
+    <string name="sort_oldest">Oldest First</string>
+    <string name="sort_name_az">Name (A-Z)</string>
+    <string name="sort_name_za">Name (Z-A)</string>
+
 </resources>

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -64,7 +65,10 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.ui.components.AnimatedBottomSheet
 import com.fabricfit.app.ui.components.AssetImage
+import com.fabricfit.app.ui.components.BottomSheetAction
+import com.fabricfit.app.ui.components.BottomSheetDivider
 import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
@@ -78,6 +82,31 @@ import com.fabricfit.app.ui.theme.HeritageGold
 import com.fabricfit.app.ui.util.shareImagePath
 import com.fabricfit.app.ui.util.timeAgo
 import kotlinx.coroutines.launch
+
+/**
+ * Sort options for favorites list.
+ */
+enum class SortOption(
+    val labelRes: Int,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector,
+) {
+    NEWEST(
+        R.string.sort_newest,
+        Icons.Filled.Star,
+    ),
+    OLDEST(
+        R.string.sort_oldest,
+        Icons.Filled.Star,
+    ),
+    NAME_A_Z(
+        R.string.sort_name_az,
+        Icons.Filled.Star,
+    ),
+    NAME_Z_A(
+        R.string.sort_name_za,
+        Icons.Filled.Star,
+    ),
+}
 
 private data class RecommendedDressItem(
     val id: String,
@@ -106,6 +135,11 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
+    
+    // Sort & Filter bottom sheet state
+    var showFilterSheet by remember { mutableStateOf(false) }
+    var sortBy by remember { mutableStateOf(SortOption.NEWEST) }
+    var filterCategory by remember { mutableStateOf<String?>(null) }
 
     if (pullToRefreshState.isRefreshing) {
         LaunchedEffect(true) {
@@ -144,6 +178,14 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                         color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f),
                     )
+                    // Filter button
+                    IconButton(onClick = { showFilterSheet = true }) {
+                        Icon(
+                            Icons.Filled.FilterList,
+                            contentDescription = stringResource(R.string.action_filter),
+                            tint = if (filterCategory != null || sortBy != SortOption.NEWEST) HeritageGold else MaterialTheme.colorScheme.onBackground,
+                        )
+                    }
                     Surface(
                         onClick = { nav.navigate(Routes.PROFILE) },
                         shape = CircleShape,
@@ -515,6 +557,85 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 onDismiss = { scope.launch { tooltips.markSeen(TooltipStore.FAVORITES) } },
                 modifier = Modifier.align(Alignment.TopCenter),
             )
+        }
+    }
+    
+    // Sort & Filter Bottom Sheet
+    AnimatedBottomSheet(
+        visible = showFilterSheet,
+        onDismiss = { showFilterSheet = false },
+        title = stringResource(R.string.filter_title),
+    ) {
+        // Sort options
+        Text(
+            text = stringResource(R.string.filter_sort_by),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        
+        SortOption.values().forEach { option ->
+            BottomSheetAction(
+                icon = {
+                    Icon(
+                        option.icon,
+                        contentDescription = null,
+                        tint = if (sortBy == option) HeritageGold else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
+                label = stringResource(option.labelRes),
+                onClick = {
+                    sortBy = option
+                    showFilterSheet = false
+                },
+            )
+            Spacer(Modifier.height(4.dp))
+        }
+        
+        BottomSheetDivider()
+        
+        // Category filters
+        Text(
+            text = stringResource(R.string.filter_category),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        
+        BottomSheetAction(
+            icon = {
+                Icon(
+                    Icons.Filled.Star,
+                    contentDescription = null,
+                    tint = if (filterCategory == null) HeritageGold else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            },
+            label = stringResource(R.string.filter_all_categories),
+            onClick = {
+                filterCategory = null
+                showFilterSheet = false
+            },
+        )
+        Spacer(Modifier.height(4.dp))
+        
+        listOf("Kente", "Ankara", "Lace", "Chiffon").forEach { category ->
+            BottomSheetAction(
+                icon = {
+                    Icon(
+                        Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = if (filterCategory == category) HeritageGold else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                },
+                label = category,
+                onClick = {
+                    filterCategory = category
+                    showFilterSheet = false
+                },
+            )
+            Spacer(Modifier.height(4.dp))
         }
     }
 }
