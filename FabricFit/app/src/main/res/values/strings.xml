@@ -995,4 +995,30 @@
     <string name="sort_name_az">Name (A-Z)</string>
     <string name="sort_name_za">Name (Z-A)</string>
 
+    <!-- ============ Community ============ -->
+    <string name="community_title">Community</string>
+    <string name="community_empty_title">No posts yet</string>
+    <string name="community_empty_body">Be the first to share your style with the community!</string>
+    <string name="community_empty_action">Create Your First Post</string>
+    <string name="community_active_challenges">Active Challenges</string>
+    <string name="community_gallery">Style Gallery</string>
+    <string name="community_following">Following</string>
+    <string name="community_followers">Followers</string>
+    <string name="community_posts">Posts</string>
+    <string name="action_like">Like</string>
+    <string name="action_comment">Comment</string>
+    <string name="action_follow">Follow</string>
+    <string name="action_unfollow">Unfollow</string>
+    <string name="action_share">Share</string>
+    <string name="challenge_participants">%d participants</string>
+    <string name="challenge_join">Join Challenge</string>
+    <string name="challenge_submit">Submit Entry</string>
+    <string name="challenge_ends">Ends %s</string>
+    <string name="user_profile">Profile</string>
+    <string name="gallery_detail">Style Details</string>
+    <string name="add_comment">Add a comment…</string>
+    <string name="post_comment">Post</string>
+    <string name="comments_count">%d comments</string>
+    <string name="likes_count">%d likes</string>
+
 </resources>

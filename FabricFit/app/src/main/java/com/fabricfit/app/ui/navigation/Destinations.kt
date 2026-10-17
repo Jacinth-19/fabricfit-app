@@ -47,5 +47,12 @@ object Routes {
     fun tailor(id: String) = "tailor/$id"
     const val MEASUREMENTS = "measurements"
 
+    // Phase-7 Community destinations
+    const val COMMUNITY = "community"
+    fun userProfile(userId: String) = "user/$userId"
+    fun galleryDetail(itemId: String) = "gallery/$itemId"
+    fun challenge(challengeId: String) = "challenge/$challengeId"
+    const val CREATE_POST = "create/post"
+
     val TOP_LEVEL = listOf(HOME, DISCOVER, DISCOVER_ROUTE_PATTERN, CREATE, FAVORITES, PROFILE)
 }

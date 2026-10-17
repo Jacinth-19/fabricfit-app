@@ -100,6 +100,17 @@ class AppContainer private constructor(context: Context) {
         settings,
     )
 
+    // Community features
+    val community: com.fabricfit.app.data.repository.CommunityRepository =
+        com.fabricfit.app.data.repository.CommunityRepository(
+            userDao = database.communityUserDao(),
+            galleryDao = database.galleryItemDao(),
+            commentDao = database.commentDao(),
+            likeDao = database.likeDao(),
+            challengeDao = database.styleChallengeDao(),
+            entryDao = database.challengeEntryDao(),
+        )
+
     companion object {
         @Volatile
         private var instance: AppContainer? = null

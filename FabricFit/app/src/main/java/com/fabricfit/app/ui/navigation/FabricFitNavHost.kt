@@ -38,6 +38,13 @@ import com.fabricfit.app.ui.screens.collections.CollectionsScreen
 import com.fabricfit.app.ui.screens.collections.CollectionDetailScreen
 import com.fabricfit.app.ui.screens.colormatch.ColorMatchScreen
 import com.fabricfit.app.ui.screens.measurements.MeasurementsScreen
+import com.fabricfit.app.ui.screens.community.CommunityScreen
+import com.fabricfit.app.ui.screens.community.UserProfileScreen
+import com.fabricfit.app.ui.screens.community.GalleryDetailScreen
+import com.fabricfit.app.ui.screens.community.ChallengeDetailScreen
+import com.fabricfit.app.ui.screens.tailors.TailorsScreen
+import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
+import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
 import com.fabricfit.app.ui.screens.tailors.TailorsScreen
 import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
 import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
@@ -272,5 +279,26 @@ private fun FabricFitNavHost(
             )
         }
         composable(Routes.MEASUREMENTS) { MeasurementsScreen(nav, padding) }
+        
+        // Phase-7 Community
+        composable(Routes.COMMUNITY) { CommunityScreen(nav, padding) }
+        composable(
+            "user/{userId}",
+            arguments = listOf(androidx.navigation.navArgument("userId") { type = NavType.StringType }),
+        ) { entry ->
+            UserProfileScreen(nav, padding, userId = entry.arguments?.getString("userId").orEmpty())
+        }
+        composable(
+            "gallery/{itemId}",
+            arguments = listOf(androidx.navigation.navArgument("itemId") { type = NavType.StringType }),
+        ) { entry ->
+            GalleryDetailScreen(nav, padding, itemId = entry.arguments?.getString("itemId").orEmpty())
+        }
+        composable(
+            "challenge/{challengeId}",
+            arguments = listOf(androidx.navigation.navArgument("challengeId") { type = NavType.StringType }),
+        ) { entry ->
+            ChallengeDetailScreen(nav, padding, challengeId = entry.arguments?.getString("challengeId").orEmpty())
+        }
     }
 }

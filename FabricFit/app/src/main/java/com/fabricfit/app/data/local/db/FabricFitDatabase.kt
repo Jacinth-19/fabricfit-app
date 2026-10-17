@@ -17,8 +17,15 @@ import androidx.room.RoomDatabase
         OutfitEntity::class,
         MeasurementEntity::class,
         StyleFeedbackEntity::class,
+        // Community entities
+        CommunityUserEntity::class,
+        GalleryItemEntity::class,
+        CommentEntity::class,
+        LikeEntity::class,
+        StyleChallengeEntity::class,
+        ChallengeEntryEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class FabricFitDatabase : RoomDatabase() {
@@ -31,4 +38,11 @@ abstract class FabricFitDatabase : RoomDatabase() {
     abstract fun wardrobeDao(): WardrobeDao
     abstract fun measurementDao(): MeasurementDao
     abstract fun styleFeedbackDao(): StyleFeedbackDao
+    // Community DAOs
+    abstract fun communityUserDao(): CommunityUserDao
+    abstract fun galleryItemDao(): GalleryItemDao
+    abstract fun commentDao(): CommentDao
+    abstract fun likeDao(): LikeDao
+    abstract fun styleChallengeDao(): StyleChallengeDao
+    abstract fun challengeEntryDao(): ChallengeEntryDao
 }
