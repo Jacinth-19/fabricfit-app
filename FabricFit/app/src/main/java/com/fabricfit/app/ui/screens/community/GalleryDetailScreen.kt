@@ -61,8 +61,10 @@ import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.ui.components.FabricSwatch
+import com.fabricfit.app.ui.components.RichTextRenderer
 import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.ZoomableImage
+import com.fabricfit.app.ui.components.rememberMarkwon
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageGold
@@ -153,8 +155,11 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
     val vm: GalleryDetailViewModel = appViewModel { c, ctx -> GalleryDetailViewModel(c, itemId) }
     val item by vm.item.collectAsStateWithLifecycle()
     val comments by vm.comments.collectAsStateWithLifecycle()
+    val fabrics by vm.fabrics.collectAsStateWithLifecycle()
+    val style by vm.style.collectAsStateWithLifecycle()
     val isLoading by vm.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val markwon = rememberMarkwon()
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Top bar
@@ -321,11 +326,11 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
 
                         Spacer(Modifier.height(16.dp))
 
-                        // Description
+                        // Description with rich text rendering
                         if (item!!.description.isNotBlank()) {
-                            Text(
-                                item!!.description,
-                                style = MaterialTheme.typography.bodyLarge,
+                            RichTextRenderer(
+                                text = item!!.description,
+                                markwon = markwon,
                             )
                             Spacer(Modifier.height(16.dp))
                         }

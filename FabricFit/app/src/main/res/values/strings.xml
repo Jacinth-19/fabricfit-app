@@ -1060,4 +1060,15 @@
     <string name="report_type_misleading">Misleading information</string>
     <string name="report_type_other">Other</string>
 
+    <!-- Rich Text Formatting -->
+    <string name="format_bold">Bold</string>
+    <string name="format_italic">Italic</string>
+    <string name="format_code">Code</string>
+    <string name="format_link">Link</string>
+    <string name="format_quote">Quote</string>
+    <string name="format_list">List</string>
+    <string name="richtext_helper">Supports markdown: **bold**, *italic*, `code`, [link](url), > quote, - list</string>
+    <string name="description_label">Description</string>
+    <string name="description_placeholder">Tell us about your style… (supports markdown)</string>
+
 </resources>

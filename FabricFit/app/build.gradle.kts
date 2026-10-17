@@ -146,6 +146,12 @@ dependencies {
     
     // Image cropping and editing
     implementation("com.github.yalantis:ucrop:2.2.8")
+    
+    // Rich text formatting with markdown
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation("io.noties.markwon:editor:4.6.2")
+    implementation("io.noties.markwon:html:4.6.2")
+    implementation("io.noties.markwon:linkify:4.6.2")
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

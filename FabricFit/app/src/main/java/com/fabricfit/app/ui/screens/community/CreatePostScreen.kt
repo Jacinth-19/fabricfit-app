@@ -74,6 +74,8 @@ import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.ui.components.AspectRatioSelector
+import com.fabricfit.app.ui.components.RichTextEditor
+import com.fabricfit.app.ui.components.rememberMarkwon
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.ImageEditor
 import com.fabricfit.app.ui.util.rememberImageEditorState
@@ -174,6 +176,9 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     // Image editing state
     val imageEditorState = rememberImageEditorState()
     var showAspectRatioSelector by remember { mutableStateOf(false) }
+    
+    // Rich text editor
+    val markwon = rememberMarkwon()
 
     // uCrop launcher
     val uCropLauncher = rememberLauncherForActivityResult(
@@ -397,17 +402,16 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                 )
             }
 
-            // Description
+            // Description with rich text formatting
             item {
-                OutlinedTextField(
+                RichTextEditor(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
-                    placeholder = { Text("Tell us about your style...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp),
-                    maxLines = 5,
+                    markwon = markwon,
+                    label = stringResource(R.string.description_label),
+                    placeholder = stringResource(R.string.description_placeholder),
+                    minLines = 5,
+                    maxLines = 10,
                 )
             }
 
