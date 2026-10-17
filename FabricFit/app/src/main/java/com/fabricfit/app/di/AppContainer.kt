@@ -120,6 +120,12 @@ class AppContainer private constructor(context: Context) {
             recentSearchDao = database.recentSearchDao(),
         )
 
+    // Report/Moderation features
+    val reports: com.fabricfit.app.data.repository.ReportRepository =
+        com.fabricfit.app.data.repository.ReportRepository(
+            reportDao = database.reportDao(),
+        )
+
     companion object {
         @Volatile
         private var instance: AppContainer? = null

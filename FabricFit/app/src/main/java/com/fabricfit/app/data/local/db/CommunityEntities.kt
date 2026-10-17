@@ -88,3 +88,18 @@ data class RecentSearchEntity(
     @PrimaryKey val query: String,
     val timestamp: Long = System.currentTimeMillis(),
 )
+
+@Entity(tableName = "reports")
+data class ReportEntity(
+    @PrimaryKey val id: String,
+    val reporterId: String,
+    val reportedUserId: String,
+    val contentType: String,
+    val contentId: String,
+    val reportType: String,
+    val description: String = "",
+    val status: String = "PENDING",
+    val createdAt: Long = System.currentTimeMillis(),
+    val resolvedAt: Long? = null,
+    val resolution: String? = null,
+)

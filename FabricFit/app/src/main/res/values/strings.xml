@@ -1042,4 +1042,22 @@
     <string name="image_rotate">Rotate</string>
     <string name="image_reset">Reset</string>
 
+    <!-- Report/Flag -->
+    <string name="action_report">Report</string>
+    <string name="report_title">Report Content</string>
+    <string name="report_description">Help us understand the issue by selecting a reason for your report.</string>
+    <string name="report_select_type">Select a reason</string>
+    <string name="report_additional_info">Additional information (optional)</string>
+    <string name="report_placeholder">Provide more details about the issue…</string>
+    <string name="report_submit">Submit Report</string>
+    <string name="report_submitting">Submitting…</string>
+    <string name="report_success">Report submitted successfully</string>
+    <string name="report_already_reported">You have already reported this content</string>
+    <string name="report_type_spam">Spam or misleading</string>
+    <string name="report_type_inappropriate">Inappropriate content</string>
+    <string name="report_type_harassment">Harassment or bullying</string>
+    <string name="report_type_copyright">Copyright violation</string>
+    <string name="report_type_misleading">Misleading information</string>
+    <string name="report_type_other">Other</string>
+
 </resources>

@@ -6,6 +6,7 @@ import com.fabricfit.app.data.local.db.CommunityUserEntity
 import com.fabricfit.app.data.local.db.GalleryItemEntity
 import com.fabricfit.app.data.local.db.LikeEntity
 import com.fabricfit.app.data.local.db.RecentSearchEntity
+import com.fabricfit.app.data.local.db.ReportEntity
 import com.fabricfit.app.data.local.db.StyleChallengeEntity
 import com.fabricfit.app.domain.model.ChallengeEntry
 import com.fabricfit.app.domain.model.Comment
@@ -15,6 +16,10 @@ import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.domain.model.Like
 import com.fabricfit.app.domain.model.Occasion
 import com.fabricfit.app.domain.model.RecentSearch
+import com.fabricfit.app.domain.model.Report
+import com.fabricfit.app.domain.model.ReportStatus
+import com.fabricfit.app.domain.model.ReportType
+import com.fabricfit.app.domain.model.ReportedContentType
 import com.fabricfit.app.domain.model.StyleChallenge
 
 // CommunityUser mappers
@@ -192,4 +197,33 @@ fun RecentSearchEntity.toDomain() = RecentSearch(
 fun RecentSearch.toEntity() = RecentSearchEntity(
     query = query,
     timestamp = timestamp,
+)
+
+// Report mappers
+fun ReportEntity.toDomain() = Report(
+    id = id,
+    reporterId = reporterId,
+    reportedUserId = reportedUserId,
+    contentType = ReportedContentType.valueOf(contentType),
+    contentId = contentId,
+    reportType = ReportType.valueOf(reportType),
+    description = description,
+    status = ReportStatus.valueOf(status),
+    createdAt = createdAt,
+    resolvedAt = resolvedAt,
+    resolution = resolution,
+)
+
+fun Report.toEntity() = ReportEntity(
+    id = id,
+    reporterId = reporterId,
+    reportedUserId = reportedUserId,
+    contentType = contentType.name,
+    contentId = contentId,
+    reportType = reportType.name,
+    description = description,
+    status = status.name,
+    createdAt = createdAt,
+    resolvedAt = resolvedAt,
+    resolution = resolution,
 )

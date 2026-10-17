@@ -168,3 +168,33 @@ interface RecentSearchDao {
     @Query("DELETE FROM recent_searches")
     suspend fun deleteAll()
 }
+
+@Dao
+interface ReportDao {
+    @Query("SELECT * FROM reports ORDER BY createdAt DESC")
+    fun observeAll(): Flow<List<ReportEntity>>
+
+    @Query("SELECT * FROM reports WHERE id = :id")
+    suspend fun getById(id: String): ReportEntity?
+
+    @Query("SELECT * FROM reports WHERE reporterId = :reporterId ORDER BY createdAt DESC")
+    fun observeByReporter(reporterId: String): Flow<List<ReportEntity>>
+
+    @Query("SELECT * FROM reports WHERE reportedUserId = :reportedUserId ORDER BY createdAt DESC")
+    fun observeByReportedUser(reportedUserId: String): Flow<List<ReportEntity>>
+
+    @Query("SELECT * FROM reports WHERE contentId = :contentId AND contentType = :contentType ORDER BY createdAt DESC")
+    suspend fun getByContent(contentId: String, contentType: String): List<ReportEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(report: ReportEntity)
+
+    @Update
+    suspend fun update(report: ReportEntity)
+
+    @Query("DELETE FROM reports WHERE id = :id")
+    suspend fun delete(id: String)
+
+    @Query("SELECT COUNT(*) FROM reports WHERE contentId = :contentId AND contentType = :contentType AND status = 'PENDING'")
+    suspend fun countPendingForContent(contentId: String, contentType: String): Int
+}
