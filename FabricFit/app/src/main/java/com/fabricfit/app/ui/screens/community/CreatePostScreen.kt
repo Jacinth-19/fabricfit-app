@@ -194,7 +194,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
         uri?.let {
             mediaUri = it
             mediaType = MediaType.IMAGE
-            imageEditorState.setOriginalUri(it)
+            imageEditorState.updateOriginalUri(it)
         }
     }
 
@@ -257,7 +257,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
             val cropped = ImageEditor.cropToCache(context, uri, ratio)
             if (cropped != null) {
                 imageUri = cropped
-                imageEditorState.setEditedUri(cropped)
+                imageEditorState.updateEditedUri(cropped)
             } else {
                 imageEditorState.cancelEditing()
             }
@@ -477,7 +477,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                     IconButton(
                                         onClick = {
                                             mediaUri?.let { uri ->
-                                                imageEditorState.setOriginalUri(uri)
+                                                imageEditorState.updateOriginalUri(uri)
                                                 showAspectRatioSelector = true
                                             }
                                         },

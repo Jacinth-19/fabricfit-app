@@ -120,12 +120,12 @@ class ImageEditorState {
     var selectedAspectRatio by mutableStateOf(ImageEditor.AspectRatio.FREE)
         private set
 
-    fun setOriginalUri(uri: Uri?) {
+    fun updateOriginalUri(uri: Uri?) {
         originalUri = uri
         editedUri = null
     }
 
-    fun setEditedUri(uri: Uri?) {
+    fun updateEditedUri(uri: Uri?) {
         editedUri = uri
         isEditing = false
     }
