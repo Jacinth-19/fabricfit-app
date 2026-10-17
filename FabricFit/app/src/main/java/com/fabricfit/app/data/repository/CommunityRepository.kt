@@ -13,6 +13,7 @@ import com.fabricfit.app.domain.model.Comment
 import com.fabricfit.app.domain.model.CommunityUser
 import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.domain.model.Like
+import com.fabricfit.app.domain.model.MediaType
 import com.fabricfit.app.domain.model.StyleChallenge
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -85,6 +86,10 @@ class CommunityRepository(
         fabricIds: List<Long> = emptyList(),
         styleId: String? = null,
         tags: List<String> = emptyList(),
+        mediaType: MediaType = MediaType.IMAGE,
+        videoUrl: String? = null,
+        videoDuration: Long? = null,
+        thumbnailUrl: String? = null,
     ): GalleryItem {
         val currentUser = userDao.getById(currentUserId) ?: throw IllegalStateException("Current user not found")
         
@@ -96,6 +101,10 @@ class CommunityRepository(
             title = title,
             description = description,
             imageUrl = imageUrl,
+            mediaType = mediaType,
+            videoUrl = videoUrl,
+            videoDuration = videoDuration,
+            thumbnailUrl = thumbnailUrl,
             fabricIds = fabricIds,
             styleId = styleId,
             tags = tags,

@@ -1,6 +1,7 @@
 package com.fabricfit.app.ui.screens.community
 
 import android.app.Activity
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +33,8 @@ import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -42,6 +45,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.InputChipDefaults
 import androidx.compose.material3.MaterialTheme
@@ -73,6 +77,8 @@ import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
+import com.fabricfit.app.domain.model.MediaType
+import com.fabricfit.app.media.VideoProcessor
 import com.fabricfit.app.ui.components.AspectRatioSelector
 import com.fabricfit.app.ui.components.RichTextEditor
 import com.fabricfit.app.ui.components.rememberMarkwon
@@ -119,6 +125,8 @@ class CreatePostViewModel(private val container: AppContainer) : ViewModel() {
         tags: List<String>,
         fabricIds: List<Long>,
         styleId: String?,
+        mediaType: MediaType = MediaType.IMAGE,
+        videoUrl: String? = null,
     ): Boolean {
         _isSubmitting.value = true
         return try {
@@ -129,6 +137,8 @@ class CreatePostViewModel(private val container: AppContainer) : ViewModel() {
                 tags = tags,
                 fabricIds = fabricIds,
                 styleId = styleId,
+                mediaType = mediaType,
+                videoUrl = videoUrl,
             )
             true
         } catch (e: Exception) {
@@ -159,11 +169,42 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var selectedFabricIds by remember { mutableStateOf<List<Long>>(emptyList()) }
     var selectedStyleId by remember { mutableStateOf<String?>(null) }
 
-    // Image pickers
+    // Media pickers
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        imageUri = uri
+        uri?.let {
+            mediaUri = it
+            mediaType = MediaType.IMAGE
+            imageEditorState.setOriginalUri(it)
+        }
+    }
+
+    val videoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { selectedVideoUri ->
+            scope.launch {
+                isProcessingVideo = true
+                try {
+                    // Generate thumbnail
+                    val thumbnail = VideoProcessor.generateThumbnail(context, selectedVideoUri)
+                    videoThumbnail = thumbnail
+                    
+                    // Compress video
+                    val compressedVideo = VideoProcessor.compressVideo(context, selectedVideoUri, quality = 70)
+                    
+                    if (compressedVideo != null) {
+                        mediaUri = Uri.fromFile(compressedVideo)
+                        mediaType = MediaType.VIDEO
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    isProcessingVideo = false
+                }
+            }
+        }
     }
 
     val cameraLauncher = rememberLauncherForActivityResult(
@@ -173,6 +214,12 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
         // For now, we'll just use gallery picker
     }
 
+    // Media state
+    var mediaUri by remember { mutableStateOf<Uri?>(null) }
+    var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
+    var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
+    var isProcessingVideo by remember { mutableStateOf(false) }
+    
     // Image editing state
     val imageEditorState = rememberImageEditorState()
     var showAspectRatioSelector by remember { mutableStateOf(false) }
@@ -219,15 +266,17 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
             )
             Button(
                 onClick = {
-                    if (imageUri != null && title.isNotBlank()) {
+                    if (mediaUri != null && title.isNotBlank()) {
                         scope.launch {
                             val success = vm.createPost(
-                                imageUri = imageUri.toString(),
+                                imageUri = if (mediaType == MediaType.IMAGE) mediaUri.toString() else videoThumbnail?.let { "" } ?: "",
                                 title = title,
                                 description = description,
                                 tags = tags,
                                 fabricIds = selectedFabricIds,
                                 styleId = selectedStyleId,
+                                mediaType = mediaType,
+                                videoUrl = if (mediaType == MediaType.VIDEO) mediaUri.toString() else null,
                             )
                             if (success) {
                                 nav.popBackStack()
@@ -235,7 +284,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                         }
                     }
                 },
-                enabled = imageUri != null && title.isNotBlank() && !isSubmitting,
+                enabled = mediaUri != null && title.isNotBlank() && !isSubmitting,
             ) {
                 Text(if (isSubmitting) "Posting..." else "Post")
             }
@@ -256,9 +305,34 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                     )
                     Spacer(Modifier.height(8.dp))
 
-                    if (imageUri == null) {
+                    // Media type selector
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = mediaType == MediaType.IMAGE,
+                            onClick = { mediaType = MediaType.IMAGE },
+                            label = { Text(stringResource(R.string.media_type_image)) }
+                        )
+                        FilterChip(
+                            selected = mediaType == MediaType.VIDEO,
+                            onClick = { mediaType = MediaType.VIDEO },
+                            label = { Text(stringResource(R.string.media_type_video)) }
+                        )
+                    }
+                    
+                    Spacer(Modifier.height(8.dp))
+
+                    if (mediaUri == null) {
                         Card(
-                            onClick = { galleryLauncher.launch("image/*") },
+                            onClick = {
+                                if (mediaType == MediaType.IMAGE) {
+                                    galleryLauncher.launch("image/*")
+                                } else {
+                                    videoPickerLauncher.launch("video/*")
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .aspectRatio(1.5f),
@@ -272,33 +346,55 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                             ) {
-                                Icon(
-                                    Icons.Filled.AddPhotoAlternate,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(48.dp),
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                Spacer(Modifier.height(8.dp))
-                                Text(
-                                    "Tap to add photo",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                                Spacer(Modifier.height(16.dp))
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    OutlinedButton(
-                                        onClick = { cameraLauncher.launch(null) },
-                                    ) {
-                                        Icon(Icons.Filled.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
-                                        Spacer(Modifier.width(4.dp))
-                                        Text("Camera")
-                                    }
-                                    OutlinedButton(
-                                        onClick = { galleryLauncher.launch("image/*") },
-                                    ) {
-                                        Icon(Icons.Filled.PhotoLibrary, contentDescription = null, modifier = Modifier.size(18.dp))
-                                        Spacer(Modifier.width(4.dp))
-                                        Text("Gallery")
+                                if (isProcessingVideo) {
+                                    CircularProgressIndicator()
+                                    Spacer(Modifier.height(8.dp))
+                                    Text(
+                                        stringResource(R.string.video_processing),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                } else {
+                                    Icon(
+                                        if (mediaType == MediaType.IMAGE) Icons.Filled.AddPhotoAlternate else Icons.Filled.VideoLibrary,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(48.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                    Spacer(Modifier.height(8.dp))
+                                    Text(
+                                        if (mediaType == MediaType.IMAGE) "Tap to add photo" else "Tap to add video",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                    Spacer(Modifier.height(16.dp))
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        if (mediaType == MediaType.IMAGE) {
+                                            OutlinedButton(
+                                                onClick = { cameraLauncher.launch(null) },
+                                            ) {
+                                                Icon(Icons.Filled.CameraAlt, contentDescription = null, modifier = Modifier.size(18.dp))
+                                                Spacer(Modifier.width(4.dp))
+                                                Text("Camera")
+                                            }
+                                        }
+                                        OutlinedButton(
+                                            onClick = {
+                                                if (mediaType == MediaType.IMAGE) {
+                                                    galleryLauncher.launch("image/*")
+                                                } else {
+                                                    videoPickerLauncher.launch("video/*")
+                                                }
+                                            },
+                                        ) {
+                                            Icon(
+                                                if (mediaType == MediaType.IMAGE) Icons.Filled.PhotoLibrary else Icons.Filled.VideoLibrary,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                            Spacer(Modifier.width(4.dp))
+                                            Text(if (mediaType == MediaType.IMAGE) "Gallery" else "Videos")
+                                        }
                                     }
                                 }
                             }
@@ -306,45 +402,81 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                     } else {
                         Column {
                             Box {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(context)
-                                        .data(imageUri)
-                                        .crossfade(true)
-                                        .build(),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(1.5f)
-                                        .clip(RoundedCornerShape(12.dp)),
-                                )
-                                // Edit button
-                                IconButton(
-                                    onClick = {
-                                        imageUri?.let { uri ->
-                                            imageEditorState.setOriginalUri(uri)
-                                            showAspectRatioSelector = true
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .align(Alignment.TopStart)
-                                        .padding(8.dp),
-                                ) {
-                                    Surface(
-                                        shape = RoundedCornerShape(50),
-                                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                if (mediaType == MediaType.IMAGE) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(context)
+                                            .data(mediaUri)
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .aspectRatio(1.5f)
+                                            .clip(RoundedCornerShape(12.dp)),
+                                    )
+                                } else {
+                                    // Video thumbnail
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .aspectRatio(1.5f)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(MaterialTheme.colorScheme.surfaceContainerHigh),
+                                        contentAlignment = Alignment.Center
                                     ) {
+                                        if (videoThumbnail != null) {
+                                            AsyncImage(
+                                                model = ImageRequest.Builder(context)
+                                                    .data(videoThumbnail)
+                                                    .crossfade(true)
+                                                    .build(),
+                                                contentDescription = null,
+                                                contentScale = ContentScale.Crop,
+                                                modifier = Modifier.fillMaxSize(),
+                                            )
+                                        }
+                                        // Play icon overlay
                                         Icon(
-                                            Icons.Filled.Edit,
-                                            contentDescription = stringResource(R.string.action_edit),
-                                            modifier = Modifier.padding(8.dp),
+                                            Icons.Filled.PlayCircle,
+                                            contentDescription = "Video",
+                                            modifier = Modifier.size(64.dp),
+                                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
                                         )
                                     }
                                 }
+                                
+                                // Edit button (only for images)
+                                if (mediaType == MediaType.IMAGE) {
+                                    IconButton(
+                                        onClick = {
+                                            mediaUri?.let { uri ->
+                                                imageEditorState.setOriginalUri(uri)
+                                                showAspectRatioSelector = true
+                                            }
+                                        },
+                                        modifier = Modifier
+                                            .align(Alignment.TopStart)
+                                            .padding(8.dp),
+                                    ) {
+                                        Surface(
+                                            shape = RoundedCornerShape(50),
+                                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.9f),
+                                        ) {
+                                            Icon(
+                                                Icons.Filled.Edit,
+                                                contentDescription = stringResource(R.string.action_edit),
+                                                modifier = Modifier.padding(8.dp),
+                                            )
+                                        }
+                                    }
+                                }
+                                
                                 // Remove button
                                 IconButton(
                                     onClick = { 
-                                        imageUri = null
+                                        mediaUri = null
+                                        videoThumbnail = null
                                         showAspectRatioSelector = false
                                     },
                                     modifier = Modifier
@@ -357,15 +489,15 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                     ) {
                                         Icon(
                                             Icons.Filled.Close,
-                                            contentDescription = "Remove photo",
+                                            contentDescription = "Remove media",
                                             modifier = Modifier.padding(8.dp),
                                         )
                                     }
                                 }
                             }
 
-                            // Aspect ratio selector
-                            if (showAspectRatioSelector) {
+                            // Aspect ratio selector (only for images)
+                            if (mediaType == MediaType.IMAGE && showAspectRatioSelector) {
                                 Spacer(Modifier.height(12.dp))
                                 AspectRatioSelector(
                                     selectedRatio = imageEditorState.selectedAspectRatio,
