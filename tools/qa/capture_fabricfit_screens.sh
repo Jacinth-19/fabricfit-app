@@ -26,7 +26,7 @@ adb shell pm clear "$PKG"
 adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS || true
 adb shell am force-stop "$PKG" || true
 adb shell am start -W -n "$PKG/$ACTIVITY"
-sleep 5 # allow the branded splash and first composition to finish
+sleep 6 # allow the branded splash and first composition to finish
 
 dump_ui() {
   adb shell uiautomator dump /sdcard/fabricfit-window.xml >/dev/null 2>&1 || true
@@ -99,6 +99,7 @@ capture discover
 
 tap_label "Camera"
 tap_label "Got it" || true # dismiss the first-run Create coach mark
+sleep 3 # the camera preview needs a moment to start on the emulator
 capture create
 
 tap_label "Try-On"
@@ -109,6 +110,7 @@ tap_label "Profile"
 
 capture profile
 tap_label "My Fit Closet"
+sleep 1.5
 capture my-fit-closet
 
 printf 'Captured screens:\n'

@@ -1,22 +1,28 @@
 package com.fabricfit.app.ui.util
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.yalantis.ucrop.UCrop
+import com.fabricfit.app.media.BitmapAnalyzer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
+import kotlin.math.abs
 
 /**
- * Image editor helper using uCrop library for cropping, rotating, and aspect ratio adjustments.
+ * Image cropping helper for the Create-post flow.
+ *
+ * This used to delegate to uCrop (`com.github.yalantis:ucrop`), which is no
+ * longer published to Maven Central — the artefact cannot be resolved by a
+ * clean build. Cropping is done here with platform APIs instead: decode a
+ * memory-bounded copy of the source, centre-crop it to the requested aspect
+ * ratio, and write the result to the app cache as a JPEG.
  */
 object ImageEditor {
 
@@ -32,59 +38,67 @@ object ImageEditor {
     }
 
     /**
-     * Launch uCrop activity for image editing.
+     * Crop [sourceUri] to [aspectRatio] and write the result to the cache.
+     * Returns the cropped file's [Uri], or null when the image cannot be
+     * decoded or written.
      */
-    fun launchEditor(
-        activity: Activity,
+    suspend fun cropToCache(
+        context: Context,
         sourceUri: Uri,
         aspectRatio: AspectRatio = AspectRatio.FREE,
         maxWidth: Int = 1920,
         maxHeight: Int = 1920,
-    ) {
-        val destinationUri = Uri.fromFile(
-            File(activity.cacheDir, "cropped_${UUID.randomUUID()}.jpg")
+    ): Uri? = withContext(Dispatchers.IO) {
+        val maxEdge = maxOf(maxWidth, maxHeight)
+        val source = BitmapAnalyzer(context).decodeSampled(sourceUri, maxEdge)
+            ?: return@withContext null
+        try {
+            val cropped = cropToRatio(source, aspectRatio)
+            val bounded = boundTo(cropped, maxWidth, maxHeight)
+            val destination = File(context.cacheDir, "cropped_${UUID.randomUUID()}.jpg")
+            destination.outputStream().use { out ->
+                bounded.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            }
+            Uri.fromFile(destination)
+        } catch (e: OutOfMemoryError) {
+            null
+        } catch (e: Exception) {
+            null
+        } finally {
+            if (!source.isRecycled) source.recycle()
+        }
+    }
+
+    /** Centre-crop to the requested ratio; FREE keeps the whole frame. */
+    private fun cropToRatio(source: Bitmap, ratio: AspectRatio): Bitmap {
+        val target = ratio.ratioX / ratio.ratioY
+        if (ratio == AspectRatio.FREE || target <= 0f) return source
+        val current = source.width.toFloat() / source.height.toFloat()
+        if (abs(current - target) < 0.01f) return source
+
+        val cropWidth = if (current > target) (source.height * target).toInt() else source.width
+        val cropHeight = if (current > target) source.height else (source.width / target).toInt()
+        val width = cropWidth.coerceIn(1, source.width)
+        val height = cropHeight.coerceIn(1, source.height)
+        val left = ((source.width - width) / 2).coerceAtLeast(0)
+        val top = ((source.height - height) / 2).coerceAtLeast(0)
+        return Bitmap.createBitmap(source, left, top, width, height)
+    }
+
+    /** Only ever downscale — upscaling a crop just inflates the file. */
+    private fun boundTo(source: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
+        val scale = minOf(
+            maxWidth.toFloat() / source.width.toFloat(),
+            maxHeight.toFloat() / source.height.toFloat(),
+            1f,
         )
-
-        val uCrop = UCrop.of(sourceUri, destinationUri)
-            .withMaxResultSize(maxWidth, maxHeight)
-
-        // Apply aspect ratio
-        if (aspectRatio != AspectRatio.FREE) {
-            uCrop.withAspectRatio(aspectRatio.ratioX, aspectRatio.ratioY)
-        }
-
-        // Configure uCrop options
-        val options = UCrop.Options().apply {
-            setCompressionQuality(90)
-            setHideBottomControls(false) // Show crop controls
-            setFreeStyleCropEnabled(aspectRatio == AspectRatio.FREE)
-            
-            // UI customization
-            setToolbarColor(android.graphics.Color.parseColor("#1B4D3E")) // Heritage Forest
-            setStatusBarColor(android.graphics.Color.parseColor("#1B4D3E"))
-            setActiveControlsWidgetColor(android.graphics.Color.parseColor("#D4AF37")) // Heritage Gold
-            setToolbarWidgetColor(android.graphics.Color.WHITE)
-        }
-
-        uCrop.withOptions(options)
-            .start(activity)
-    }
-
-    /**
-     * Parse uCrop result from activity result.
-     */
-    fun parseResult(resultCode: Int, data: Intent?): Uri? {
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            return UCrop.getOutput(data)
-        }
-        return null
-    }
-
-    /**
-     * Check if uCrop error occurred.
-     */
-    fun getError(data: Intent?): Throwable? {
-        return UCrop.getError(data)
+        if (scale >= 1f) return source
+        return Bitmap.createScaledBitmap(
+            source,
+            (source.width * scale).toInt().coerceAtLeast(1),
+            (source.height * scale).toInt().coerceAtLeast(1),
+            true,
+        )
     }
 }
 
@@ -106,12 +120,12 @@ class ImageEditorState {
     var selectedAspectRatio by mutableStateOf(ImageEditor.AspectRatio.FREE)
         private set
 
-    fun setOriginalUri(uri: Uri?) {
+    fun updateOriginalUri(uri: Uri?) {
         originalUri = uri
         editedUri = null
     }
 
-    fun setEditedUri(uri: Uri?) {
+    fun updateEditedUri(uri: Uri?) {
         editedUri = uri
         isEditing = false
     }

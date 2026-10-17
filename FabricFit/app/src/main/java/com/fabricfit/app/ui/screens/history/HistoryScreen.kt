@@ -20,17 +20,16 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDismissState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +47,7 @@ import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.HistoryEvent
 import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.ShimmerGrid
-import com.fabricfit.app.ui.util.Haptics
+import com.fabricfit.app.ui.util.rememberHapticFeedback
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.resolveKey
@@ -114,10 +113,11 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
         } else {
             LazyColumn(contentPadding = PaddingValues(16.dp)) {
                 items(state.events, key = { it.id }) { event ->
-                    val dismissState = rememberDismissState(
+                    val haptics = rememberHapticFeedback()
+                    val dismissState = rememberSwipeToDismissBoxState(
                         confirmValueChange = { dismissValue ->
-                            if (dismissValue == DismissValue.DismissedToStart) {
-                                Haptics.heavy()
+                            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                haptics.heavy()
                                 vm.delete(event.id)
                                 true
                             } else {
@@ -125,11 +125,11 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                             }
                         }
                     )
-                    
-                    SwipeToDismiss(
+
+                    SwipeToDismissBox(
                         state = dismissState,
-                        directions = setOf(DismissDirection.EndToStart),
-                        background = {
+                        enableDismissFromStartToEnd = false,
+                        backgroundContent = {
                             Card(
                                 modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
                                 colors = CardDefaults.cardColors(
@@ -157,7 +157,7 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                                 }
                             }
                         },
-                        dismissContent = {
+                        content = {
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -165,7 +165,7 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                                     .combinedClickable(
                                         onClick = { /* Navigate to detail if needed */ },
                                         onLongClick = {
-                                            Haptics.tap()
+                                            haptics.tap()
                                             expandedMenuId = event.id
                                         }
                                     ),
@@ -192,7 +192,7 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                                         )
                                     }
                                     IconButton(onClick = {
-                                        Haptics.tap()
+                                        haptics.tap()
                                         vm.delete(event.id)
                                     }) {
                                         Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.cd_delete_item))
@@ -223,7 +223,7 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                                     text = { Text(stringResource(R.string.action_delete)) },
                                     onClick = {
                                         expandedMenuId = null
-                                        Haptics.heavy()
+                                        haptics.heavy()
                                         vm.delete(event.id)
                                     },
                                     leadingIcon = {

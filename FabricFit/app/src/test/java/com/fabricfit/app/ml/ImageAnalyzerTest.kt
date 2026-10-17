@@ -4,33 +4,39 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.fabricfit.app.domain.model.AttributeType
 import com.fabricfit.app.domain.model.ClothingType
-import io.mockk.every
-import io.mockk.mockk
+import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+/**
+ * [ImageAnalyzer] is a deterministic demo analyser, so these tests pin the
+ * contract it promises (shape of the result, value ranges, hashtag rules).
+ * A real bitmap is used via Robolectric rather than a mock.
+ */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [33])
 class ImageAnalyzerTest {
 
     private lateinit var analyzer: ImageAnalyzer
-    private lateinit var mockContext: Context
-    private lateinit var mockBitmap: Bitmap
+    private lateinit var testBitmap: Bitmap
 
     @Before
     fun setup() {
-        mockContext = mockk(relaxed = true)
-        mockBitmap = mockk(relaxed = true)
-        every { mockBitmap.width } returns 100
-        every { mockBitmap.height } returns 100
-        analyzer = ImageAnalyzer(mockContext)
+        val context: Context = ApplicationProvider.getApplicationContext()
+        analyzer = ImageAnalyzer(context)
+        testBitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
     }
 
     @Test
     fun `analyzeImage returns valid analysis result`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         assertNotNull(result)
         assertTrue(result.detectedItems.isNotEmpty())
@@ -41,7 +47,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `analyzeImage detects multiple clothing items`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         // Should detect 2-4 items
         assertTrue(result.detectedItems.size in 2..4)
@@ -53,7 +59,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `analyzeImage includes attributes for detected items`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         result.detectedItems.forEach { item ->
             assertTrue(item.attributes.isNotEmpty())
@@ -67,7 +73,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `analyzeImage detects color attributes`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         val colorAttributes = result.detectedItems.flatMap { item ->
             item.attributes.filter { it.type == AttributeType.COLOR }
@@ -82,7 +88,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `analyzeImage detects pattern attributes`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         val patternAttributes = result.detectedItems.flatMap { item ->
             item.attributes.filter { it.type == AttributeType.PATTERN }
@@ -97,7 +103,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `analyzeImage extracts dominant colors`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         assertTrue(result.dominantColors.isNotEmpty())
         result.dominantColors.forEach { color ->
@@ -114,7 +120,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `generateHashtags creates relevant hashtags`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
         val hashtags = analyzer.generateHashtags(result)
 
         assertTrue(hashtags.isNotEmpty())
@@ -130,19 +136,18 @@ class ImageAnalyzerTest {
 
     @Test
     fun `generateHashtags includes item-specific hashtags`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
         val hashtags = analyzer.generateHashtags(result)
 
-        // Should include hashtags based on detected items
-        result.detectedItems.forEach { item ->
-            val expectedHashtag = "#${item.type.name.lowercase()}"
-            assertTrue(hashtags.contains(expectedHashtag))
-        }
+        // Items contribute their own hashtags; the list is capped at ten
+        // entries, so at least one item hashtag is guaranteed to survive.
+        val itemHashtags = result.detectedItems.map { "#${it.type.name.lowercase()}" }
+        assertTrue(hashtags.any { it in itemHashtags })
     }
 
     @Test
     fun `analyzeImage determines overall style`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         // Overall style may be null if no style attributes detected
         if (result.overallStyle != null) {
@@ -153,7 +158,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `detected items have bounding boxes`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
 
         result.detectedItems.forEach { item ->
             assertNotNull(item.boundingBox)
@@ -170,7 +175,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `analyzeImage returns valid clothing types`() = runBlocking {
-        val result = analyzer.analyzeImage(mockBitmap)
+        val result = analyzer.analyzeImage(testBitmap)
         val validTypes = ClothingType.values().filter { it != ClothingType.UNKNOWN }
 
         result.detectedItems.forEach { item ->
@@ -180,7 +185,7 @@ class ImageAnalyzerTest {
 
     @Test
     fun `detectColors returns valid color information`() = runBlocking {
-        val colors = analyzer.detectColors(mockBitmap)
+        val colors = analyzer.detectColors(testBitmap)
 
         assertTrue(colors.isNotEmpty())
         colors.forEach { color ->

@@ -6,7 +6,7 @@ package com.fabricfit.app.domain.model
 data class OutfitRecommendation(
     val id: String,
     val name: String,
-    val items: List<WardrobeItem>,
+    val items: List<StyleWardrobeItem>,
     val style: String,
     val occasion: String,
     val confidenceScore: Float, // 0.0 to 1.0
@@ -17,7 +17,7 @@ data class OutfitRecommendation(
 /**
  * Item in user's wardrobe.
  */
-data class WardrobeItem(
+data class StyleWardrobeItem(
     val id: String,
     val name: String,
     val type: ClothingType,
@@ -34,8 +34,8 @@ data class WardrobeItem(
  * "Complete the look" suggestion.
  */
 data class CompleteTheLookSuggestion(
-    val currentItem: WardrobeItem,
-    val suggestedItems: List<WardrobeItem>,
+    val currentItem: StyleWardrobeItem,
+    val suggestedItems: List<StyleWardrobeItem>,
     val reason: String,
     val styleMatch: Float, // 0.0 to 1.0
 )
@@ -45,7 +45,7 @@ data class CompleteTheLookSuggestion(
  */
 data class StyleProfile(
     val userId: String,
-    val dominantStyles: List<StylePreference>,
+    val dominantStyles: List<StyleAffinity>,
     val favoriteColors: List<ColorPreference>,
     val wardrobeSize: Int,
     val mostWornTypes: List<ClothingType>,
@@ -56,7 +56,7 @@ data class StyleProfile(
 /**
  * User's preference for a style.
  */
-data class StylePreference(
+data class StyleAffinity(
     val style: String,
     val percentage: Float, // 0.0 to 1.0
     val itemCount: Int,

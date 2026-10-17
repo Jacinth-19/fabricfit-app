@@ -2,7 +2,9 @@ name: build
 
 on:
   push:
-    branches: [main]
+    # Feature branches are built too, so a branch can be validated (and have its
+    # screenshots refreshed) without opening a pull request first.
+    branches: [main, "arena/**"]
     tags: ['v*']
   pull_request:
   # Weekly emulator sweep. Linux GitHub runners have no KVM, so the heavy
@@ -20,6 +22,9 @@ defaults:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v7
 
@@ -39,9 +44,47 @@ jobs:
       # assembleDebugAndroidTest compiles the instrumented source set, so a
       # package/class rename there is caught without needing an emulator.
       - name: Unit tests, debug build, instrumented-test compile
-        run: >-
-          ./gradlew :app:testDebugUnitTest :app:assembleDebug
-          :app:assembleDebugAndroidTest
+        run: |
+          set -o pipefail
+          ./gradlew :app:testDebugUnitTest :app:assembleDebug \
+            :app:assembleDebugAndroidTest --console=plain 2>&1 | tee verify-gradle.log
+
+      # Job logs need a login to read; annotations are visible on the public run
+      # page, so the reason for a red build is obvious without opening the log.
+      - name: Annotate the Gradle failure
+        if: failure()
+        run: python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log
+
+      # Annotations are truncated, so the full error list also goes to the pull
+      # request (or the branch's PR), where it can be read line by line.
+      - name: Report the failure on the pull request
+        if: failure() && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          pr=$(gh pr list --head "${GITHUB_REF_NAME}" --state open --json number \
+               --jq '.[0].number // empty')
+          if [ -z "$pr" ]; then
+            echo "No open pull request for ${GITHUB_REF_NAME}; skipping comment."
+            exit 0
+          fi
+          {
+            echo "### ❌ Gradle: \`verify\` failed on \`${GITHUB_REF_NAME}\`"
+            echo
+            echo "Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo
+            python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log --markdown
+          } > /tmp/gradle-failure.md
+          # Update the previous failure comment instead of spamming the PR.
+          existing=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${pr}/comments?per_page=100" \
+            --jq '[.[] | select(.body | startswith("### ❌ Gradle:"))] | last | .id // empty')
+          if [ -n "$existing" ]; then
+            gh api -X PATCH "repos/${GITHUB_REPOSITORY}/issues/comments/${existing}" \
+              -F body=@/tmp/gradle-failure.md > /dev/null
+          else
+            gh pr comment "$pr" --body-file /tmp/gradle-failure.md
+          fi
 
       - name: Upload test reports
         if: always()
@@ -62,6 +105,8 @@ jobs:
   release:
     needs: verify
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
 
@@ -79,19 +124,52 @@ jobs:
 
       # Signed with the throwaway demo key committed in app/demo-release.keystore.
       - name: Minified release APK + Play bundle
-        run: ./gradlew :app:assembleRelease :app:bundleRelease
+        run: |
+          set -o pipefail
+          ./gradlew :app:assembleRelease :app:bundleRelease --console=plain 2>&1 \
+            | tee release-gradle.log
+
+      - name: Annotate the Gradle failure
+        if: failure()
+        run: python3 ../tools/qa/gradle_error_annotations.py release-gradle.log
 
       - name: Upload release APK
+        if: success()
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-release-apk
           path: FabricFit/app/build/outputs/apk/release/app-release.apk
 
       - name: Upload Play bundle
+        if: success()
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-release-aab
           path: FabricFit/app/build/outputs/bundle/release/app-release.aab
+
+      # Artifacts expire and need an Actions login to download, so the release
+      # build is also attached to a GitHub Release for one-click install.
+      - name: Publish release APK + bundle to GitHub Releases
+        if: >-
+          success() && (github.event_name == 'workflow_dispatch' ||
+          startsWith(github.ref, 'refs/tags/v'))
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          version=$(sed -n 's/.*versionName = "\(.*\)".*/\1/p' app/build.gradle.kts | head -1)
+          tag="v${version:-1.0.0}"
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "dist/fabricfit-${tag}.apk"
+          cp app/build/outputs/bundle/release/app-release.aab "dist/fabricfit-${tag}.aab"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/* --clobber
+          else
+            gh release create "$tag" dist/* \
+              --title "FabricFit ${tag}" \
+              --notes "Signed release build produced by GitHub Actions run ${GITHUB_RUN_ID}."
+          fi
+          echo "Published $tag"
 
   # Opt-in device QA: run the DeepLabV3 instrumented test on an emulator.
   # macOS runners only (Linux GH runners lack KVM). Fires on manual dispatch,
@@ -126,11 +204,14 @@ jobs:
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
 
-  # Full app UI screenshots are expensive; capture them only when requested
-  # manually via workflow_dispatch. The job commits the refreshed PNGs back
-  # to the branch that triggered the dispatch.
+  # Full app UI screenshots are expensive; capture them on demand only:
+  # manual dispatch, or a push whose commit message contains "[screenshots]".
+  # The job commits the refreshed PNGs back to the branch that triggered it.
   screenshots:
-    if: github.event_name == 'workflow_dispatch'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+       contains(github.event.head_commit.message, '[screenshots]'))
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
@@ -178,7 +259,9 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_2
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # No `-camera-back none`: the Create tab shows a live preview, and the
+          # emulator's virtual camera at least renders a test pattern.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           working-directory: FabricFit
           # NOTE: the runner's `script` input executes one command per line

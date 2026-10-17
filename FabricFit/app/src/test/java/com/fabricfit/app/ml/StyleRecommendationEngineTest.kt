@@ -2,7 +2,7 @@ package com.fabricfit.app.ml
 
 import com.fabricfit.app.domain.model.ClothingType
 import com.fabricfit.app.domain.model.StyleProfile
-import com.fabricfit.app.domain.model.WardrobeItem
+import com.fabricfit.app.domain.model.StyleWardrobeItem
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -12,13 +12,13 @@ import org.junit.Test
 class StyleRecommendationEngineTest {
 
     private lateinit var engine: StyleRecommendationEngine
-    private lateinit var testWardrobe: List<WardrobeItem>
+    private lateinit var testWardrobe: List<StyleWardrobeItem>
 
     @Before
     fun setup() {
         engine = StyleRecommendationEngine()
         testWardrobe = listOf(
-            WardrobeItem(
+            StyleWardrobeItem(
                 id = "item_1",
                 name = "White Shirt",
                 type = ClothingType.SHIRT,
@@ -28,7 +28,7 @@ class StyleRecommendationEngineTest {
                 imageUrl = "https://example.com/shirt.jpg",
                 timesWorn = 5
             ),
-            WardrobeItem(
+            StyleWardrobeItem(
                 id = "item_2",
                 name = "Blue Jeans",
                 type = ClothingType.PANTS,
@@ -38,7 +38,7 @@ class StyleRecommendationEngineTest {
                 imageUrl = "https://example.com/jeans.jpg",
                 timesWorn = 10
             ),
-            WardrobeItem(
+            StyleWardrobeItem(
                 id = "item_3",
                 name = "Black Shoes",
                 type = ClothingType.SHOES,
@@ -48,7 +48,7 @@ class StyleRecommendationEngineTest {
                 imageUrl = "https://example.com/shoes.jpg",
                 timesWorn = 8
             ),
-            WardrobeItem(
+            StyleWardrobeItem(
                 id = "item_4",
                 name = "Red Dress",
                 type = ClothingType.DRESS,
@@ -149,7 +149,7 @@ class StyleRecommendationEngineTest {
 
     @Test
     fun `empty wardrobe returns empty recommendations`() {
-        val emptyWardrobe = emptyList<WardrobeItem>()
+        val emptyWardrobe = emptyList<StyleWardrobeItem>()
         val recommendations = engine.generateOutfitRecommendations(emptyWardrobe, limit = 3)
 
         assertNotNull(recommendations)

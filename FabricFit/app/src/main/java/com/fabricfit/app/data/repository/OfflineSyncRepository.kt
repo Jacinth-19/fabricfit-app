@@ -168,11 +168,11 @@ class PostUploadWorker(
             delay(2000)
             
             // Upload post
+            // The repository resolves the author from its own current-user id.
             container.community.createGalleryItem(
-                userId = "current_user_id", // Would get from auth
                 title = title,
                 description = description,
-                imageUrls = if (mediaType == "IMAGE" && imageUri != null) listOf(imageUri) else emptyList(),
+                imageUrl = imageUri.orEmpty(),
                 fabricIds = emptyList(),
                 styleId = null,
                 mediaType = com.fabricfit.app.domain.model.MediaType.valueOf(mediaType),
@@ -210,8 +210,7 @@ class CommentUploadWorker(
             
             // Add comment
             container.community.addComment(
-                itemId = postId,
-                userId = "current_user_id", // Would get from auth
+                galleryItemId = postId,
                 text = commentText,
             )
             
@@ -246,9 +245,9 @@ class LikeSyncWorker(
             
             // Toggle like
             if (isLiked) {
-                container.community.likeItem(postId, "current_user_id")
+                container.community.likeGalleryItem(postId)
             } else {
-                container.community.unlikeItem(postId, "current_user_id")
+                container.community.unlikeGalleryItem(postId)
             }
             
             Result.success()

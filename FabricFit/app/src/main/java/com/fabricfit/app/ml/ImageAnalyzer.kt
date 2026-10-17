@@ -46,8 +46,11 @@ class ImageAnalyzer(private val context: Context) {
      * Generate hashtag suggestions based on detected items.
      */
     fun generateHashtags(analysis: ImageAnalysisResult): List<String> {
-        val hashtags = mutableSetOf<String>()
-        
+        // General fashion tags are seeded first so they survive the ten-tag cap
+        // below; item-specific tags are the ones that get trimmed when a busy
+        // image produces more suggestions than we keep.
+        val hashtags = mutableSetOf("#fashion", "#style", "#ootd", "#outfit")
+
         // Add hashtags based on detected items
         analysis.detectedItems.forEach { item ->
             hashtags.add("#${item.type.name.lowercase()}")
@@ -66,9 +69,6 @@ class ImageAnalyzer(private val context: Context) {
         analysis.dominantColors.take(2).forEach { color ->
             hashtags.add("#${color.name.lowercase().replace(" ", "")}")
         }
-        
-        // Add general fashion hashtags
-        hashtags.addAll(listOf("#fashion", "#style", "#ootd", "#outfit"))
         
         return hashtags.toList().take(10)
     }

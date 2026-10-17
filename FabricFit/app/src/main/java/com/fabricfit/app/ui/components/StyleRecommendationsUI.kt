@@ -42,7 +42,8 @@ import coil.request.ImageRequest
 import com.fabricfit.app.domain.model.OutfitRecommendation
 import com.fabricfit.app.domain.model.SimilarUser
 import com.fabricfit.app.domain.model.StyleProfile
-import com.fabricfit.app.domain.model.WardrobeItem
+import com.fabricfit.app.domain.model.StyleAffinity
+import com.fabricfit.app.domain.model.StyleWardrobeItem
 
 /**
  * Card displaying an outfit recommendation.
@@ -50,7 +51,7 @@ import com.fabricfit.app.domain.model.WardrobeItem
 @Composable
 fun OutfitRecommendationCard(
     recommendation: OutfitRecommendation,
-    onItemClick: (WardrobeItem) -> Unit,
+    onItemClick: (StyleWardrobeItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -182,7 +183,7 @@ fun OutfitRecommendationCard(
  */
 @Composable
 private fun WardrobeItemThumbnail(
-    item: WardrobeItem,
+    item: StyleWardrobeItem,
     onClick: () -> Unit,
 ) {
     Surface(
@@ -337,7 +338,7 @@ fun StyleProfileCard(
 }
 
 @Composable
-private fun StylePreferenceRow(style: com.fabricfit.app.domain.model.StylePreference) {
+private fun StylePreferenceRow(style: StyleAffinity) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

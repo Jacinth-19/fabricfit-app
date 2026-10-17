@@ -114,7 +114,11 @@ object ExportManager {
                     yPosition = MARGIN
                 }
                 
-                val lookName = look.styleTitle ?: "Look ${index + 1}"
+                // The display title lives in string resources behind DressStyle.titleKey,
+                // which is not reachable from here, so fall back to the style id.
+                val lookName = look.dressStyleId
+                    .replace('_', ' ')
+                    .replaceFirstChar { it.uppercase() }
                 canvas.drawText(lookName, MARGIN, yPosition, subtitlePaint)
                 yPosition += 25f
                 

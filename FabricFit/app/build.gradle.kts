@@ -130,8 +130,8 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     
-    // Google Fonts for custom branded typography
-    implementation("androidx.compose.ui:ui-text-google-fonts:1.6.0")
+    // Google Fonts for custom branded typography (version comes from the Compose BOM)
+    implementation(libs.androidx.compose.ui.text.google.fonts)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
@@ -144,14 +144,14 @@ dependencies {
     
     implementation(libs.coil.compose)
     
-    // Image cropping and editing
-    implementation("com.github.yalantis:ucrop:2.2.8")
-    
     // Rich text formatting with markdown
     implementation("io.noties.markwon:core:4.6.2")
     implementation("io.noties.markwon:editor:4.6.2")
     implementation("io.noties.markwon:html:4.6.2")
     implementation("io.noties.markwon:linkify:4.6.2")
+    // Markwon's HTML <strike> handler reaches into the GFM strikethrough
+    // extension; ship it so R8 does not strip (or fail on) the reference.
+    implementation("com.atlassian.commonmark:commonmark-ext-gfm-strikethrough:0.13.0")
     
     // Firebase Cloud Messaging for push notifications
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
@@ -160,9 +160,6 @@ dependencies {
     
     // ExoPlayer for video playback
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")
-    
-    // FFmpeg for video processing (compression, trimming, thumbnails)
-    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
 
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)

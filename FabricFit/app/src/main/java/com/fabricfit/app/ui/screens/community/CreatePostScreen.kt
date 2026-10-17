@@ -1,6 +1,5 @@
 package com.fabricfit.app.ui.screens.community
 
-import android.app.Activity
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,6 +40,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -56,10 +56,12 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,6 +92,7 @@ import com.fabricfit.app.ui.components.rememberMarkwon
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.util.ImageEditor
 import com.fabricfit.app.ui.util.rememberImageEditorState
+import com.fabricfit.app.ui.util.resolveKey
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -113,7 +116,8 @@ class CreatePostViewModel(private val container: AppContainer) : ViewModel() {
 
     private fun loadFabrics() {
         viewModelScope.launch {
-            _fabrics.value = container.fabricAnalysis.getAll()
+            // The repository exposes a hot Flow; keep the state in step with it.
+            container.fabricAnalysis.observeAll().collect { list -> _fabrics.value = list }
         }
     }
 
@@ -174,6 +178,15 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var selectedFabricIds by remember { mutableStateOf<List<Long>>(emptyList()) }
     var selectedStyleId by remember { mutableStateOf<String?>(null) }
 
+    // Media state
+    var mediaUri by remember { mutableStateOf<Uri?>(null) }
+    var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
+    var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
+    var isProcessingVideo by remember { mutableStateOf(false) }
+
+    // Image editing state
+    val imageEditorState = rememberImageEditorState()
+
     // Media pickers
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -181,7 +194,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
         uri?.let {
             mediaUri = it
             mediaType = MediaType.IMAGE
-            imageEditorState.setOriginalUri(it)
+            imageEditorState.updateOriginalUri(it)
         }
     }
 
@@ -196,11 +209,11 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                     val thumbnail = VideoProcessor.generateThumbnail(context, selectedVideoUri)
                     videoThumbnail = thumbnail
                     
-                    // Compress video
-                    val compressedVideo = VideoProcessor.compressVideo(context, selectedVideoUri, quality = 70)
+                    // Stage the video in the app cache for publishing
+                    val preparedVideo = VideoProcessor.prepareForUpload(context, selectedVideoUri)
                     
-                    if (compressedVideo != null) {
-                        mediaUri = Uri.fromFile(compressedVideo)
+                    if (preparedVideo != null) {
+                        mediaUri = Uri.fromFile(preparedVideo)
                         mediaType = MediaType.VIDEO
                     }
                 } catch (e: Exception) {
@@ -219,12 +232,6 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
         // For now, we'll just use gallery picker
     }
 
-    // Media state
-    var mediaUri by remember { mutableStateOf<Uri?>(null) }
-    var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
-    var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
-    var isProcessingVideo by remember { mutableStateOf(false) }
-    
     // Image filter state
     var showImageFilters by remember { mutableStateOf(false) }
     var brightness by remember { mutableStateOf(0f) }
@@ -238,22 +245,23 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var trimStartTime by remember { mutableStateOf(0L) }
     var trimEndTime by remember { mutableStateOf(0L) }
     
-    // Image editing state
-    val imageEditorState = rememberImageEditorState()
     var showAspectRatioSelector by remember { mutableStateOf(false) }
     
     // Rich text editor
     val markwon = rememberMarkwon()
 
-    // uCrop launcher
-    val uCropLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val uri = ImageEditor.parseResult(result.resultCode, result.data)
-        if (uri != null) {
-            imageUri = uri
+    // Crop the attached image to a chosen aspect ratio on a background thread
+    // (see ImageEditor for why this no longer launches an external cropper).
+    val cropLauncher: (Uri, ImageEditor.AspectRatio) -> Unit = { uri, ratio ->
+        scope.launch {
+            val cropped = ImageEditor.cropToCache(context, uri, ratio)
+            if (cropped != null) {
+                imageUri = cropped
+                imageEditorState.updateEditedUri(cropped)
+            } else {
+                imageEditorState.cancelEditing()
+            }
         }
-        imageEditorState.cancelEditing()
     }
 
     // Dropdown states
@@ -469,7 +477,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                     IconButton(
                                         onClick = {
                                             mediaUri?.let { uri ->
-                                                imageEditorState.setOriginalUri(uri)
+                                                imageEditorState.updateOriginalUri(uri)
                                                 showAspectRatioSelector = true
                                             }
                                         },
@@ -521,16 +529,9 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                     selectedRatio = imageEditorState.selectedAspectRatio,
                                     onRatioSelected = { ratio ->
                                         imageEditorState.setAspectRatio(ratio)
-                                        // Launch uCrop with selected aspect ratio
+                                        // Crop to the selected aspect ratio
                                         imageEditorState.originalUri?.let { uri ->
-                                            val activity = context as? Activity
-                                            if (activity != null) {
-                                                ImageEditor.launchEditor(
-                                                    activity = activity,
-                                                    sourceUri = uri,
-                                                    aspectRatio = ratio,
-                                                )
-                                            }
+                                            cropLauncher(uri, ratio)
                                         }
                                     },
                                 )
@@ -571,7 +572,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                                 imageUri?.let { uri ->
                                                     // Load bitmap and apply filters
                                                     val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-                                                        context.contentResolver, Uri.parse(uri)
+                                                        context.contentResolver, uri
                                                     )
                                                     filteredBitmap = ImageFilterProcessor.applyFilters(
                                                         bitmap, brightness, contrast, saturation
@@ -582,7 +583,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                                 contrast = it
                                                 imageUri?.let { uri ->
                                                     val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-                                                        context.contentResolver, Uri.parse(uri)
+                                                        context.contentResolver, uri
                                                     )
                                                     filteredBitmap = ImageFilterProcessor.applyFilters(
                                                         bitmap, brightness, contrast, saturation
@@ -593,7 +594,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                                 saturation = it
                                                 imageUri?.let { uri ->
                                                     val bitmap = android.provider.MediaStore.Images.Media.getBitmap(
-                                                        context.contentResolver, Uri.parse(uri)
+                                                        context.contentResolver, uri
                                                     )
                                                     filteredBitmap = ImageFilterProcessor.applyFilters(
                                                         bitmap, brightness, contrast, saturation
@@ -834,8 +835,8 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                         onExpandedChange = { styleMenuExpanded = it },
                     ) {
                         OutlinedTextField(
-                            value = styles.find { it.id == selectedStyleId }?.let { 
-                                context.getString(it.titleKey) 
+                            value = styles.find { it.id == selectedStyleId }?.let {
+                                context.resolveKey(it.titleKey) ?: it.id
                             } ?: "",
                             onValueChange = {},
                             readOnly = true,
@@ -859,7 +860,7 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                             )
                             styles.forEach { style ->
                                 DropdownMenuItem(
-                                    text = { Text(context.getString(style.titleKey)) },
+                                    text = { Text(context.resolveKey(style.titleKey) ?: style.id) },
                                     onClick = {
                                         selectedStyleId = style.id
                                         styleMenuExpanded = false

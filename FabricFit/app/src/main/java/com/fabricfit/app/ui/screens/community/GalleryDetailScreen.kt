@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,6 +79,7 @@ import com.fabricfit.app.ui.util.shareImagePath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 // ViewModel
@@ -124,12 +126,12 @@ class GalleryDetailViewModel(
     }
 
     private suspend fun loadFabrics(fabricIds: List<Long>) {
-        val allFabrics = container.fabricAnalysis.getAll()
+        val allFabrics = container.fabricAnalysis.observeAll().first()
         _fabrics.value = allFabrics.filter { it.id in fabricIds }
     }
 
     private suspend fun loadStyle(styleId: String) {
-        _style.value = container.dressStyles.getById(styleId)
+        _style.value = container.dressStyles.byId(styleId)
     }
 
     private fun loadComments() {
@@ -164,6 +166,7 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
     val style by vm.style.collectAsStateWithLifecycle()
     val isLoading by vm.isLoading.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val markwon = rememberMarkwon()
     
     // Report dialog state
@@ -214,10 +217,11 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
             ) {
                 // Full media display (image or video)
                 item {
-                    if (item!!.mediaType == MediaType.VIDEO && item.videoUrl != null) {
+                    val current = item
+                    if (current != null && current.mediaType == MediaType.VIDEO && current.videoUrl != null) {
                         // Video player
                         InlineVideoPlayer(
-                            videoUri = item.videoUrl!!,
+                            videoUri = current.videoUrl,
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
@@ -422,7 +426,6 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 }
 
                 // Fabrics used section
-                val fabrics by vm.fabrics.collectAsStateWithLifecycle()
                 if (fabrics.isNotEmpty()) {
                     item {
                         Column(
@@ -473,7 +476,6 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 }
 
                 // Style used section
-                val style by vm.style.collectAsStateWithLifecycle()
                 if (style != null) {
                     item {
                         Column(
@@ -528,15 +530,17 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
         ReportDialog(
             onDismiss = { showReportDialog = false },
             onSubmit = { reportType, description ->
-                // Submit report
+                // Submit report (the repository call is suspending)
                 val container = AppContainer.get(context)
-                container.reports.submitReport(
-                    reportedUserId = item!!.userId,
-                    contentType = com.fabricfit.app.domain.model.ReportedContentType.GALLERY_ITEM,
-                    contentId = item!!.id,
-                    reportType = reportType,
-                    description = description,
-                )
+                scope.launch {
+                    container.reports.submitReport(
+                        reportedUserId = item!!.userId,
+                        contentType = com.fabricfit.app.domain.model.ReportedContentType.GALLERY_ITEM,
+                        contentId = item!!.id,
+                        reportType = reportType,
+                        description = description,
+                    )
+                }
                 showReportDialog = false
                 // Show success message
                 android.widget.Toast.makeText(

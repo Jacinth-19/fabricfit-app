@@ -66,6 +66,7 @@ import com.fabricfit.app.domain.model.WardrobeCategory
 import com.fabricfit.app.domain.model.WardrobeItem
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ShimmerGrid
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -82,10 +83,12 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
     val scope = rememberCoroutineScope()
     var isLoading by remember { mutableStateOf(true) }
 
-    LaunchedEffect(items, outfits) {
-        if (items.isNotEmpty() || outfits.isNotEmpty()) {
-            isLoading = false
-        }
+    LaunchedEffect(Unit) {
+        // Room emits its first value within a frame or two. Clear the shimmer
+        // once it has — including when the result is empty — otherwise a
+        // first-run closet with nothing saved yet shimmers forever.
+        delay(250)
+        isLoading = false
     }
 
     Column(

@@ -111,6 +111,13 @@ class AppContainer private constructor(context: Context) {
             entryDao = database.challengeEntryDao(),
         )
 
+    // Blocked users (community safety)
+    val blockedUsers: com.fabricfit.app.data.repository.BlockedUserRepository by lazy {
+        com.fabricfit.app.data.repository.BlockedUserRepository(
+            blockedUserDao = database.blockedUserDao(),
+        )
+    }
+
     // Search features
     val search: com.fabricfit.app.data.repository.SearchRepository =
         com.fabricfit.app.data.repository.SearchRepository(

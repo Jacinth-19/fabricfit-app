@@ -14,6 +14,7 @@ import com.fabricfit.app.domain.model.CommunityUser
 import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.GalleryItem
 import com.fabricfit.app.domain.model.Like
+import com.fabricfit.app.domain.model.MediaType
 import com.fabricfit.app.domain.model.Occasion
 import com.fabricfit.app.domain.model.RecentSearch
 import com.fabricfit.app.domain.model.Report

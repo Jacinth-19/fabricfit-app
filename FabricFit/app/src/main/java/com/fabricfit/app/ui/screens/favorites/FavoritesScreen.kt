@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -32,17 +31,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DismissDirection
-import androidx.compose.material3.DismissValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Surface
-import androidx.compose.material3.SwipeToDismiss
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDismissState
-import androidx.compose.material3.rememberPullToRefreshState
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.util.rememberHapticFeedback
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.ui.components.AnimatedBottomSheet
@@ -134,24 +132,21 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
     val tooltipSeen by tooltips.seen(TooltipStore.FAVORITES).collectAsState(initial = true)
     val scope = rememberCoroutineScope()
     var isRefreshing by remember { mutableStateOf(false) }
-    val pullToRefreshState = rememberPullToRefreshState()
-    
+    val haptics = rememberHapticFeedback()
+
     // Sort & Filter bottom sheet state
     var showFilterSheet by remember { mutableStateOf(false) }
     var sortBy by remember { mutableStateOf(SortOption.NEWEST) }
     var filterCategory by remember { mutableStateOf<String?>(null) }
 
-    if (pullToRefreshState.isRefreshing) {
-        LaunchedEffect(true) {
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = {
             isRefreshing = true
-            vm.refresh {
-                isRefreshing = false
-                pullToRefreshState.endRefresh()
-            }
-        }
-    }
-
-    Box(Modifier.fillMaxSize().padding(padding).nestedScroll(pullToRefreshState.nestedScrollConnection)) {
+            vm.refresh { isRefreshing = false }
+        },
+        modifier = Modifier.fillMaxSize().padding(padding),
+    ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
@@ -456,10 +451,10 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     )
                 }
                 items(state.fabrics, key = { it.id }) { fabric ->
-                    val dismissState = rememberDismissState(
+                    val dismissState = rememberSwipeToDismissBoxState(
                         confirmValueChange = { dismissValue ->
-                            if (dismissValue == DismissValue.DismissedToStart) {
-                                Haptics.heavy()
+                            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                haptics.heavy()
                                 vm.unfavoriteFabric(fabric.id)
                                 true
                             } else {
@@ -467,11 +462,11 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                             }
                         }
                     )
-                    
-                    SwipeToDismiss(
+
+                    SwipeToDismissBox(
                         state = dismissState,
-                        directions = setOf(DismissDirection.EndToStart),
-                        background = {
+                        enableDismissFromStartToEnd = false,
+                        backgroundContent = {
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -501,7 +496,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                 }
                             }
                         },
-                        dismissContent = {
+                        content = {
                             Card(
                                 onClick = { nav.navigate(Routes.fabric(fabric.id)) },
                                 modifier = Modifier
@@ -545,11 +540,6 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 }
             }
         }
-
-        PullToRefreshContainer(
-            state = pullToRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-        )
 
         if (!tooltipSeen) {
             FirstRunTooltip(
