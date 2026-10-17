@@ -1020,5 +1020,8 @@
     <string name="post_comment">Post</string>
     <string name="comments_count">%d comments</string>
     <string name="likes_count">%d likes</string>
+    <string name="fabrics_used">Fabrics Used</string>
+    <string name="style_used">Style Used</string>
+    <string name="user_profile_not_found">User not found</string>
 
 </resources>

@@ -57,11 +57,16 @@ import coil.request.ImageRequest
 import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Comment
+import com.fabricfit.app.domain.model.DressStyle
+import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.GalleryItem
+import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.components.ZoomableImage
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageGold
+import com.fabricfit.app.ui.util.resolveKey
 import com.fabricfit.app.ui.util.shareImagePath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -79,6 +84,12 @@ class GalleryDetailViewModel(
     private val _comments = MutableStateFlow<List<Comment>>(emptyList())
     val comments: StateFlow<List<Comment>> = _comments.asStateFlow()
 
+    private val _fabrics = MutableStateFlow<List<Fabric>>(emptyList())
+    val fabrics: StateFlow<List<Fabric>> = _fabrics.asStateFlow()
+
+    private val _style = MutableStateFlow<DressStyle?>(null)
+    val style: StateFlow<DressStyle?> = _style.asStateFlow()
+
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
@@ -89,9 +100,29 @@ class GalleryDetailViewModel(
 
     private fun loadItem() {
         viewModelScope.launch {
-            _item.value = container.community.getGalleryItem(itemId)
+            val galleryItem = container.community.getGalleryItem(itemId)
+            _item.value = galleryItem
             _isLoading.value = false
+            
+            // Load related fabrics
+            if (galleryItem != null && galleryItem.fabricIds.isNotEmpty()) {
+                loadFabrics(galleryItem.fabricIds)
+            }
+            
+            // Load related style
+            if (galleryItem?.styleId != null) {
+                loadStyle(galleryItem.styleId!!)
+            }
         }
+    }
+
+    private suspend fun loadFabrics(fabricIds: List<Long>) {
+        val allFabrics = container.fabricAnalysis.getAll()
+        _fabrics.value = allFabrics.filter { it.id in fabricIds }
+    }
+
+    private suspend fun loadStyle(styleId: String) {
+        _style.value = container.dressStyles.getById(styleId)
     }
 
     private fun loadComments() {
@@ -168,20 +199,24 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(bottom = 24.dp),
             ) {
-                // Full image
+                // Full image with zoom
                 item {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(item!!.imageUrl)
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = item!!.title,
-                        contentScale = ContentScale.Fit,
+                    ZoomableImage(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(400.dp)
                             .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-                    )
+                    ) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(item!!.imageUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = item!!.title,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                    }
                 }
 
                 // User info and actions
@@ -349,6 +384,102 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
                 } else {
                     items(comments, key = { it.id }) { comment ->
                         CommentItem(comment = comment)
+                    }
+                }
+
+                // Fabrics used section
+                val fabrics by vm.fabrics.collectAsStateWithLifecycle()
+                if (fabrics.isNotEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        ) {
+                            Text(
+                                stringResource(R.string.fabrics_used),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            fabrics.forEach { fabric ->
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .clickable { nav.navigate(Routes.fabric(fabric.id)) },
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                                    ),
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        FabricSwatch(
+                                            fabric = fabric,
+                                            modifier = Modifier.size(48.dp),
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = fabric.name ?: context.getString(fabric.category.labelRes),
+                                                style = MaterialTheme.typography.titleSmall,
+                                                fontWeight = FontWeight.SemiBold,
+                                            )
+                                            Text(
+                                                text = context.getString(fabric.category.labelRes),
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Style used section
+                val style by vm.style.collectAsStateWithLifecycle()
+                if (style != null) {
+                    item {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                        ) {
+                            Text(
+                                stringResource(R.string.style_used),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { nav.navigate(Routes.design(style!!.id)) },
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+                                ),
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(12.dp)
+                                ) {
+                                    Text(
+                                        text = context.resolveKey(style!!.titleKey) ?: style!!.id,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.SemiBold,
+                                    )
+                                    if (style!!.descriptionKey.isNotBlank()) {
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = context.resolveKey(style!!.descriptionKey) ?: "",
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis,
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
