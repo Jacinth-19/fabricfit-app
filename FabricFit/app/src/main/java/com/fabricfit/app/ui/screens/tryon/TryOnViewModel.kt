@@ -114,6 +114,12 @@ class TryOnViewModel(
         }
     }
 
+    fun consumeResult() {
+        if (_state.value.tryOn is TryOnState.Success) {
+            _state.value = _state.value.copy(tryOn = TryOnState.Idle, running = false)
+        }
+    }
+
     fun start() {
         val s = _state.value
         val fabricId = s.fabricId ?: return
@@ -124,7 +130,6 @@ class TryOnViewModel(
                 _state.value = _state.value.copy(paywallOpen = true)
                 return@launch
             }
-            container.entitlements.consumeTryOn()
             _state.value = _state.value.copy(running = true, tryOn = TryOnState.Idle)
             container.tryOn.generate(
                 TryOnRequest(
@@ -135,6 +140,9 @@ class TryOnViewModel(
                     customization = s.customization,
                 ),
             ).collect { st ->
+                if (st is TryOnState.Success) {
+                    container.entitlements.consumeTryOn()
+                }
                 _state.value = _state.value.copy(
                     tryOn = st,
                     running = st !is TryOnState.Success && st !is TryOnState.Error,

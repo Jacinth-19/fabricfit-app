@@ -75,9 +75,9 @@ fun ProfileScreen(nav: NavHostController, padding: PaddingValues) {
     var renameOpen by remember { mutableStateOf(false) }
 
     val displayName = state.prefs.displayName.ifBlank { "Ama Serwaa" }
-    val scansCount = if (state.fabricCount > 0) state.fabricCount else 12
-    val favsCount = 8
-    val tryOnsCount = if (state.lookCount > 0) state.lookCount else 3
+    val scansCount = state.fabricCount
+    val favsCount = state.favoriteCount
+    val tryOnsCount = state.lookCount
 
     Column(
         Modifier

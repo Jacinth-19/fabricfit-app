@@ -111,11 +111,25 @@ fun TryOnScreen(
         }
     }
 
+    val savedStateHandle = nav.currentBackStackEntry?.savedStateHandle
+    val returnedPersonPath by savedStateHandle
+        ?.getStateFlow<String?>("person_path", null)
+        ?.collectAsState()
+        ?: remember { androidx.compose.runtime.mutableStateOf(null) }
+
+    LaunchedEffect(returnedPersonPath) {
+        val path = returnedPersonPath ?: return@LaunchedEffect
+        vm.setPerson(path)
+        savedStateHandle?.remove<String>("person_path")
+    }
+
     LaunchedEffect(state.tryOn) {
         val st = state.tryOn
         if (st is TryOnState.Success) {
-            nav.navigate(Routes.result(st.look.id)) {
-                popUpTo(Routes.CREATE)
+            val lookId = st.look.id
+            vm.consumeResult()
+            nav.navigate(Routes.result(lookId)) {
+                launchSingleTop = true
             }
         }
     }

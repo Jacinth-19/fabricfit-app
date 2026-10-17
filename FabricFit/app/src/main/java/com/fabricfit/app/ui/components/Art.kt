@@ -299,6 +299,42 @@ fun CustomizedSilhouettePreview(
 }
 
 suspend fun ensureSampleKenteFabric(context: Context): Long {
-    // Return a sample fabric ID for demo purposes
-    return 1L
+    val repo = AppContainer.get(context).fabricAnalysis
+    val existing = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        val current = repo.observeAll().first()
+        current.firstOrNull { it.category == FabricCategory.KENTE } ?: current.firstOrNull()
+    }
+    if (existing != null) return existing.id
+
+    val uri = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        SampleFabrics.materialize(context, SampleFabrics.all.first()) ?: run {
+            val dir = File(context.filesDir, "media").apply { mkdirs() }
+            val out = File(dir, "sample_kente.jpg")
+            if (!out.exists()) {
+                context.assets.open("catalog/heritage/swatch_kente.jpg").use { input ->
+                    out.outputStream().use { input.copyTo(it) }
+                }
+            }
+            android.net.Uri.fromFile(out).toString()
+        }
+    }
+
+    val sample = Fabric(
+        imageUri = uri,
+        name = "Royal Ashanti Kente",
+        category = FabricCategory.KENTE,
+        colors = listOf(
+            AnalyzedColor(0xFFD4A84BL, ColorName.GOLD, 0.38f),
+            AnalyzedColor(0xFF0F3D2EL, ColorName.GREEN, 0.32f),
+            AnalyzedColor(0xFF8C2F39L, ColorName.RED, 0.18f),
+            AnalyzedColor(0xFF14110FL, ColorName.BLACK, 0.12f),
+        ),
+        pattern = PatternType.STRIPED,
+        texture = TextureType.WOVEN,
+        confidence = 0.94f,
+        createdAt = System.currentTimeMillis(),
+    )
+    return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        repo.save(sample)
+    }
 }

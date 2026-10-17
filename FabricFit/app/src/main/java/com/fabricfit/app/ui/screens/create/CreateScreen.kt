@@ -147,7 +147,7 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
 
                     Spacer(Modifier.height(18.dp))
 
-                    // Mode switcher: Photo · Video · • Scan
+                    // Mode switcher: Photo · Sample · • Scan
                     Row(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -162,14 +162,18 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                                 .padding(horizontal = 16.dp, vertical = 4.dp),
                         )
                         Text(
-                            "Video",
+                            "Sample",
                             style = MaterialTheme.typography.bodyMedium,
                             color = HeritageCream.copy(alpha = 0.6f),
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                            modifier = Modifier
+                                .clickable { showSamples = true }
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                            modifier = Modifier
+                                .clickable { requestCamera() }
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
                         ) {
                             Box(
                                 Modifier
