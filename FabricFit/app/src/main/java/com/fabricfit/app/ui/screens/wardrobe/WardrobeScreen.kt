@@ -70,6 +70,7 @@ import com.fabricfit.app.domain.model.WardrobeItem
 import com.fabricfit.app.export.ExportManager
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.sharePdfFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -165,10 +166,10 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
         } else if (tab == 0) {
             if (items.isEmpty()) {
                 val sampleCapsule = listOf(
-                    Triple("Modern Kente Dress", "Kente · Ceremony", "catalog/heritage/outfit_modern_kente.jpg"),
-                    Triple("Elegant Peplum Set", "Kente · Formal", "catalog/heritage/outfit_elegant_peplum.jpg"),
-                    Triple("Royal Kente Maxi", "Kente · Wedding", "catalog/heritage/outfit_maxi_dress.jpg"),
-                    Triple("Heritage Two-Piece", "Kente · Occasion", "catalog/heritage/outfit_twopiece_set.jpg"),
+                    listOf("kaba_slit", "Modern Kente Dress", "Kente · Ceremony", "catalog/heritage/outfit_modern_kente.jpg"),
+                    listOf("modern_kaba", "Elegant Peplum Set", "Kente · Formal", "catalog/heritage/outfit_elegant_peplum.jpg"),
+                    listOf("maxi_dress", "Royal Kente Maxi", "Kente · Wedding", "catalog/heritage/outfit_maxi_dress.jpg"),
+                    listOf("co_ords", "Heritage Two-Piece", "Kente · Occasion", "catalog/heritage/outfit_twopiece_set.jpg"),
                 )
                 Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
                     Row(
@@ -200,8 +201,13 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        items(sampleCapsule) { (title, sub, asset) ->
+                        items(sampleCapsule) { entry ->
+                            val styleId = entry[0]
+                            val title = entry[1]
+                            val sub = entry[2]
+                            val asset = entry[3]
                             Card(
+                                onClick = { nav.navigate(Routes.design(styleId)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = CardDefaults.cardColors(
                                     containerColor = com.fabricfit.app.ui.theme.HeritageCreamBright,
@@ -290,8 +296,39 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
                         textAlign = TextAlign.Center,
                     )
                     OutlinedButton(
-                        onClick = { showBuilder = true },
-                        enabled = items.isNotEmpty(),
+                        onClick = {
+                            scope.launch {
+                                if (items.isEmpty()) {
+                                    val seeds = listOf(
+                                        Triple("Modern Kente Dress", WardrobeCategory.DRESS, "catalog/heritage/outfit_modern_kente.jpg"),
+                                        Triple("Elegant Peplum Top", WardrobeCategory.TOP, "catalog/heritage/outfit_elegant_peplum.jpg"),
+                                        Triple("Heritage Kente Skirt", WardrobeCategory.BOTTOM, "catalog/heritage/outfit_maxi_dress.jpg"),
+                                        Triple("Heritage Two-Piece", WardrobeCategory.ACCESSORY, "catalog/heritage/outfit_twopiece_set.jpg"),
+                                    )
+                                    withContext(Dispatchers.IO) {
+                                        val dir = java.io.File(context.filesDir, "media").apply { mkdirs() }
+                                        seeds.forEachIndexed { idx, (name, cat, asset) ->
+                                            val out = java.io.File(dir, "capsule_${idx + 1}.jpg")
+                                            if (!out.exists()) {
+                                                context.assets.open(asset).use { input ->
+                                                    out.outputStream().use { input.copyTo(it) }
+                                                }
+                                            }
+                                            container.wardrobe.addItem(
+                                                WardrobeItem(
+                                                    name = name,
+                                                    category = cat,
+                                                    imageUri = out.absolutePath,
+                                                    notes = "Heritage Wardrobe Capsule",
+                                                    createdAt = System.currentTimeMillis(),
+                                                ),
+                                            )
+                                        }
+                                    }
+                                }
+                                showBuilder = true
+                            }
+                        },
                     ) {
                         Text(stringResource(R.string.outfit_builder_title))
                     }

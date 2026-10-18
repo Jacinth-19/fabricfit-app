@@ -18,6 +18,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.TextButton
@@ -50,7 +53,13 @@ import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.HistoryEvent
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
+import com.fabricfit.app.ui.components.ensureSampleKenteFabric
+import com.fabricfit.app.ui.components.heritagePrice
+import com.fabricfit.app.ui.components.heritageRating
+import com.fabricfit.app.ui.components.heritageReviews
+import com.fabricfit.app.ui.components.heritageTitle
 import com.fabricfit.app.ui.navigation.Routes
+import com.fabricfit.app.ui.theme.HeritageGold
 import com.fabricfit.app.ui.util.shareTextOnly
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
@@ -145,7 +154,30 @@ fun DesignDetailScreen(nav: NavHostController, padding: PaddingValues, styleId: 
                                 modifier = Modifier.fillMaxWidth().height(240.dp),
                             )
                             Spacer(Modifier.height(12.dp))
-                            Text(context.resolveKey(s.titleKey) ?: s.id, style = MaterialTheme.typography.headlineMedium)
+                            Text(s.heritageTitle(context), style = MaterialTheme.typography.headlineMedium)
+                            Spacer(Modifier.height(4.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    s.heritagePrice(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                                Spacer(Modifier.width(10.dp))
+                                Icon(
+                                    Icons.Filled.Star,
+                                    contentDescription = null,
+                                    tint = HeritageGold,
+                                    modifier = Modifier.size(16.dp),
+                                )
+                                Spacer(Modifier.width(3.dp))
+                                Text(
+                                    "${s.heritageRating()} (${s.heritageReviews()})",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Spacer(Modifier.height(6.dp))
                             Text(
                                 context.resolveKey(s.descriptionKey).orEmpty(),
                                 style = MaterialTheme.typography.bodyMedium,
@@ -225,7 +257,12 @@ fun DesignDetailScreen(nav: NavHostController, padding: PaddingValues, styleId: 
                 item { Spacer(Modifier.height(20.dp)) }
                 item {
                     Button(
-                        onClick = { nav.navigate(Routes.tryOn(selectedFabric?.id, s.id)) },
+                        onClick = {
+                            scope.launch {
+                                val fId = selectedFabric?.id ?: ensureSampleKenteFabric(context)
+                                nav.navigate(Routes.tryOn(fId, s.id))
+                            }
+                        },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp).height(52.dp),
                     ) {
                         Text(stringResource(R.string.design_detail_tryon))

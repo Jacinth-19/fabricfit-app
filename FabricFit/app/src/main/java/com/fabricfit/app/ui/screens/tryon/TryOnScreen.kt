@@ -496,8 +496,28 @@ fun TryOnScreen(
                         Spacer(Modifier.height(8.dp))
                     }
                     Button(
-                        onClick = vm::start,
-                        enabled = !state.running && state.personPath != null && state.fabricId != null && state.styleId != null,
+                        onClick = {
+                            scope.launch {
+                                if (state.personPath == null) {
+                                    val samplePath = withContext(Dispatchers.IO) {
+                                        val out = File(context.cacheDir, "sample_model_portrait.jpg")
+                                        if (!out.exists()) {
+                                            context.assets.open("catalog/heritage/outfit_modern_kente.jpg").use { input ->
+                                                out.outputStream().use { output -> input.copyTo(output) }
+                                            }
+                                        }
+                                        out.absolutePath
+                                    }
+                                    vm.setPerson(samplePath)
+                                }
+                                if (state.fabricId == null) {
+                                    val id = ensureSampleKenteFabric(context)
+                                    vm.setFabric(id)
+                                }
+                                vm.start()
+                            }
+                        },
+                        enabled = !state.running && state.styleId != null,
                         modifier = Modifier.fillMaxWidth().height(54.dp),
                     ) {
                         Text(stringResource(R.string.tryon_start))

@@ -74,8 +74,10 @@ import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.SectionHeader
 import com.fabricfit.app.ui.components.ShimmerCard
+import com.fabricfit.app.ui.components.ensureSampleKenteFabric
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
+import com.fabricfit.app.ui.components.heritageTitle
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
@@ -319,7 +321,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                     )
                                     Spacer(Modifier.height(8.dp))
                                     Text(
-                                        context.resolveKey(style.titleKey) ?: style.id,
+                                        style.heritageTitle(context),
                                         style = MaterialTheme.typography.titleSmall,
                                         fontWeight = FontWeight.SemiBold,
                                         maxLines = 1,
@@ -497,11 +499,10 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                 ) {
                     AssistChip(
                         onClick = {
-                            val latest = state.recentFabrics.firstOrNull()
-                            if (latest != null) {
-                                nav.navigate(Routes.colorMatch(latest.id))
-                            } else {
-                                nav.navigate(Routes.CREATE)
+                            scope.launch {
+                                val id = state.recentFabrics.firstOrNull()?.id
+                                    ?: ensureSampleKenteFabric(context)
+                                nav.navigate(Routes.colorMatch(id))
                             }
                         },
                         label = { Text(stringResource(R.string.tool_color_ideas)) },

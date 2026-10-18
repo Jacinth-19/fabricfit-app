@@ -38,6 +38,7 @@ import com.fabricfit.app.domain.model.DesignCustomization
 import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.FabricPlacement
 import com.fabricfit.app.domain.model.TextureType
+import com.fabricfit.app.ui.util.resolveKey
 import java.io.File
 import kotlinx.coroutines.flow.first
 
@@ -47,6 +48,17 @@ private val assetBitmapCache = object : LruCache<String, android.graphics.Bitmap
 
 internal fun Fabric.paletteColors(): List<Color> =
     colors.map { Color(it.argb) }.ifEmpty { FALLBACK }
+
+fun DressStyle.heritageTitle(context: Context): String = when (id) {
+    "kaba_slit" -> "Modern Kente Dress"
+    "modern_kaba" -> "Elegant Peplum Dress"
+    "maxi_dress" -> "Maxi Dress"
+    "co_ords" -> "Two-Piece Set"
+    "african_gown" -> "Flare Kente Gown"
+    "straight_dress" -> "Royal Kente Gown"
+    "peplum" -> "Asymmetric Peplum"
+    else -> context.resolveKey(titleKey) ?: id
+}
 
 /**
  * Maps each catalogue [DressStyle] to a bundled Heritage Luxe Ghanaian fashion asset
@@ -82,9 +94,9 @@ fun DressStyle.heritagePrice(): String = when (id) {
     "modern_kaba" -> "$89.00"
     "maxi_dress" -> "$95.00"
     "co_ords" -> "$110.00"
-    "peplum" -> "$89.00"
-    "african_gown" -> "$125.00"
-    "straight_dress" -> "$82.00"
+    "peplum" -> "$59.00"
+    "african_gown" -> "$89.00"
+    "straight_dress" -> "$89.00"
     "mermaid_dress" -> "$130.00"
     "skirt_blouse" -> "$85.00"
     "jumpsuit" -> "$92.00"

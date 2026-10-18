@@ -73,6 +73,7 @@ import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.components.heritageReviews
+import com.fabricfit.app.ui.components.heritageTitle
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
@@ -454,13 +455,7 @@ private fun orderFeaturedFirst(
 private fun displayTitleFor(
     style: com.fabricfit.app.domain.model.DressStyle,
     context: android.content.Context,
-): String = when (style.id) {
-    "kaba_slit" -> "Modern Kente Dress"
-    "modern_kaba" -> "Elegant Peplum Dress"
-    "maxi_dress" -> "Maxi Dress"
-    "co_ords" -> "Two-Piece Set"
-    else -> context.resolveKey(style.titleKey) ?: style.id
-}
+): String = style.heritageTitle(context)
 
 /** Builds a display-only swatch for the fabric library without pretending to be a scan. */
 private fun representativeFabric(cat: FabricCategory): com.fabricfit.app.domain.model.Fabric {
@@ -519,7 +514,8 @@ private fun smartFilterStyles(
         intent.category != null || intent.fabricKeywords.isNotEmpty()
     if (!hasStructured) {
         return styles.filter {
-            context.resolveKey(it.titleKey).orEmpty().contains(q, ignoreCase = true) ||
+            it.heritageTitle(context).contains(q, ignoreCase = true) ||
+                context.resolveKey(it.titleKey).orEmpty().contains(q, ignoreCase = true) ||
                 context.resolveKey(it.descriptionKey).orEmpty().contains(q, ignoreCase = true)
         }
     }
@@ -534,6 +530,7 @@ private fun smartFilterStyles(
             (intent.category == null || style.category == intent.category) &&
             (fabricCats.isEmpty() || style.affinity.intersect(fabricCats).isNotEmpty()) &&
             (intent.remainder.isBlank() ||
+                style.heritageTitle(context).contains(intent.remainder, ignoreCase = true) ||
                 context.resolveKey(style.titleKey).orEmpty().contains(intent.remainder, ignoreCase = true) ||
                 context.resolveKey(style.descriptionKey).orEmpty().contains(intent.remainder, ignoreCase = true))
     }

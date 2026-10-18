@@ -49,9 +49,6 @@ import com.fabricfit.app.ui.screens.admin.AdminModerationScreen
 import com.fabricfit.app.ui.screens.tailors.TailorsScreen
 import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
 import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
-import com.fabricfit.app.ui.screens.tailors.TailorsScreen
-import com.fabricfit.app.ui.screens.tailors.TailorDetailScreen
-import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
 
 @Composable
 fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {

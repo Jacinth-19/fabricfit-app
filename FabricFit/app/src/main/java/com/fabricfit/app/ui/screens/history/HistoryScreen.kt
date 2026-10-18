@@ -163,7 +163,23 @@ fun HistoryScreen(nav: NavHostController, padding: PaddingValues) {
                                     .fillMaxWidth()
                                     .padding(vertical = 5.dp)
                                     .combinedClickable(
-                                        onClick = { /* Navigate to detail if needed */ },
+                                        onClick = {
+                                            when (event.kind) {
+                                                HistoryEvent.Kind.DESIGN_OPEN -> {
+                                                    val styleId = event.labelKey?.removePrefix("style_")?.takeIf { it.isNotBlank() }
+                                                    if (styleId != null) {
+                                                        nav.navigate(com.fabricfit.app.ui.navigation.Routes.design(styleId))
+                                                    } else {
+                                                        nav.navigate(com.fabricfit.app.ui.navigation.Routes.DISCOVER)
+                                                    }
+                                                }
+                                                HistoryEvent.Kind.SCAN,
+                                                HistoryEvent.Kind.ANALYSIS,
+                                                HistoryEvent.Kind.LOOK_CREATED -> {
+                                                    nav.navigate(com.fabricfit.app.ui.navigation.Routes.FAVORITES)
+                                                }
+                                            }
+                                        },
                                         onLongClick = {
                                             haptics.tap()
                                             expandedMenuId = event.id
