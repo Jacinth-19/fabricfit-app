@@ -56,6 +56,7 @@ class FavoritesViewModel(private val container: AppContainer) : ViewModel() {
                 fabrics = container.favorites.observeFavoriteFabrics().first(),
                 designs = container.favorites.observeFavoriteDesigns().first(),
                 looks = container.favorites.observeFavoriteLooks().first(),
+                isLoading = false,
             )
             onComplete()
         }

@@ -111,6 +111,18 @@ class ViewModelJourneyTest {
         assertEquals("kaba_slit", vm.state.value.styleId)
         assertEquals("/tmp/person.jpg", vm.state.value.personPath)
     }
+
+    @Test
+    fun `ensureSampleKenteFabric persists a real Kente fabric for first-run try-on`() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<android.app.Application>()
+        val container = AppContainer.get(context)
+        val id = com.fabricfit.app.ui.components.ensureSampleKenteFabric(context)
+        val saved = container.fabricAnalysis.get(id)
+        assertNotNull("sample kente fabric must exist in Room", saved)
+        assertEquals(com.fabricfit.app.domain.model.FabricCategory.KENTE, saved!!.category)
+        val secondId = com.fabricfit.app.ui.components.ensureSampleKenteFabric(context)
+        assertEquals("subsequent calls reuse the persisted sample fabric", id, secondId)
+    }
 }
 
 class PersonMaskTest {

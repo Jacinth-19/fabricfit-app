@@ -57,13 +57,25 @@ fun EditImageScreen(nav: NavHostController, padding: PaddingValues, uri: String,
 
     LaunchedEffect(state.resultPath) {
         val path = state.resultPath ?: return@LaunchedEffect
+        val currentRoute = nav.currentBackStackEntry?.destination?.route
         if (target == "person") {
-            nav.navigate(Routes.tryOn(null, null, path)) {
-                popUpTo(Routes.CREATE)
+            val tryOnRoute = "tryon?fabricId={fabricId}&styleId={styleId}&person={person}"
+            val tryOnEntry = runCatching { nav.getBackStackEntry(tryOnRoute) }.getOrNull()
+            if (tryOnEntry != null) {
+                tryOnEntry.savedStateHandle["person_path"] = path
+                nav.popBackStack(route = tryOnRoute, inclusive = false)
+            } else {
+                nav.navigate(Routes.tryOn(null, null, path)) {
+                    if (currentRoute != null) {
+                        popUpTo(currentRoute) { inclusive = true }
+                    }
+                }
             }
         } else {
             nav.navigate(Routes.analysis(path)) {
-                popUpTo(Routes.CREATE)
+                if (currentRoute != null) {
+                    popUpTo(currentRoute) { inclusive = true }
+                }
             }
         }
     }

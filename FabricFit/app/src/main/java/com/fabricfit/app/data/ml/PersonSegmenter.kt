@@ -80,10 +80,10 @@ class PersonSegmenter(private val context: Context) {
      * with `deeplabv3_257_mv.tflite`.
      */
     fun personMask(person: Bitmap, targetWidth: Int, targetHeight: Int): Bitmap? {
-        // Try MediaPipe Selfie Segmentation (256x256) first for crisp boundaries
-        val selfieMask = runSelfieMask(person, targetWidth, targetHeight)
-        if (selfieMask != null) return selfieMask
-        return runDeepLabMask(person, targetWidth, targetHeight)
+        // Run full-body DeepLabV3 PASCAL VOC (257x257) first, with Selfie Segmentation (256x256) fallback
+        val deeplabMask = runDeepLabMask(person, targetWidth, targetHeight)
+        if (deeplabMask != null) return deeplabMask
+        return runSelfieMask(person, targetWidth, targetHeight)
     }
 
     private fun runSelfieMask(person: Bitmap, targetWidth: Int, targetHeight: Int): Bitmap? {
@@ -163,7 +163,7 @@ class PersonSegmenter(private val context: Context) {
                     outPx[y * DEEPLAB_SIZE + x] = if (isPerson) Color.BLACK else Color.TRANSPARENT
                 }
             }
-            if (personCount < DEEPLAB_SIZE * DEEPLAB_SIZE / 30) return null
+            if (personCount < DEEPLAB_SIZE * DEEPLAB_SIZE / 40) return null
             maskSmall.setPixels(outPx, 0, DEEPLAB_SIZE, 0, 0, DEEPLAB_SIZE, DEEPLAB_SIZE)
             Bitmap.createScaledBitmap(maskSmall, targetWidth, targetHeight, true)
         } catch (_: Throwable) {
@@ -281,7 +281,13 @@ class PersonSegmenter(private val context: Context) {
         fun backgroundPixels(person: IntArray, maskAlpha: IntArray): IntArray {
             require(person.size >= maskAlpha.size)
             return IntArray(person.size) { i ->
-                if (i >= maskAlpha.size || maskAlpha[i] <= 128) person[i] else (person[i] and 0x00FFFFFF)
+                if (i >= maskAlpha.size) {
+                    person[i]
+                } else {
+                    val m = maskAlpha[i]
+                    val alpha = if ((m ushr 24) != 0) (m ushr 24) and 0xFF else m and 0xFF
+                    if (alpha <= 128) person[i] else (person[i] and 0x00FFFFFF)
+                }
             }
         }
 

@@ -82,7 +82,6 @@ import java.util.concurrent.Executors
 
 enum class CaptureMode(val label: String) {
     PHOTO("Photo"),
-    VIDEO("Video"),
     SCAN("Scan"),
 }
 
@@ -190,7 +189,14 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                                     Uri.fromFile(out).toString()
                                 }
                                 if (target == "person") {
-                                    nav.navigate(Routes.tryOn(null, null, savedUri))
+                                    val tryOnRoute = "tryon?fabricId={fabricId}&styleId={styleId}&person={person}"
+                                    val tryOnEntry = runCatching { nav.getBackStackEntry(tryOnRoute) }.getOrNull()
+                                    if (tryOnEntry != null) {
+                                        tryOnEntry.savedStateHandle["person_path"] = savedUri
+                                        nav.popBackStack(route = tryOnRoute, inclusive = false)
+                                    } else {
+                                        nav.navigate(Routes.tryOn(null, null, savedUri))
+                                    }
                                 } else {
                                     nav.navigate(Routes.analysis(savedUri))
                                 }

@@ -23,10 +23,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.fabricfit.app.domain.model.DressStyle
+import com.fabricfit.app.media.garment.GarmentGeometry
 import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.PatternType
 import com.fabricfit.app.di.AppContainer
@@ -36,6 +38,7 @@ import com.fabricfit.app.domain.model.DesignCustomization
 import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.FabricPlacement
 import com.fabricfit.app.domain.model.TextureType
+import com.fabricfit.app.ui.util.resolveKey
 import java.io.File
 import kotlinx.coroutines.flow.first
 
@@ -45,6 +48,17 @@ private val assetBitmapCache = object : LruCache<String, android.graphics.Bitmap
 
 internal fun Fabric.paletteColors(): List<Color> =
     colors.map { Color(it.argb) }.ifEmpty { FALLBACK }
+
+fun DressStyle.heritageTitle(context: Context): String = when (id) {
+    "kaba_slit" -> "Modern Kente Dress"
+    "modern_kaba" -> "Elegant Peplum Dress"
+    "maxi_dress" -> "Maxi Dress"
+    "co_ords" -> "Two-Piece Set"
+    "african_gown" -> "Flare Kente Gown"
+    "straight_dress" -> "Royal Kente Gown"
+    "peplum" -> "Asymmetric Peplum"
+    else -> context.resolveKey(titleKey) ?: id
+}
 
 /**
  * Maps each catalogue [DressStyle] to a bundled Heritage Luxe Ghanaian fashion asset
@@ -80,9 +94,9 @@ fun DressStyle.heritagePrice(): String = when (id) {
     "modern_kaba" -> "$89.00"
     "maxi_dress" -> "$95.00"
     "co_ords" -> "$110.00"
-    "peplum" -> "$89.00"
-    "african_gown" -> "$125.00"
-    "straight_dress" -> "$82.00"
+    "peplum" -> "$59.00"
+    "african_gown" -> "$89.00"
+    "straight_dress" -> "$89.00"
     "mermaid_dress" -> "$130.00"
     "skirt_blouse" -> "$85.00"
     "jumpsuit" -> "$92.00"
@@ -284,21 +298,97 @@ fun CustomizedSilhouettePreview(
     customization: DesignCustomization,
     modifier: Modifier = Modifier,
 ) {
+    val palette = fabric?.paletteColors() ?: FALLBACK
+    val shapes = remember(style.silhouette, customization) {
+        GarmentGeometry.shapesFor(style.silhouette, customization)
+    }
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(14.dp))
             .background(Color(0xFFF3EFE6)),
         contentAlignment = Alignment.Center,
     ) {
-        GarmentArt(
-            style = style,
-            fabric = fabric,
-            modifier = Modifier.fillMaxSize(0.8f),
+        AssetImage(
+            asset = style.heritageAsset(),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
         )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xBB0F3D2E)),
+        )
+        Canvas(modifier = Modifier.fillMaxSize().padding(12.dp)) {
+            val w = size.width
+            val h = size.height
+            val primaryColor = palette.first()
+            val accentColor = palette.getOrElse(1) { Color(0xFFD4A84B) }
+
+            shapes.forEachIndexed { idx, polygon ->
+                if (polygon.size >= 3) {
+                    val path = Path().apply {
+                        moveTo(polygon[0].first * w, polygon[0].second * h)
+                        for (i in 1 until polygon.size) {
+                            lineTo(polygon[i].first * w, polygon[i].second * h)
+                        }
+                        close()
+                    }
+                    val fillColor = when (customization.placement) {
+                        FabricPlacement.FULL -> if (idx == 0) primaryColor.copy(alpha = 0.78f) else accentColor.copy(alpha = 0.72f)
+                        FabricPlacement.TOP_ONLY -> if (idx == 0) primaryColor.copy(alpha = 0.82f) else Color(0xFFFBF8F1).copy(alpha = 0.55f)
+                        FabricPlacement.SKIRT_ONLY -> if (idx == 0) Color(0xFFFBF8F1).copy(alpha = 0.55f) else primaryColor.copy(alpha = 0.82f)
+                        FabricPlacement.ACCENTS -> Color(0xFFFBF8F1).copy(alpha = 0.45f)
+                        FabricPlacement.PANELS -> if (idx % 2 == 0) primaryColor.copy(alpha = 0.75f) else accentColor.copy(alpha = 0.65f)
+                    }
+                    drawPath(path = path, color = fillColor)
+                    drawPath(
+                        path = path,
+                        color = Color(0xFFD4A84B),
+                        style = Stroke(width = 2.dp.toPx()),
+                    )
+                }
+            }
+        }
     }
 }
 
 suspend fun ensureSampleKenteFabric(context: Context): Long {
-    // Return a sample fabric ID for demo purposes
-    return 1L
+    val repo = AppContainer.get(context).fabricAnalysis
+    val existing = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        val current = repo.observeAll().first()
+        current.firstOrNull { it.category == FabricCategory.KENTE } ?: current.firstOrNull()
+    }
+    if (existing != null) return existing.id
+
+    val uri = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        SampleFabrics.materialize(context, SampleFabrics.all.first()) ?: run {
+            val dir = File(context.filesDir, "media").apply { mkdirs() }
+            val out = File(dir, "sample_kente.jpg")
+            if (!out.exists()) {
+                context.assets.open("catalog/heritage/swatch_kente.jpg").use { input ->
+                    out.outputStream().use { input.copyTo(it) }
+                }
+            }
+            android.net.Uri.fromFile(out).toString()
+        }
+    }
+
+    val sample = Fabric(
+        imageUri = uri,
+        name = "Royal Ashanti Kente",
+        category = FabricCategory.KENTE,
+        colors = listOf(
+            AnalyzedColor(0xFFD4A84BL, ColorName.GOLD, 0.38f),
+            AnalyzedColor(0xFF0F3D2EL, ColorName.GREEN, 0.32f),
+            AnalyzedColor(0xFF8C2F39L, ColorName.RED, 0.18f),
+            AnalyzedColor(0xFF14110FL, ColorName.BLACK, 0.12f),
+        ),
+        pattern = PatternType.STRIPED,
+        texture = TextureType.WOVEN,
+        confidence = 0.94f,
+        createdAt = System.currentTimeMillis(),
+    )
+    return kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+        repo.save(sample)
+    }
 }

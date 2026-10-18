@@ -1,10 +1,15 @@
 package com.fabricfit.app.ui.onboarding
 
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,28 +20,41 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PhotoLibrary
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -44,15 +62,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fabricfit.app.R
+import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.domain.model.StylePreference
+import com.fabricfit.app.domain.model.UserPreferences
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.HeritageLuxeMark
+import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.theme.HeritageCream
 import com.fabricfit.app.ui.theme.HeritageForest
 import com.fabricfit.app.ui.theme.HeritageForestDark
 import com.fabricfit.app.ui.theme.HeritageGold
 import com.fabricfit.app.ui.theme.HeritageGoldSoft
+import com.fabricfit.app.ui.util.rememberPhotoPicker
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 
 private data class Page(
     @DrawableRes val illustration: Int?,
@@ -69,12 +96,30 @@ private val pages = listOf(
     Page(R.drawable.illust_onboarding_save, R.string.onboarding_step4_title, R.string.onboarding_step4_body),
 )
 
+internal val HERITAGE_AVATAR_PRESETS = listOf(
+    "catalog/heritage/avatar_ama_serwaa.jpg",
+    "catalog/heritage/outfit_modern_kente.jpg",
+    "catalog/heritage/outfit_elegant_peplum.jpg",
+)
+
+internal val HERITAGE_ROLE_PRESETS = listOf(
+    "Fashion Lover",
+    "Bespoke Tailor",
+    "Kente Collector",
+    "Style Creator",
+)
+
 @Composable
 fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
+    val context = LocalContext.current
+    val container = AppContainer.get(context)
+    val prefs by container.settings.preferences
+        .collectAsStateWithLifecycle(initialValue = UserPreferences())
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val scope = rememberCoroutineScope()
     val pageIndex by remember { derivedStateOf { pagerState.currentPage } }
     val page = pages[pageIndex]
+    var loginDialogOpen by remember { mutableStateOf(false) }
 
     val bgColor = if (page.dark) HeritageForest else MaterialTheme.colorScheme.background
 
@@ -168,7 +213,7 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                         }
                         Spacer(Modifier.height(12.dp))
                         OutlinedButton(
-                            onClick = { onFinished(false) },
+                            onClick = { loginDialogOpen = true },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(56.dp),
@@ -218,6 +263,239 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
                 }
             }
         }
+    }
+
+    if (loginDialogOpen) {
+        ProfileIdentityDialog(
+            title = stringResource(R.string.onboarding_cta_login),
+            confirmLabel = stringResource(R.string.onboarding_cta_get_started),
+            initialName = prefs.displayName.ifBlank { "Ama Serwaa" },
+            initialBio = prefs.profileBio.ifBlank { "Fashion Lover" },
+            initialAvatarUri = prefs.avatarUri.ifBlank { HERITAGE_AVATAR_PRESETS.first() },
+            initialStylePreference = prefs.stylePreference,
+            onDismiss = { loginDialogOpen = false },
+            onConfirm = { name, bio, avatarUri, stylePref ->
+                loginDialogOpen = false
+                scope.launch {
+                    container.settings.update {
+                        it.copy(
+                            displayName = name.trim().ifBlank { "Ama Serwaa" },
+                            profileBio = bio.trim().ifBlank { "Fashion Lover" },
+                            avatarUri = avatarUri,
+                            stylePreference = stylePref,
+                            onboardingCompleted = true,
+                        )
+                    }
+                    onFinished(false)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+fun ProfileIdentityDialog(
+    title: String,
+    confirmLabel: String,
+    initialName: String,
+    initialBio: String,
+    initialAvatarUri: String,
+    initialStylePreference: StylePreference,
+    onDismiss: () -> Unit,
+    onConfirm: (name: String, bio: String, avatarUri: String, stylePreference: StylePreference) -> Unit,
+) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var name by remember { mutableStateOf(initialName) }
+    var bio by remember { mutableStateOf(initialBio) }
+    var avatarUri by remember { mutableStateOf(initialAvatarUri) }
+    var stylePref by remember { mutableStateOf(initialStylePreference) }
+
+    val avatarPicker = rememberPhotoPicker { uri ->
+        scope.launch {
+            val savedPath = withContext(Dispatchers.IO) {
+                try {
+                    val out = File(context.filesDir, "profile_avatar_${System.currentTimeMillis()}.jpg")
+                    context.contentResolver.openInputStream(uri)?.use { input ->
+                        out.outputStream().use { output -> input.copyTo(output) }
+                    }
+                    out.takeIf { it.exists() && it.length() > 0L }?.absolutePath
+                } catch (_: Exception) {
+                    null
+                }
+            }
+            if (savedPath != null) avatarUri = savedPath
+        }
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    ProfileAvatarImage(
+                        avatarUri = avatarUri,
+                        contentDescription = name,
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, HeritageGold, CircleShape),
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(
+                            text = "Choose Avatar",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            HERITAGE_AVATAR_PRESETS.forEach { preset ->
+                                val selected = avatarUri == preset
+                                AssetImage(
+                                    asset = preset,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .clip(CircleShape)
+                                        .border(
+                                            width = if (selected) 2.5.dp else 1.dp,
+                                            color = if (selected) HeritageGold else Color.Transparent,
+                                            shape = CircleShape,
+                                        )
+                                        .clickable { avatarUri = preset },
+                                )
+                            }
+                            Surface(
+                                onClick = {
+                                    avatarPicker.launch(
+                                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
+                                    )
+                                },
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                modifier = Modifier.size(36.dp),
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        Icons.Outlined.PhotoLibrary,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text(stringResource(R.string.profile_name_hint)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                OutlinedTextField(
+                    value = bio,
+                    onValueChange = { bio = it },
+                    label = { Text("Role / Style Tagline") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    HERITAGE_ROLE_PRESETS.forEach { role ->
+                        SuggestionChip(
+                            onClick = { bio = role },
+                            label = { Text(role, style = MaterialTheme.typography.labelSmall) },
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Style Preference",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    StylePreference.entries.forEach { pref ->
+                        FilterChip(
+                            selected = stylePref == pref,
+                            onClick = { stylePref = pref },
+                            label = { Text(stringResource(pref.labelRes)) },
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { onConfirm(name, bio, avatarUri, stylePref) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = HeritageForest,
+                    contentColor = HeritageCream,
+                ),
+            ) {
+                Text(confirmLabel)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.action_cancel))
+            }
+        },
+    )
+}
+
+@Composable
+fun ProfileAvatarImage(
+    avatarUri: String,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+) {
+    val resolved = avatarUri.ifBlank { HERITAGE_AVATAR_PRESETS.first() }
+    if (resolved.startsWith("catalog/")) {
+        AssetImage(
+            asset = resolved,
+            contentDescription = contentDescription,
+            contentScale = ContentScale.Crop,
+            modifier = modifier,
+        )
+    } else {
+        LocalImage(
+            uri = resolved,
+            contentDescription = contentDescription,
+            contentScale = ContentScale.Crop,
+            modifier = modifier,
+        )
     }
 }
 

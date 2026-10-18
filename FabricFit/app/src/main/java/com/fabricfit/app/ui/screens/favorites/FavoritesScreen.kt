@@ -34,6 +34,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
@@ -70,13 +71,20 @@ import com.fabricfit.app.ui.components.BottomSheetDivider
 import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
+import com.fabricfit.app.ui.components.GarmentArt
+import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.components.ensureSampleKenteFabric
+import com.fabricfit.app.ui.components.heritagePrice
+import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
+import com.fabricfit.app.ui.onboarding.ProfileAvatarImage
 import com.fabricfit.app.ui.theme.HeritageCreamBright
 import com.fabricfit.app.ui.theme.HeritageForest
 import com.fabricfit.app.ui.theme.HeritageForestDark
 import com.fabricfit.app.ui.theme.HeritageGold
+import com.fabricfit.app.ui.util.resolveKey
 import com.fabricfit.app.ui.util.shareImagePath
 import com.fabricfit.app.ui.util.timeAgo
 import kotlinx.coroutines.launch
@@ -113,13 +121,14 @@ private data class RecommendedDressItem(
     val rating: String,
     val reviews: Int,
     val asset: String,
+    val categoryTag: String = "Kente",
 )
 
 private val recommendedDresses = listOf(
-    RecommendedDressItem("african_gown", "Elegant Peplum Dress", "$89.00", "4.8", 124, "catalog/heritage/dress_kente_flare.jpg"),
-    RecommendedDressItem("straight_dress", "Royal Kente Gown", "$89.00", "4.8", 122, "catalog/heritage/dress_kente_aline.jpg"),
-    RecommendedDressItem("peplum", "Asymmetric Peplum", "$59.00", "4.8", 79, "catalog/heritage/dress_kente_asymmetric.jpg"),
-    RecommendedDressItem("kaba_slit", "Modern Kente Dress", "$78.00", "4.7", 98, "catalog/heritage/outfit_modern_kente.jpg"),
+    RecommendedDressItem("african_gown", "Elegant Peplum Dress", "$89.00", "4.8", 124, "catalog/heritage/dress_kente_flare.jpg", "Kente"),
+    RecommendedDressItem("straight_dress", "Royal Kente Gown", "$89.00", "4.8", 122, "catalog/heritage/dress_kente_aline.jpg", "Kente"),
+    RecommendedDressItem("peplum", "Asymmetric Peplum", "$59.00", "4.8", 79, "catalog/heritage/dress_kente_asymmetric.jpg", "Ankara"),
+    RecommendedDressItem("kaba_slit", "Modern Kente Dress", "$78.00", "4.7", 98, "catalog/heritage/outfit_modern_kente.jpg", "Kente"),
 )
 
 @Composable
@@ -138,6 +147,64 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
     var showFilterSheet by remember { mutableStateOf(false) }
     var sortBy by remember { mutableStateOf(SortOption.NEWEST) }
     var filterCategory by remember { mutableStateOf<String?>(null) }
+
+    val filteredRecommendedDresses = remember(sortBy, filterCategory) {
+        val base = if (filterCategory == null) {
+            recommendedDresses
+        } else {
+            recommendedDresses.filter {
+                it.categoryTag.equals(filterCategory, ignoreCase = true) ||
+                    it.title.contains(filterCategory!!, ignoreCase = true)
+            }.ifEmpty { recommendedDresses }
+        }
+        when (sortBy) {
+            SortOption.NEWEST -> base
+            SortOption.OLDEST -> base.reversed()
+            SortOption.NAME_A_Z -> base.sortedBy { it.title.lowercase() }
+            SortOption.NAME_Z_A -> base.sortedByDescending { it.title.lowercase() }
+        }
+    }
+
+    val filteredFabrics = remember(state.fabrics, sortBy, filterCategory, context) {
+        val base = state.fabrics.filter { fabric ->
+            filterCategory == null ||
+                fabric.category.name.contains(filterCategory!!, ignoreCase = true) ||
+                context.getString(fabric.category.labelRes).contains(filterCategory!!, ignoreCase = true) ||
+                (fabric.name?.contains(filterCategory!!, ignoreCase = true) == true)
+        }
+        when (sortBy) {
+            SortOption.NEWEST -> base.sortedByDescending { it.createdAt }
+            SortOption.OLDEST -> base.sortedBy { it.createdAt }
+            SortOption.NAME_A_Z -> base.sortedBy { (it.name ?: context.getString(it.category.labelRes)).lowercase() }
+            SortOption.NAME_Z_A -> base.sortedByDescending { (it.name ?: context.getString(it.category.labelRes)).lowercase() }
+        }
+    }
+
+    val filteredDesigns = remember(state.designs, sortBy, filterCategory, context) {
+        val base = state.designs.filter { style ->
+            filterCategory == null ||
+                style.affinity.any {
+                    it.name.contains(filterCategory!!, ignoreCase = true) ||
+                        context.getString(it.labelRes).contains(filterCategory!!, ignoreCase = true)
+                } ||
+                (context.resolveKey(style.titleKey) ?: style.id).contains(filterCategory!!, ignoreCase = true)
+        }
+        when (sortBy) {
+            SortOption.NEWEST -> base
+            SortOption.OLDEST -> base.reversed()
+            SortOption.NAME_A_Z -> base.sortedBy { (context.resolveKey(it.titleKey) ?: it.id).lowercase() }
+            SortOption.NAME_Z_A -> base.sortedByDescending { (context.resolveKey(it.titleKey) ?: it.id).lowercase() }
+        }
+    }
+
+    val filteredLooks = remember(state.looks, sortBy) {
+        when (sortBy) {
+            SortOption.NEWEST -> state.looks.sortedByDescending { it.createdAt }
+            SortOption.OLDEST -> state.looks.sortedBy { it.createdAt }
+            SortOption.NAME_A_Z -> state.looks.sortedBy { it.dressStyleId.lowercase() }
+            SortOption.NAME_Z_A -> state.looks.sortedByDescending { it.dressStyleId.lowercase() }
+        }
+    }
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -201,9 +268,31 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 }
             }
 
-            // Main Scan Result Card: Kente Royalty · 98% Match + 4 Palette Dots + Colors/Pattern/Style tabs
+            // Main Scan Result Card: dynamic latest scan or Kente Royalty · 98% Match + 4 Palette Dots + Colors/Pattern/Style tabs
             item {
+                val activeFabric = state.fabrics.firstOrNull()
+                val bannerTitle = activeFabric?.let {
+                    it.name?.takeIf { n -> n.isNotBlank() } ?: context.getString(it.category.labelRes)
+                } ?: "Kente Royalty"
+                val matchPercent = activeFabric?.let {
+                    (it.confidence * 100).toInt().coerceIn(78, 99)
+                } ?: 98
+                val paletteSwatches = activeFabric?.colors?.take(4)?.map { Color(it.argb) }
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: listOf(
+                        Color(0xFF144B2F),
+                        Color(0xFF611425),
+                        Color(0xFFD99B26),
+                        Color(0xFFCC292B),
+                    )
+
                 Card(
+                    onClick = {
+                        scope.launch {
+                            val id = activeFabric?.id ?: ensureSampleKenteFabric(context)
+                            nav.navigate(Routes.fabric(id))
+                        }
+                    },
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
                     elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
@@ -213,20 +302,31 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                 ) {
                     Column(Modifier.padding(14.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            AssetImage(
-                                asset = "catalog/heritage/swatch_kente.jpg",
-                                contentDescription = "Kente Royalty",
-                                modifier = Modifier
-                                    .size(92.dp)
-                                    .clip(RoundedCornerShape(16.dp)),
-                            )
+                            if (activeFabric != null) {
+                                FabricSwatch(
+                                    activeFabric,
+                                    modifier = Modifier
+                                        .size(92.dp)
+                                        .clip(RoundedCornerShape(16.dp)),
+                                )
+                            } else {
+                                AssetImage(
+                                    asset = "catalog/heritage/swatch_kente.jpg",
+                                    contentDescription = bannerTitle,
+                                    modifier = Modifier
+                                        .size(92.dp)
+                                        .clip(RoundedCornerShape(16.dp)),
+                                )
+                            }
                             Spacer(Modifier.width(16.dp))
-                            Column {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    "Kente Royalty",
+                                    bannerTitle,
                                     style = MaterialTheme.typography.headlineSmall,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
                                 Spacer(Modifier.height(6.dp))
                                 Surface(
@@ -234,7 +334,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                     color = Color(0xFF216849),
                                 ) {
                                     Text(
-                                        "98% Match",
+                                        "$matchPercent% Match",
                                         style = MaterialTheme.typography.labelLarge,
                                         fontWeight = FontWeight.SemiBold,
                                         color = Color.White,
@@ -246,23 +346,54 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
 
                         Spacer(Modifier.height(12.dp))
 
-                        // Extracted Colour Palette Circles (Forest Green, Deep Burgundy, Royal Gold, Kente Red)
+                        // Extracted Colour Palette Circles + Quick Action Pills (Try-On / Colour Match)
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            listOf(
-                                Color(0xFF144B2F),
-                                Color(0xFF611425),
-                                Color(0xFFD99B26),
-                                Color(0xFFCC292B),
-                            ).forEach { swatchColor ->
-                                Box(
-                                    Modifier
-                                        .size(32.dp)
-                                        .clip(CircleShape)
-                                        .background(swatchColor),
-                                )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                paletteSwatches.forEach { swatchColor ->
+                                    Box(
+                                        Modifier
+                                            .size(30.dp)
+                                            .clip(CircleShape)
+                                            .background(swatchColor),
+                                    )
+                                }
+                            }
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                OutlinedButton(
+                                    onClick = {
+                                        scope.launch {
+                                            val id = activeFabric?.id ?: ensureSampleKenteFabric(context)
+                                            nav.navigate(Routes.colorMatch(id))
+                                        }
+                                    },
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp),
+                                ) {
+                                    Text("Colour Match", style = MaterialTheme.typography.labelSmall)
+                                }
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            val id = activeFabric?.id ?: ensureSampleKenteFabric(context)
+                                            nav.navigate(Routes.tryOn(id, null))
+                                        }
+                                    },
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = HeritageForest,
+                                        contentColor = Color.White,
+                                    ),
+                                    contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp),
+                                ) {
+                                    Text("Try-On", style = MaterialTheme.typography.labelSmall)
+                                }
                             }
                         }
 
@@ -318,6 +449,27 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                                 }
                             }
                         }
+
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            text = when (detailTab) {
+                                0 -> if (activeFabric != null) {
+                                    "Palette: " + activeFabric.colors.take(4).joinToString(" · ") {
+                                        context.getString(it.colorName.labelRes)
+                                    }
+                                } else {
+                                    "Palette: Forest Green · Deep Burgundy · Royal Gold · Kente Red"
+                                }
+                                1 -> if (activeFabric != null) {
+                                    "Pattern: ${context.getString(activeFabric.pattern.labelRes)} · ${context.getString(activeFabric.texture.labelRes)}"
+                                } else {
+                                    "Pattern: Hand-woven Ashanti strip geometry · High contrast"
+                                }
+                                else -> "Best matches: Kaba & Slit · Elegant Peplum · Royal Gown"
+                            },
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
             }
@@ -353,7 +505,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     contentPadding = PaddingValues(horizontal = 20.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    items(recommendedDresses, key = { it.id }) { item ->
+                    items(filteredRecommendedDresses, key = { it.id }) { item ->
                         Column(
                             modifier = Modifier
                                 .width(136.dp)
@@ -441,102 +593,214 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                         modifier = Modifier.padding(horizontal = 20.dp)
                     )
                 }
-            } else if (state.fabrics.isNotEmpty()) {
-                item {
-                    Text(
-                        stringResource(R.string.favorites_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
-                    )
-                }
-                items(state.fabrics, key = { it.id }) { fabric ->
-                    val dismissState = rememberSwipeToDismissBoxState(
-                        confirmValueChange = { dismissValue ->
-                            if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
-                                haptics.heavy()
-                                vm.unfavoriteFabric(fabric.id)
-                                true
-                            } else {
-                                false
-                            }
-                        }
-                    )
-
-                    SwipeToDismissBox(
-                        state = dismissState,
-                        enableDismissFromStartToEnd = false,
-                        backgroundContent = {
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp, vertical = 6.dp),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = MaterialTheme.colorScheme.errorContainer
-                                ),
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(horizontal = 20.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = androidx.compose.foundation.layout.Arrangement.End
-                                ) {
-                                    Icon(
-                                        Icons.Filled.Delete,
-                                        contentDescription = stringResource(R.string.action_remove),
-                                        tint = MaterialTheme.colorScheme.onErrorContainer,
-                                    )
-                                    Spacer(Modifier.width(8.dp))
-                                    Text(
-                                        stringResource(R.string.action_remove),
-                                        color = MaterialTheme.colorScheme.onErrorContainer,
-                                        style = MaterialTheme.typography.labelLarge,
-                                    )
+            } else {
+                if (filteredFabrics.isNotEmpty()) {
+                    item {
+                        Text(
+                            stringResource(R.string.favorites_title),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                        )
+                    }
+                    items(filteredFabrics, key = { "fabric_${it.id}" }) { fabric ->
+                        val dismissState = rememberSwipeToDismissBoxState(
+                            confirmValueChange = { dismissValue ->
+                                if (dismissValue == SwipeToDismissBoxValue.EndToStart) {
+                                    haptics.heavy()
+                                    vm.unfavoriteFabric(fabric.id)
+                                    true
+                                } else {
+                                    false
                                 }
                             }
-                        },
-                        content = {
-                            Card(
-                                onClick = { nav.navigate(Routes.fabric(fabric.id)) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 20.dp, vertical = 6.dp),
-                                colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
-                            ) {
-                                Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                                    FabricSwatch(fabric, modifier = Modifier.size(64.dp))
-                                    Spacer(Modifier.width(14.dp))
-                                    Column(Modifier.weight(1f)) {
-                                        Text(
-                                            fabric.name ?: context.getString(fabric.category.labelRes),
-                                            style = MaterialTheme.typography.titleMedium,
+                        )
+
+                        SwipeToDismissBox(
+                            state = dismissState,
+                            enableDismissFromStartToEnd = false,
+                            backgroundContent = {
+                                Card(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp, vertical = 6.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer
+                                    ),
+                                ) {
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(horizontal = 20.dp),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        Icon(
+                                            Icons.Filled.Delete,
+                                            contentDescription = stringResource(R.string.action_remove),
+                                            tint = MaterialTheme.colorScheme.onErrorContainer,
                                         )
+                                        Spacer(Modifier.width(8.dp))
                                         Text(
-                                            context.timeAgo(fabric.createdAt),
+                                            stringResource(R.string.action_remove),
+                                            color = MaterialTheme.colorScheme.onErrorContainer,
+                                            style = MaterialTheme.typography.labelLarge,
+                                        )
+                                    }
+                                }
+                            },
+                            content = {
+                                Card(
+                                    onClick = { nav.navigate(Routes.fabric(fabric.id)) },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 20.dp, vertical = 6.dp),
+                                    colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                                ) {
+                                    Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                        FabricSwatch(fabric, modifier = Modifier.size(64.dp))
+                                        Spacer(Modifier.width(14.dp))
+                                        Column(Modifier.weight(1f)) {
+                                            Text(
+                                                fabric.name ?: context.getString(fabric.category.labelRes),
+                                                style = MaterialTheme.typography.titleMedium,
+                                            )
+                                            Text(
+                                                context.timeAgo(fabric.createdAt),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                        IconButton(onClick = {
+                                            context.shareImagePath(
+                                                fabric.imageUri,
+                                                context.getString(
+                                                    R.string.share_fabric_text,
+                                                    fabric.name ?: context.getString(fabric.category.labelRes),
+                                                    context.getString(fabric.pattern.labelRes),
+                                                ),
+                                            )
+                                        }) {
+                                            Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
+                                        }
+                                        IconButton(onClick = { vm.unfavoriteFabric(fabric.id) }) {
+                                            Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+
+                if (filteredDesigns.isNotEmpty()) {
+                    item {
+                        Text(
+                            "Saved Styles",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                        )
+                    }
+                    items(filteredDesigns, key = { "design_${it.id}" }) { style ->
+                        val styleTitle = context.resolveKey(style.titleKey) ?: style.id
+                        Card(
+                            onClick = { nav.navigate(Routes.design(style.id)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 6.dp),
+                            colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                        ) {
+                            Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                GarmentArt(style, null, modifier = Modifier.size(64.dp))
+                                Spacer(Modifier.width(14.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        styleTitle,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                    )
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            style.heritagePrice(),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                        Spacer(Modifier.width(6.dp))
+                                        Icon(
+                                            Icons.Filled.Star,
+                                            contentDescription = null,
+                                            tint = HeritageGold,
+                                            modifier = Modifier.size(13.dp),
+                                        )
+                                        Spacer(Modifier.width(2.dp))
+                                        Text(
+                                            style.heritageRating(),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         )
                                     }
-                                    IconButton(onClick = {
-                                        context.shareImagePath(
-                                            fabric.imageUri,
-                                            context.getString(
-                                                R.string.share_fabric_text,
-                                                fabric.name ?: context.getString(fabric.category.labelRes),
-                                                context.getString(fabric.pattern.labelRes),
-                                            ),
-                                        )
-                                    }) {
-                                        Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
-                                    }
-                                    IconButton(onClick = { vm.unfavoriteFabric(fabric.id) }) {
-                                        Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
-                                    }
+                                }
+                                IconButton(onClick = { vm.unfavoriteDesign(style.id) }) {
+                                    Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
                                 }
                             }
                         }
-                    )
+                    }
+                }
+
+                if (filteredLooks.isNotEmpty()) {
+                    item {
+                        Text(
+                            "Saved Try-On Looks",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+                        )
+                    }
+                    items(filteredLooks, key = { "look_${it.id}" }) { look ->
+                        Card(
+                            onClick = { nav.navigate(Routes.result(look.id)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 6.dp),
+                            colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
+                        ) {
+                            Row(Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                                LocalImage(
+                                    look.resultImageUri,
+                                    contentDescription = stringResource(R.string.cd_generated_image),
+                                    modifier = Modifier
+                                        .size(64.dp)
+                                        .clip(RoundedCornerShape(12.dp)),
+                                )
+                                Spacer(Modifier.width(14.dp))
+                                Column(Modifier.weight(1f)) {
+                                    Text(
+                                        stringResource(R.string.result_title),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.SemiBold,
+                                    )
+                                    Text(
+                                        context.timeAgo(look.createdAt),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                IconButton(onClick = {
+                                    context.shareImagePath(
+                                        look.resultImageUri,
+                                        context.getString(R.string.result_title),
+                                    )
+                                }) {
+                                    Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.cd_share_item))
+                                }
+                                IconButton(onClick = { vm.unfavoriteLook(look.id) }) {
+                                    Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.action_remove))
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

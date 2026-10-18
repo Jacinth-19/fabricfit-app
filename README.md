@@ -9,6 +9,10 @@
 ### **Scan. Discover. Try. Wear.**
 *Where Ghanaian Heritage Fabric Meets Modern Style.*
 
+<img src="FabricFit/store/feature_graphic.png" alt="FabricFit Google Play Store Feature Graphic" width="100%">
+
+<br><br>
+
 <table>
   <tr>
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Heritage Luxe</strong></sub></td>
@@ -19,6 +23,31 @@
 </table>
 
 </div>
+
+---
+
+## Google Play Store Marketing Kit, Promo Videos & Banners
+
+Complete Google Play Console store listing copy, feature graphics, framed screenshot cards, social/campaign banners, and promo videos live in [`FabricFit/store/`](FabricFit/store/listing.md) and [`FabricFit/docs/marketing/MARKETING_MATERIALS.md`](FabricFit/docs/marketing/MARKETING_MATERIALS.md):
+
+<div align="center">
+  <img src="FabricFit/store/video/fabricfit_promo_preview.gif" alt="FabricFit Google Play Promo Video Preview" width="760">
+  <br>
+  <sub><strong>🎬 <a href="FabricFit/store/video/fabricfit_play_store_promo_16x9.mp4">16:9 Google Play Promo Video (MP4 + Audio)</a> · <a href="FabricFit/store/video/fabricfit_shorts_reel_9x16.mp4">9:16 Play Shorts / Reels Video (MP4 + Audio)</a> · <a href="FabricFit/store/listing.md">Full Play Store Listing Kit</a></strong></sub>
+</div>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center"><img src="FabricFit/store/screenshots/01_play_welcome.png" alt="Play Store Card 01" width="180"><br><sub><strong>01 · Welcome</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/02_play_home.png" alt="Play Store Card 02" width="180"><br><sub><strong>02 · Home Lookbook</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/03_play_fitscan.png" alt="Play Store Card 03" width="180"><br><sub><strong>03 · FitScan AI</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/04_play_scan_results.png" alt="Play Store Card 04" width="180"><br><sub><strong>04 · Scan Results</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/05_play_discover.png" alt="Play Store Card 05" width="180"><br><sub><strong>05 · FitMatch AI</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/06_play_wardrobe.png" alt="Play Store Card 06" width="180"><br><sub><strong>06 · My Fit Closet</strong></sub></td>
+  </tr>
+</table>
 
 ---
 
@@ -124,10 +153,12 @@ adb install -r fabricfit-v1.0.0.apk
 | **Debug APK** | run → artifact `fabricfit-debug-apk` | `com.fabricfit.app.debug`, debuggable, for testers without a release key. |
 | **Instrumented test report** | run → artifact `test-reports` | Unit-test and lint output for the run. |
 
-> **Signing** — the release build is signed with the throwaway demo keystore
-> committed at `FabricFit/app/demo-release.keystore`, so it installs on any
-> device but is *not* a real upload key. Swap `signingConfigs.release` in
-> `FabricFit/app/build.gradle.kts` before publishing to a store; see
+> **Signing** — `signingConfigs.release` in `FabricFit/app/build.gradle.kts`
+> reads `KEYSTORE_FILE` / `KEYSTORE_PASSWORD` / `KEY_ALIAS` / `KEY_PASSWORD`
+> from Gradle properties or environment variables (and the CI `release` job
+> decodes an optional `KEYSTORE_BASE64` secret). When unset, it falls back to
+> the throwaway demo keystore at `FabricFit/app/demo-release.keystore`, so the
+> APK installs on any device out of the box; see
 > [`FabricFit/BUILD.md`](FabricFit/BUILD.md#release-signing).
 
 ### Continuous Integration
@@ -138,8 +169,8 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 | Job | Trigger | What it does |
 | --- | --- | --- |
 | `verify` | every push & PR (paths under `FabricFit/**`) | `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`, then uploads the debug APK and test reports. Gradle failures are annotated inline on the commit. |
-| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8, uploads both artifacts, and publishes them to the `v*` GitHub Release on tags or manual dispatch. |
-| `device-qa` | manual, weekly, or on `v*` tags | macOS runner with KVM: boots an API 35 emulator and runs the DeepLabV3 instrumented test. |
+| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags or manual dispatch. |
+| `device-qa` | manual, weekly, or on `v*` tags | Linux runner (`ubuntu-latest`) with KVM & `SCREENSHOT_ABI=1`: boots an API 33 `x86_64` emulator and runs `PersonSegmenterDeviceTest`. |
 | `screenshots` | manual dispatch, or any push whose commit message contains `[screenshots]` | Boots an API 33 emulator, drives the app, and commits fresh PNGs to `FabricFit/docs/screenshots/`. |
 
 ```bash

@@ -212,7 +212,10 @@ fun TailorDetailScreen(
             onDismissRequest = { showQuote = false },
             title = { Text(stringResource(R.string.tailor_quote_title)) },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
                     // Design picker
                     Text(
                         stringResource(R.string.brief_design, ""),

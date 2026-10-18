@@ -3,6 +3,7 @@ package com.fabricfit.app.ui.navigation
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,11 @@ import com.fabricfit.app.R
 import com.fabricfit.app.ui.theme.HeritageCream
 import com.fabricfit.app.ui.theme.HeritageForest
 import com.fabricfit.app.ui.theme.HeritageForestDark
+import com.fabricfit.app.ui.theme.HeritageGold
+
+private fun isTabSelected(currentRoute: String?, tabRoute: String): Boolean =
+    currentRoute == tabRoute ||
+        (tabRoute == Routes.DISCOVER && currentRoute == Routes.DISCOVER_ROUTE_PATTERN)
 
 internal data class Tab(
     val route: String,
@@ -102,10 +108,11 @@ internal fun FabricFitBottomBar(
                 verticalAlignment = Alignment.Bottom,
             ) {
                 tabs.forEach { tab ->
+                    val isSelected = isTabSelected(currentRoute, tab.route)
                     if (tab.isCentre) {
                         CameraTab(
                             label = stringResource(tab.labelRes),
-                            selected = currentRoute == tab.route,
+                            selected = isSelected,
                             darkChrome = isDarkChrome,
                             onClick = { onNavigate(tab.route) },
                             modifier = Modifier.weight(1f),
@@ -113,7 +120,7 @@ internal fun FabricFitBottomBar(
                     } else {
                         StandardTab(
                             tab = tab,
-                            selected = currentRoute == tab.route,
+                            selected = isSelected,
                             darkChrome = isDarkChrome,
                             onClick = { onNavigate(tab.route) },
                             modifier = Modifier.weight(1f),
@@ -185,7 +192,7 @@ private fun CameraTab(
     )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.offset(y = (-16).dp),
+        modifier = modifier.offset(y = (-8).dp),
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -196,6 +203,15 @@ private fun CameraTab(
                     scaleY = scale
                 }
                 .background(HeritageForest, CircleShape)
+                .border(
+                    width = if (selected) 2.dp else 1.2.dp,
+                    color = if (selected) {
+                        HeritageGold
+                    } else {
+                        HeritageGold.copy(alpha = if (darkChrome) 0.55f else 0.28f)
+                    },
+                    shape = CircleShape,
+                )
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -213,11 +229,5 @@ private fun CameraTab(
                 modifier = Modifier.size(26.dp),
             )
         }
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (darkChrome) HeritageCream else MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(top = 4.dp),
-        )
     }
 }
