@@ -9,6 +9,10 @@
 ### **Scan. Discover. Try. Wear.**
 *Where Ghanaian Heritage Fabric Meets Modern Style.*
 
+<img src="FabricFit/store/feature_graphic.png" alt="FabricFit Google Play Store Feature Graphic" width="100%">
+
+<br><br>
+
 <table>
   <tr>
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Heritage Luxe</strong></sub></td>
@@ -19,6 +23,31 @@
 </table>
 
 </div>
+
+---
+
+## Google Play Store Marketing Kit, Promo Videos & Banners
+
+Complete Google Play Console store listing copy, feature graphics, framed screenshot cards, social/campaign banners, and promo videos live in [`FabricFit/store/`](FabricFit/store/listing.md) and [`FabricFit/docs/marketing/MARKETING_MATERIALS.md`](FabricFit/docs/marketing/MARKETING_MATERIALS.md):
+
+<div align="center">
+  <img src="FabricFit/store/video/fabricfit_promo_preview.gif" alt="FabricFit Google Play Promo Video Preview" width="760">
+  <br>
+  <sub><strong>🎬 <a href="FabricFit/store/video/fabricfit_play_store_promo_16x9.mp4">16:9 Google Play Promo Video (MP4 + Audio)</a> · <a href="FabricFit/store/video/fabricfit_shorts_reel_9x16.mp4">9:16 Play Shorts / Reels Video (MP4 + Audio)</a> · <a href="FabricFit/store/listing.md">Full Play Store Listing Kit</a></strong></sub>
+</div>
+
+<br>
+
+<table>
+  <tr>
+    <td align="center"><img src="FabricFit/store/screenshots/01_play_welcome.png" alt="Play Store Card 01" width="180"><br><sub><strong>01 · Welcome</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/02_play_home.png" alt="Play Store Card 02" width="180"><br><sub><strong>02 · Home Lookbook</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/03_play_fitscan.png" alt="Play Store Card 03" width="180"><br><sub><strong>03 · FitScan AI</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/04_play_scan_results.png" alt="Play Store Card 04" width="180"><br><sub><strong>04 · Scan Results</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/05_play_discover.png" alt="Play Store Card 05" width="180"><br><sub><strong>05 · FitMatch AI</strong></sub></td>
+    <td align="center"><img src="FabricFit/store/screenshots/06_play_wardrobe.png" alt="Play Store Card 06" width="180"><br><sub><strong>06 · My Fit Closet</strong></sub></td>
+  </tr>
+</table>
 
 ---
 

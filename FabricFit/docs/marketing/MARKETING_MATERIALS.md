@@ -1,4 +1,48 @@
-# FabricFit Marketing Materials
+# FabricFit Marketing Materials & Google Play Store Asset Kit
+
+<div align="center">
+  <img src="../../store/feature_graphic.png" alt="FabricFit Google Play Feature Graphic (1024x500)" width="100%">
+  <br>
+  <sub><strong>Google Play Store Feature Graphic (`1024 × 500`) — <a href="../../store/listing.md">View Full Google Play Store Listing &amp; Asset Kit</a></strong></sub>
+</div>
+
+---
+
+## 🎬 Google Play Store Promo Videos & Campaign Banners
+
+<div align="center">
+  <img src="../../store/video/fabricfit_promo_preview.gif" alt="FabricFit Google Play Promo Video Preview" width="720">
+  <br>
+  <sub><strong>15s Landscape Google Play Trailer (<a href="../../store/video/fabricfit_play_store_promo_16x9.mp4"><code>fabricfit_play_store_promo_16x9.mp4</code></a> · 1280×720 H.264 + AAC) &amp; 12s Vertical Play Shorts / Reels (<a href="../../store/video/fabricfit_shorts_reel_9x16.mp4"><code>fabricfit_shorts_reel_9x16.mp4</code></a> · 720×1280)</strong></sub>
+</div>
+
+### Ready-to-Publish Asset Index (`FabricFit/store/`)
+
+| Asset | Resolution | Path |
+| --- | --- | --- |
+| **Google Play Hi-Res Icon** | `512 × 512` PNG | [`FabricFit/store/play_icon_512.png`](../../store/play_icon_512.png) |
+| **Google Play Feature Graphic** | `1024 × 500` PNG | [`FabricFit/store/feature_graphic.png`](../../store/feature_graphic.png) |
+| **Google Play Promo Video (16:9)** | `1280 × 720` MP4 (15s, Audio) | [`FabricFit/store/video/fabricfit_play_store_promo_16x9.mp4`](../../store/video/fabricfit_play_store_promo_16x9.mp4) |
+| **Play Shorts / Reels Video (9:16)** | `720 × 1280` MP4 (12s, Audio) | [`FabricFit/store/video/fabricfit_shorts_reel_9x16.mp4`](../../store/video/fabricfit_shorts_reel_9x16.mp4) |
+| **Promo Video Preview (GIF)** | `640 × 360` GIF | [`FabricFit/store/video/fabricfit_promo_preview.gif`](../../store/video/fabricfit_promo_preview.gif) |
+| **Hero Campaign Banner (16:9)** | `1920 × 1080` PNG | [`FabricFit/store/banners/banner_wide_1920x1080.png`](../../store/banners/banner_wide_1920x1080.png) |
+| **TV / Play Store Banner (16:9)** | `1280 × 720` PNG | [`FabricFit/store/banners/banner_tv_1280x720.png`](../../store/banners/banner_tv_1280x720.png) |
+| **Square Launch Banner (1:1)** | `1080 × 1080` PNG | [`FabricFit/store/banners/banner_social_square_1080x1080.png`](../../store/banners/banner_social_square_1080x1080.png) |
+| **Press / X Header Banner (3:1)** | `1500 × 500` PNG | [`FabricFit/store/banners/banner_x_header_1500x500.png`](../../store/banners/banner_x_header_1500x500.png) |
+| **Framed Play Store Cards (×6)** | `1080 × 1920` PNG | [`FabricFit/store/screenshots/01..06_*.png`](../../store/screenshots/) |
+
+<table>
+  <tr>
+    <td align="center"><img src="../../store/screenshots/01_play_welcome.png" width="180" alt="01 Welcome"><br><sub>01 · Welcome</sub></td>
+    <td align="center"><img src="../../store/screenshots/02_play_home.png" width="180" alt="02 Home"><br><sub>02 · Home</sub></td>
+    <td align="center"><img src="../../store/screenshots/03_play_fitscan.png" width="180" alt="03 FitScan"><br><sub>03 · FitScan AI</sub></td>
+    <td align="center"><img src="../../store/screenshots/04_play_scan_results.png" width="180" alt="04 Scan Results"><br><sub>04 · Scan Results</sub></td>
+    <td align="center"><img src="../../store/screenshots/05_play_discover.png" width="180" alt="05 Discover"><br><sub>05 · FitMatch AI</sub></td>
+    <td align="center"><img src="../../store/screenshots/06_play_wardrobe.png" width="180" alt="06 Wardrobe"><br><sub>06 · My Fit Closet</sub></td>
+  </tr>
+</table>
+
+---
 
 ## 📱 App Store Descriptions
 
