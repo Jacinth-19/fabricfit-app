@@ -54,6 +54,10 @@ def main() -> int:
     ap.add_argument("--allow-local", action="store_true", help="permit file:// URLs (selftest only)")
     ap.add_argument("--allow-any-license", action="store_true",
                     help="accept rows without a free-culture license (you take responsibility)")
+    ap.add_argument(
+        "--only-missing", action="store_true",
+        help="skip labels that already have a staged image; useful for a second transient-error retry",
+    )
     ap.add_argument("--threshold", type=int, default=6)
     ap.add_argument("--min-side", type=int, default=220)
     ap.add_argument("--sleep", type=float, default=0.25)
@@ -74,6 +78,11 @@ def main() -> int:
         if cls not in classes:
             common.log(f"  ! row {i}: unknown label {cls!r}")
             errors += 1
+            continue
+        if args.only_missing and any(
+            path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}
+            for path in (staging.root / cls).glob("*")
+        ):
             continue
 
         lic_raw = (row.get("license") or "").strip()
