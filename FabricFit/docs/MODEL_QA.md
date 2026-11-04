@@ -43,10 +43,10 @@ exact bundled classifier, weave extractor, and ImageNet OOD model:
    classifier's catalog training sources to expose possible image leakage.
    This is a diagnostic smoke test, not expert fiber/heritage verification;
    GONJA is represented by a Northern Ghana smock proxy.
-2. **Unvetted search set:** the Wikimedia and Openverse scrapers collect up to
-   two search-derived images per family. This set intentionally remains
-   separate because irrelevant and mislabeled results make its raw score unfit
-   as a cleaned accuracy estimate.
+2. **Unvetted search set:** on `[fabric-qa-search]` runs, the Wikimedia and
+   Openverse scrapers collect up to two search-derived images per family. This
+   set intentionally remains separate because irrelevant and mislabeled results
+   make its raw score unfit as a cleaned accuracy estimate.
 
 Generated curated outputs:
 

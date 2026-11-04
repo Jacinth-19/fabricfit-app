@@ -302,6 +302,9 @@ jobs:
         run: python3 FabricFit/tools/dataset/scrape/selftest.py
 
       - name: Collect freely licensed real fabric photos online
+        if: >-
+          github.event_name == 'workflow_dispatch' ||
+          contains(github.event.head_commit.message, '[fabric-qa-search]')
         env:
           FABRICFIT_SCRAPER_CONTACT: https://github.com/Jacinth-19/fabricfit-app
         run: |
@@ -323,6 +326,9 @@ jobs:
         run: python3 tools/qa/fabric_model_qa.py contracts --output qa-artifacts/model-contracts.json
 
       - name: Evaluate models on the unvetted online search set
+        if: >-
+          github.event_name == 'workflow_dispatch' ||
+          contains(github.event.head_commit.message, '[fabric-qa-search]')
         run: |
           python3 tools/qa/fabric_model_qa.py online \
             --data-dir FabricFit/tools/dataset/scraped/wikimedia \
@@ -354,7 +360,7 @@ jobs:
       - name: Commit QA reports and attributed contact sheets
         if: always()
         run: |
-          set -e
+          set -euxo pipefail
           if [ ! -f qa-artifacts/curated/real-fabric-report.json ]; then
             echo 'No curated online report was generated; nothing to commit.'
             exit 0
@@ -371,9 +377,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add FabricFit/docs/qa/
+          git diff --cached --stat
           if ! git diff --cached --quiet; then
             git commit -m "docs: test bundled models on real online fabrics [skip ci]"
-            git push
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
           fi
 
   # Full app UI screenshots are expensive; capture them on demand only:
