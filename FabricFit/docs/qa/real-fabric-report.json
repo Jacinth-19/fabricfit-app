@@ -1,101 +1,105 @@
 {
-  "generatedAt": "2026-11-04T10:51:55.296475+00:00",
-  "evaluationType": "unvetted freely licensed online real-photo smoke test",
+  "generatedAt": "2026-11-04T11:20:13.993609+00:00",
+  "evaluationType": "manually curated freely licensed online real-textile smoke test",
+  "labelReview": "manual source-description and visual review; not expert fiber/heritage verification",
   "notProductionAccuracy": true,
   "fusionIncluded": false,
   "contractSummary": "8/8 passed",
   "summary": {
     "expectedClasses": 17,
-    "coveredClasses": 17,
-    "missingClasses": [],
-    "evaluatedImages": 33,
-    "correctImages": 3,
-    "top1Agreement": 0.09090909090909091,
+    "coveredClasses": 16,
+    "missingClasses": [
+      "LACE"
+    ],
+    "evaluatedImages": 16,
+    "correctImages": 1,
+    "top1Agreement": 0.0625,
+    "catalogNearDuplicateImages": 0,
     "inferenceErrors": []
   },
   "perClass": {
     "ADINKRA": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "ANKARA": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "BATIK": {
-      "images": 2,
+      "images": 1,
       "correct": 1,
-      "agreement": 0.5
+      "agreement": 1.0
     },
     "BROCADE": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "CHIFFON": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "COTTON_PLAIN": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "DENIM": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "FUGU": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "GONJA": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "KENTE": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "KENTE_PRINT": {
       "images": 1,
-      "correct": 1,
-      "agreement": 1.0
+      "correct": 0,
+      "agreement": 0.0
     },
     "LACE": {
-      "images": 2,
-      "correct": 1,
-      "agreement": 0.5
+      "images": 0,
+      "correct": 0,
+      "agreement": 0.0
     },
     "LINEN": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "SILK": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "TIEDYE": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "VELVET": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     },
     "WAX": {
-      "images": 2,
+      "images": 1,
       "correct": 0,
       "agreement": 0.0
     }
@@ -103,81 +107,47 @@
   "results": [
     {
       "expected": "ADINKRA",
-      "predicted": "BATIK",
-      "confidence": 0.988770604133606,
+      "predicted": "ANKARA",
+      "confidence": 0.9582958817481995,
       "correct": false,
       "top3": [
+        {
+          "label": "ANKARA",
+          "score": 0.9582958817481995
+        },
+        {
+          "label": "BROCADE",
+          "score": 0.038401298224925995
+        },
         {
           "label": "BATIK",
-          "score": 0.988770604133606
-        },
-        {
-          "label": "BROCADE",
-          "score": 0.006739884149283171
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.004488972947001457
+          "score": 0.0032845770474523306
         }
       ],
       "weaveMetrics": [
-        0.13121621310710907,
-        0.07514839619398117,
-        0.6053065061569214,
-        0.020507793873548508,
-        0.06314048171043396,
-        0.17902863025665283
+        0.27138251066207886,
+        0.30052927136421204,
+        0.318843275308609,
+        0.04977046698331833,
+        0.5538979768753052,
+        0.7093626260757446
       ],
       "imagenetHint": {
-        "label": "menu",
-        "score": 0.6196078658103943
+        "label": "prayer rug",
+        "score": 0.5686274766921997
       },
-      "localPath": "ADINKRA_Adinkra_Rattray.JPG.jpg",
-      "source": "wikimedia",
-      "title": "Adinkra Rattray.JPG",
-      "creator": "Robert Sutherland Rattray",
+      "localPath": "Adinkra_cloth.jpg",
+      "source": "manifest",
+      "title": "Adinkra mourning cloth collected in Kumasi in 1817",
+      "creator": "Photo of public-domain textile via British Museum",
       "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Adinkra_Rattray.JPG",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Adinkra_Rattray.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "ADINKRA",
-      "predicted": "ANKARA",
-      "confidence": 0.9593943953514099,
-      "correct": false,
-      "top3": [
-        {
-          "label": "ANKARA",
-          "score": 0.9593943953514099
-        },
-        {
-          "label": "LACE",
-          "score": 0.034824859350919724
-        },
-        {
-          "label": "BROCADE",
-          "score": 0.0056277173571288586
-        }
-      ],
-      "weaveMetrics": [
-        0.3080509305000305,
-        0.13939616084098816,
-        0.4266604781150818,
-        0.05812496319413185,
-        0.5791466236114502,
-        0.7234889268875122
-      ],
-      "imagenetHint": {
-        "label": "cinema",
-        "score": 0.5411764979362488
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Adinkra_cloth.JPG",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cb/Adinkra_cloth.JPG",
+      "catalogNearest": {
+        "path": "catalog/heritage/swatch_kente.jpg",
+        "dHashDistance": 23
       },
-      "localPath": "ADINKRA_Adinkra_symbols_Ghana.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Adinkra symbols, Ghana.jpg",
-      "creator": "ZSM",
-      "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Adinkra_symbols,_Ghana.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2d/Adinkra_symbols%2C_Ghana.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "ANKARA",
@@ -210,52 +180,18 @@
         "label": "purse",
         "score": 0.5882353186607361
       },
-      "localPath": "ANKARA_Wax_print.jpeg.jpg",
-      "source": "wikimedia",
-      "title": "Wax print.jpeg",
+      "localPath": "Wax_print.jpg",
+      "source": "manifest",
+      "title": "Wax print",
       "creator": "M_nunoo",
       "license": "CC BY-SA 3.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Wax_print.jpeg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wax_print.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "ANKARA",
-      "predicted": "BATIK",
-      "confidence": 0.8020528554916382,
-      "correct": false,
-      "top3": [
-        {
-          "label": "BATIK",
-          "score": 0.8020528554916382
-        },
-        {
-          "label": "GONJA",
-          "score": 0.19248899817466736
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.002206984208896756
-        }
-      ],
-      "weaveMetrics": [
-        0.2909422218799591,
-        0.2592203617095947,
-        0.5532598495483398,
-        0.1270529180765152,
-        0.4139833152294159,
-        0.5483088493347168
-      ],
-      "imagenetHint": {
-        "label": "toyshop",
-        "score": 0.7215686440467834
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e0/Wax_print.jpeg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/adinkra.jpg",
+        "dHashDistance": 28
       },
-      "localPath": "ANKARA_Waxprints_in_a_West_African_Shop.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Waxprints in a West African Shop.jpg",
-      "creator": "Alexander Sarlay",
-      "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Waxprints_in_a_West_African_Shop.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Waxprints_in_a_West_African_Shop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "BATIK",
@@ -288,286 +224,150 @@
         "label": "sea urchin",
         "score": 0.6000000238418579
       },
-      "localPath": "BATIK_Batik_Indonesia.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Batik Indonesia.jpg",
+      "localPath": "Batik_Indonesia.jpg",
+      "source": "manifest",
+      "title": "Batik Indonesia",
       "creator": "MartijnL",
       "license": "CC BY-SA 3.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Batik_Indonesia.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Batik_Indonesia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "BATIK",
-      "predicted": "BROCADE",
-      "confidence": 0.8076276779174805,
-      "correct": false,
-      "top3": [
-        {
-          "label": "BROCADE",
-          "score": 0.8076276779174805
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.11989164352416992
-        },
-        {
-          "label": "SILK",
-          "score": 0.04067794606089592
-        }
-      ],
-      "weaveMetrics": [
-        0.45664799213409424,
-        0.211477130651474,
-        0.42959973216056824,
-        0.099331334233284,
-        0.49457496404647827,
-        0.5742584466934204
-      ],
-      "imagenetHint": {
-        "label": "stretcher",
-        "score": 0.6039215922355652
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Batik_Indonesia.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/tiedye.jpg",
+        "dHashDistance": 25
       },
-      "localPath": "BATIK_COLLECTIE_TROPENMUSEUM_Batiksters_aan_het_werk_op_een_stand_van_batikmaker.jpg",
-      "source": "wikimedia",
-      "title": "COLLECTIE TROPENMUSEUM Batiksters aan het werk op een stand van batikmakerij Tanaabang Batawi TMnr 60018019.jpg",
-      "creator": "Unknown author Unknown author",
-      "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:COLLECTIE_TROPENMUSEUM_Batiksters_aan_het_werk_op_een_stand_van_batikmakerij_Tanaabang_Batawi_TMnr_60018019.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/COLLECTIE_TROPENMUSEUM_Batiksters_aan_het_werk_op_een_stand_van_batikmakerij_Tanaabang_Batawi_TMnr_60018019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "BROCADE",
-      "predicted": "ANKARA",
-      "confidence": 0.7959981560707092,
-      "correct": false,
-      "top3": [
-        {
-          "label": "ANKARA",
-          "score": 0.7959981560707092
-        },
-        {
-          "label": "CHIFFON",
-          "score": 0.1871839016675949
-        },
-        {
-          "label": "ADINKRA",
-          "score": 0.007574799936264753
-        }
-      ],
-      "weaveMetrics": [
-        0.5066298246383667,
-        0.1747792661190033,
-        0.3370969891548157,
-        0.08881605416536331,
-        0.6337072849273682,
-        0.6563040614128113
-      ],
-      "imagenetHint": {
-        "label": "parallel bars",
-        "score": 0.6901960968971252
-      },
-      "localPath": "BROCADE_Brocade_loom.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Brocade loom.jpg",
-      "creator": "Anne Oeldorf-Hirsch",
-      "license": "CC BY 2.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Brocade_loom.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b5/Brocade_loom.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "BROCADE",
       "predicted": "BATIK",
-      "confidence": 0.9016147255897522,
+      "confidence": 0.9795190691947937,
       "correct": false,
       "top3": [
         {
           "label": "BATIK",
-          "score": 0.9016147255897522
+          "score": 0.9795190691947937
         },
         {
-          "label": "CHIFFON",
-          "score": 0.06383383274078369
+          "label": "FUGU",
+          "score": 0.018514148890972137
         },
         {
-          "label": "ANKARA",
-          "score": 0.031174585223197937
+          "label": "GONJA",
+          "score": 0.0013186043361201882
         }
       ],
       "weaveMetrics": [
-        0.5673438310623169,
-        0.17616680264472961,
-        0.29893648624420166,
-        0.07279573380947113,
-        0.6109457015991211,
-        0.6747084856033325
+        0.2781277596950531,
+        0.34306198358535767,
+        0.4816141128540039,
+        0.18588420748710632,
+        0.35212767124176025,
+        0.42377421259880066
       ],
       "imagenetHint": {
-        "label": "bell cote",
-        "score": 0.7058823704719543
+        "label": "doormat",
+        "score": 0.5843137502670288
       },
-      "localPath": "BROCADE_Nanjing_Brocade_Research_Institute.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Nanjing Brocade Research Institute.jpg",
-      "creator": "Anne Oeldorf-Hirsch",
-      "license": "CC BY 2.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Nanjing_Brocade_Research_Institute.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/9/94/Nanjing_Brocade_Research_Institute.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "localPath": "27Sari_27_from_Varanasi_28north-central_India_29_2C_silk_and_gold-wrapped_silk_y.jpg",
+      "source": "manifest",
+      "title": "Silk sari with supplementary-weft brocade",
+      "creator": "Unknown author",
+      "license": "Public domain",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:%27Sari%27_from_Varanasi_%28north-central_India%29%2C_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4e/%27Sari%27_from_Varanasi_%28north-central_India%29%2C_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/batik.jpg",
+        "dHashDistance": 20
+      },
+      "catalogNearDuplicate": false
     },
     {
       "expected": "CHIFFON",
       "predicted": "ADINKRA",
-      "confidence": 0.477367103099823,
+      "confidence": 0.9998332262039185,
       "correct": false,
       "top3": [
         {
           "label": "ADINKRA",
-          "score": 0.477367103099823
+          "score": 0.9998332262039185
         },
         {
-          "label": "WAX",
-          "score": 0.43286553025245667
+          "label": "COTTON_PLAIN",
+          "score": 0.00011317433381918818
         },
         {
-          "label": "ANKARA",
-          "score": 0.05111347883939743
+          "label": "KENTE",
+          "score": 4.374104173621163e-05
         }
       ],
       "weaveMetrics": [
-        0.4429927170276642,
-        0.2112717628479004,
-        0.48129040002822876,
-        0.05760125070810318,
-        0.5226085782051086,
-        0.6753157377243042
+        0.2710922658443451,
+        0.28285863995552063,
+        0.4822288155555725,
+        0.07763341069221497,
+        0.6946954727172852,
+        0.7783167362213135
       ],
       "imagenetHint": {
-        "label": "ice cream",
-        "score": 0.7254902124404907
+        "label": "sarong",
+        "score": 0.6980392336845398
       },
-      "localPath": "CHIFFON_Chiffon_cake_kanko.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Chiffon cake kanko.jpg",
-      "creator": "Kanko from Nagasaki, Japan",
-      "license": "CC BY 2.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Chiffon_cake_kanko.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/21/Chiffon_cake_kanko.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "CHIFFON",
-      "predicted": "SILK",
-      "confidence": 0.9693023562431335,
-      "correct": false,
-      "top3": [
-        {
-          "label": "SILK",
-          "score": 0.9693023562431335
-        },
-        {
-          "label": "BROCADE",
-          "score": 0.02813045307993889
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.0015352144837379456
-        }
-      ],
-      "weaveMetrics": [
-        0.361473947763443,
-        0.18474413454532623,
-        0.4874326288700104,
-        0.12277653813362122,
-        0.47077134251594543,
-        0.5861157774925232
-      ],
-      "imagenetHint": {
-        "label": "vestment",
-        "score": 0.6431372761726379
+      "localPath": "1970s_Givenchy_cocktail_dress_2C_orange_printed_silk_chiffon_03.jpg",
+      "source": "manifest",
+      "title": "1970s Givenchy orange printed silk chiffon dress detail",
+      "creator": "Rhode Island School of Design Museum staff photographer",
+      "license": "CC0 1.0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:1970s_Givenchy_cocktail_dress%2C_orange_printed_silk_chiffon_03.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/1/10/1970s_Givenchy_cocktail_dress%2C_orange_printed_silk_chiffon_03.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/brocade.jpg",
+        "dHashDistance": 19
       },
-      "localPath": "CHIFFON_Lillian_Gish_2.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Lillian Gish 2.jpg",
-      "creator": "George Grantham Bain Collection.",
-      "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Lillian_Gish_2.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Lillian_Gish_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "COTTON_PLAIN",
-      "predicted": "TIEDYE",
-      "confidence": 0.7826672196388245,
+      "predicted": "LACE",
+      "confidence": 0.7747407555580139,
       "correct": false,
       "top3": [
         {
-          "label": "TIEDYE",
-          "score": 0.7826672196388245
+          "label": "LACE",
+          "score": 0.7747407555580139
         },
-        {
-          "label": "SILK",
-          "score": 0.217108353972435
-        },
-        {
-          "label": "CHIFFON",
-          "score": 9.401952411280945e-05
-        }
-      ],
-      "weaveMetrics": [
-        0.45961013436317444,
-        0.1135922372341156,
-        0.46751123666763306,
-        0.08560249209403992,
-        0.7218961715698242,
-        0.8016137480735779
-      ],
-      "imagenetHint": {
-        "label": "dowitcher",
-        "score": 0.7137255072593689
-      },
-      "localPath": "COTTON_PLAIN_Female_Mallard_Duck_Rest_3.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Female Mallard Duck Rest 3.jpg",
-      "creator": "Acarpentier",
-      "license": "CC BY 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Female_Mallard_Duck_Rest_3.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e7/Female_Mallard_Duck_Rest_3.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "COTTON_PLAIN",
-      "predicted": "KENTE_PRINT",
-      "confidence": 0.6069942116737366,
-      "correct": false,
-      "top3": [
         {
           "label": "KENTE_PRINT",
-          "score": 0.6069942116737366
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.2419878989458084
+          "score": 0.21273858845233917
         },
         {
           "label": "SILK",
-          "score": 0.12185245752334595
+          "score": 0.01025710441172123
         }
       ],
       "weaveMetrics": [
-        0.4192327857017517,
-        0.2260323166847229,
-        0.4984394311904907,
-        0.13447073101997375,
-        0.5196921229362488,
-        0.6467798948287964
+        0.42881613969802856,
+        0.16087180376052856,
+        0.5114973783493042,
+        0.089029960334301,
+        0.7682137489318848,
+        0.8367208242416382
       ],
       "imagenetHint": {
-        "label": "drake",
-        "score": 0.9137254953384399
+        "label": "coral fungus",
+        "score": 0.5490196347236633
       },
-      "localPath": "COTTON_PLAIN_Male_mallard_duck_2.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Male mallard duck 2.jpg",
-      "creator": "Acarpentier",
-      "license": "CC BY 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Male_mallard_duck_2.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Male_mallard_duck_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "localPath": "Cotton_fabric.jpg",
+      "source": "manifest",
+      "title": "Cotton fabric",
+      "creator": "Ivan Pavlushkin",
+      "license": "CC BY 4.0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Cotton_fabric.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Cotton_fabric.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/kente_print.jpg",
+        "dHashDistance": 25
+      },
+      "catalogNearDuplicate": false
     },
     {
       "expected": "DENIM",
@@ -600,208 +400,106 @@
         "label": "poncho",
         "score": 0.5843137502670288
       },
-      "localPath": "DENIM_Denim_fabric_03_Rico_Cilliers_and_colormass_via_Poly_Haven_.png.jpg",
-      "source": "wikimedia",
-      "title": "Denim fabric 03 (Rico Cilliers and colormass via Poly Haven).png",
-      "creator": "Rico Cilliers (Processing) colormass (Photography)",
+      "localPath": "Denim_fabric_03_28Rico_Cilliers_and_colormass_via_Poly_Haven_29.jpg",
+      "source": "manifest",
+      "title": "Denim fabric 03",
+      "creator": "Rico Cilliers and colormass via Poly Haven",
       "license": "CC0 1.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Denim_fabric_03_(Rico_Cilliers_and_colormass_via_Poly_Haven).png",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Denim_fabric_03_%28Rico_Cilliers_and_colormass_via_Poly_Haven%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "DENIM",
-      "predicted": "VELVET",
-      "confidence": 1.0,
-      "correct": false,
-      "top3": [
-        {
-          "label": "VELVET",
-          "score": 1.0
-        },
-        {
-          "label": "TIEDYE",
-          "score": 2.812811983332608e-09
-        },
-        {
-          "label": "LINEN",
-          "score": 1.0032448640286476e-13
-        }
-      ],
-      "weaveMetrics": [
-        0.32246890664100647,
-        0.26221153140068054,
-        0.6078003644943237,
-        0.20128293335437775,
-        0.49039027094841003,
-        0.594851553440094
-      ],
-      "imagenetHint": {
-        "label": "sweatshirt",
-        "score": 0.6039215922355652
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ea/Denim_fabric_03_%28Rico_Cilliers_and_colormass_via_Poly_Haven%29.png",
+      "catalogNearest": {
+        "path": "catalog/fabrics/adinkra.jpg",
+        "dHashDistance": 23
       },
-      "localPath": "DENIM_Denim_fabric_03_Rico_Cilliers_and_colormass_via_Poly_Haven_.webp.jpg",
-      "source": "wikimedia",
-      "title": "Denim fabric 03 (Rico Cilliers and colormass via Poly Haven).webp",
-      "creator": "Rico Cilliers (Processing) colormass (Photography)",
-      "license": "CC0 1.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Denim_fabric_03_(Rico_Cilliers_and_colormass_via_Poly_Haven).webp",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/f/ff/Denim_fabric_03_%28Rico_Cilliers_and_colormass_via_Poly_Haven%29.webp?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "FUGU",
       "predicted": "ANKARA",
-      "confidence": 0.6077924370765686,
+      "confidence": 0.6197113990783691,
       "correct": false,
       "top3": [
         {
           "label": "ANKARA",
-          "score": 0.6077924370765686
+          "score": 0.6197113990783691
         },
         {
           "label": "BATIK",
-          "score": 0.380731463432312
+          "score": 0.3684304356575012
         },
         {
           "label": "CHIFFON",
-          "score": 0.009367288090288639
+          "score": 0.009799845516681671
         }
       ],
       "weaveMetrics": [
-        0.5284881591796875,
-        0.10361095517873764,
-        0.6217468976974487,
-        0.09905202686786652,
-        0.3113601803779602,
-        0.3675951063632965
+        0.5281689167022705,
+        0.10399051755666733,
+        0.6214059591293335,
+        0.09910881519317627,
+        0.3113601505756378,
+        0.3669722378253937
       ],
       "imagenetHint": {
         "label": "poncho",
-        "score": 0.5490196347236633
+        "score": 0.5411764979362488
       },
-      "localPath": "FUGU_Dress_12.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Dress 12.jpg",
+      "localPath": "Dress_12.jpg",
+      "source": "manifest",
+      "title": "Ghanaian smock dress",
       "creator": "Kinvidia",
       "license": "CC BY-SA 4.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Dress_12.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/29/Dress_12.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "FUGU",
-      "predicted": "ANKARA",
-      "confidence": 0.316672682762146,
-      "correct": false,
-      "top3": [
-        {
-          "label": "ANKARA",
-          "score": 0.316672682762146
-        },
-        {
-          "label": "CHIFFON",
-          "score": 0.21651525795459747
-        },
-        {
-          "label": "TIEDYE",
-          "score": 0.19005830585956573
-        }
-      ],
-      "weaveMetrics": [
-        0.44714292883872986,
-        0.270479679107666,
-        0.4680156707763672,
-        0.23462089896202087,
-        0.6136438846588135,
-        0.6600594520568848
-      ],
-      "imagenetHint": {
-        "label": "barrow",
-        "score": 0.5058823823928833
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/29/Dress_12.jpg",
+      "catalogNearest": {
+        "path": "catalog/heritage/scan_kente_closeup.jpg",
+        "dHashDistance": 23
       },
-      "localPath": "FUGU_MAN_DRESSED_IN_LOCAL_ATTIRE_03.jpg.jpg",
-      "source": "wikimedia",
-      "title": "MAN DRESSED IN LOCAL ATTIRE 03.jpg",
-      "creator": "Salifu Wumpini Hussein",
-      "license": "CC BY-SA 4.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:MAN_DRESSED_IN_LOCAL_ATTIRE_03.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/3/36/MAN_DRESSED_IN_LOCAL_ATTIRE_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "GONJA",
-      "predicted": "KENTE_PRINT",
-      "confidence": 0.603586733341217,
+      "predicted": "TIEDYE",
+      "confidence": 0.9999886751174927,
       "correct": false,
       "top3": [
         {
-          "label": "KENTE_PRINT",
-          "score": 0.603586733341217
+          "label": "TIEDYE",
+          "score": 0.9999886751174927
+        },
+        {
+          "label": "ANKARA",
+          "score": 1.1245356290601194e-05
         },
         {
           "label": "LACE",
-          "score": 0.3804266154766083
-        },
-        {
-          "label": "ADINKRA",
-          "score": 0.006255675107240677
+          "score": 1.2927964121445257e-07
         }
       ],
       "weaveMetrics": [
-        0.5216312408447266,
-        0.13751466572284698,
-        0.4250969886779785,
-        0.10405273735523224,
-        0.7216510772705078,
-        0.7967792749404907
+        0.2381860911846161,
+        0.06474345922470093,
+        0.745935320854187,
+        0.04962658882141113,
+        0.1603909283876419,
+        0.3314138948917389
       ],
       "imagenetHint": {
-        "label": "brambling",
-        "score": 0.686274528503418
+        "label": "bath towel",
+        "score": 0.5411764979362488
       },
-      "localPath": "GONJA_Dryoscopus_gambensis_Malaconotidae_Northern_Puffback_-_male_Mole_National_.jpg",
-      "source": "wikimedia",
-      "title": "Dryoscopus gambensis (Malaconotidae) (Northern Puffback) - (male), Mole National Park, Ghana, crop.jpg",
-      "creator": "This image is created by user Bram ter Keurs at Observation.org , a global biodiversity recording project.",
-      "license": "CC BY 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Dryoscopus_gambensis_(Malaconotidae)_(Northern_Puffback)_-_(male),_Mole_National_Park,_Ghana,_crop.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/2c/Dryoscopus_gambensis_%28Malaconotidae%29_%28Northern_Puffback%29_-_%28male%29%2C_Mole_National_Park%2C_Ghana%2C_crop.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "GONJA",
-      "predicted": "ANKARA",
-      "confidence": 0.4616691470146179,
-      "correct": false,
-      "top3": [
-        {
-          "label": "ANKARA",
-          "score": 0.4616691470146179
-        },
-        {
-          "label": "KENTE_PRINT",
-          "score": 0.37341076135635376
-        },
-        {
-          "label": "CHIFFON",
-          "score": 0.08553900569677353
-        }
-      ],
-      "weaveMetrics": [
-        0.46862345933914185,
-        0.21883435547351837,
-        0.4064812660217285,
-        0.09269102662801743,
-        0.5518522262573242,
-        0.6538190245628357
-      ],
-      "imagenetHint": {
-        "label": "jackfruit",
-        "score": 0.7686274647712708
-      },
-      "localPath": "GONJA_Fruits_and_flower_of_the_sausage_tree_Kigelia_africana_Ghana.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Fruits and flower of the sausage tree (Kigelia africana), Ghana.jpg",
-      "creator": "ZSM",
+      "localPath": "Smock_from_Northern_Ghana.jpg",
+      "source": "manifest",
+      "title": "Smock from Northern Ghana (Gonja-style strip-cloth proxy)",
+      "creator": "Ibn Shiraz",
       "license": "CC BY-SA 4.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Fruits_and_flower_of_the_sausage_tree_(Kigelia_africana),_Ghana.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/5/52/Fruits_and_flower_of_the_sausage_tree_%28Kigelia_africana%29%2C_Ghana.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Smock_from_Northern_Ghana.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/4/46/Smock_from_Northern_Ghana.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/brocade.jpg",
+        "dHashDistance": 14
+      },
+      "catalogNearDuplicate": false
     },
     {
       "expected": "KENTE",
@@ -834,208 +532,62 @@
         "label": "shower curtain",
         "score": 0.7803921699523926
       },
-      "localPath": "KENTE_Ewe_kente_2_Ghana.JPG.jpg",
-      "source": "wikimedia",
-      "title": "Ewe kente 2, Ghana.JPG",
+      "localPath": "Ewe_kente_2_2C_Ghana.jpg",
+      "source": "manifest",
+      "title": "Ewe kente cloth from Ghana",
       "creator": "ZSM",
       "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ewe_kente_2,_Ghana.JPG",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Ewe_kente_2%2C_Ghana.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "KENTE",
-      "predicted": "TIEDYE",
-      "confidence": 0.9877405762672424,
-      "correct": false,
-      "top3": [
-        {
-          "label": "TIEDYE",
-          "score": 0.9877405762672424
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.01225933339446783
-        },
-        {
-          "label": "LACE",
-          "score": 8.272330376257742e-08
-        }
-      ],
-      "weaveMetrics": [
-        0.30650296807289124,
-        0.19128833711147308,
-        0.4821436107158661,
-        0.11934926360845566,
-        0.4133770763874054,
-        0.5443257093429565
-      ],
-      "imagenetHint": {
-        "label": "quilt",
-        "score": 0.6000000238418579
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ewe_kente_2%2C_Ghana.JPG",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/d/dc/Ewe_kente_2%2C_Ghana.JPG",
+      "catalogNearest": {
+        "path": "catalog/fabrics/kente_print.jpg",
+        "dHashDistance": 19
       },
-      "localPath": "KENTE_Ewe_kente_stripes_Ghana.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Ewe kente stripes, Ghana.jpg",
-      "creator": "ZSM",
-      "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ewe_kente_stripes,_Ghana.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Ewe_kente_stripes%2C_Ghana.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "KENTE_PRINT",
-      "predicted": "KENTE_PRINT",
-      "confidence": 0.8579186797142029,
-      "correct": true,
-      "top3": [
-        {
-          "label": "KENTE_PRINT",
-          "score": 0.8579186797142029
-        },
-        {
-          "label": "DENIM",
-          "score": 0.13210318982601166
-        },
-        {
-          "label": "SILK",
-          "score": 0.008453802205622196
-        }
-      ],
-      "weaveMetrics": [
-        0.41214409470558167,
-        0.21435286104679108,
-        0.512417197227478,
-        0.11944930255413055,
-        0.7127455472946167,
-        0.7705601453781128
-      ],
-      "imagenetHint": {
-        "label": "suit",
-        "score": 0.6000000238418579
-      },
-      "localPath": "KENTE_PRINT_Broek_van_Afrikaanse_kente_stof-_Stichting_Nationaal_Museum_van_Were.jpg",
-      "source": "wikimedia",
-      "title": "Broek van Afrikaanse kente stof- Stichting Nationaal Museum van Wereldculturen - R-3633b.jpg",
-      "creator": "Unknown author Unknown author",
-      "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Broek_van_Afrikaanse_kente_stof-_Stichting_Nationaal_Museum_van_Wereldculturen_-_R-3633b.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Broek_van_Afrikaanse_kente_stof-_Stichting_Nationaal_Museum_van_Wereldculturen_-_R-3633b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "LACE",
-      "predicted": "LACE",
-      "confidence": 0.8919302821159363,
-      "correct": true,
-      "top3": [
-        {
-          "label": "LACE",
-          "score": 0.8919302821159363
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.06628483533859253
-        },
-        {
-          "label": "KENTE_PRINT",
-          "score": 0.037243861705064774
-        }
-      ],
-      "weaveMetrics": [
-        0.4505123794078827,
-        0.10381992161273956,
-        0.4120906889438629,
-        0.0722760558128357,
-        0.7129817008972168,
-        0.7775561809539795
-      ],
-      "imagenetHint": {
-        "label": "gown",
-        "score": 0.6078431606292725
-      },
-      "localPath": "LACE_Transparent_lace_top_and_skirt.png.jpg",
-      "source": "wikimedia",
-      "title": "Transparent lace top and skirt.png",
-      "creator": "Lukasz Dunikowski",
-      "license": "CC BY 2.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Transparent_lace_top_and_skirt.png",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/4/47/Transparent_lace_top_and_skirt.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "LACE",
-      "predicted": "SILK",
-      "confidence": 0.9990887641906738,
+      "predicted": "GONJA",
+      "confidence": 0.9646503329277039,
       "correct": false,
       "top3": [
         {
-          "label": "SILK",
-          "score": 0.9990887641906738
+          "label": "GONJA",
+          "score": 0.9646503329277039
         },
         {
-          "label": "BROCADE",
-          "score": 0.0005765170208178461
+          "label": "WAX",
+          "score": 0.025856930762529373
         },
         {
-          "label": "KENTE_PRINT",
-          "score": 0.0001562726538395509
+          "label": "KENTE",
+          "score": 0.006468154955655336
         }
       ],
       "weaveMetrics": [
-        0.3085375130176544,
-        0.1971377283334732,
-        0.3669053912162781,
-        0.11447397619485855,
-        0.631754457950592,
-        0.6532407999038696
+        0.4627627730369568,
+        0.19464340806007385,
+        0.36776304244995117,
+        0.08534150570631027,
+        0.5189378261566162,
+        0.6057745218276978
       ],
       "imagenetHint": {
-        "label": "kimono",
-        "score": 0.6352941393852234
+        "label": "prayer rug",
+        "score": 0.8117647171020508
       },
-      "localPath": "LACE_Unidentified_woman_c1850_daguerreotype_by_Southworth_Hawes.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Unidentified woman c1850 daguerreotype by Southworth & Hawes.jpg",
-      "creator": "Southworth &amp; Hawes en",
-      "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Unidentified_woman_c1850_daguerreotype_by_Southworth_%26_Hawes.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Unidentified_woman_c1850_daguerreotype_by_Southworth_%26_Hawes.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "LINEN",
-      "predicted": "BROCADE",
-      "confidence": 0.9536036252975464,
-      "correct": false,
-      "top3": [
-        {
-          "label": "BROCADE",
-          "score": 0.9536036252975464
-        },
-        {
-          "label": "BATIK",
-          "score": 0.03796308860182762
-        },
-        {
-          "label": "ANKARA",
-          "score": 0.004928394220769405
-        }
-      ],
-      "weaveMetrics": [
-        0.37015262246131897,
-        0.4270191788673401,
-        0.25910359621047974,
-        0.05025541037321091,
-        0.691602885723114,
-        0.8036968111991882
-      ],
-      "imagenetHint": {
-        "label": "chest",
-        "score": 0.5215686559677124
+      "localPath": "Kente_28Batik_29_Cloth_in_Market_-_Kumasi_-_Ghana_284755541241_29.jpg",
+      "source": "manifest",
+      "title": "Kente-style batik/printed cloth in Kumasi market",
+      "creator": "Adam Jones",
+      "license": "CC BY-SA 2.0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Kente_(Batik)_Cloth_in_Market_-_Kumasi_-_Ghana_(4755541241).jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/0/04/Kente_%28Batik%29_Cloth_in_Market_-_Kumasi_-_Ghana_%284755541241%29.jpg",
+      "catalogNearest": {
+        "path": "catalog/heritage/scan_kente_closeup.jpg",
+        "dHashDistance": 21
       },
-      "localPath": "LINEN_Egypt_Coptic_fabric.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Egypt Coptic fabric.jpg",
-      "creator": "Anonymous ( Egypt ) Unknown author",
-      "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Egypt_Coptic_fabric.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e2/Egypt_Coptic_fabric.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "LINEN",
@@ -1068,52 +620,18 @@
         "label": "buckle",
         "score": 0.5843137502670288
       },
-      "localPath": "LINEN_Linen_Coptic_fabric_REM.JPG.jpg",
-      "source": "wikimedia",
-      "title": "Linen Coptic fabric REM.JPG",
+      "localPath": "Linen_Coptic_fabric_REM.jpg",
+      "source": "manifest",
+      "title": "Linen Coptic fabric",
       "creator": "BrokenSphere",
       "license": "CC BY-SA 3.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Linen_Coptic_fabric_REM.JPG",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/9/90/Linen_Coptic_fabric_REM.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "SILK",
-      "predicted": "BATIK",
-      "confidence": 0.9795190691947937,
-      "correct": false,
-      "top3": [
-        {
-          "label": "BATIK",
-          "score": 0.9795190691947937
-        },
-        {
-          "label": "FUGU",
-          "score": 0.018514148890972137
-        },
-        {
-          "label": "GONJA",
-          "score": 0.0013186043361201882
-        }
-      ],
-      "weaveMetrics": [
-        0.2781277596950531,
-        0.34306198358535767,
-        0.4816141128540039,
-        0.18588420748710632,
-        0.35212767124176025,
-        0.42377421259880066
-      ],
-      "imagenetHint": {
-        "label": "doormat",
-        "score": 0.5843137502670288
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/9/90/Linen_Coptic_fabric_REM.JPG",
+      "catalogNearest": {
+        "path": "catalog/fabrics/denim.jpg",
+        "dHashDistance": 21
       },
-      "localPath": "SILK_Sari_from_Varanasi_north-central_India_silk_and_gold-wrapped_silk_yarn_with.jpg",
-      "source": "wikimedia",
-      "title": "'Sari' from Varanasi (north-central India), silk and gold-wrapped silk yarn with supplementary weft brocade.jpg",
-      "creator": "Unknown author Unknown author",
-      "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:%27Sari%27_from_Varanasi_(north-central_India),_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4e/%27Sari%27_from_Varanasi_%28north-central_India%29%2C_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "SILK",
@@ -1146,130 +664,62 @@
         "label": "wooden spoon",
         "score": 0.5215686559677124
       },
-      "localPath": "SILK_Sea_silk_glove_lo-res.JPG.jpg",
-      "source": "wikimedia",
-      "title": "Sea silk glove lo-res.JPG",
+      "localPath": "Sea_silk_glove_lo-res.jpg",
+      "source": "manifest",
+      "title": "Sea silk glove",
       "creator": "John Hill",
       "license": "CC BY-SA 3.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Sea_silk_glove_lo-res.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/2/24/Sea_silk_glove_lo-res.JPG",
+      "catalogNearest": {
+        "path": "catalog/fabrics/lace.jpg",
+        "dHashDistance": 15
+      },
+      "catalogNearDuplicate": false
     },
     {
       "expected": "TIEDYE",
       "predicted": "BROCADE",
-      "confidence": 0.749207615852356,
+      "confidence": 0.7672184705734253,
       "correct": false,
       "top3": [
         {
           "label": "BROCADE",
-          "score": 0.749207615852356
+          "score": 0.7672184705734253
         },
         {
           "label": "BATIK",
-          "score": 0.17143170535564423
+          "score": 0.15738366544246674
         },
         {
           "label": "ANKARA",
-          "score": 0.07914740592241287
+          "score": 0.07519207149744034
         }
       ],
       "weaveMetrics": [
-        0.33040207624435425,
-        0.274721622467041,
-        0.4092036485671997,
-        0.043904297053813934,
-        0.3261139988899231,
-        0.5536404252052307
+        0.3304392993450165,
+        0.2755492925643921,
+        0.40803396701812744,
+        0.043853096663951874,
+        0.32661667466163635,
+        0.5534366369247437
       ],
       "imagenetHint": {
         "label": "wallet",
-        "score": 0.5607843399047852
+        "score": 0.5647059082984924
       },
-      "localPath": "TIEDYE_Bai_fabric_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG.jpg",
-      "source": "wikimedia",
-      "title": "Bai fabric, tie-dyed - Yunnan Provincial Museum - DSC02211.JPG",
+      "localPath": "Bai_fabric_2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.jpg",
+      "source": "manifest",
+      "title": "Bai tie-dyed fabric",
       "creator": "Daderot",
       "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Bai_fabric,_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Bai_fabric%2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "TIEDYE",
-      "predicted": "SILK",
-      "confidence": 0.9896447658538818,
-      "correct": false,
-      "top3": [
-        {
-          "label": "SILK",
-          "score": 0.9896447658538818
-        },
-        {
-          "label": "LACE",
-          "score": 0.006717854645103216
-        },
-        {
-          "label": "TIEDYE",
-          "score": 0.0031408232171088457
-        }
-      ],
-      "weaveMetrics": [
-        0.5475447177886963,
-        0.1285647451877594,
-        0.3034129738807678,
-        0.06711634993553162,
-        0.8284586071968079,
-        0.8669775724411011
-      ],
-      "imagenetHint": {
-        "label": "worm fence",
-        "score": 0.6509804129600525
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Bai_fabric%2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fd/Bai_fabric%2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG",
+      "catalogNearest": {
+        "path": "catalog/fabrics/cotton_plain.jpg",
+        "dHashDistance": 27
       },
-      "localPath": "TIEDYE_Tension_Fabric_Building.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Tension Fabric Building.jpg",
-      "creator": "Montanabw",
-      "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Tension_Fabric_Building.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/a/a7/Tension_Fabric_Building.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "VELVET",
-      "predicted": "ANKARA",
-      "confidence": 0.9231404066085815,
-      "correct": false,
-      "top3": [
-        {
-          "label": "ANKARA",
-          "score": 0.9231404066085815
-        },
-        {
-          "label": "KENTE_PRINT",
-          "score": 0.04323715716600418
-        },
-        {
-          "label": "LACE",
-          "score": 0.015735577791929245
-        }
-      ],
-      "weaveMetrics": [
-        0.4447805881500244,
-        0.2174864113330841,
-        0.5058106184005737,
-        0.07916481047868729,
-        0.6120898723602295,
-        0.765288233757019
-      ],
-      "imagenetHint": {
-        "label": "vestment",
-        "score": 0.5372549295425415
-      },
-      "localPath": "VELVET_Iner_ornamental_velvet_covering_Scroll_of_the_Law_.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Iner ornamental velvet covering Scroll of the Law,.jpg",
-      "creator": "Daniel Ventura",
-      "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Iner_ornamental_velvet_covering_Scroll_of_the_Law,.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/e/eb/Iner_ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     },
     {
       "expected": "VELVET",
@@ -1302,13 +752,18 @@
         "label": "vestment",
         "score": 0.615686297416687
       },
-      "localPath": "VELVET_Ornamental_velvet_covering_Scroll_of_the_Law_.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Ornamental velvet covering Scroll of the Law,.jpg",
+      "localPath": "Ornamental_velvet_covering_Scroll_of_the_Law_2C.jpg",
+      "source": "manifest",
+      "title": "Ornamental velvet covering",
       "creator": "Daniel Ventura",
       "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ornamental_velvet_covering_Scroll_of_the_Law,.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/d/df/Ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/d/df/Ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/ankara.jpg",
+        "dHashDistance": 21
+      },
+      "catalogNearDuplicate": false
     },
     {
       "expected": "WAX",
@@ -1341,52 +796,18 @@
         "label": "monastery",
         "score": 0.5490196347236633
       },
-      "localPath": "WAX_Ankara_4372.jpg.jpg",
-      "source": "wikimedia",
-      "title": "Ankara 4372.jpg",
-      "creator": "User:Darwinek",
+      "localPath": "Ankara_4372.jpg",
+      "source": "manifest",
+      "title": "Ankara wax-print fabric",
+      "creator": "Darwinek",
       "license": "CC BY-SA 3.0",
       "landingUrl": "https://commons.wikimedia.org/wiki/File:Ankara_4372.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/0/00/Ankara_4372.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
-    },
-    {
-      "expected": "WAX",
-      "predicted": "KENTE",
-      "confidence": 0.702184796333313,
-      "correct": false,
-      "top3": [
-        {
-          "label": "KENTE",
-          "score": 0.702184796333313
-        },
-        {
-          "label": "KENTE_PRINT",
-          "score": 0.2875073552131653
-        },
-        {
-          "label": "COTTON_PLAIN",
-          "score": 0.010298901237547398
-        }
-      ],
-      "weaveMetrics": [
-        0.35132113099098206,
-        0.31081825494766235,
-        0.5007225275039673,
-        0.2789146900177002,
-        0.589795708656311,
-        0.6169189214706421
-      ],
-      "imagenetHint": {
-        "label": "nematode",
-        "score": 0.6313725709915161
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/0/00/Ankara_4372.jpg",
+      "catalogNearest": {
+        "path": "catalog/fabrics/chiffon.jpg",
+        "dHashDistance": 25
       },
-      "localPath": "WAX_NGC7293_2004_.jpg.jpg",
-      "source": "wikimedia",
-      "title": "NGC7293 (2004).jpg",
-      "creator": "NASA, ESA, C.R. O'Dell (Vanderbilt University), M. Meixner and P. McCullough (STScI)",
-      "license": "Public domain",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:NGC7293_(2004).jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b1/NGC7293_%282004%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original"
+      "catalogNearDuplicate": false
     }
   ]
 }
