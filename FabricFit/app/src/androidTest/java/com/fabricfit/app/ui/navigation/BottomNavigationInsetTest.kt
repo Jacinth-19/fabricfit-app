@@ -8,17 +8,15 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.UiSelector
 import com.fabricfit.app.MainActivity
 import com.fabricfit.app.di.AppContainer
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -73,44 +71,27 @@ class BottomNavigationInsetTest {
         )
         assertEquals("Device QA must enable Android's 3-button navigation", 0, navigationMode)
 
-        val rootWindowInsets = ViewCompat.getRootWindowInsets(
-            composeRule.activity.window.decorView,
-        )
-        assertNotNull("Root window insets must be attached", rootWindowInsets)
-        // Compose may consume the visible inset before this assertion runs. The
-        // ignoring-visibility value still describes the system bar frame; the
-        // platform dimension is a fallback on headless emulator windows.
-        val reportedInsetPx = rootWindowInsets!!
-            .getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars())
-            .bottom
-        val navigationBarResource = composeRule.activity.resources.getIdentifier(
-            "navigation_bar_height",
-            "dimen",
-            "android",
-        )
-        val platformInsetPx = if (navigationBarResource > 0) {
-            composeRule.activity.resources.getDimensionPixelSize(navigationBarResource)
-        } else {
-            0
-        }
-        val navigationInsetPx = maxOf(reportedInsetPx, platformInsetPx)
-        assertTrue(
-            "3-button navigation must have a bottom inset " +
-                "(reported=$reportedInsetPx, platform=$platformInsetPx)",
-            navigationInsetPx > 0,
-        )
-
         val density = composeRule.activity.resources.displayMetrics.density
-        val navigationInset = (navigationInsetPx / density).dp
-        val rootBounds = composeRule.onRoot().getUnclippedBoundsInRoot()
         val homeTabBounds = composeRule.onNodeWithContentDescription("Home")
             .getUnclippedBoundsInRoot()
-        val safeContentBottom = rootBounds.bottom - navigationInset
+        val homeTabBottomPx = homeTabBounds.bottom.value * density
+
+        // Compare against the visible SystemUI control itself. Instrumented
+        // activity windows can report zero insets on a headless emulator even
+        // while the 3-button bar is present, making an inset-only test unreliable.
+        val systemHomeButton = UiDevice.getInstance(
+            InstrumentationRegistry.getInstrumentation(),
+        ).findObject(UiSelector().resourceId("com.android.systemui:id/home"))
+        assertTrue(
+            "Android SystemUI Home button must be visible in 3-button mode",
+            systemHomeButton.waitForExists(5_000),
+        )
+        val systemHomeTopPx = systemHomeButton.bounds.top
 
         assertTrue(
-            "Home tab bottom ${homeTabBounds.bottom} must be above system navigation " +
-                "at $safeContentBottom (inset $navigationInset)",
-            homeTabBounds.bottom <= safeContentBottom + 1.dp,
+            "FabricFit Home tab bottom $homeTabBottomPx must be above SystemUI " +
+                "Home button top $systemHomeTopPx",
+            homeTabBottomPx <= systemHomeTopPx + 1f,
         )
     }
 }
