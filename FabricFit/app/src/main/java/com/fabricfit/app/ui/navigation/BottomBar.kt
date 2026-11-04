@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -87,7 +88,10 @@ internal fun FabricFitBottomBar(
     val barColor = if (isDarkChrome) HeritageForestDark else MaterialTheme.colorScheme.surface
 
     Surface(
-        modifier = modifier,
+        // Edge-to-edge layouts draw underneath Android's 3-button navigation bar.
+        // Keep every tab above that system area while extending the bar colour
+        // behind it; Scaffold also includes this height in the content padding.
+        modifier = modifier.navigationBarsPadding(),
         color = barColor,
         tonalElevation = if (isDarkChrome) 0.dp else 8.dp,
         shadowElevation = 8.dp,
