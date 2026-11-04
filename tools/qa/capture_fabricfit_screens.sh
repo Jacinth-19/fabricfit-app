@@ -131,7 +131,9 @@ capture profile
 tap_label "Saved Styles"
 capture scan-results
 
-tap_label "Profile"
+# Return through the real back stack rather than restoring an older Profile tab state.
+adb shell input keyevent KEYCODE_BACK
+sleep 2
 tap_label "My Fit Closet"
 sleep 1.5
 capture my-fit-closet

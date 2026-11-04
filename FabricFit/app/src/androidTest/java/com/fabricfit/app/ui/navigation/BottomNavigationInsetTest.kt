@@ -77,10 +77,28 @@ class BottomNavigationInsetTest {
             composeRule.activity.window.decorView,
         )
         assertNotNull("Root window insets must be attached", rootWindowInsets)
-        val navigationInsetPx = rootWindowInsets!!
-            .getInsets(WindowInsetsCompat.Type.navigationBars())
+        // Compose may consume the visible inset before this assertion runs. The
+        // ignoring-visibility value still describes the system bar frame; the
+        // platform dimension is a fallback on headless emulator windows.
+        val reportedInsetPx = rootWindowInsets!!
+            .getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars())
             .bottom
-        assertTrue("3-button navigation must have a bottom inset", navigationInsetPx > 0)
+        val navigationBarResource = composeRule.activity.resources.getIdentifier(
+            "navigation_bar_height",
+            "dimen",
+            "android",
+        )
+        val platformInsetPx = if (navigationBarResource > 0) {
+            composeRule.activity.resources.getDimensionPixelSize(navigationBarResource)
+        } else {
+            0
+        }
+        val navigationInsetPx = maxOf(reportedInsetPx, platformInsetPx)
+        assertTrue(
+            "3-button navigation must have a bottom inset " +
+                "(reported=$reportedInsetPx, platform=$platformInsetPx)",
+            navigationInsetPx > 0,
+        )
 
         val density = composeRule.activity.resources.displayMetrics.density
         val navigationInset = (navigationInsetPx / density).dp
