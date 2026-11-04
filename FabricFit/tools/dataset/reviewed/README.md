@@ -46,9 +46,14 @@ Photos where a person dominates and the cloth is a small detail are rejected.
 | --- | --- |
 | `FabricFit/docs/qa/review-round-N/review-index.csv` | every candidate, with source, licence, URL, duplicate flag and decision |
 | `FabricFit/docs/qa/review-round-N/*-review.jpg` | the sheet that was visually inspected for each family |
-| `round-1-decisions.csv` | the reviewer's accept/reject decision and reason per candidate |
-| `round-1/accepted-manifest.csv` | accepted rows only, with licence + provenance |
-| `round-1/reviewed-summary.json` | counts per family and the honest-label disclaimer |
+| `round-N-decisions.csv` | the reviewer's accept/reject decision and reason per candidate |
+| `round-N/accepted-manifest.csv` | accepted rows only, with licence + provenance |
+| `round-N/reviewed-summary.json` | counts per family and the honest-label disclaimer |
+| `accepted-manifest.csv` | the union of every round, de-duplicated by source URL |
+
+Round 1 reviewed 82 candidates (26 accepted). Round 2 reviewed 205 candidates
+(30 accepted). Totals, rejection reasons and the measured classifier result are
+in `FabricFit/docs/qa/reviewed-dataset.md`.
 
 `tools/qa/review_fabric_dataset.py export` refuses to write a manifest while any
 candidate is still `pending` or lacks a licence/source page.
