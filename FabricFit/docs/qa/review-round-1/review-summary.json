@@ -1,0 +1,25 @@
+{
+  "candidates": 82,
+  "automaticDuplicateRejects": 12,
+  "pendingVisualReview": 70,
+  "perClass": {
+    "KENTE": 5,
+    "KENTE_PRINT": 2,
+    "ADINKRA": 5,
+    "WAX": 5,
+    "ANKARA": 5,
+    "BATIK": 5,
+    "TIEDYE": 5,
+    "LACE": 5,
+    "BROCADE": 5,
+    "COTTON_PLAIN": 5,
+    "LINEN": 5,
+    "SILK": 5,
+    "CHIFFON": 5,
+    "VELVET": 5,
+    "DENIM": 5,
+    "FUGU": 5,
+    "GONJA": 5
+  },
+  "instructions": "Inspect every class sheet; change pending decisions to accept or reject. No pending row can be exported."
+}
