@@ -31,26 +31,37 @@ FabricFit supports 17 **appearance families**, not every fabric or cultural
 variation in Ghana or worldwide. The existing `ON_DEVICE_DEMO` status must stay
 until a human-reviewed, leak-free field dataset establishes real performance.
 
-## Real online fabric smoke test
+## Real online fabric smoke tests
 
-The `[fabric-qa]` workflow collects freely licensed photographs from Wikimedia
-Commons and Openverse using the existing license, host-blocklist, decode, size,
-and duplicate gates. It targets every one of the 17 labels and runs the exact
-bundled classifier, weave extractor, and ImageNet OOD model.
+The `[fabric-qa]` workflow runs two deliberately separate diagnostics with the
+exact bundled classifier, weave extractor, and ImageNet OOD model:
 
-Generated outputs:
+1. **Curated source set:** `tools/dataset/qa_real_fabrics.csv` contains one
+   openly licensed textile example for each of the 17 families. Each row was
+   manually selected from its Commons source page to remove obvious search
+   contamination. The evaluator also screens dHash distance against the
+   classifier's catalog training sources to expose possible image leakage.
+   This is a diagnostic smoke test, not expert fiber/heritage verification;
+   GONJA is represented by a Northern Ghana smock proxy.
+2. **Unvetted search set:** the Wikimedia and Openverse scrapers collect up to
+   two search-derived images per family. This set intentionally remains
+   separate because irrelevant and mislabeled results make its raw score unfit
+   as a cleaned accuracy estimate.
+
+Generated curated outputs:
 
 - [`qa/real-fabric-report.md`](qa/real-fabric-report.md) — per-family and
   per-image predictions with source links and licenses.
 - [`qa/real-fabric-report.json`](qa/real-fabric-report.json) — raw top-3 scores,
-  weave metrics, OOD hints, and machine-readable provenance.
+  weave metrics, OOD hints, catalog-leakage screening, and provenance.
 - [`qa/real-fabric-contact-sheet.jpg`](qa/real-fabric-contact-sheet.jpg) —
   attributed visual review sheet; source images retain their original licenses.
 
-This is an **unvetted online smoke test**, not a production accuracy benchmark.
-Search labels can be wrong, photos can show garments rather than close-ups, and
-two images per family cannot cover the variety of real textiles. The reported
-rate is raw classifier top-1 before Android's heuristic/OOD fusion.
+The original broad-search diagnostics are preserved under
+[`qa/online-search/`](qa/online-search/real-fabric-report.md). Neither set is a
+production accuracy benchmark: one or two web images per family cannot cover
+real-world variety, and source descriptions are not independent expert labels.
+Reported rates are raw classifier top-1 before Android's heuristic/OOD fusion.
 
 ## Run it
 
@@ -63,14 +74,14 @@ Or run locally with network access:
 
 ```bash
 python3 -m pip install ai-edge-litert numpy pillow requests certifi
-python3 FabricFit/tools/dataset/scrape/wikimedia.py --per-class 2
-python3 FabricFit/tools/dataset/scrape/openverse.py --per-class 1
+python3 FabricFit/tools/dataset/scrape/manifest.py \
+  FabricFit/tools/dataset/qa_real_fabrics.csv
 python3 tools/qa/fabric_model_qa.py contracts --output qa-artifacts/model-contracts.json
 python3 tools/qa/fabric_model_qa.py online \
-  --data-dir FabricFit/tools/dataset/scraped/wikimedia \
-  --data-dir FabricFit/tools/dataset/scraped/openverse \
+  --data-dir FabricFit/tools/dataset/scraped/manifest \
   --contracts qa-artifacts/model-contracts.json \
-  --output-dir qa-artifacts --per-class 2 --require-all-classes
+  --output-dir qa-artifacts/curated --evaluation-type curated \
+  --per-class 1 --require-all-classes
 ```
 
 Production training still requires the dataset policy in

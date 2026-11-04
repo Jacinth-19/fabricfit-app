@@ -311,17 +311,33 @@ jobs:
           python3 FabricFit/tools/dataset/scrape/openverse.py \
             --per-class 1 --queries-per-class 4 --max-pages 2 --sleep 0.2
 
+      - name: Collect manually curated, openly licensed fabric examples
+        env:
+          FABRICFIT_SCRAPER_CONTACT: https://github.com/Jacinth-19/fabricfit-app
+        run: |
+          rm -rf FabricFit/tools/dataset/scraped/manifest
+          python3 FabricFit/tools/dataset/scrape/manifest.py \
+            FabricFit/tools/dataset/qa_real_fabrics.csv --sleep 0.2
+
       - name: Audit every bundled TFLite model
         run: python3 tools/qa/fabric_model_qa.py contracts --output qa-artifacts/model-contracts.json
 
-      - name: Evaluate textile models on real online fabrics
+      - name: Evaluate models on the unvetted online search set
         run: |
           python3 tools/qa/fabric_model_qa.py online \
             --data-dir FabricFit/tools/dataset/scraped/wikimedia \
             --data-dir FabricFit/tools/dataset/scraped/openverse \
             --contracts qa-artifacts/model-contracts.json \
-            --output-dir qa-artifacts \
-            --per-class 2 --require-all-classes
+            --output-dir qa-artifacts/online-search \
+            --evaluation-type search --per-class 2
+
+      - name: Evaluate models on curated real online fabrics
+        run: |
+          python3 tools/qa/fabric_model_qa.py online \
+            --data-dir FabricFit/tools/dataset/scraped/manifest \
+            --contracts qa-artifacts/model-contracts.json \
+            --output-dir qa-artifacts/curated \
+            --evaluation-type curated --per-class 1 --require-all-classes
 
       - name: Upload model and real-fabric QA reports
         if: always()
@@ -332,20 +348,26 @@ jobs:
             qa-artifacts/
             FabricFit/tools/dataset/scraped/wikimedia/CREDITS.csv
             FabricFit/tools/dataset/scraped/openverse/CREDITS.csv
+            FabricFit/tools/dataset/scraped/manifest/CREDITS.csv
           if-no-files-found: warn
 
-      - name: Commit QA reports and attributed contact sheet
+      - name: Commit QA reports and attributed contact sheets
         if: always()
         run: |
           set -e
-          if [ ! -f qa-artifacts/real-fabric-report.json ]; then
-            echo 'No online report was generated; nothing to commit.'
+          if [ ! -f qa-artifacts/curated/real-fabric-report.json ]; then
+            echo 'No curated online report was generated; nothing to commit.'
             exit 0
           fi
-          mkdir -p FabricFit/docs/qa
+          mkdir -p FabricFit/docs/qa/online-search
           cp qa-artifacts/model-contracts.json qa-artifacts/model-contracts.md FabricFit/docs/qa/
-          cp qa-artifacts/real-fabric-report.json qa-artifacts/real-fabric-report.md \
-            qa-artifacts/real-fabric-contact-sheet.jpg FabricFit/docs/qa/
+          cp qa-artifacts/curated/real-fabric-report.json qa-artifacts/curated/real-fabric-report.md \
+            qa-artifacts/curated/real-fabric-contact-sheet.jpg FabricFit/docs/qa/
+          if [ -f qa-artifacts/online-search/real-fabric-report.json ]; then
+            cp qa-artifacts/online-search/real-fabric-report.json \
+              qa-artifacts/online-search/real-fabric-report.md \
+              qa-artifacts/online-search/real-fabric-contact-sheet.jpg FabricFit/docs/qa/online-search/
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add FabricFit/docs/qa/

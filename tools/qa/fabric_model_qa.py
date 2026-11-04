@@ -248,14 +248,28 @@ def make_contact_sheet(results: list[dict], output: Path) -> None:
 
 def online_markdown(report: dict) -> str:
     summary = report["summary"]
+    curated = report.get("evaluationType", "").startswith("manually curated")
+    methodology = (
+        [
+            "> **Not a production accuracy claim.** These freely licensed Commons images were",
+            "> manually selected from source descriptions and visually reviewed to remove obvious",
+            "> search contamination. They are not expert fiber/heritage certifications; Gonja is",
+            "> represented by a Northern Ghana smock proxy. One photo per family is only a",
+            "> diagnostic smoke test, not a validation set or a measure of real-world accuracy.",
+        ]
+        if curated
+        else [
+            "> **Not a production accuracy claim.** These are freely licensed, search-derived",
+            "> online photos with unvetted labels. Obvious irrelevant and mislabeled search results",
+            "> remain in this diagnostic set. Do not interpret its score as cleaned model accuracy.",
+        ]
+    )
     lines = [
-        "# Real online fabric smoke test",
+        "# Curated real online fabric smoke test" if curated else "# Unvetted online fabric search smoke test",
         "",
         f"Generated: `{report['generatedAt']}`",
         "",
-        "> **Not a production accuracy claim.** These are freely licensed, search-derived",
-        "> online photos with unvetted labels. The test exercises the exact bundled TFLite",
-        "> models, but a few web images per family cannot represent all real-world fabrics.",
+        *methodology,
         "> The result below is raw classifier top-1, before Android's heuristic/OOD fusion.",
         "",
         f"- Model contract audit: **{report['contractSummary']}**",
@@ -264,6 +278,8 @@ def online_markdown(report: dict) -> str:
         f"- Raw classifier top-1 agreement: **{summary['top1Agreement']:.3f}** "
         f"({summary['correctImages']}/{summary['evaluatedImages'] or 1})",
         f"- Missing families: **{', '.join(summary['missingClasses']) or 'none'}**",
+        f"- Near-duplicates of classifier training/catalog images (dHash ≤ 6): "
+        f"**{summary.get('catalogNearDuplicateImages', 0)}**",
         "",
         "The app remains an `ON_DEVICE_DEMO`; this smoke result must not be used as an",
         "advertised accuracy metric. Production validation needs hundreds to thousands of",
@@ -299,9 +315,45 @@ def online_markdown(report: dict) -> str:
     return "\n".join(lines)
 
 
+def difference_hash(path: Path) -> int:
+    """Match the dataset scraper's 64-bit dHash for catalog leakage screening."""
+    with Image.open(path) as source:
+        image = ImageOps.exif_transpose(source).convert("L").resize((9, 8))
+    pixels = image.tobytes()
+    value = 0
+    for y in range(8):
+        for x in range(8):
+            value = (value << 1) | int(pixels[y * 9 + x] > pixels[y * 9 + x + 1])
+    return value
+
+
+def catalog_hashes() -> list[tuple[str, int]]:
+    """Images used as classifier training sources in tools/build_ai_models.py."""
+    paths = sorted((ASSETS / "catalog/fabrics").glob("*.jpg"))
+    paths += [
+        ASSETS / "catalog/heritage" / name
+        for name in (
+            "swatch_ankara.jpg", "swatch_batik.jpg", "swatch_kente.jpg",
+            "swatch_lace.jpg", "scan_kente_closeup.jpg", "hero_kente_folds.jpg",
+        )
+    ]
+    return [(str(path.relative_to(ASSETS)), difference_hash(path)) for path in paths if path.exists()]
+
+
+def nearest_catalog_image(path: Path, catalog: list[tuple[str, int]]) -> dict:
+    image_hash = difference_hash(path)
+    name, distance = min(
+        ((name, (image_hash ^ other).bit_count()) for name, other in catalog),
+        key=lambda item: item[1],
+        default=("", 64),
+    )
+    return {"path": name, "dHashDistance": distance, "nearDuplicate": distance <= 6}
+
+
 def run_online(args: argparse.Namespace) -> int:
     data_dirs = [Path(p).resolve() for p in args.data_dir]
     classes = load_labels("ghanaian_fabric_labels.txt")
+    catalog = catalog_hashes()
     imagenet_labels = load_labels("imagenet_labels.txt")
     selected, missing = select_images(data_dirs, classes, args.per_class)
     credits = read_credits(data_dirs)
@@ -331,6 +383,7 @@ def run_online(args: argparse.Namespace) -> int:
                 ood_index = 1 + int(np.argmax(ood_scores[1:]))
                 credit = credits.get((cls, path.name), {})
                 predicted = top3[0]["label"]
+                catalog_match = nearest_catalog_image(path, catalog)
                 results.append({
                     "expected": cls,
                     "predicted": predicted,
@@ -350,6 +403,11 @@ def run_online(args: argparse.Namespace) -> int:
                     "license": credit.get("license", ""),
                     "landingUrl": credit.get("landing_url", ""),
                     "fileUrl": credit.get("file_url", ""),
+                    "catalogNearest": {
+                        "path": catalog_match["path"],
+                        "dHashDistance": catalog_match["dHashDistance"],
+                    },
+                    "catalogNearDuplicate": catalog_match["nearDuplicate"],
                 })
                 print(f"{cls}: -> {predicted} ({top3[0]['score']:.3f}) [{path.name}]")
             except Exception as exc:  # keep a complete report for diagnosis
@@ -368,9 +426,17 @@ def run_online(args: argparse.Namespace) -> int:
             "agreement": cls_correct / len(rows) if rows else 0.0,
         }
     contract_data = json.loads(Path(args.contracts).read_text()) if args.contracts else None
+    curated = args.evaluation_type == "curated"
     report = {
         "generatedAt": now(),
-        "evaluationType": "unvetted freely licensed online real-photo smoke test",
+        "evaluationType": (
+            "manually curated freely licensed online real-textile smoke test"
+            if curated else "unvetted freely licensed online real-photo smoke test"
+        ),
+        "labelReview": (
+            "manual source-description and visual review; not expert fiber/heritage verification"
+            if curated else "none; search-derived labels include known irrelevant and mislabeled images"
+        ),
         "notProductionAccuracy": True,
         "fusionIncluded": False,
         "contractSummary": (
@@ -384,6 +450,7 @@ def run_online(args: argparse.Namespace) -> int:
             "evaluatedImages": len(results),
             "correctImages": correct,
             "top1Agreement": correct / len(results) if results else 0.0,
+            "catalogNearDuplicateImages": sum(1 for row in results if row["catalogNearDuplicate"]),
             "inferenceErrors": errors,
         },
         "perClass": per_class,
@@ -430,6 +497,10 @@ def main() -> int:
     online.add_argument("--contracts", help="contract JSON from the contracts command")
     online.add_argument("--output-dir", required=True)
     online.add_argument("--per-class", type=int, default=2)
+    online.add_argument(
+        "--evaluation-type", choices=("search", "curated"), default="search",
+        help="controls methodology labels; curated means manually selected and visually reviewed",
+    )
     online.add_argument("--require-all-classes", action="store_true")
     args = parser.parse_args()
     if args.command == "contracts":
