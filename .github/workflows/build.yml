@@ -247,8 +247,10 @@ jobs:
           SCREENSHOT_ABI: '1'
         with:
           api-level: 33
-          target: default
+          target: google_apis
           arch: x86_64
+          profile: pixel_2
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           working-directory: FabricFit
           script: >
             export SCREENSHOT_ABI=1 &&
