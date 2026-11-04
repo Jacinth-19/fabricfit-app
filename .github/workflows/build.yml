@@ -460,6 +460,86 @@ jobs:
             git push origin "HEAD:$GITHUB_REF_NAME"
           fi
 
+  # Train the candidate classifier from the manually reviewed manifest only.
+  # Leak-free splits come from prepare_kaggle.py, evaluation uses an untouched
+  # test split, and the TFLite file is uploaded as an artifact — app assets are
+  # never modified here.
+  fabric-train:
+    if: >-
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, '[fabric-train]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install training dependencies
+        run: python3 -m pip install --disable-pip-version-check pillow requests certifi tensorflow-cpu==2.20.0
+      - name: Verify every reviewed row has provenance
+        run: |
+          python3 - <<'PY'
+          import csv, sys
+          rows = list(csv.DictReader(open("FabricFit/tools/dataset/reviewed/accepted-manifest.csv", newline="", encoding="utf-8")))
+          if not rows:
+              sys.exit("::error::accepted manifest is empty")
+          missing = [r for r in rows if not all(r.get(k) for k in ("url", "label", "license", "source_page"))]
+          if missing:
+              sys.exit(f"::error::{len(missing)} accepted rows lack url/license/source provenance")
+          print(f"{len(rows)} provenance-complete accepted rows")
+          PY
+      - name: Stage only the reviewed photos
+        run: |
+          mkdir -p qa-artifacts/staging/reviewed
+          python3 FabricFit/tools/dataset/scrape/manifest.py \
+            FabricFit/tools/dataset/reviewed/accepted-manifest.csv
+          mv FabricFit/tools/dataset/scraped/manifest/* qa-artifacts/staging/reviewed/
+      - name: Build leak-free train/validation/test splits
+        run: |
+          mkdir -p qa-artifacts/staging
+          python3 FabricFit/tools/dataset/prepare_kaggle.py \
+            --raw-dir qa-artifacts/empty-raw \
+            --scraped-dir qa-artifacts/staging \
+            --out qa-artifacts/dataset --force
+      - name: Train and evaluate on the untouched test split
+        run: |
+          python3 tools/qa/train_fabric_candidate.py \
+            --data-dir qa-artifacts/dataset \
+            --report-dir FabricFit/docs/qa/candidate \
+            --out qa-artifacts/candidate/ghanaian_fabric_classifier_candidate.tflite \
+            > qa-artifacts/train.log 2>&1 || cp qa-artifacts/train.log FabricFit/docs/qa/candidate/train.log
+          tail -60 qa-artifacts/train.log
+          test -f FabricFit/docs/qa/candidate/candidate-report.md
+      - name: Upload the candidate model (never installed automatically)
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fabricfit-candidate-classifier
+          path: |
+            qa-artifacts/candidate/
+            FabricFit/docs/qa/candidate/
+            qa-artifacts/train.log
+          if-no-files-found: warn
+      - name: Commit the candidate evaluation
+        if: always()
+        run: |
+          set -euxo pipefail
+          test -f FabricFit/docs/qa/candidate/candidate-report.md
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add FabricFit/docs/qa/candidate/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: record candidate classifier on manually reviewed photos [skip ci]"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
   # The job commits the refreshed PNGs back to the branch that triggered it.
