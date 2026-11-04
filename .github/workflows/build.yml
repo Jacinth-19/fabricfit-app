@@ -486,23 +486,46 @@ jobs:
       - name: Download every shard
         uses: actions/download-artifact@v7
         with:
+          # No merge: each shard owns its own CREDITS.csv, and merging the
+          # directories would silently overwrite every shard's provenance but one.
           pattern: fabricfit-candidates-shard-*
           path: qa-artifacts/candidates
-          merge-multiple: true
+      - name: Verify every candidate still has a credits row
+        run: |
+          python3 - <<'PY'
+          import csv, sys
+          from pathlib import Path
+          problems = []
+          for credits in Path("qa-artifacts/candidates").glob("*/**/CREDITS.csv"):
+              rows = list(csv.DictReader(credits.open(newline="", encoding="utf-8")))
+              names = {row["filename"] for row in rows}
+              for image in credits.parent.glob("*/*.jpg"):
+                  if image.name not in names:
+                      problems.append(f"{credits.parent.name}/{image.parent.name}/{image.name}")
+              missing = [r for r in rows
+                         if not all(r.get(k) for k in ("file_url", "license", "landing_url"))]
+              if missing:
+                  problems.append(f"{credits}: {len(missing)} rows missing url/licence/landing")
+          if problems:
+              print("::error::provenance lost for " + str(len(problems)) + " candidates")
+              print("\n".join(problems[:20]))
+              sys.exit(1)
+          print("every candidate has complete provenance")
+          PY
       - name: Generate per-class visual review sheets
         run: |
           arguments=()
-          for directory in qa-artifacts/candidates/*/; do
+          for directory in qa-artifacts/candidates/*/*/; do
             [ -d "$directory" ] && arguments+=(--data-dir "$directory")
           done
           echo "data dirs: ${arguments[*]}"
           python3 tools/qa/review_fabric_dataset.py sheets "${arguments[@]}" \
-            --output-dir qa-artifacts/review-round-2
+            --output-dir qa-artifacts/review-round-3
       - name: Upload review sheets and candidate images
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: fabricfit-review-round-2
+          name: fabricfit-review-round-3
           path: |
             qa-artifacts/review-round-2/
             qa-artifacts/candidates/
@@ -511,14 +534,56 @@ jobs:
         if: always()
         run: |
           set -euxo pipefail
-          test -f qa-artifacts/review-round-2/review-index.csv
-          mkdir -p FabricFit/docs/qa/review-round-2
-          cp qa-artifacts/review-round-2/* FabricFit/docs/qa/review-round-2/
+          test -f qa-artifacts/review-round-3/review-index.csv
+          mkdir -p FabricFit/docs/qa/review-round-3
+          cp qa-artifacts/review-round-3/* FabricFit/docs/qa/review-round-3/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add FabricFit/docs/qa/review-round-2/
+          git add FabricFit/docs/qa/review-round-3/
           if ! git diff --cached --quiet; then
             git commit -m "docs: collect fabric candidates for manual review [skip ci]"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+
+  # Recover provenance that a sharded collection round lost by merging
+  # CREDITS.csv files. Licences are re-read from the source; a row whose licence
+  # does not pass the free-licence gate is never written.
+  fabric-provenance:
+    if: >-
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, '[fabric-provenance]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: python3 -m pip install --disable-pip-version-check pillow requests certifi
+      - name: Re-read licence and source page from Wikimedia Commons
+        run: |
+          set -euxo pipefail
+          for index in FabricFit/docs/qa/review-round-*/review-index.csv; do
+            directory=$(dirname "$index")
+            python3 tools/qa/fill_missing_provenance.py --index "$index" \
+              --out "$directory/provenance-overrides.csv" \
+              || echo "::warning::some rows could not be recovered for $index"
+          done
+      - name: Commit the recovered provenance
+        run: |
+          set -euxo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add FabricFit/docs/qa/review-round-*/provenance-overrides.csv
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: recover source licence for reviewed candidates [skip ci]"
             git pull --rebase origin "$GITHUB_REF_NAME"
             git push origin "HEAD:$GITHUB_REF_NAME"
           fi

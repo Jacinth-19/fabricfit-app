@@ -1,0 +1,206 @@
+id,decision,reason
+R001,reject,already accepted in round 1 (same source image)
+R002,reject,already accepted in round 1 (same source image)
+R003,reject,already accepted in round 1 (same source image)
+R004,reject,already accepted in round 1 (same source image)
+R005,reject,duplicate of the WAX photo accepted in round 1
+R006,reject,already accepted in round 1 (same source image)
+R007,reject,already accepted in round 1 (same source image)
+R008,reject,already accepted in round 1 (same source image)
+R009,reject,already accepted in round 1 (same source image)
+R010,reject,"raw cotton fibre, not woven cloth"
+R011,reject,already accepted in round 1 (same source image)
+R012,reject,"glove object, not fabric surface"
+R013,reject,already accepted in round 1 (same source image)
+R014,reject,already accepted in round 1 (same source image)
+R015,reject,"CGI texture render, not a photograph of cloth"
+R016,reject,already accepted in round 1 (same source image)
+R017,reject,already accepted in round 1 (same source image)
+R018,reject,"crowd scene, people dominate"
+R019,reject,"dancers, people dominate"
+R020,reject,"dancers, people dominate"
+R021,reject,"dancer photo, person dominates frame"
+R022,reject,near duplicate of R001
+R023,reject,already accepted in round 1 (same source image)
+R024,reject,already accepted in round 1 under KENTE_PRINT
+R025,reject,"two people posing, cloth incidental"
+R026,accept,"kente cloth, MET, fabric fills frame"
+R027,reject,"same museum object as R026, detail variant"
+R028,accept,"kente-pattern stoles, garment product view"
+R029,reject,selfie; fabric incidental
+R030,reject,plain white trousers; mislabeled
+R031,reject,"calabash stamps are tools, not cloth"
+R032,reject,already accepted in round 1 (same source image)
+R033,reject,"symbol chart, not cloth"
+R034,reject,near duplicate of R003
+R035,reject,person printing cloth outdoors
+R036,reject,digital symbol graphic
+R037,reject,digital symbol graphic
+R038,reject,symbol chart
+R039,accept,Ntonso adinkra cloth laid out
+R040,accept,Ntonso adinkra comb-printed cloth
+R041,reject,"ink pots and hands, not cloth"
+R042,reject,digital symbol graphic
+R043,reject,monument photo
+R044,reject,museum interior
+R045,reject,portrait; fabric incidental
+R046,reject,"choir on stage, people dominate"
+R047,reject,museum building
+R048,reject,crowd scene
+R049,reject,"wrestling, people dominate"
+R050,reject,performance scene
+R051,reject,astronomy photo
+R052,reject,sculpture
+R053,reject,already accepted in round 1 (same source image)
+R054,reject,near duplicate of R004
+R055,reject,"festival crowd, people dominate"
+R056,reject,museum interior
+R057,reject,"Turkish kilim; 'Ankara' here is the city, mislabeled"
+R058,reject,manuscript page
+R059,reject,manuscript page
+R060,reject,carved stone portal
+R061,reject,already accepted in round 1 (same source image)
+R062,reject,"person holding a bag, not fabric"
+R063,reject,person collage panel
+R064,reject,person-dominant dress photo
+R065,reject,"wrestling, people dominate"
+R066,reject,parade with tractors
+R067,reject,near duplicate of R006
+R068,reject,shop interior with person
+R069,reject,"historical workshop photo, people dominate"
+R070,reject,"historical workshop photo, people dominate"
+R071,reject,"historical workshop photo, people dominate"
+R072,reject,"historical workshop photo, people dominate"
+R073,reject,"historical workshop photo, people dominate"
+R074,reject,"historical workshop photo, people dominate"
+R075,reject,"historical workshop photo, people dominate"
+R076,reject,"historical workshop photo, people dominate"
+R077,reject,"historical workshop photo, people dominate"
+R078,reject,"historical workshop photo, people dominate"
+R079,reject,near duplicate of R007
+R080,reject,same museum display object as R081
+R081,accept,Bai tie-dyed textile closeup
+R082,reject,"craft object, not cloth"
+R083,reject,building exterior
+R084,reject,"craft circles, not tie-dye cloth"
+R085,reject,madras plaid; not tie-dye
+R086,reject,madras plaid; not tie-dye
+R087,reject,"dyed silk, not a tie-dye pattern"
+R088,reject,unlabeled fabric scraps
+R089,reject,tent/building
+R090,reject,fabric shaver device
+R091,reject,"engraving, not a fabric photograph"
+R092,reject,watermarked product shot
+R093,reject,already accepted in round 1 (same source image)
+R094,accept,african lace fabric display
+R095,reject,not lace; dark wax-lace cloth
+R096,reject,"garment, not lace fabric"
+R097,reject,"mannequins, not lace"
+R098,reject,"person modelling, fabric incidental"
+R099,accept,white lace closeup
+R100,reject,"museum display case, little fabric"
+R101,reject,near duplicate of R008
+R102,reject,portrait; lace incidental
+R103,reject,already accepted in round 1 (same source image)
+R104,reject,"loom/machinery, no fabric closeup"
+R105,reject,building/courtyard
+R106,reject,interior
+R107,accept,pink brocade gown on mannequin
+R108,reject,already accepted in round 1 (same source image)
+R109,reject,institute building
+R110,accept,"brocade textile, geometric floral meanders"
+R111,accept,woven floral textile fragment
+R112,accept,woven red textile fragment
+R113,accept,woven cream/gold textile fragment
+R114,reject,"same museum object as R113, other side"
+R115,accept,plain-weave cotton breechcloth
+R116,reject,person holding muslin scraps
+R117,reject,duck
+R118,accept,plain cotton muslin on fitting dummy
+R119,reject,stage performance with cloth
+R120,reject,duck
+R121,accept,plain-weave cotton mantle
+R122,reject,"painted mask object, not plain cotton"
+R123,reject,book title page
+R124,reject,portrait
+R125,accept,plain-weave cotton tunic
+R126,reject,already accepted in round 1 (same source image)
+R127,reject,object of uncertain material
+R128,reject,"black-and-white archival copy, material unclear"
+R129,reject,workshop interior
+R130,accept,linen garment fabric detail
+R131,reject,near duplicate of R011
+R132,reject,"beaded craft, not linen cloth"
+R133,accept,"wool and linen fabric, 8th century"
+R134,reject,"person at work, cloth incidental"
+R135,accept,"linen shoulder cloth, large flat cloth"
+R136,reject,museum bowl
+R137,reject,paper sample card
+R138,accept,linen closeup
+R139,accept,silk brocade furnishing fabric
+R140,reject,"silk in a beaker, not a fabric view"
+R141,accept,dupioni silk fabric stack
+R142,reject,already accepted in round 1 (same source image)
+R143,accept,persian silk brocade panel
+R144,accept,rajshahi silk fabric
+R145,reject,duplicate of the BROCADE image accepted in round 1
+R146,reject,room interior
+R147,reject,near duplicate of R012
+R148,reject,"museum room of textiles, little fabric"
+R149,reject,"fur coat, not silk cloth"
+R150,reject,weaving room interior
+R151,accept,chiffon dress on mannequin
+R152,reject,cake
+R153,accept,chiffon gown on mannequin
+R154,accept,chiffon gown on mannequin
+R155,accept,green chiffon gown with cape
+R156,reject,"person on runway, fabric incidental"
+R157,reject,cake
+R158,reject,portrait
+R159,reject,cake batter
+R160,reject,cake
+R161,reject,fashion illustration
+R162,reject,already accepted in round 1 (same source image)
+R163,accept,blue velvet closeup
+R164,reject,already accepted in round 1 (same source image)
+R165,reject,same exhibit as the round-1 velvet reject
+R166,accept,red velvet jacket on mannequin
+R167,reject,near duplicate of R014
+R168,reject,already accepted in round 1 (same source image)
+R169,reject,"narrow cut-out strip, little fabric"
+R170,reject,plain weave; does not look like velvet pile
+R171,reject,"damask fragment, not velvet"
+R172,accept,velvet textile sample with pile
+R173,accept,velvet textile sample with pattern
+R174,accept,yellow velvet textile sample
+R175,reject,"CGI texture render, not a photograph of cloth"
+R176,reject,"CGI texture render, not a photograph of cloth"
+R177,reject,near duplicate of R176
+R178,reject,"CGI texture render, not a photograph of cloth"
+R179,reject,near duplicate CGI variant
+R180,reject,"CGI texture render, not a photograph of cloth"
+R181,reject,"CGI texture render, not a photograph of cloth"
+R182,reject,"CGI texture render, not a photograph of cloth"
+R183,reject,near duplicate of R176
+R184,reject,"CGI texture render, not a photograph of cloth"
+R185,reject,"CGI texture render, not a photograph of cloth"
+R186,reject,near duplicate of R177
+R187,reject,near duplicate of R016
+R188,reject,already accepted in round 1 (same source image)
+R189,reject,same scene as the round-1 smock photo
+R190,reject,same scene as the round-1 smock photo
+R191,accept,fugu smock fabric laid out during hand stitching
+R192,reject,same sewing session as R191
+R193,reject,same sewing session as R191
+R194,reject,same sewing session as R191
+R195,reject,same sewing session as R191
+R196,reject,same sewing session as R191
+R197,reject,same sewing session as R191
+R198,reject,"people sewing, cloth incidental"
+R199,reject,bird
+R200,reject,animal footprint
+R201,reject,tree
+R202,reject,camera-trap photo of a genet
+R203,reject,park landscape
+R204,reject,elephants
+R205,reject,elephant

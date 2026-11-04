@@ -167,6 +167,12 @@ def read_csv(path: Path) -> list[dict]:
 def export(args: argparse.Namespace) -> int:
     rows = read_csv(Path(args.index))
     overrides = {row["id"]: row for row in read_csv(Path(args.decisions))} if args.decisions else {}
+    # Provenance recovered from the source's own metadata (used only when the
+    # staged credits row is incomplete). Decisions never live in this file.
+    provenance = {}
+    for path in args.provenance or []:
+        for row in read_csv(Path(path)):
+            provenance[row["id"]] = row
     output = Path(args.output_dir)
     output.mkdir(parents=True, exist_ok=True)
     accepted = []
@@ -181,6 +187,12 @@ def export(args: argparse.Namespace) -> int:
             continue
         counts[row["label"]][decision] += 1
         if decision == "accept":
+            for key, column in (("file_url", "url"), ("license", "license"),
+                                ("landing_url", "source_page"), ("title", "title"),
+                                ("creator", "creator")):
+                recovered = (provenance.get(row["id"]) or {}).get(column)
+                if recovered and not row.get(key):
+                    row[key] = recovered
             if not row.get("file_url") or not row.get("license") or not row.get("landing_url"):
                 print(f"::error::{row['id']} lacks URL/license/provenance; reject it instead")
                 pending.append(row["id"])
@@ -229,6 +241,9 @@ def main() -> int:
     apply = commands.add_parser("export")
     apply.add_argument("--index", required=True)
     apply.add_argument("--decisions", help="optional override CSV with id,decision,reason")
+    apply.add_argument("--provenance", action="append",
+                       help="optional CSV with id,url,license,source_page,title,creator for "
+                            "candidates whose staged credits row was incomplete")
     apply.add_argument("--output-dir", required=True)
     apply.add_argument("--allow-pending", action="store_true")
     apply.set_defaults(function=export)
