@@ -112,9 +112,9 @@ by tapping its real label, and `adb screencap` writes the frame straight into
 photo editing — if the UI changes, the pictures change with it on the next run.
 
 These captures track the branch that triggered the screenshot job. The
-[downloadable release](#download-the-apk) is updated only when a new version is
-tagged or the workflow is manually dispatched, so a newer branch can temporarily
-be ahead of the latest published APK.
+[downloadable release](#download-the-apk) is updated only for a version tag,
+manual dispatch, or `[release]` commit, so a newer branch can temporarily be
+ahead of the latest published APK.
 
 <table>
   <tr>
@@ -140,9 +140,9 @@ be ahead of the latest published APK.
 ## Download the APK
 
 Every push and pull request is compiled and tested by GitHub Actions. The
-minified **release build** is published to GitHub Releases on version tags or
-manual workflow dispatch; ordinary branch builds upload CI artifacts without
-replacing the public release.
+minified **release build** is published to GitHub Releases on version tags,
+manual workflow dispatch, or a branch commit marked `[release]`; ordinary branch
+builds upload CI artifacts without replacing the public release.
 
 > ### 👉 [Download FabricFit v1.0.1 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
 >
@@ -176,7 +176,7 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 | Job | Trigger | What it does |
 | --- | --- | --- |
 | `verify` | every push & PR (paths under `FabricFit/**`) | `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`, then uploads the debug APK and test reports. Gradle failures are annotated inline on the commit. |
-| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags or manual dispatch. |
+| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags, manual dispatch, or a push whose commit message contains `[release]`. |
 | `device-qa` | manual, weekly, or on `v*` tags | Linux runner (`ubuntu-latest`) with KVM & `SCREENSHOT_ABI=1`: boots an API 33 `x86_64` emulator and runs `PersonSegmenterDeviceTest`. |
 | `screenshots` | manual dispatch, or any push whose commit message contains `[screenshots]` | Boots an API 33 emulator, drives the app, and commits fresh PNGs to `FabricFit/docs/screenshots/`. |
 
