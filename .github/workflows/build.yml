@@ -388,6 +388,78 @@ jobs:
             git push origin "HEAD:$GITHUB_REF_NAME"
           fi
 
+  # Collect a larger candidate pool and commit visual review sheets. Nothing in
+  # this job trains on an image: every candidate must first be accepted/rejected
+  # in review-index.csv and exported to a fixed, provenance-preserving manifest.
+  fabric-review:
+    if: >-
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, '[fabric-review]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install image and scraper dependencies
+        run: python3 -m pip install --disable-pip-version-check pillow requests certifi
+      - name: Verify dataset scraper safety rails
+        run: python3 FabricFit/tools/dataset/scrape/selftest.py
+      - name: Collect review candidates from licensed online sources
+        env:
+          FABRICFIT_SCRAPER_CONTACT: https://github.com/Jacinth-19/fabricfit-app
+        run: |
+          rm -rf FabricFit/tools/dataset/scraped/wikimedia \
+            FabricFit/tools/dataset/scraped/openverse \
+            FabricFit/tools/dataset/scraped/manifest
+          python3 FabricFit/tools/dataset/scrape/manifest.py \
+            FabricFit/tools/dataset/qa_real_fabrics.csv --sleep 0.1
+          python3 FabricFit/tools/dataset/scrape/manifest.py \
+            FabricFit/tools/dataset/qa_real_fabrics.csv --only-missing --sleep 0.1
+          python3 FabricFit/tools/dataset/scrape/wikimedia.py \
+            --per-class 4 --queries-per-class 4 --max-pages 3 --sleep 0.1
+          python3 FabricFit/tools/dataset/scrape/openverse.py \
+            --per-class 4 --queries-per-class 4 --max-pages 3 --sleep 0.1
+      - name: Generate per-class visual review sheets
+        run: |
+          python3 tools/qa/review_fabric_dataset.py sheets \
+            --data-dir FabricFit/tools/dataset/scraped/manifest \
+            --data-dir FabricFit/tools/dataset/scraped/wikimedia \
+            --data-dir FabricFit/tools/dataset/scraped/openverse \
+            --output-dir qa-artifacts/review-round-1
+      - name: Upload review candidates and provenance index
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fabricfit-fabric-review-round-1
+          path: |
+            qa-artifacts/review-round-1/
+            FabricFit/tools/dataset/scraped/manifest/CREDITS.csv
+            FabricFit/tools/dataset/scraped/wikimedia/CREDITS.csv
+            FabricFit/tools/dataset/scraped/openverse/CREDITS.csv
+          if-no-files-found: warn
+      - name: Commit visual review sheets and decision index
+        if: always()
+        run: |
+          set -euxo pipefail
+          test -f qa-artifacts/review-round-1/review-index.csv
+          mkdir -p FabricFit/docs/qa/review-round-1
+          cp qa-artifacts/review-round-1/* FabricFit/docs/qa/review-round-1/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add FabricFit/docs/qa/review-round-1/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: collect fabric candidates for manual review [skip ci]"
+            git pull --rebase origin "$GITHUB_REF_NAME"
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
+
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
   # The job commits the refreshed PNGs back to the branch that triggered it.
