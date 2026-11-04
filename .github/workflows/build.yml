@@ -178,9 +178,13 @@ jobs:
           if gh release view "$tag" >/dev/null 2>&1; then
             gh release upload "$tag" dist/* --clobber
           else
+            # Pin a newly created tag to the exact revision compiled in this job.
+            # Without --target, a manual release from a branch can tag the
+            # repository's default branch while publishing branch-built assets.
             gh release create "$tag" dist/* \
+              --target "$GITHUB_SHA" \
               --title "FabricFit ${tag}" \
-              --notes "Signed release build produced by GitHub Actions run ${GITHUB_RUN_ID}."
+              --notes "Signed release build produced by GitHub Actions run ${GITHUB_RUN_ID} from commit ${GITHUB_SHA}."
           fi
           echo "Published $tag"
 
