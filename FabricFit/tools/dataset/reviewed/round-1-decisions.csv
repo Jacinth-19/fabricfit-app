@@ -13,7 +13,7 @@ R011,accept,linen Coptic textile fragment
 R012,reject,"knitted glove object, not a fabric surface"
 R013,accept,printed silk chiffon dress detail
 R014,accept,"ornamental velvet covering, texture visible"
-R015,accept,denim fabric draped
+R015,reject,"CGI albedo texture render (Poly Haven), not a photograph of cloth"
 R016,accept,Ghanaian fugu smock dress
 R017,accept,Gonja-style striped northern smock
 R018,reject,"dancer photo, person dominates frame"

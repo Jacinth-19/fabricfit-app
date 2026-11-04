@@ -19,7 +19,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import difflib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -52,6 +54,67 @@ def title_candidates(filename: str, label: str) -> list[str]:
             seen.add(name.lower())
             unique.append(name)
     return unique
+
+
+def normalise(text: str) -> str:
+    """Lowercase and drop everything but letters/digits, to compare titles."""
+    return re.sub(r"[^a-z0-9]+", "", text.lower())
+
+
+def search_match(session, row: dict, sleep: float):
+    """Fallback: ask Commons to search the sanitised file name, then compare titles.
+
+    Sanitising a title for disk mangled punctuation (commas, en dashes) for some
+    files, so an exact title lookup cannot succeed for them. A search hit is only
+    accepted when one candidate matches the sanitised stem closely and uniquely.
+    """
+    stem = row["filename"][:-4] if row["filename"].lower().endswith(".jpg") else row["filename"]
+    stem = stem[len(f"{row['label']}_"):] if stem.startswith(f"{row['label']}_") else stem
+    query = re.sub(r"[_.]+", " ", stem).strip()
+    params = {
+        "action": "query", "generator": "search", "gsrsearch": query,
+        "gsrnamespace": 6, "gsrlimit": 10, "prop": "imageinfo",
+        "iiprop": "url|extmetadata|size", "iiurlwidth": 2048,
+        "format": "json", "formatversion": 2,
+    }
+    try:
+        payload = json.loads(common.fetch_bytes(session, API, params=params))
+    except Exception as error:
+        print(f"  ! search failed for {row['id']}: {error}")
+        return None
+    common.polite_sleep(sleep)
+    wanted = normalise(stem)
+    scored = []
+    for page in payload.get("query", {}).get("pages", []) or []:
+        info = (page.get("imageinfo") or [None])[0]
+        if not info:
+            continue
+        title = page.get("title", "").replace("File:", "")
+        scored.append((difflib.SequenceMatcher(None, wanted, normalise(title)).ratio(), title, info))
+    if not scored:
+        return None
+    scored.sort(reverse=True, key=lambda item: item[0])
+    if scored[0][0] < 0.85:
+        return None
+    if len(scored) > 1 and scored[1][0] >= scored[0][0] - 0.02:
+        print(f"  ? {row['id']}: ambiguous search match, skipped")
+        return None
+    _, title, info = scored[0]
+    ext = info.get("extmetadata") or {}
+    licence = common.norm_license(
+        (ext.get("LicenseShortName") or {}).get("value", "")
+        or (ext.get("License") or {}).get("value", "")
+    )
+    if not licence:
+        return "unlicensed"
+    return {
+        "id": row["id"],
+        "url": info.get("url", ""),
+        "license": licence,
+        "source_page": info.get("descriptionurl", ""),
+        "title": title,
+        "creator": common.strip_html((ext.get("Artist") or {}).get("value", "")),
+    }
 
 
 def main() -> int:
@@ -111,6 +174,14 @@ def main() -> int:
                 break
             if found:
                 break
+        if found is None:
+            # exact title lookups miss files whose title punctuation was
+            # sanitised on disk; fall back to a fuzzy, unique search hit.
+            fallback = search_match(session, row, args.sleep)
+            if fallback == "unlicensed":
+                failed.append((row["id"], "licence at source does not pass the free-licence gate"))
+            elif fallback:
+                found = fallback
         if isinstance(found, dict):
             recovered.append(found)
             print(f"  + {row['id']} <- {found['title']} [{found['license']}]")

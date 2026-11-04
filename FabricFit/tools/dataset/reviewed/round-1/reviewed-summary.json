@@ -1,6 +1,6 @@
 {
-  "accepted": 27,
-  "rejected": 55,
+  "accepted": 26,
+  "rejected": 56,
   "pending": [],
   "perClass": {
     "KENTE": {
@@ -60,8 +60,7 @@
       "reject": 2
     },
     "DENIM": {
-      "accept": 1,
-      "reject": 4
+      "reject": 5
     },
     "FUGU": {
       "accept": 2,
