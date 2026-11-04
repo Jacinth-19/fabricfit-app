@@ -119,6 +119,7 @@ capture home-small
 adb shell wm size 1920x1080
 adb shell wm density 420
 sleep 2
+tap_label "Got it" || true # dismiss Android's first-rotation immersive-mode tutorial
 capture home-landscape
 adb shell wm size 1080x1920
 adb shell wm density 420
