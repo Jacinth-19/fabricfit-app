@@ -81,7 +81,11 @@ class BottomNavigationInsetTest {
         // while the 3-button bar is present, making an inset-only test unreliable.
         val systemHomeButton = UiDevice.getInstance(
             InstrumentationRegistry.getInstrumentation(),
-        ).findObject(UiSelector().resourceId("com.android.systemui:id/home"))
+        ).findObject(
+            UiSelector()
+                .packageName("com.android.systemui")
+                .descriptionMatches("(?i)home.*"),
+        )
         assertTrue(
             "Android SystemUI Home button must be visible in 3-button mode",
             systemHomeButton.waitForExists(5_000),

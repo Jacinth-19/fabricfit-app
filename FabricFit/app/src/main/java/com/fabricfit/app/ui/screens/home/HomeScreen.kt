@@ -6,13 +6,16 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -214,7 +217,9 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
 
                     // Three equal Quick-Action cards: Scan Fabric · AI Recommendations · Virtual Try-On
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min),
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         QuickActionTile(
@@ -543,7 +548,9 @@ private fun QuickActionTile(
         color = HeritageCreamBright,
         border = BorderStroke(1.dp, Color(0xFFE4DAC6)),
         shadowElevation = 1.dp,
-        modifier = modifier.height(92.dp),
+        modifier = modifier
+            .fillMaxHeight()
+            .heightIn(min = 92.dp),
     ) {
         Column(
             modifier = Modifier

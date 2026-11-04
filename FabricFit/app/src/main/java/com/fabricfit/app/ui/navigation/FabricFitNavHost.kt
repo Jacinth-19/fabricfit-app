@@ -54,7 +54,10 @@ import com.fabricfit.app.ui.screens.wardrobe.WardrobeScreen
 fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
-    val currentRoute = backStack?.destination?.route
+    // NavHost composes inside Scaffold's body, so the back stack is null on the
+    // first measure. Supplying the known start destination prevents the bottom
+    // bar from being omitted (and initially placed behind SystemUI) on cold start.
+    val currentRoute = backStack?.destination?.route ?: Routes.HOME
 
     LaunchedEffect(startWithScan) {
         if (startWithScan) {
