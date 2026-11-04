@@ -139,6 +139,7 @@ capture try-on
 tap_label "Profile"
 capture profile
 tap_label "Saved Styles"
+tap_label "Got it" || true # dismiss the first-run Saved Styles coach mark
 capture scan-results
 
 # Return through the real back stack rather than restoring an older Profile tab state.

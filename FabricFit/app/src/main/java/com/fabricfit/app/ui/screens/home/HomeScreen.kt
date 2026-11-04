@@ -230,7 +230,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         )
                         QuickActionTile(
                             icon = Icons.Filled.AutoAwesome,
-                            label = "AI Recommendations",
+                            label = "AI Matches",
                             onClick = { nav.navigate(Routes.DISCOVER) },
                             modifier = Modifier.weight(1f),
                         )
