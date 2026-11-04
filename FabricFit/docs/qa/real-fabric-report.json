@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-04T11:20:13.993609+00:00",
+  "generatedAt": "2026-11-04T11:33:52.551713+00:00",
   "evaluationType": "manually curated freely licensed online real-textile smoke test",
   "labelReview": "manual source-description and visual review; not expert fiber/heritage verification",
   "notProductionAccuracy": true,
@@ -7,13 +7,11 @@
   "contractSummary": "8/8 passed",
   "summary": {
     "expectedClasses": 17,
-    "coveredClasses": 16,
-    "missingClasses": [
-      "LACE"
-    ],
-    "evaluatedImages": 16,
-    "correctImages": 1,
-    "top1Agreement": 0.0625,
+    "coveredClasses": 17,
+    "missingClasses": [],
+    "evaluatedImages": 17,
+    "correctImages": 2,
+    "top1Agreement": 0.11764705882352941,
     "catalogNearDuplicateImages": 0,
     "inferenceErrors": []
   },
@@ -74,9 +72,9 @@
       "agreement": 0.0
     },
     "LACE": {
-      "images": 0,
-      "correct": 0,
-      "agreement": 0.0
+      "images": 1,
+      "correct": 1,
+      "agreement": 1.0
     },
     "LINEN": {
       "images": 1,
@@ -590,6 +588,50 @@
       "catalogNearDuplicate": false
     },
     {
+      "expected": "LACE",
+      "predicted": "LACE",
+      "confidence": 0.8919302821159363,
+      "correct": true,
+      "top3": [
+        {
+          "label": "LACE",
+          "score": 0.8919302821159363
+        },
+        {
+          "label": "ANKARA",
+          "score": 0.06628483533859253
+        },
+        {
+          "label": "KENTE_PRINT",
+          "score": 0.037243861705064774
+        }
+      ],
+      "weaveMetrics": [
+        0.4505123794078827,
+        0.10381992161273956,
+        0.4120906889438629,
+        0.0722760558128357,
+        0.7129817008972168,
+        0.7775561809539795
+      ],
+      "imagenetHint": {
+        "label": "gown",
+        "score": 0.6078431606292725
+      },
+      "localPath": "Transparent_lace_top_and_skirt.jpg",
+      "source": "manifest",
+      "title": "Transparent lace top and skirt",
+      "creator": "Lukasz Dunikowski",
+      "license": "CC BY 2.0",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Transparent_lace_top_and_skirt.png",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/4/47/Transparent_lace_top_and_skirt.png",
+      "catalogNearest": {
+        "path": "catalog/fabrics/wax.jpg",
+        "dHashDistance": 24
+      },
+      "catalogNearDuplicate": false
+    },
+    {
       "expected": "LINEN",
       "predicted": "BATIK",
       "confidence": 0.7824724912643433,
@@ -767,45 +809,45 @@
     },
     {
       "expected": "WAX",
-      "predicted": "TIEDYE",
-      "confidence": 0.8017944693565369,
+      "predicted": "BATIK",
+      "confidence": 0.8020528554916382,
       "correct": false,
       "top3": [
         {
-          "label": "TIEDYE",
-          "score": 0.8017944693565369
+          "label": "BATIK",
+          "score": 0.8020528554916382
         },
         {
-          "label": "LACE",
-          "score": 0.198066845536232
+          "label": "GONJA",
+          "score": 0.19248899817466736
         },
         {
-          "label": "VELVET",
-          "score": 0.00013515960017684847
+          "label": "ANKARA",
+          "score": 0.002206984208896756
         }
       ],
       "weaveMetrics": [
-        0.5218213796615601,
-        0.20622797310352325,
-        0.37384265661239624,
-        0.061793312430381775,
-        0.7466873526573181,
-        0.8233954906463623
+        0.2909422218799591,
+        0.2592203617095947,
+        0.5532598495483398,
+        0.1270529180765152,
+        0.4139833152294159,
+        0.5483088493347168
       ],
       "imagenetHint": {
-        "label": "monastery",
-        "score": 0.5490196347236633
+        "label": "toyshop",
+        "score": 0.7215686440467834
       },
-      "localPath": "Ankara_4372.jpg",
+      "localPath": "Waxprints_in_a_West_African_Shop.jpg",
       "source": "manifest",
-      "title": "Ankara wax-print fabric",
-      "creator": "Darwinek",
+      "title": "Wax prints in a West African fabric shop",
+      "creator": "Alexander Sarlay",
       "license": "CC BY-SA 3.0",
-      "landingUrl": "https://commons.wikimedia.org/wiki/File:Ankara_4372.jpg",
-      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/0/00/Ankara_4372.jpg",
+      "landingUrl": "https://commons.wikimedia.org/wiki/File:Waxprints_in_a_West_African_Shop.jpg",
+      "fileUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c1/Waxprints_in_a_West_African_Shop.jpg",
       "catalogNearest": {
-        "path": "catalog/fabrics/chiffon.jpg",
-        "dHashDistance": 25
+        "path": "catalog/fabrics/lace.jpg",
+        "dHashDistance": 23
       },
       "catalogNearDuplicate": false
     }

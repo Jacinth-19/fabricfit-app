@@ -1,6 +1,6 @@
 # Curated real online fabric smoke test
 
-Generated: `2026-11-04T11:20:13.993609+00:00`
+Generated: `2026-11-04T11:33:52.551713+00:00`
 
 > **Not a production accuracy claim.** These freely licensed Commons images were
 > manually selected from source descriptions and visually reviewed to remove obvious
@@ -10,10 +10,10 @@ Generated: `2026-11-04T11:20:13.993609+00:00`
 > The result below is raw classifier top-1, before Android's heuristic/OOD fusion.
 
 - Model contract audit: **8/8 passed**
-- Coverage: **16/17 fabric families**
-- Images evaluated: **16**
-- Raw classifier top-1 agreement: **0.062** (1/16)
-- Missing families: **LACE**
+- Coverage: **17/17 fabric families**
+- Images evaluated: **17**
+- Raw classifier top-1 agreement: **0.118** (2/17)
+- Missing families: **none**
 - Near-duplicates of classifier training/catalog images (dHash ≤ 6): **0**
 
 The app remains an `ON_DEVICE_DEMO`; this smoke result must not be used as an
@@ -35,7 +35,7 @@ consented, human-verified field photos per family with leak-free held-out splits
 | GONJA | 1 | 0 | 0.000 |
 | KENTE | 1 | 0 | 0.000 |
 | KENTE_PRINT | 1 | 0 | 0.000 |
-| LACE | 0 | 0 | 0.000 |
+| LACE | 1 | 1 | 1.000 |
 | LINEN | 1 | 0 | 0.000 |
 | SILK | 1 | 0 | 0.000 |
 | TIEDYE | 1 | 0 | 0.000 |
@@ -60,10 +60,11 @@ original license. Follow the landing-page links for attribution details.
 | 9 | GONJA | TIEDYE (1.000) | no | [Smock from Northern Ghana (Gonja-style strip-cloth proxy)](https://commons.wikimedia.org/wiki/File:Smock_from_Northern_Ghana.jpg) — Ibn Shiraz; CC BY-SA 4.0 |
 | 10 | KENTE | WAX (0.877) | no | [Ewe kente cloth from Ghana](https://commons.wikimedia.org/wiki/File:Ewe_kente_2%2C_Ghana.JPG) — ZSM; CC BY-SA 3.0 |
 | 11 | KENTE_PRINT | GONJA (0.965) | no | [Kente-style batik/printed cloth in Kumasi market](https://commons.wikimedia.org/wiki/File:Kente_(Batik)_Cloth_in_Market_-_Kumasi_-_Ghana_(4755541241).jpg) — Adam Jones; CC BY-SA 2.0 |
-| 12 | LINEN | BATIK (0.782) | no | [Linen Coptic fabric](https://commons.wikimedia.org/wiki/File:Linen_Coptic_fabric_REM.JPG) — BrokenSphere; CC BY-SA 3.0 |
-| 13 | SILK | COTTON_PLAIN (0.437) | no | [Sea silk glove](https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG) — John Hill; CC BY-SA 3.0 |
-| 14 | TIEDYE | BROCADE (0.767) | no | [Bai tie-dyed fabric](https://commons.wikimedia.org/wiki/File:Bai_fabric%2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG) — Daderot; Public domain |
-| 15 | VELVET | KENTE_PRINT (0.616) | no | [Ornamental velvet covering](https://commons.wikimedia.org/wiki/File:Ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg) — Daniel Ventura; CC BY-SA 3.0 |
-| 16 | WAX | TIEDYE (0.802) | no | [Ankara wax-print fabric](https://commons.wikimedia.org/wiki/File:Ankara_4372.jpg) — Darwinek; CC BY-SA 3.0 |
+| 12 | LACE | LACE (0.892) | yes | [Transparent lace top and skirt](https://commons.wikimedia.org/wiki/File:Transparent_lace_top_and_skirt.png) — Lukasz Dunikowski; CC BY 2.0 |
+| 13 | LINEN | BATIK (0.782) | no | [Linen Coptic fabric](https://commons.wikimedia.org/wiki/File:Linen_Coptic_fabric_REM.JPG) — BrokenSphere; CC BY-SA 3.0 |
+| 14 | SILK | COTTON_PLAIN (0.437) | no | [Sea silk glove](https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG) — John Hill; CC BY-SA 3.0 |
+| 15 | TIEDYE | BROCADE (0.767) | no | [Bai tie-dyed fabric](https://commons.wikimedia.org/wiki/File:Bai_fabric%2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG) — Daderot; Public domain |
+| 16 | VELVET | KENTE_PRINT (0.616) | no | [Ornamental velvet covering](https://commons.wikimedia.org/wiki/File:Ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg) — Daniel Ventura; CC BY-SA 3.0 |
+| 17 | WAX | BATIK (0.802) | no | [Wax prints in a West African fabric shop](https://commons.wikimedia.org/wiki/File:Waxprints_in_a_West_African_Shop.jpg) — Alexander Sarlay; CC BY-SA 3.0 |
 
 Raw per-image scores and source URLs are in `real-fabric-report.json`.

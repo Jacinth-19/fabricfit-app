@@ -1,6 +1,6 @@
 # FabricFit bundled model contract audit
 
-Generated: `2026-11-04T11:20:12.838811+00:00`
+Generated: `2026-11-04T11:33:51.339075+00:00`
 
 **8/8 models loaded, invoked, and matched their declared contracts.**
 
