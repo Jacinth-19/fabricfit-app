@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -199,12 +200,12 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(216.dp),
+                            .aspectRatio(632f / 352f),
                     ) {
                         AssetImage(
                             asset = "catalog/heritage/hero_banner_card.jpg",
                             contentDescription = "Ghanaian Fabrics Timeless Style",
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier.fillMaxSize(),
                         )
                     }

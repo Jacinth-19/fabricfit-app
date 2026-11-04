@@ -252,7 +252,7 @@ jobs:
           working-directory: FabricFit
           script: >
             export SCREENSHOT_ABI=1 &&
-            adb shell settings put secure navigation_mode 0 &&
+            bash ../tools/qa/enable_three_button_navigation.sh &&
             chmod +x ./gradlew &&
             ./gradlew :app:connectedDebugAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest,com.fabricfit.app.ui.navigation.BottomNavigationInsetTest

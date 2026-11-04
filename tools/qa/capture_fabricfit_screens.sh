@@ -19,8 +19,9 @@ adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
 # Exercise the same Android 3-button navigation mode used by many devices.
-# The matching instrumented test asserts the tab bounds against this inset.
-adb shell settings put secure navigation_mode 0
+# The matching instrumented test compares app and SystemUI control bounds.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+bash "$SCRIPT_DIR/enable_three_button_navigation.sh"
 adb shell input keyevent KEYCODE_WAKEUP
 adb shell wm dismiss-keyguard || true
 
@@ -92,19 +93,28 @@ capture() {
   echo "Captured: $OUT_DIR/${name}.png"
 }
 
+restart_app() {
+  adb shell am force-stop "$PKG"
+  adb shell am start -W -n "$PKG/$ACTIVITY"
+  sleep 4
+}
+
 # Capture the Heritage Luxe Welcome screen first, then skip to Home.
 capture welcome
 tap_label "Skip for now"
 capture home
 
 # Responsive/accessibility captures: enlarged text, a smaller display and landscape.
+# Restart after changing font scale so no stale Configuration can mask the result.
 adb shell settings put system font_scale 1.30
-sleep 2
+restart_app
+printf 'Large-font capture uses Android font_scale=%s\n' \
+  "$(adb shell settings get system font_scale | tr -d '\r')"
 capture home-large-font
 adb shell settings put system font_scale 1.0
 adb shell wm size 720x1280
 adb shell wm density 320
-sleep 2
+restart_app
 capture home-small
 adb shell wm size 1920x1080
 adb shell wm density 420
