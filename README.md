@@ -2,7 +2,7 @@
 
 [![build](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml/badge.svg)](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml)
 [![release](https://img.shields.io/github/v/release/Jacinth-19/fabricfit-app?label=release)](https://github.com/Jacinth-19/fabricfit-app/releases/latest)
-[![download](https://img.shields.io/badge/download-fabricfit--v1.0.0.apk-D4A84B)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.0.apk)
+[![download](https://img.shields.io/badge/download-fabricfit--v1.0.1.apk-D4A84B)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
 
 <div align="center">
 
@@ -18,7 +18,7 @@
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Heritage Luxe</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="210"><br><sub><strong>Home Dashboard</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="210"><br><sub><strong>FitScan · Capture Fabric</strong></sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Try-On and saved looks" width="210"><br><sub><strong>FitRoom · Try-On &amp; Saved</strong></sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Scan Results" width="210"><br><sub><strong>FitScan · Scan Results</strong></sub></td>
   </tr>
 </table>
 
@@ -101,7 +101,7 @@ The splash emblem and brand mark is a custom symmetrical **Adinkra-inspired mono
 
 ---
 
-## Real App UI (Shipped Android Build)
+## Real App UI (Current Android Source)
 
 Every frame below is an **unretouched capture of the running app**, taken on an
 **API 33 emulator at 1080 × 1920** by the `screenshots` job in
@@ -111,6 +111,11 @@ by tapping its real label, and `adb screencap` writes the frame straight into
 [`FabricFit/docs/screenshots/`](FabricFit/docs/screenshots/). No mockups, no
 photo editing — if the UI changes, the pictures change with it on the next run.
 
+These captures track the branch that triggered the screenshot job. The
+[downloadable release](#download-the-apk) is updated only for a version tag,
+manual dispatch, or `[release]` commit, so a newer branch can temporarily be
+ahead of the latest published APK.
+
 <table>
   <tr>
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="215"><br><strong>1. Welcome / Splash</strong><br><sub>Deep Forest canvas, gold Adinkra monogram, folded Kente hero &amp; pill CTAs</sub></td>
@@ -118,8 +123,8 @@ photo editing — if the UI changes, the pictures change with it on the next run
     <td align="center"><img src="FabricFit/docs/screenshots/discover.png" alt="FabricFit Discover" width="215"><br><strong>3. Discover (FitMatch AI)</strong><br><sub>Occasion filter pills over the 2-column Ghanaian lookbook grid</sub></td>
   </tr>
   <tr>
-    <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="215"><br><strong>4. Capture Fabric (FitScan)</strong><br><sub>Dark forest camera chrome, viewfinder &amp; Fabric/Photo/Video switcher</sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Try-On and saved looks" width="215"><br><strong>5. Try-On &amp; Saved (FitRoom)</strong><br><sub>Segmented tabs over saved looks, fabrics and scan history</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="215"><br><strong>4. Capture Fabric (FitScan)</strong><br><sub>Dark forest camera chrome, viewfinder &amp; Photo/Sample/Scan switcher</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Scan Results" width="215"><br><strong>5. Scan Results (FitScan)</strong><br><sub>Fabric match, colour palette, inspector tabs &amp; recommended dresses</sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/profile.png" alt="FabricFit Profile" width="215"><br><strong>6. Profile</strong><br><sub>Deep Forest dark luxury profile, avatar, stats &amp; wardrobe menu</sub></td>
   </tr>
 </table>
@@ -134,22 +139,24 @@ photo editing — if the UI changes, the pictures change with it on the next run
 
 ## Download the APK
 
-Every push and pull request is built by GitHub Actions, and the minified **release
-build** is published to GitHub Releases as `fabricfit-v1.0.0.apk`:
+Every push and pull request is compiled and tested by GitHub Actions. The
+minified **release build** is published to GitHub Releases on version tags,
+manual workflow dispatch, or a branch commit marked `[release]`; ordinary branch
+builds upload CI artifacts without replacing the public release.
 
-> ### 👉 [Download FabricFit v1.0.0 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.0.apk)
+> ### 👉 [Download FabricFit v1.0.1 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
 >
-> [`releases/latest`](https://github.com/Jacinth-19/fabricfit-app/releases/latest) also carries `fabricfit-v1.0.0.aab` for a Play upload.
+> [`releases/latest`](https://github.com/Jacinth-19/fabricfit-app/releases/latest) also carries `fabricfit-v1.0.1.aab` for a Play upload.
 
 ```bash
 # install on a connected phone or a running emulator
-adb install -r fabricfit-v1.0.0.apk
+adb install -r fabricfit-v1.0.1.apk
 ```
 
 | What | Where it comes from | Notes |
 | --- | --- | --- |
-| **Release APK** (`fabricfit-v1.0.0.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
-| **Release bundle** (`fabricfit-v1.0.0.aab`) | same release | The artifact you would upload to the Play Console. |
+| **Release APK** (`fabricfit-v1.0.1.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
+| **Release bundle** (`fabricfit-v1.0.1.aab`) | same release | The artifact you would upload to the Play Console. |
 | **Debug APK** | run → artifact `fabricfit-debug-apk` | `com.fabricfit.app.debug`, debuggable, for testers without a release key. |
 | **Instrumented test report** | run → artifact `test-reports` | Unit-test and lint output for the run. |
 
@@ -169,7 +176,7 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 | Job | Trigger | What it does |
 | --- | --- | --- |
 | `verify` | every push & PR (paths under `FabricFit/**`) | `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`, then uploads the debug APK and test reports. Gradle failures are annotated inline on the commit. |
-| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags or manual dispatch. |
+| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags, manual dispatch, or a push whose commit message contains `[release]`. |
 | `device-qa` | manual, weekly, or on `v*` tags | Linux runner (`ubuntu-latest`) with KVM & `SCREENSHOT_ABI=1`: boots an API 33 `x86_64` emulator and runs `PersonSegmenterDeviceTest`. |
 | `screenshots` | manual dispatch, or any push whose commit message contains `[screenshots]` | Boots an API 33 emulator, drives the app, and commits fresh PNGs to `FabricFit/docs/screenshots/`. |
 
@@ -180,42 +187,29 @@ git commit --allow-empty -m "chore: refresh screenshots [screenshots]" && git pu
 
 ---
 
-## UI/UX Reference Mockups & Screen-by-Screen Breakdown
+## Screen-by-Screen Breakdown
 
-The six high-fidelity design reference boards that guided the **Heritage Luxe** transformation are archived in [`FabricFit/docs/heritage-luxe-mockups/`](FabricFit/docs/heritage-luxe-mockups/):
+The notes below refer to the genuine emulator captures in
+[`FabricFit/docs/screenshots/`](FabricFit/docs/screenshots/), not separate design
+mockups.
 
-<table>
-  <tr>
-    <td align="center"><img src="FabricFit/docs/heritage-luxe-mockups/01-splash-welcome.jpg" alt="01 Welcome Mockup" width="215"><br><strong>Ref 01 · Welcome / Splash</strong></td>
-    <td align="center"><img src="FabricFit/docs/heritage-luxe-mockups/02-home-dashboard.jpg" alt="02 Home Dashboard Mockup" width="215"><br><strong>Ref 02 · Home Dashboard</strong></td>
-    <td align="center"><img src="FabricFit/docs/heritage-luxe-mockups/03-capture-scan.jpg" alt="03 Capture Fabric Mockup" width="215"><br><strong>Ref 03 · Capture Fabric</strong></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="FabricFit/docs/heritage-luxe-mockups/04-scan-results.jpg" alt="04 Scan Results Mockup" width="215"><br><strong>Ref 04 · Scan Results</strong></td>
-    <td align="center"><img src="FabricFit/docs/heritage-luxe-mockups/05-outfit-recommendations.jpg" alt="05 Outfit Recommendations Mockup" width="215"><br><strong>Ref 05 · Outfit Recommendations</strong></td>
-    <td align="center"><img src="FabricFit/docs/heritage-luxe-mockups/06-profile.jpg" alt="06 Profile Mockup" width="215"><br><strong>Ref 06 · Profile</strong></td>
-  </tr>
-</table>
-
-### Screen UX Notes
-
-1. **Welcome / Splash (`01-splash-welcome.jpg` → `OnboardingScreen.kt`)**
+1. **Welcome / Splash ([`welcome.png`](FabricFit/docs/screenshots/welcome.png) → `OnboardingScreen.kt`)**
    - Full-bleed Deep Forest (`#0F3D2E`) atmosphere with the Royal Gold Adinkra monogram (`HeritageLuxeMark`), *Heritage Luxe* serif title, and *Scan. Discover. Try. Wear.* value proposition.
    - Anchored by photorealistic stacked folds of hand-woven Kente cloth and dual full-width pill CTAs (**Get Started** in tonal forest green and **Login** in outlined muted gold).
-2. **Home Dashboard (`02-home-dashboard.jpg` → `HomeScreen.kt`)**
+2. **Home Dashboard ([`home.png`](FabricFit/docs/screenshots/home.png) → `HomeScreen.kt`)**
    - Opens on a Warm Cream (`#F7F1E5`) canvas with a rounded global search pill (*"Search fabrics, styles or keywords…"*).
    - Features the *"Ghanaian Fabrics · Timeless Style"* editorial hero banner, three balanced quick-action cards (**Scan Fabric**, **AI Matches**, **Virtual Try-On**), and a horizontal **Featured Fabrics** rail (**Kente**, **Ankara**, **Lace**, **Batik**, **Adinkra**).
-3. **Capture Fabric (`03-capture-scan.jpg` → `CreateScreen.kt` & `CameraScreen.kt`)**
+3. **Capture Fabric ([`create.png`](FabricFit/docs/screenshots/create.png) → `CreateScreen.kt` & `CameraScreen.kt`)**
    - Uses dark forest chrome (`#0A2B20`) to eliminate glare while inspecting textile threads.
-   - Pairs a macro Kente viewfinder frame with a **Photo · Video · ● Scan** mode indicator, a quick-access swatch gallery thumbnail, a double-ring shutter button, and a sample-fabric switcher.
-4. **Scan Results (`04-scan-results.jpg` → `FavoritesScreen.kt` & `FabricDetailScreen.kt`)**
+   - Pairs a macro Kente viewfinder frame with a **Photo · Sample · ● Scan** mode indicator, a quick-access swatch gallery thumbnail, a double-ring shutter button, and a sample-fabric switcher.
+4. **Scan Results ([`favourites.png`](FabricFit/docs/screenshots/favourites.png) → `FavoritesScreen.kt` & `FabricDetailScreen.kt`)**
    - Summarises the identified weave (**Kente Royalty**) alongside a high-contrast **`98% Match`** pill badge and four extracted colour swatches (forest green, deep burgundy, royal gold, Kente crimson).
    - Provides a segmented **Colors · Pattern · Style** inspector, a **Recommended Dresses** horizontal carousel with star ratings and review counts, and a full-width gold-on-forest **View All Recommendations** CTA.
-5. **Outfit Recommendations (`05-outfit-recommendations.jpg` → `DiscoverScreen.kt` & `RecommendationsScreen.kt`)**
+5. **Outfit Recommendations ([`discover.png`](FabricFit/docs/screenshots/discover.png) → `DiscoverScreen.kt` & `RecommendationsScreen.kt`)**
    - Pairs an editorial serif title with pill filter chips (**All**, **Casual**, **Formal**, **Occasion**, **Fabrics**).
    - Displays a two-column lookbook grid (*Modern Kente Dress*, *Elegant Peplum Dress*, *Maxi Dress*, *Two-Piece Set*) with favourite heart affordances, tailoring price estimates, and gold star ratings.
-6. **Profile (`06-profile.jpg` → `ProfileScreen.kt`)**
-   - Returns to the intimate Deep Forest dark palette with a gold-ringed circular portrait (**Ama Serwaa — Fashion Lover**), a three-column activity summary (**12 Scans · 8 Favorites · 3 Try-Ons**), and translucent dark cards leading to **My Fit Closet**, **Saved Styles**, **Scan History**, **Settings**, and **Help & Support**.
+6. **Profile ([`profile.png`](FabricFit/docs/screenshots/profile.png) → `ProfileScreen.kt`)**
+   - Returns to the intimate Deep Forest dark palette with a gold-ringed circular portrait (**Ama Serwaa — Fashion Lover**), a three-column activity summary for scans, favourites and try-ons, and translucent dark cards leading to **My Fit Closet**, **Saved Styles**, **Scan History**, **Settings**, and **Help & Support**.
 
 ---
 
@@ -297,7 +291,6 @@ FabricFit pairs an offline-first on-device computer-vision and ML pipeline with 
 FabricFit/          Android app (Kotlin + Jetpack Compose), package com.fabricfit.app
   app/              app module — Heritage Luxe UI, domain engines, Room DB, on-device ML
   docs/             brand positioning, Play readiness, device QA, research notes,
-                    heritage-luxe-mockups/ (UI/UX design reference boards),
                     screenshots/ (real API 33 emulator captures)
   store/            Play listing copy, icon and feature graphic, privacy policy
   tools/            i18n packs (en, tw, gaa, ee), dataset pipeline, mock backend
