@@ -391,14 +391,20 @@ jobs:
   # Collect a larger candidate pool and commit visual review sheets. Nothing in
   # this job trains on an image: every candidate must first be accepted/rejected
   # in review-index.csv and exported to a fixed, provenance-preserving manifest.
-  fabric-review:
+  # Collect a larger candidate pool for image-by-image review. Sharded so a
+  # rate-limited source cannot stall the whole sweep; sheets are merged and
+  # committed afterwards. Nothing here trains: every photo must be accepted or
+  # rejected by a reviewer first.
+  fabric-collect:
     if: >-
       github.event_name == 'push' &&
       contains(github.event.head_commit.message, '[fabric-review]')
     runs-on: ubuntu-latest
-    timeout-minutes: 35
-    permissions:
-      contents: write
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
     defaults:
       run:
         working-directory: .
@@ -411,49 +417,106 @@ jobs:
         run: python3 -m pip install --disable-pip-version-check pillow requests certifi
       - name: Verify dataset scraper safety rails
         run: python3 FabricFit/tools/dataset/scrape/selftest.py
-      - name: Collect review candidates from licensed online sources
+      - name: Assign this shard's fabric families
+        id: classes
+        run: |
+          python3 - <<'PY'
+          import json, os
+          classes = sorted(json.load(open("FabricFit/tools/dataset/label_schema.json"))["classes"])
+          shard = int(os.environ["SHARD"])
+          mine = [c for i, c in enumerate(classes) if i % 3 == shard]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as handle:
+              handle.write("list=" + ",".join(mine) + "\n")
+          print("shard families:", mine)
+          PY
+        env:
+          SHARD: ${{ matrix.shard }}
+      - name: Collect candidate photos from licensed sources
         env:
           FABRICFIT_SCRAPER_CONTACT: https://github.com/Jacinth-19/fabricfit-app
+          CLASSES: ${{ steps.classes.outputs.list }}
         run: |
-          rm -rf FabricFit/tools/dataset/scraped/wikimedia \
-            FabricFit/tools/dataset/scraped/openverse \
-            FabricFit/tools/dataset/scraped/manifest
-          python3 FabricFit/tools/dataset/scrape/manifest.py \
-            FabricFit/tools/dataset/qa_real_fabrics.csv --sleep 0.1
-          python3 FabricFit/tools/dataset/scrape/manifest.py \
-            FabricFit/tools/dataset/qa_real_fabrics.csv --only-missing --sleep 0.1
+          set -x
+          rm -rf FabricFit/tools/dataset/scraped
           python3 FabricFit/tools/dataset/scrape/wikimedia.py \
-            --per-class 4 --queries-per-class 4 --max-pages 3 --sleep 0.1
+            --classes "$CLASSES" --per-class 12 --queries-per-class 5 \
+            --max-pages 2 --sleep 0.4 || echo '::warning::wikimedia shard incomplete'
           python3 FabricFit/tools/dataset/scrape/openverse.py \
-            --per-class 4 --queries-per-class 4 --max-pages 3 --sleep 0.1
-      - name: Generate per-class visual review sheets
-        run: |
-          python3 tools/qa/review_fabric_dataset.py sheets \
-            --data-dir FabricFit/tools/dataset/scraped/manifest \
-            --data-dir FabricFit/tools/dataset/scraped/wikimedia \
-            --data-dir FabricFit/tools/dataset/scraped/openverse \
-            --output-dir qa-artifacts/review-round-1
-      - name: Upload review candidates and provenance index
+            --classes "$CLASSES" --per-class 12 --queries-per-class 5 \
+            --max-pages 2 --sleep 0.4 || echo '::warning::openverse shard incomplete'
+          python3 FabricFit/tools/dataset/scrape/manifest.py \
+            FabricFit/tools/dataset/qa_real_fabrics.csv --sleep 0.2 \
+            || echo '::warning::curated manifest shard incomplete'
+          mkdir -p "qa-artifacts/candidates/shard-${{ matrix.shard }}"
+          for source in wikimedia openverse manifest; do
+            if [ -d "FabricFit/tools/dataset/scraped/$source" ]; then
+              cp -r "FabricFit/tools/dataset/scraped/$source" \
+                "qa-artifacts/candidates/shard-${{ matrix.shard }}/$source"
+            fi
+          done
+          find qa-artifacts/candidates -name '*.jpg' | wc -l
+      - name: Upload this shard's candidates
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: fabricfit-fabric-review-round-1
-          path: |
-            qa-artifacts/review-round-1/
-            FabricFit/tools/dataset/scraped/manifest/CREDITS.csv
-            FabricFit/tools/dataset/scraped/wikimedia/CREDITS.csv
-            FabricFit/tools/dataset/scraped/openverse/CREDITS.csv
+          name: fabricfit-candidates-shard-${{ matrix.shard }}
+          path: qa-artifacts/candidates/shard-${{ matrix.shard }}/
           if-no-files-found: warn
-      - name: Commit visual review sheets and decision index
+
+  fabric-review-sheets:
+    needs: fabric-collect
+    if: >-
+      always() &&
+      github.event_name == 'push' &&
+      contains(github.event.head_commit.message, '[fabric-review]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install review dependencies
+        run: python3 -m pip install --disable-pip-version-check pillow requests certifi
+      - name: Download every shard
+        uses: actions/download-artifact@v7
+        with:
+          pattern: fabricfit-candidates-shard-*
+          path: qa-artifacts/candidates
+          merge-multiple: true
+      - name: Generate per-class visual review sheets
+        run: |
+          arguments=()
+          for directory in qa-artifacts/candidates/*/; do
+            [ -d "$directory" ] && arguments+=(--data-dir "$directory")
+          done
+          echo "data dirs: ${arguments[*]}"
+          python3 tools/qa/review_fabric_dataset.py sheets "${arguments[@]}" \
+            --output-dir qa-artifacts/review-round-2
+      - name: Upload review sheets and candidate images
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fabricfit-review-round-2
+          path: |
+            qa-artifacts/review-round-2/
+            qa-artifacts/candidates/
+          if-no-files-found: warn
+      - name: Commit the review sheets and decision index
         if: always()
         run: |
           set -euxo pipefail
-          test -f qa-artifacts/review-round-1/review-index.csv
-          mkdir -p FabricFit/docs/qa/review-round-1
-          cp qa-artifacts/review-round-1/* FabricFit/docs/qa/review-round-1/
+          test -f qa-artifacts/review-round-2/review-index.csv
+          mkdir -p FabricFit/docs/qa/review-round-2
+          cp qa-artifacts/review-round-2/* FabricFit/docs/qa/review-round-2/
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add FabricFit/docs/qa/review-round-1/
+          git add FabricFit/docs/qa/review-round-2/
           if ! git diff --cached --quiet; then
             git commit -m "docs: collect fabric candidates for manual review [skip ci]"
             git pull --rebase origin "$GITHUB_REF_NAME"
