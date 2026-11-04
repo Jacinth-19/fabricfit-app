@@ -1,0 +1,175 @@
+{
+  "generatedAt": "2026-11-04T10:51:52.706578+00:00",
+  "expectedModels": 8,
+  "passedModels": 8,
+  "allAssetsReferenced": true,
+  "models": [
+    {
+      "name": "ghanaian_fabric_classifier.tflite",
+      "role": "17-family textile appearance classifier",
+      "bytes": 87552,
+      "sha256": "07299df5dea2f25fc4876b3c6069f45cae2c719eaeebb99e7dc335336b1f63ed",
+      "inputShape": [
+        1,
+        128,
+        128,
+        3
+      ],
+      "outputShape": [
+        1,
+        17
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "weave_motif_extractor.tflite",
+      "role": "directional weave and motif feature extractor",
+      "bytes": 16456,
+      "sha256": "eda1bca51dd382089d9677eda0792afc9c22a7150924689ba6aa30a65c2e306b",
+      "inputShape": [
+        1,
+        128,
+        128,
+        3
+      ],
+      "outputShape": [
+        1,
+        6
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "mobilenet_v2_1.0_224_quant.tflite",
+      "role": "ImageNet textile/out-of-distribution hint model",
+      "bytes": 3577760,
+      "sha256": "f08d447cde49b4e0446428aa921aff0a14ea589fa9c5817b31f83128e9a43c1d",
+      "inputShape": [
+        1,
+        224,
+        224,
+        3
+      ],
+      "outputShape": [
+        1,
+        1001
+      ],
+      "inputDtype": "uint8",
+      "outputDtype": "uint8",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "selfie_segmentation.tflite",
+      "role": "portrait foreground segmentation",
+      "bytes": 12364,
+      "sha256": "c937b38d9a81133cd24a5c6ccde52c59cd1fd5bc15cfd7f9d95fef0c6373840e",
+      "inputShape": [
+        1,
+        256,
+        256,
+        3
+      ],
+      "outputShape": [
+        1,
+        256,
+        256,
+        1
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "deeplabv3_257_mv.tflite",
+      "role": "DeepLabV3 PASCAL person segmentation",
+      "bytes": 2779264,
+      "sha256": "68a539782c2c6a72f8aac3724600124a85ed977162b44e84cbae5db717c933c6",
+      "inputShape": [
+        1,
+        257,
+        257,
+        3
+      ],
+      "outputShape": [
+        1,
+        257,
+        257,
+        21
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "human_parsing_5class.tflite",
+      "role": "five-zone human parsing",
+      "bytes": 25268,
+      "sha256": "ca1ec6d936d5ebc4344241dbdf5f96cbf4b25e100bd163b454d20fa21eadad88",
+      "inputShape": [
+        1,
+        128,
+        128,
+        3
+      ],
+      "outputShape": [
+        1,
+        128,
+        128,
+        5
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "cloth_warper_shading.tflite",
+      "role": "cloth displacement and fold shading",
+      "bytes": 25800,
+      "sha256": "beaf9d54c2d0e260e8b4c971c56bd7c6dbf0702d4c800a0f375e2dfdaad91e6d",
+      "inputShape": [
+        1,
+        64,
+        64,
+        4
+      ],
+      "outputShape": [
+        1,
+        64,
+        64,
+        3
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    },
+    {
+      "name": "fitmatch_ranker.tflite",
+      "role": "16-feature recommendation ranker",
+      "bytes": 6724,
+      "sha256": "b363aa4d664c5bbfa924189c7af9508e5cd41418218fd3363df9c43ea0cd80c5",
+      "inputShape": [
+        1,
+        16
+      ],
+      "outputShape": [
+        1,
+        1
+      ],
+      "inputDtype": "float32",
+      "outputDtype": "float32",
+      "runtimeReference": true,
+      "zeroInputInference": "passed"
+    }
+  ],
+  "limitation": "Tensor contracts and zero-input inference do not establish model accuracy."
+}
