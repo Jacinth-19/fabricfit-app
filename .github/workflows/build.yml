@@ -285,6 +285,9 @@ jobs:
     timeout-minutes: 35
     permissions:
       contents: write
+    defaults:
+      run:
+        working-directory: .
     steps:
       - uses: actions/checkout@v7
 
