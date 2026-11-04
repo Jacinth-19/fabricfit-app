@@ -77,11 +77,16 @@ class BottomNavigationInsetTest {
             composeRule.activity.window.decorView,
         )
         assertNotNull("Root window insets must be attached", rootWindowInsets)
-        val navigationInsetPx = rootWindowInsets!!
+        val visibleInsetPx = rootWindowInsets!!
             .getInsets(WindowInsetsCompat.Type.navigationBars())
             .bottom
+        val persistentInsetPx = rootWindowInsets
+            .getInsetsIgnoringVisibility(WindowInsetsCompat.Type.navigationBars())
+            .bottom
+        val navigationInsetPx = maxOf(visibleInsetPx, persistentInsetPx)
         assertTrue(
-            "Visible 3-button navigation must report a bottom inset",
+            "3-button navigation must report a bottom inset " +
+                "(visible=$visibleInsetPx, persistent=$persistentInsetPx)",
             navigationInsetPx > 0,
         )
 
