@@ -609,7 +609,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install training dependencies
-        run: python3 -m pip install --disable-pip-version-check pillow requests certifi tensorflow-cpu==2.20.0
+        run: python3 -m pip install --disable-pip-version-check pillow requests certifi ai-edge-litert numpy tensorflow-cpu==2.20.0
       - name: Verify every reviewed row has provenance
         run: |
           python3 - <<'PY'
@@ -630,19 +630,27 @@ jobs:
           mv FabricFit/tools/dataset/scraped/manifest/* qa-artifacts/staging/reviewed/
       - name: Build leak-free train/validation/test splits
         run: |
-          mkdir -p qa-artifacts/staging
+          mkdir -p qa-artifacts/empty-raw
           python3 FabricFit/tools/dataset/prepare_kaggle.py \
             --raw-dir qa-artifacts/empty-raw \
             --scraped-dir qa-artifacts/staging \
             --out qa-artifacts/dataset --force
-      - name: Train and evaluate on the untouched test split
+      - name: Measure the shipped classifier on verified photos
         run: |
+          python3 tools/qa/fabric_model_qa.py online \
+            --data-dir qa-artifacts/staging/reviewed \
+            --per-class 20 --evaluation-type curated \
+            --output-dir FabricFit/docs/qa/reviewed-diagnostic
+      - name: Attempt candidate training (the data gate may refuse)
+        run: |
+          set +e
           python3 tools/qa/train_fabric_candidate.py \
             --data-dir qa-artifacts/dataset \
             --report-dir FabricFit/docs/qa/candidate \
             --out qa-artifacts/candidate/ghanaian_fabric_classifier_candidate.tflite \
-            > qa-artifacts/train.log 2>&1 || cp qa-artifacts/train.log FabricFit/docs/qa/candidate/train.log
-          tail -60 qa-artifacts/train.log
+            > qa-artifacts/train.log 2>&1
+          echo "trainer exit: $?"
+          tail -40 qa-artifacts/train.log
           test -f FabricFit/docs/qa/candidate/candidate-report.md
       - name: Upload the candidate model (never installed automatically)
         if: always()
@@ -652,6 +660,8 @@ jobs:
           path: |
             qa-artifacts/candidate/
             FabricFit/docs/qa/candidate/
+            FabricFit/docs/qa/reviewed-diagnostic/
+            qa-artifacts/dataset/
             qa-artifacts/train.log
           if-no-files-found: warn
       - name: Commit the candidate evaluation
@@ -661,9 +671,9 @@ jobs:
           test -f FabricFit/docs/qa/candidate/candidate-report.md
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add FabricFit/docs/qa/candidate/
+          git add FabricFit/docs/qa/candidate/ FabricFit/docs/qa/reviewed-diagnostic/
           if ! git diff --cached --quiet; then
-            git commit -m "docs: record candidate classifier on manually reviewed photos [skip ci]"
+            git commit -m "docs: record reviewed-photo evaluation and candidate status [skip ci]"
             git pull --rebase origin "$GITHUB_REF_NAME"
             git push origin "HEAD:$GITHUB_REF_NAME"
           fi

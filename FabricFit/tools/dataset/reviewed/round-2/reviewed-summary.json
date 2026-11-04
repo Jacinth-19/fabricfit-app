@@ -1,0 +1,71 @@
+{
+  "accepted": 30,
+  "rejected": 175,
+  "pending": [],
+  "perClass": {
+    "KENTE": {
+      "reject": 11,
+      "accept": 2
+    },
+    "KENTE_PRINT": {
+      "reject": 2
+    },
+    "ADINKRA": {
+      "reject": 11,
+      "accept": 2
+    },
+    "WAX": {
+      "reject": 13
+    },
+    "ANKARA": {
+      "reject": 13
+    },
+    "BATIK": {
+      "reject": 13
+    },
+    "TIEDYE": {
+      "reject": 12,
+      "accept": 1
+    },
+    "LACE": {
+      "reject": 11,
+      "accept": 2
+    },
+    "BROCADE": {
+      "reject": 8,
+      "accept": 5
+    },
+    "COTTON_PLAIN": {
+      "reject": 12,
+      "accept": 1
+    },
+    "LINEN": {
+      "reject": 10,
+      "accept": 3
+    },
+    "SILK": {
+      "reject": 9,
+      "accept": 4
+    },
+    "CHIFFON": {
+      "reject": 9,
+      "accept": 4
+    },
+    "VELVET": {
+      "reject": 8,
+      "accept": 5
+    },
+    "DENIM": {
+      "reject": 13
+    },
+    "FUGU": {
+      "reject": 12,
+      "accept": 1
+    },
+    "GONJA": {
+      "reject": 8
+    }
+  },
+  "notProductionGroundTruth": true,
+  "reviewType": "manual visual/source review; not expert fiber or heritage certification"
+}

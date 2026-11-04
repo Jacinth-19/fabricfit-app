@@ -113,17 +113,17 @@ R111,accept,woven floral textile fragment
 R112,accept,woven red textile fragment
 R113,accept,woven cream/gold textile fragment
 R114,reject,"same museum object as R113, other side"
-R115,accept,plain-weave cotton breechcloth
+R115,reject,provenance could not be recovered from the source; excluded so every row stays fully attributed
 R116,reject,person holding muslin scraps
 R117,reject,duck
 R118,accept,plain cotton muslin on fitting dummy
 R119,reject,stage performance with cloth
 R120,reject,duck
-R121,accept,plain-weave cotton mantle
+R121,reject,provenance could not be recovered from the source; excluded so every row stays fully attributed
 R122,reject,"painted mask object, not plain cotton"
 R123,reject,book title page
 R124,reject,portrait
-R125,accept,plain-weave cotton tunic
+R125,reject,provenance could not be recovered from the source; excluded so every row stays fully attributed
 R126,reject,already accepted in round 1 (same source image)
 R127,reject,object of uncertain material
 R128,reject,"black-and-white archival copy, material unclear"
@@ -133,7 +133,7 @@ R131,reject,near duplicate of R011
 R132,reject,"beaded craft, not linen cloth"
 R133,accept,"wool and linen fabric, 8th century"
 R134,reject,"person at work, cloth incidental"
-R135,accept,"linen shoulder cloth, large flat cloth"
+R135,reject,provenance could not be recovered from the source; excluded so every row stays fully attributed
 R136,reject,museum bowl
 R137,reject,paper sample card
 R138,accept,linen closeup
