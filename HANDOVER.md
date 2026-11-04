@@ -148,9 +148,11 @@ keystore's `ntoma`/`ntomastudio` credentials.
 
 ## 5. Smaller follow-ups
 
-- **Instrumented emulator test has never actually run.** The weekly schedule will
-  exercise it; check the first Monday run and fix whatever it surfaces (DeepLabV3
-  delegate loading on `macos-latest` is the likely friction point).
+- **Instrumented emulator QA is passing for v1.0.2.** The `[device-qa]` build job
+  runs DeepLabV3 person segmentation, FitRoom tab routing, and bottom-tab/system
+  navigation bounds on an API 33 `google_apis` Pixel 2 emulator with the real
+  three-button SystemUI overlay. Keep that emulator target aligned with screenshot
+  QA; the AOSP `default` image does not apply the same navigation overlay.
 - **The Android SDK / JDK toolchain script** is `tools/setup_toolchain.sh` at the repo
   root. It still assumes the module path is `/home/user/FabricFit`, which is correct,
   but it downloads from `api.adoptium.net`, `services.gradle.org` and `dl.google.com` —
