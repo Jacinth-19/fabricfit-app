@@ -70,7 +70,11 @@ def search_match(session, row: dict, sleep: float):
     """
     stem = row["filename"][:-4] if row["filename"].lower().endswith(".jpg") else row["filename"]
     stem = stem[len(f"{row['label']}_"):] if stem.startswith(f"{row['label']}_") else stem
-    query = re.sub(r"[_.]+", " ", stem).strip()
+    # sanitize_name truncates the stem at 80 characters, so a long title arrives
+    # as a cut-off prefix. Search the leading words and match on the prefix.
+    truncated = len(stem) >= 78
+    words = re.sub(r"[_.]+", " ", stem).strip().split()
+    query = " ".join(words[:6]) if truncated else " ".join(words)
     params = {
         "action": "query", "generator": "search", "gsrsearch": query,
         "gsrnamespace": 6, "gsrlimit": 10, "prop": "imageinfo",
@@ -84,13 +88,19 @@ def search_match(session, row: dict, sleep: float):
         return None
     common.polite_sleep(sleep)
     wanted = normalise(stem)
+    prefix = wanted[:40] if truncated else wanted
     scored = []
     for page in payload.get("query", {}).get("pages", []) or []:
         info = (page.get("imageinfo") or [None])[0]
         if not info:
             continue
         title = page.get("title", "").replace("File:", "")
-        scored.append((difflib.SequenceMatcher(None, wanted, normalise(title)).ratio(), title, info))
+        candidate = normalise(title)
+        if truncated:
+            score = 1.0 if prefix and prefix in candidate else 0.0
+        else:
+            score = difflib.SequenceMatcher(None, wanted, candidate).ratio()
+        scored.append((score, title, info))
     if not scored:
         return None
     scored.sort(reverse=True, key=lambda item: item[0])
