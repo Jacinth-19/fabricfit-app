@@ -189,7 +189,7 @@ fun CameraScreen(nav: NavHostController, padding: PaddingValues, target: String)
                                     Uri.fromFile(out).toString()
                                 }
                                 if (target == "person") {
-                                    val tryOnRoute = "tryon?fabricId={fabricId}&styleId={styleId}&person={person}"
+                                    val tryOnRoute = Routes.TRYON_ROUTE_PATTERN
                                     val tryOnEntry = runCatching { nav.getBackStackEntry(tryOnRoute) }.getOrNull()
                                     if (tryOnEntry != null) {
                                         tryOnEntry.savedStateHandle["person_path"] = savedUri

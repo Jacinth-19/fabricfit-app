@@ -97,6 +97,10 @@ and CI builds always produce an installable release APK out of the box.
 
 In GitHub Actions, the `release` job decodes an optional `KEYSTORE_BASE64` secret into
 `app/upload.keystore` and passes `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` to
-Gradle; configure those four repository secrets before publishing to a store.
+Gradle. Set the repository variable `PRODUCTION_RELEASE=true` to make all four secrets
+mandatory and prevent accidental demo-signed Play artifacts. See
+[Production signing](docs/PRODUCTION_SIGNING.md) for secure key creation, storage, and
+verification. The public demo key is for disposable tester builds only.
+
 Because the application ID changed to `com.fabricfit.app`, an existing `com.ntoma.studio`
 install cannot be upgraded in place.

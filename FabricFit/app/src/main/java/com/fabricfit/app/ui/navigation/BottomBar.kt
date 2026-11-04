@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -54,7 +54,9 @@ import com.fabricfit.app.ui.theme.HeritageGold
 
 private fun isTabSelected(currentRoute: String?, tabRoute: String): Boolean =
     currentRoute == tabRoute ||
-        (tabRoute == Routes.DISCOVER && currentRoute == Routes.DISCOVER_ROUTE_PATTERN)
+        (tabRoute == Routes.DISCOVER && currentRoute == Routes.DISCOVER_ROUTE_PATTERN) ||
+        (tabRoute == Routes.TRYON &&
+            (currentRoute == Routes.TRYON_ROUTE_PATTERN || currentRoute == Routes.FAVORITES))
 
 internal data class Tab(
     val route: String,
@@ -74,7 +76,7 @@ internal val tabs = listOf(
     Tab(Routes.HOME, R.string.nav_home, Icons.Filled.Home, Icons.Outlined.Home),
     Tab(Routes.DISCOVER, R.string.nav_discover, Icons.Filled.Explore, Icons.Outlined.Explore),
     Tab(Routes.CREATE, R.string.nav_camera, Icons.Filled.CameraAlt, Icons.Filled.CameraAlt, isCentre = true),
-    Tab(Routes.FAVORITES, R.string.nav_tryon, Icons.Filled.Checkroom, Icons.Outlined.Checkroom),
+    Tab(Routes.TRYON, R.string.nav_tryon, Icons.Filled.Checkroom, Icons.Outlined.Checkroom),
     Tab(Routes.PROFILE, R.string.nav_profile, Icons.Filled.Person, Icons.Outlined.Person),
 )
 
@@ -96,40 +98,34 @@ internal fun FabricFitBottomBar(
         tonalElevation = if (isDarkChrome) 0.dp else 8.dp,
         shadowElevation = 8.dp,
     ) {
-        androidx.compose.runtime.CompositionLocalProvider(
-            androidx.compose.ui.platform.LocalDensity provides
-                androidx.compose.ui.unit.Density(
-                    density = androidx.compose.ui.platform.LocalDensity.current.density,
-                    fontScale = 1f,
-                ),
+        Row(
+            Modifier
+                .fillMaxWidth()
+                // Respect the user's font-scale setting and grow rather than clip
+                // enlarged labels. System navigation insets are added by Surface.
+                .heightIn(min = 78.dp)
+                .padding(top = 6.dp, bottom = 4.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.Bottom,
         ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(78.dp)
-                    .padding(top = 6.dp, bottom = 4.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                tabs.forEach { tab ->
-                    val isSelected = isTabSelected(currentRoute, tab.route)
-                    if (tab.isCentre) {
-                        CameraTab(
-                            label = stringResource(tab.labelRes),
-                            selected = isSelected,
-                            darkChrome = isDarkChrome,
-                            onClick = { onNavigate(tab.route) },
-                            modifier = Modifier.weight(1f),
-                        )
-                    } else {
-                        StandardTab(
-                            tab = tab,
-                            selected = isSelected,
-                            darkChrome = isDarkChrome,
-                            onClick = { onNavigate(tab.route) },
-                            modifier = Modifier.weight(1f),
-                        )
-                    }
+            tabs.forEach { tab ->
+                val isSelected = isTabSelected(currentRoute, tab.route)
+                if (tab.isCentre) {
+                    CameraTab(
+                        label = stringResource(tab.labelRes),
+                        selected = isSelected,
+                        darkChrome = isDarkChrome,
+                        onClick = { onNavigate(tab.route) },
+                        modifier = Modifier.weight(1f),
+                    )
+                } else {
+                    StandardTab(
+                        tab = tab,
+                        selected = isSelected,
+                        darkChrome = isDarkChrome,
+                        onClick = { onNavigate(tab.route) },
+                        modifier = Modifier.weight(1f),
+                    )
                 }
             }
         }

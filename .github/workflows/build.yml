@@ -121,15 +121,37 @@ jobs:
       - name: Make the Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      # Decode an upload keystore when KEYSTORE_BASE64 is configured in repo
-      # secrets; otherwise app/build.gradle.kts falls back to demo-release.keystore.
-      - name: Decode release keystore (optional)
+      # Decode an upload keystore when configured. Demo signing remains useful
+      # for disposable tester APKs, but repository variable PRODUCTION_RELEASE=true
+      # makes every missing production signing secret a hard failure.
+      - name: Decode and validate release signing
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          PRODUCTION_RELEASE: ${{ vars.PRODUCTION_RELEASE }}
         run: |
+          if [ "$PRODUCTION_RELEASE" = "true" ]; then
+            missing=0
+            for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+              if [ -z "${!name:-}" ]; then
+                echo "::error::PRODUCTION_RELEASE requires the $name secret."
+                missing=1
+              fi
+            done
+            if [ "$missing" -ne 0 ]; then
+              echo "::error::Refusing to create a production artifact with demo-release.keystore."
+              exit 1
+            fi
+          fi
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > app/upload.keystore
             echo "KEYSTORE_FILE=upload.keystore" >> "$GITHUB_ENV"
+            echo "RELEASE_SIGNING=production" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Using the public demo keystore. Do not upload this artifact to Google Play."
+            echo "RELEASE_SIGNING=demo" >> "$GITHUB_ENV"
           fi
 
       - name: Minified release APK + Play bundle
@@ -186,7 +208,7 @@ jobs:
             gh release create "$tag" dist/* \
               --target "$GITHUB_SHA" \
               --title "FabricFit ${tag}" \
-              --notes "Signed release build produced by GitHub Actions run ${GITHUB_RUN_ID} from commit ${GITHUB_SHA}."
+              --notes "${RELEASE_SIGNING} signed release build produced by GitHub Actions run ${GITHUB_RUN_ID} from commit ${GITHUB_SHA}. Demo-signed artifacts are for testing only and must not be uploaded to Google Play."
           fi
           echo "Published $tag"
 
@@ -230,9 +252,10 @@ jobs:
           working-directory: FabricFit
           script: >
             export SCREENSHOT_ABI=1 &&
+            adb shell settings put secure navigation_mode 0 &&
             chmod +x ./gradlew &&
             ./gradlew :app:connectedDebugAndroidTest
-            -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
+            -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest,com.fabricfit.app.ui.navigation.BottomNavigationInsetTest
 
       - name: Annotate instrumented test failures
         if: failure()

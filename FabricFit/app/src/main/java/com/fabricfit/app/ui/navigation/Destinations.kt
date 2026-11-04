@@ -8,6 +8,8 @@ object Routes {
     const val DISCOVER_ROUTE_PATTERN = "discover?q={q}"
     const val CREATE = "create"
     const val FAVORITES = "favorites"
+    const val TRYON = "tryon"
+    const val TRYON_ROUTE_PATTERN = "tryon?fabricId={fabricId}&styleId={styleId}&person={person}"
     const val PROFILE = "profile"
 
     const val ONBOARDING = "onboarding"
@@ -57,5 +59,13 @@ object Routes {
     const val NOTIFICATION_PREFERENCES = "settings/notifications"
     const val ADMIN_MODERATION = "admin/moderation"
 
-    val TOP_LEVEL = listOf(HOME, DISCOVER, DISCOVER_ROUTE_PATTERN, CREATE, FAVORITES, PROFILE)
+    val TOP_LEVEL = listOf(
+        HOME,
+        DISCOVER,
+        DISCOVER_ROUTE_PATTERN,
+        CREATE,
+        TRYON_ROUTE_PATTERN,
+        FAVORITES,
+        PROFILE,
+    )
 }

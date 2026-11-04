@@ -59,7 +59,7 @@ fun EditImageScreen(nav: NavHostController, padding: PaddingValues, uri: String,
         val path = state.resultPath ?: return@LaunchedEffect
         val currentRoute = nav.currentBackStackEntry?.destination?.route
         if (target == "person") {
-            val tryOnRoute = "tryon?fabricId={fabricId}&styleId={styleId}&person={person}"
+            val tryOnRoute = Routes.TRYON_ROUTE_PATTERN
             val tryOnEntry = runCatching { nav.getBackStackEntry(tryOnRoute) }.getOrNull()
             if (tryOnEntry != null) {
                 tryOnEntry.savedStateHandle["person_path"] = path

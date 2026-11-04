@@ -197,7 +197,7 @@ private fun FabricFitNavHost(
         }
 
         composable(
-            "tryon?fabricId={fabricId}&styleId={styleId}&person={person}",
+            Routes.TRYON_ROUTE_PATTERN,
             arguments = listOf(
                 androidx.navigation.navArgument("fabricId") {
                     type = NavType.LongType

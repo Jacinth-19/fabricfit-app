@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -123,7 +124,14 @@ fun OnboardingScreen(onFinished: (scanNow: Boolean) -> Unit) {
 
     val bgColor = if (page.dark) HeritageForest else MaterialTheme.colorScheme.background
 
-    Surface(modifier = Modifier.fillMaxSize(), color = bgColor) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            // Onboarding lives outside MainScaffold, so protect its top Skip
+            // action and bottom CTAs from status/navigation bars explicitly.
+            .safeDrawingPadding(),
+        color = bgColor,
+    ) {
         Column(Modifier.fillMaxSize()) {
             // Top bar with "Skip for now" accessible on all pages
             Row(

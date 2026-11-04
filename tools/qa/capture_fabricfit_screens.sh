@@ -18,6 +18,9 @@ adb shell settings put system screen_off_timeout 600000
 adb shell settings put global window_animation_scale 0
 adb shell settings put global transition_animation_scale 0
 adb shell settings put global animator_duration_scale 0
+# Exercise the same Android 3-button navigation mode used by many devices.
+# The matching instrumented test asserts the tab bounds against this inset.
+adb shell settings put secure navigation_mode 0
 adb shell input keyevent KEYCODE_WAKEUP
 adb shell wm dismiss-keyguard || true
 
@@ -94,6 +97,23 @@ capture welcome
 tap_label "Skip for now"
 capture home
 
+# Responsive/accessibility captures: enlarged text, a smaller display and landscape.
+adb shell settings put system font_scale 1.30
+sleep 2
+capture home-large-font
+adb shell settings put system font_scale 1.0
+adb shell wm size 720x1280
+adb shell wm density 320
+sleep 2
+capture home-small
+adb shell wm size 1920x1080
+adb shell wm density 420
+sleep 2
+capture home-landscape
+adb shell wm size 1080x1920
+adb shell wm density 420
+sleep 2
+
 tap_label "Discover"
 capture discover
 
@@ -103,12 +123,15 @@ sleep 3 # the camera preview needs a moment to start on the emulator
 capture create
 
 tap_label "Try-On"
-tap_label "Got it" || true # dismiss the first-run Favourites coach mark
-capture favourites
+tap_label "Got it" || true # dismiss the first-run FitRoom coach mark
+capture try-on
 
 tap_label "Profile"
-
 capture profile
+tap_label "Saved Styles"
+capture scan-results
+
+tap_label "Profile"
 tap_label "My Fit Closet"
 sleep 1.5
 capture my-fit-closet

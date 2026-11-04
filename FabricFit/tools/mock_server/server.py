@@ -614,7 +614,8 @@ HTML_PAGE = """<!DOCTYPE html>
           <img src="docs-screenshots/welcome.png" alt="Welcome"/>
           <img src="docs-screenshots/home.png" alt="Home"/>
           <img src="docs-screenshots/create.png" alt="Create"/>
-          <img src="docs-screenshots/favourites.png" alt="Scan Results"/>
+          <img src="docs-screenshots/try-on.png" alt="Virtual Try-On"/>
+          <img src="docs-screenshots/scan-results.png" alt="Scan Results"/>
           <img src="docs-screenshots/discover.png" alt="Discover"/>
           <img src="docs-screenshots/profile.png" alt="Profile"/>
         </div>

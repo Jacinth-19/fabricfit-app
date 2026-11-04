@@ -65,7 +65,7 @@ clean worktree at `b47bbce`, the result byte-matches this tree.
 | Command-line: `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest` | green in CI on `main` |
 | `./gradlew :app:assembleRelease :app:bundleRelease` | green in CI on `main` |
 | GitHub repository | `Jacinth-19/fabricfit-app` (renamed from `ntoma-studio`) |
-| Gradle / AGP / Kotlin | 8.9 / 8.5.2 / 2.0.20, compileSdk + targetSdk 34, minSdk 24, versionCode 2 / versionName 1.0.1 |
+| Gradle / AGP / Kotlin | 8.9 / 8.5.2 / 2.0.20, compileSdk + targetSdk 34, minSdk 24, versionCode 3 / versionName 1.0.2 |
 
 CI runs on every PR and every push to `main`: `verify` (unit tests, debug APK,
 androidTest compile) then `release` (R8 APK + Play bundle). The macOS emulator job
