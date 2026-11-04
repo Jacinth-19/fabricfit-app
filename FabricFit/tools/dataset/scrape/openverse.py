@@ -91,8 +91,11 @@ def main() -> int:
     kept = skipped = errors = 0
 
     for cls in targets:
+        # Keep the limit independent for every fabric family; Staging.stats
+        # counts all classes and must not short-circuit the remaining targets.
+        class_kept = 0
         for q in qmap[cls][: args.queries_per_class]:
-            if staging and staging.stats["ok"] >= args.per_class:
+            if staging and class_kept >= args.per_class:
                 break
             page_no = 1
             while page_no <= args.max_pages:
@@ -146,12 +149,13 @@ def main() -> int:
                     )
                     if outcome == "ok":
                         kept += 1
+                        class_kept += 1
                         common.log(f"  + {cls}/{res.get('title')} [{res['_license']}]")
                     else:
                         skipped += 1
-                    if staging.stats["ok"] >= args.per_class:
+                    if staging and class_kept >= args.per_class:
                         break
-                if not payload.get("results") or staging and staging.stats["ok"] >= args.per_class:
+                if not payload.get("results") or staging and class_kept >= args.per_class:
                     break
                 page_no += 1
 

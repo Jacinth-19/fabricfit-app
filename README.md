@@ -305,6 +305,13 @@ FabricFit pairs an offline-first on-device computer-vision and ML pipeline with 
 | **4** | **Texture-Preserving Cloth Warper for Virtual Try-On** | • `cloth_warper_shading.tflite` (`11.9 KB`, `[1,64,64,4] -> [1,64,64,3]`) | `DemoLookGenerator.kt`, `GarmentGeometry.kt` & `CloudAnalysisClient.kt` | • Seamless `160×160` mirror-tiled real fabric swatch extraction (`loadRealFabricTextureOrFallback`), dynamic sleeve/neckline/length polygon reshaping, 3D cylindrical + neural fold shading (`predictClothShadingMap`), head/face pixel preservation, and `POST v1/tryon` cloud VTON contract. |
 | **5** | **Context-Aware FitMatch AI Ranker** | • `fitmatch_ranker.tflite` (`6.5 KB`, `[1,16] -> [1,1]`) | `RecommendationEngine.kt` & `RecommendationsViewModel.kt` | • 16-feature neural ranker MLP (`buildFeatureVector`) fused with `RecommendationContext` (fabric structure, wearer skin-tone harmony, `Measurements` waist-to-hip & height proportions, Gabor weave anisotropy, and session favorite style affinity). |
 
+**Model validation:** all eight bundled TFLite assets are contract-tested, while
+the 17-family fabric classifier is evaluated separately on freely licensed real
+online photos. The current classifier is a small catalog-trained demo, not a
+claim to recognise every real-world fabric. See
+[**Model inventory & real-fabric QA**](FabricFit/docs/MODEL_QA.md) for the audit,
+attributed contact sheet, per-class predictions, and validation limits.
+
 ---
 
 ## Repository Layout

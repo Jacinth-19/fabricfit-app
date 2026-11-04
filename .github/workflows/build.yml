@@ -273,6 +273,84 @@ jobs:
                       print(f"::error::{tc.attrib.get('classname')}.{tc.attrib.get('name')}: {esc[:1400]}")
           PY
 
+  # Real-fabric QA is deliberately separate from pass/fail build verification:
+  # search-derived online labels are unvetted, so recognition results are reported
+  # honestly without turning a low accuracy finding into a misleading green quality gate.
+  fabric-qa:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+       contains(github.event.head_commit.message, '[fabric-qa]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install LiteRT and image/scraper dependencies
+        run: python3 -m pip install --disable-pip-version-check ai-edge-litert numpy pillow requests certifi
+
+      - name: Verify dataset scraper safety rails
+        run: python3 FabricFit/tools/dataset/scrape/selftest.py
+
+      - name: Collect freely licensed real fabric photos online
+        env:
+          FABRICFIT_SCRAPER_CONTACT: https://github.com/Jacinth-19/fabricfit-app
+        run: |
+          rm -rf FabricFit/tools/dataset/scraped/wikimedia FabricFit/tools/dataset/scraped/openverse
+          python3 FabricFit/tools/dataset/scrape/wikimedia.py \
+            --per-class 2 --queries-per-class 4 --max-pages 2 --sleep 0.2
+          python3 FabricFit/tools/dataset/scrape/openverse.py \
+            --per-class 1 --queries-per-class 4 --max-pages 2 --sleep 0.2
+
+      - name: Audit every bundled TFLite model
+        run: python3 tools/qa/fabric_model_qa.py contracts --output qa-artifacts/model-contracts.json
+
+      - name: Evaluate textile models on real online fabrics
+        run: |
+          python3 tools/qa/fabric_model_qa.py online \
+            --data-dir FabricFit/tools/dataset/scraped/wikimedia \
+            --data-dir FabricFit/tools/dataset/scraped/openverse \
+            --contracts qa-artifacts/model-contracts.json \
+            --output-dir qa-artifacts \
+            --per-class 2 --require-all-classes
+
+      - name: Upload model and real-fabric QA reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fabricfit-real-fabric-qa
+          path: |
+            qa-artifacts/
+            FabricFit/tools/dataset/scraped/wikimedia/CREDITS.csv
+            FabricFit/tools/dataset/scraped/openverse/CREDITS.csv
+          if-no-files-found: warn
+
+      - name: Commit QA reports and attributed contact sheet
+        if: always()
+        run: |
+          set -e
+          if [ ! -f qa-artifacts/real-fabric-report.json ]; then
+            echo 'No online report was generated; nothing to commit.'
+            exit 0
+          fi
+          mkdir -p FabricFit/docs/qa
+          cp qa-artifacts/model-contracts.json qa-artifacts/model-contracts.md FabricFit/docs/qa/
+          cp qa-artifacts/real-fabric-report.json qa-artifacts/real-fabric-report.md \
+            qa-artifacts/real-fabric-contact-sheet.jpg FabricFit/docs/qa/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add FabricFit/docs/qa/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: test bundled models on real online fabrics [skip ci]"
+            git push
+          fi
+
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
   # The job commits the refreshed PNGs back to the branch that triggered it.

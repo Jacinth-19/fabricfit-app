@@ -5,9 +5,11 @@
 - Classifies into **17 fabric families** (Kente, Kente print, Adinkra, Wax, Ankara, Batik,
   Tie-dye, Lace, Brocade, Cotton plain, Linen, Silk, Chiffon, Velvet, Denim, **Fugu (batakari)**,
   **Gonja**) + honest **Unknown**.
-- Pipeline: quantized MobileNetV2 (ImageNet hints) + **GLCM texture metrics** + a dedicated
-  **kente-strip detector** + color analysis. Confidence is capped and results are labelled
-  `ON_DEVICE_DEMO` until a real backend or fine-tuned model exists.
+- Pipeline: a **small catalog-trained 17-class TFLite demo** + quantized MobileNetV2
+  (ImageNet/OOD hints) + **GLCM texture metrics** + a dedicated **kente-strip detector**
+  + color analysis. Most classifier families have only one or two training sources, and
+  Fugu/Gonja use procedural examples. Confidence is capped and results remain labelled
+  `ON_DEVICE_DEMO`; real online-photo results are published in `docs/qa/real-fabric-report.md`.
 - **Fugu/Gonja detection (new)**: 2–3-hue narrow-strip weaves with muted palettes are now
   recognised; earth-toned (ochre/brown, judged from raw argb warmth) high-contrast strips
   classify as **Gonja**, cooler indigo/black/white strips as **Fugu**. Unit-tested with
@@ -64,9 +66,12 @@ fabric photos, inspiration look photos, and the PDF tailor brief (FileProvider).
   **KENTE 0.00, GONJA 0.00, BATIK 0.00**. Qualitative probe: kente photo → "ANKARA" (0.80).
   Exported `out/fabric_starter.tflite` (1.14 MB, 96×96→17 classes, LiteRT-verified).
 - **Verdict: the starter model is NOT shipped.** It beats random 7× but is far below the
-  honesty bar (README rule: no shipping under ~1000 images/class). The shipped classifier
-  stays MobileNetV2 + GLCM + strip heuristics with ON_DEVICE_DEMO labelling. The experiment's
-  value is the proven pipeline + a baseline number to beat once real field photos exist.
+  honesty bar (README rule: no shipping under ~1000 images/class). The separately generated
+  `ghanaian_fabric_classifier.tflite` **is** bundled, but it is also a demo baseline trained
+  on a few catalog sources with procedural Fugu/Gonja—not a field-validated model. It runs
+  alongside MobileNetV2 + GLCM + strip heuristics with ON_DEVICE_DEMO labelling. The
+  experiment's value is the proven pipeline + a baseline number to beat once real field
+  photos exist.
 
 ## 7. DeepLabV3 person segmentation — QA'd (as far as possible without a device)
 `tools/qa_deeplabv3.py` runs the **exact shipped model asset** through the LiteRT interpreter

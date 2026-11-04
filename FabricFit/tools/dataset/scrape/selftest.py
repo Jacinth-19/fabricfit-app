@@ -178,6 +178,73 @@ def test_staging():
     shutil.rmtree(tmp)
 
 
+# --------------------------------------------- per-class scraper budgets
+
+def test_scraper_class_budgets():
+    """A full first class must not prevent any later class being collected."""
+    from unittest.mock import patch
+    import openverse
+    import wikimedia
+
+    class FakeStaging:
+        def __init__(self):
+            self.stats = {"ok": 0, "duplicate": 0, "conflict": 0, "invalid": 0}
+            self.added = []
+            self.root = Path("fake-staging")
+
+        def add(self, cls, _img, **_kwargs):
+            self.stats["ok"] += 1
+            self.added.append(cls)
+            return "ok"
+
+    def exercise(module, payload):
+        staging = FakeStaging()
+
+        def fetch(_session, url, **_kwargs):
+            return json.dumps(payload).encode() if url == module.API else b"real-image"
+
+        argv = [
+            module.__file__, "--per-class", "1", "--classes", "KENTE,ANKARA",
+            "--queries-per-class", "1", "--max-pages", "1", "--sleep", "0",
+        ]
+        with (
+            patch.object(module.common, "make_session", return_value=object()),
+            patch.object(module.common, "fetch_bytes", side_effect=fetch),
+            patch.object(
+                module.common, "validate_image",
+                return_value=(common.Image.new("RGB", (320, 320)), "ok"),
+            ),
+            patch.object(module.common, "Staging", return_value=staging),
+            patch.object(sys, "argv", argv),
+        ):
+            module.main()
+        return staging.added
+
+    wm_payload = {"query": {"pages": [{
+        "title": "File:Real cloth.jpg", "pageid": 1,
+        "imageinfo": [{
+            "url": "https://upload.wikimedia.org/real.jpg",
+            "thumburl": "https://upload.wikimedia.org/real-thumb.jpg",
+            "descriptionurl": "https://commons.wikimedia.org/wiki/File:Real_cloth.jpg",
+            "width": 640, "height": 480, "mime": "image/jpeg",
+            "extmetadata": {
+                "LicenseShortName": {"value": "CC BY 4.0"},
+                "Artist": {"value": "A. Weaver"},
+            },
+        }],
+    }]}}
+    ov_payload = {"results": [{
+        "id": "real", "url": "https://example.org/real.jpg",
+        "foreign_landing_url": "https://example.org/real",
+        "license": "by", "license_version": "4.0", "title": "Real cloth",
+        "width": 640, "height": 480,
+    }]}
+    wm_added = exercise(wikimedia, wm_payload)
+    ov_added = exercise(openverse, ov_payload)
+    check("Wikimedia budget is per class", wm_added == ["KENTE", "ANKARA"], str(wm_added))
+    check("Openverse budget is per class", ov_added == ["KENTE", "ANKARA"], str(ov_added))
+
+
 # ------------------------------------------------------- split utilities
 
 def load_prepare_module():
@@ -334,6 +401,7 @@ def main() -> int:
     test_wikimedia_parser()
     test_openverse_parser()
     test_staging()
+    test_scraper_class_budgets()
     test_split()
     test_prepare_e2e()
     print()

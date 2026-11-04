@@ -89,9 +89,12 @@ def main() -> int:
 
     kept = skipped = errors = 0
     for cls in targets:
+        # This budget is per class, not the global Staging total. Using the
+        # global counter here starved every class after the first few targets.
+        class_kept = 0
         queries = qmap[cls][: args.queries_per_class]
         for q in queries:
-            if staging and staging.stats["ok"] >= args.per_class:
+            if staging and class_kept >= args.per_class:
                 break
             offset = 0
             pages_done = 0
@@ -152,12 +155,13 @@ def main() -> int:
                     )
                     if outcome == "ok":
                         kept += 1
+                        class_kept += 1
                         common.log(f"  + {cls}/{title} [{page['_license']}]")
                     else:
                         skipped += 1
-                    if staging and staging.stats["ok"] >= args.per_class:
+                    if staging and class_kept >= args.per_class:
                         break
-                if "continue" not in payload or staging and staging.stats["ok"] >= args.per_class:
+                if "continue" not in payload or staging and class_kept >= args.per_class:
                     break
                 offset = payload["continue"].get("gsroffset", 0)
                 pages_done += 1
