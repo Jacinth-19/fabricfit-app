@@ -1,0 +1,72 @@
+{
+  "generatedAt": "2026-11-04T20:24:54.053098+00:00",
+  "status": "dataset incomplete; training refused",
+  "missingSplitImages": {
+    "ADINKRA": {
+      "train": 3,
+      "val": 1,
+      "test": 0
+    },
+    "ANKARA": {
+      "train": 1,
+      "val": 0,
+      "test": 0
+    },
+    "BATIK": {
+      "train": 1,
+      "val": 0,
+      "test": 0
+    },
+    "COTTON_PLAIN": {
+      "train": 2,
+      "val": 0,
+      "test": 0
+    },
+    "DENIM": {
+      "train": 0,
+      "val": 0,
+      "test": 0
+    },
+    "FUGU": {
+      "train": 2,
+      "val": 1,
+      "test": 0
+    },
+    "GONJA": {
+      "train": 1,
+      "val": 0,
+      "test": 0
+    },
+    "KENTE": {
+      "train": 2,
+      "val": 1,
+      "test": 0
+    },
+    "KENTE_PRINT": {
+      "train": 1,
+      "val": 0,
+      "test": 0
+    },
+    "LACE": {
+      "train": 3,
+      "val": 1,
+      "test": 0
+    },
+    "LINEN": {
+      "train": 3,
+      "val": 1,
+      "test": 0
+    },
+    "TIEDYE": {
+      "train": 1,
+      "val": 0,
+      "test": 0
+    },
+    "WAX": {
+      "train": 2,
+      "val": 0,
+      "test": 0
+    }
+  },
+  "explanation": "Every family needs at least one independent train, validation, and test image. No accuracy was reported."
+}
