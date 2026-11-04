@@ -1,0 +1,83 @@
+id,decision,reason
+R001,accept,"Ewe kente cloth, fabric fills frame"
+R002,accept,kente-style printed cloth in Kumasi market
+R003,accept,"adinkra mourning cloth, Kumasi"
+R004,accept,wax prints in a West African fabric shop
+R005,reject,duplicate of R029 (WAX); wax-vs-ankara label ambiguous
+R006,accept,Indonesian batik cloth
+R007,accept,"Bai tie-dyed fabric, Yunnan museum"
+R008,accept,"sheer lace top and skirt, no person in frame"
+R009,accept,silk sari with supplementary-weft brocade
+R010,reject,"raw cotton fibre, not woven cloth"
+R011,accept,linen Coptic textile fragment
+R012,reject,"knitted glove object, not a fabric surface"
+R013,accept,printed silk chiffon dress detail
+R014,accept,"ornamental velvet covering, texture visible"
+R015,accept,denim fabric draped
+R016,accept,Ghanaian fugu smock dress
+R017,accept,Gonja-style striped northern smock
+R018,reject,"dancer photo, person dominates frame"
+R019,reject,near duplicate of R001
+R020,accept,Ewe kente strips
+R021,reject,selfie; fabric incidental
+R022,reject,plain white trousers; mislabeled as kente
+R023,accept,historic adinkra cloth
+R024,reject,"printed symbol chart, not cloth"
+R025,reject,near duplicate of R003
+R026,reject,building facade
+R027,reject,monument/building photo
+R028,reject,astronomy photo
+R029,accept,wax print fabric pile
+R030,reject,near duplicate of R004
+R031,accept,"ankara fabric stall, fabric is the subject"
+R032,reject,person collage panel
+R033,reject,person-dominant dress photo
+R034,reject,museum building
+R035,reject,near duplicate of R006
+R036,reject,historical people scene
+R037,reject,"person at work, cloth incidental"
+R038,reject,historical people scene
+R039,reject,near duplicate of R007
+R040,reject,building exterior
+R041,reject,building exterior
+R042,reject,tent/building
+R043,reject,"engraving, not a fabric photograph"
+R044,accept,african lace fabric draped
+R045,reject,near duplicate of R008
+R046,reject,portrait; lace incidental
+R047,accept,Benaras brocade sari
+R048,reject,"loom/machinery, no fabric closeup"
+R049,accept,Konia brocade sari
+R050,reject,institute building
+R051,reject,duck
+R052,reject,duck
+R053,reject,book title page
+R054,accept,"plain muslin dress, garment as subject"
+R055,reject,object of uncertain material
+R056,reject,"black-and-white archival copy, material unclear"
+R057,reject,near duplicate of R011
+R058,reject,museum bowl
+R059,accept,"silk furnishing fabric, Lyon 1785"
+R060,reject,duplicate of R009 (BROCADE); label conflict
+R061,reject,near duplicate of R012
+R062,reject,"fur coat, not silk cloth"
+R063,reject,cake
+R064,reject,cake
+R065,reject,portrait; chiffon incidental
+R066,accept,turquoise chiffon sari fabric
+R067,accept,"devore velvet, texture fills frame"
+R068,reject,"same exhibit as R014, angle variant"
+R069,reject,near duplicate of R014
+R070,accept,"velvet, Honolulu museum"
+R071,reject,near duplicate of R015
+R072,reject,"near duplicate of R015, same cloth"
+R073,reject,"synthetic texture render, nearly blank"
+R074,reject,near duplicate of R073
+R075,reject,near duplicate of R016
+R076,accept,fugu smock worn; garment is the subject
+R077,reject,"same scene as R076, variant frame"
+R078,reject,"same scene as R076, variant frame"
+R079,reject,bird
+R080,reject,animal footprint
+R081,reject,tree
+R082,reject,landscape
