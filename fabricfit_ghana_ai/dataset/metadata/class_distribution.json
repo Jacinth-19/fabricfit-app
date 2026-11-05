@@ -1,0 +1,30 @@
+{
+  "candidateRows": 21,
+  "downloaded": 0,
+  "classes": {
+    "KENTE": 4,
+    "ANKARA_WAX_PRINT": 3,
+    "ADINKRA": 4,
+    "BATIK": 1,
+    "TIE_DYE_ADIRE": 2,
+    "LACE": 4,
+    "GHANAIAN_FUGU_SMOCK": 3,
+    "OTHER_UNKNOWN": 0
+  },
+  "classTarget": 1300,
+  "perClassTarget": 162,
+  "sourceDataset": {
+    "id": "mikuns/african-fabric",
+    "availability": "NOT VERIFIED (Kaggle host inaccessible in this run)",
+    "license": "NOT VERIFIED; excluded until Kaggle metadata/licence can be checked"
+  },
+  "requiredManualWork": [
+    "download eligible files and populate SHA-256/dimensions",
+    "confirm every mapped label with a Ghanaian textile specialist",
+    "confirm open licence and collection date per source",
+    "review all images; reject non-fabric, irrelevant, watermarks and uncertain labels",
+    "source additional independent photos; currently zero binaries available here"
+  ],
+  "trainingAllowed": false,
+  "reason": "No local downloaded image files and severe per-class data shortage; no model training or test result is justified."
+}

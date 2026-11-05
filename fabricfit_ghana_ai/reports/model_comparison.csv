@@ -1,0 +1,4 @@
+variant,status,test_accuracy,model_bytes,median_latency_ms,p95_latency_ms
+FP32,NOT_EXPORTED,,,,
+FP16,NOT_EXPORTED,,,,
+INT8,NOT_EXPORTED,,,,

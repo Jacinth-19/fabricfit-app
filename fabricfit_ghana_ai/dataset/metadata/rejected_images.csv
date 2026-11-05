@@ -1,0 +1,232 @@
+id,round,label,title,license,source_page,reason
+R005,round-1,ANKARA,Wax print,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Wax_print.jpeg,duplicate of R029 (WAX); wax-vs-ankara label ambiguous
+R010,round-1,COTTON_PLAIN,Cotton fabric,CC BY 4.0,https://commons.wikimedia.org/wiki/File:Cotton_fabric.jpg,"raw cotton fibre, not woven cloth"
+R012,round-1,SILK,Sea silk glove,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG,"knitted glove object, not a fabric surface"
+R015,round-1,DENIM,Denim fabric 03,CC0 1.0,https://commons.wikimedia.org/wiki/File:Denim_fabric_03_(Rico_Cilliers_and_colormass_via_Poly_Haven).png,"CGI albedo texture render (Poly Haven), not a photograph of cloth"
+R018,round-1,KENTE,Adowa Dancer in Kente Cloth.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Adowa_Dancer_in_Kente_Cloth.jpg,"dancer photo, person dominates frame"
+R019,round-1,KENTE,"Ewe kente 2, Ghana.JPG",CC BY-SA 3.0,"https://commons.wikimedia.org/wiki/File:Ewe_kente_2,_Ghana.JPG",near duplicate of R001
+R021,round-1,KENTE,Kente cloth.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Kente_cloth.jpg,selfie; fabric incidental
+R022,round-1,KENTE_PRINT,Broek van Afrikaanse kente stof- Stichting Nationaal Museum van Wereldculturen - R-3633b.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Broek_van_Afrikaanse_kente_stof-_Stichting_Nationaal_Museum_van_Wereldculturen_-_R-3633b.jpg,plain white trousers; mislabeled as kente
+R024,round-1,ADINKRA,Adinkra Rattray.JPG,Public domain,https://commons.wikimedia.org/wiki/File:Adinkra_Rattray.JPG,"printed symbol chart, not cloth"
+R025,round-1,ADINKRA,Adinkra cloth.JPG,Public domain,https://commons.wikimedia.org/wiki/File:Adinkra_cloth.JPG,near duplicate of R003
+R026,round-1,ADINKRA,"Adinkra symbols, Ghana.jpg",CC BY-SA 3.0,"https://commons.wikimedia.org/wiki/File:Adinkra_symbols,_Ghana.jpg",building facade
+R027,round-1,WAX,Ankara 4372.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Ankara_4372.jpg,monument/building photo
+R028,round-1,WAX,NGC7293 (2004).jpg,Public domain,https://commons.wikimedia.org/wiki/File:NGC7293_(2004).jpg,astronomy photo
+R030,round-1,WAX,Waxprints in a West African Shop.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Waxprints_in_a_West_African_Shop.jpg,near duplicate of R004
+R032,round-1,ANKARA,Ankara dress.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_dress.jpg,person collage panel
+R033,round-1,ANKARA,Ankara monostrap dress.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_monostrap_dress.jpg,person-dominant dress photo
+R034,round-1,ANKARA,Ethnography Museum of Ankara.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Ethnography_Museum_of_Ankara.jpg,museum building
+R035,round-1,BATIK,Batik Indonesia.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Batik_Indonesia.jpg,near duplicate of R006
+R036,round-1,BATIK,COLLECTIE TROPENMUSEUM Batiksters aan het werk op een stand van batikmakerij Tanaabang Batawi TMnr 60018019.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:COLLECTIE_TROPENMUSEUM_Batiksters_aan_het_werk_op_een_stand_van_batikmakerij_Tanaabang_Batawi_TMnr_60018019.jpg,historical people scene
+R037,round-1,BATIK,COLLECTIE TROPENMUSEUM Een batikker aan het werk met een wasstempel in een batikkerij in de omgeving van Tasikmalaja TMnr 60016877.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:COLLECTIE_TROPENMUSEUM_Een_batikker_aan_het_werk_met_een_wasstempel_in_een_batikkerij_in_de_omgeving_van_Tasikmalaja_TMnr_60016877.jpg,"person at work, cloth incidental"
+R038,round-1,BATIK,COLLECTIE TROPENMUSEUM Een batikker en een batikster aan het werk TMnr 60018016.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:COLLECTIE_TROPENMUSEUM_Een_batikker_en_een_batikster_aan_het_werk_TMnr_60018016.jpg,historical people scene
+R039,round-1,TIEDYE,"Bai fabric, tie-dyed - Yunnan Provincial Museum - DSC02211.JPG",Public domain,"https://commons.wikimedia.org/wiki/File:Bai_fabric,_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG",near duplicate of R007
+R040,round-1,TIEDYE,Sinagoga Fabric Timisoara1.jpg,CC BY-SA 2.5,https://commons.wikimedia.org/wiki/File:Sinagoga_Fabric_Timisoara1.jpg,building exterior
+R041,round-1,TIEDYE,Sinagoga din Fabric - Timisoara1.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Sinagoga_din_Fabric_-_Timisoara1.jpg,building exterior
+R042,round-1,TIEDYE,Tension Fabric Building.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Tension_Fabric_Building.jpg,tent/building
+R043,round-1,LACE,1911 Britannica - Lace 3.jpg,Public domain,https://commons.wikimedia.org/wiki/File:1911_Britannica_-_Lace_3.jpg,"engraving, not a fabric photograph"
+R045,round-1,LACE,Transparent lace top and skirt.png,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Transparent_lace_top_and_skirt.png,near duplicate of R008
+R046,round-1,LACE,Unidentified woman c1850 daguerreotype by Southworth & Hawes.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Unidentified_woman_c1850_daguerreotype_by_Southworth_%26_Hawes.jpg,portrait; lace incidental
+R048,round-1,BROCADE,Brocade loom.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Brocade_loom.jpg,"loom/machinery, no fabric closeup"
+R050,round-1,BROCADE,Nanjing Brocade Research Institute.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Nanjing_Brocade_Research_Institute.jpg,institute building
+R051,round-1,COTTON_PLAIN,Female Mallard Duck Rest 3.jpg,CC BY 3.0,https://commons.wikimedia.org/wiki/File:Female_Mallard_Duck_Rest_3.jpg,duck
+R052,round-1,COTTON_PLAIN,Male mallard duck 2.jpg,CC BY 3.0,https://commons.wikimedia.org/wiki/File:Male_mallard_duck_2.jpg,duck
+R053,round-1,COTTON_PLAIN,Muslin Title.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Muslin_Title.jpg,book title page
+R055,round-1,LINEN,Djeserty.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Djeserty.jpg,object of uncertain material
+R056,round-1,LINEN,Egypt Coptic fabric.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Egypt_Coptic_fabric.jpg,"black-and-white archival copy, material unclear"
+R057,round-1,LINEN,Linen Coptic fabric REM.JPG,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Linen_Coptic_fabric_REM.JPG,near duplicate of R011
+R058,round-1,LINEN,Spinning bowl.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Spinning_bowl.jpg,museum bowl
+R060,round-1,SILK,"'Sari' from Varanasi (north-central India), silk and gold-wrapped silk yarn with supplementary weft brocade.jpg",Public domain,"https://commons.wikimedia.org/wiki/File:%27Sari%27_from_Varanasi_(north-central_India),_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg",duplicate of R009 (BROCADE); label conflict
+R061,round-1,SILK,Sea silk glove lo-res.JPG,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG,near duplicate of R012
+R062,round-1,SILK,"Silk lamb fur coat with fabric and leather belt, Germany 2008.jpg",Public domain,"https://commons.wikimedia.org/wiki/File:Silk_lamb_fur_coat_with_fabric_and_leather_belt,_Germany_2008.jpg","fur coat, not silk cloth"
+R063,round-1,CHIFFON,Chiffon cake kanko.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Chiffon_cake_kanko.jpg,cake
+R064,round-1,CHIFFON,Hojomai Chiffon Cake.jpg,CC0 1.0,https://commons.wikimedia.org/wiki/File:Hojomai_Chiffon_Cake.jpg,cake
+R065,round-1,CHIFFON,Lillian Gish 2.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Lillian_Gish_2.jpg,portrait; chiffon incidental
+R068,round-1,VELVET,"Iner ornamental velvet covering Scroll of the Law,.jpg",CC BY-SA 3.0,"https://commons.wikimedia.org/wiki/File:Iner_ornamental_velvet_covering_Scroll_of_the_Law,.jpg","same exhibit as R014, angle variant"
+R069,round-1,VELVET,"Ornamental velvet covering Scroll of the Law,.jpg",CC BY-SA 3.0,"https://commons.wikimedia.org/wiki/File:Ornamental_velvet_covering_Scroll_of_the_Law,.jpg",near duplicate of R014
+R071,round-1,DENIM,Denim fabric 03 (Rico Cilliers and colormass via Poly Haven).png,CC0 1.0,https://commons.wikimedia.org/wiki/File:Denim_fabric_03_(Rico_Cilliers_and_colormass_via_Poly_Haven).png,near duplicate of R015
+R072,round-1,DENIM,Denim fabric 03 (Rico Cilliers and colormass via Poly Haven).webp,CC0 1.0,https://commons.wikimedia.org/wiki/File:Denim_fabric_03_(Rico_Cilliers_and_colormass_via_Poly_Haven).webp,"near duplicate of R015, same cloth"
+R073,round-1,DENIM,Denim fabric 03 ao 8k (Rico Cilliers and colormass via Poly Haven).jpg,CC0 1.0,https://commons.wikimedia.org/wiki/File:Denim_fabric_03_ao_8k_(Rico_Cilliers_and_colormass_via_Poly_Haven).jpg,"synthetic texture render, nearly blank"
+R074,round-1,DENIM,Denim fabric 03 arm 8k (Rico Cilliers and colormass via Poly Haven).jpg,CC0 1.0,https://commons.wikimedia.org/wiki/File:Denim_fabric_03_arm_8k_(Rico_Cilliers_and_colormass_via_Poly_Haven).jpg,near duplicate of R073
+R075,round-1,FUGU,Dress 12.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Dress_12.jpg,near duplicate of R016
+R077,round-1,FUGU,MAN DRESSED IN LOCAL ATTIRE 02.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:MAN_DRESSED_IN_LOCAL_ATTIRE_02.jpg,"same scene as R076, variant frame"
+R078,round-1,FUGU,MAN DRESSED IN LOCAL ATTIRE 03.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:MAN_DRESSED_IN_LOCAL_ATTIRE_03.jpg,"same scene as R076, variant frame"
+R079,round-1,GONJA,"Dryoscopus gambensis (Malaconotidae) (Northern Puffback) - (male), Mole National Park, Ghana, crop.jpg",CC BY 3.0,"https://commons.wikimedia.org/wiki/File:Dryoscopus_gambensis_(Malaconotidae)_(Northern_Puffback)_-_(male),_Mole_National_Park,_Ghana,_crop.jpg",bird
+R080,round-1,GONJA,"Elephant footprint, West Gonja (P1100394).jpg",CC BY-SA 4.0,"https://commons.wikimedia.org/wiki/File:Elephant_footprint,_West_Gonja_(P1100394).jpg",animal footprint
+R081,round-1,GONJA,"Fruits and flower of the sausage tree (Kigelia africana), Ghana.jpg",CC BY-SA 4.0,"https://commons.wikimedia.org/wiki/File:Fruits_and_flower_of_the_sausage_tree_(Kigelia_africana),_Ghana.jpg",tree
+R082,round-1,GONJA,"Mole National Park, West Gonja (P1100366).jpg",CC BY-SA 4.0,"https://commons.wikimedia.org/wiki/File:Mole_National_Park,_West_Gonja_(P1100366).jpg",landscape
+R001,round-2,KENTE,Ewe kente cloth from Ghana,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Ewe_kente_2%2C_Ghana.JPG,already accepted in round 1 (same source image)
+R002,round-2,KENTE_PRINT,Kente-style batik/printed cloth in Kumasi market,CC BY-SA 2.0,https://commons.wikimedia.org/wiki/File:Kente_(Batik)_Cloth_in_Market_-_Kumasi_-_Ghana_(4755541241).jpg,already accepted in round 1 (same source image)
+R003,round-2,ADINKRA,Adinkra mourning cloth collected in Kumasi in 1817,Public domain,https://commons.wikimedia.org/wiki/File:Adinkra_cloth.JPG,already accepted in round 1 (same source image)
+R004,round-2,WAX,Wax prints in a West African fabric shop,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Waxprints_in_a_West_African_Shop.jpg,already accepted in round 1 (same source image)
+R005,round-2,ANKARA,Wax print,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Wax_print.jpeg,duplicate of the WAX photo accepted in round 1
+R006,round-2,BATIK,Batik Indonesia,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Batik_Indonesia.jpg,already accepted in round 1 (same source image)
+R007,round-2,TIEDYE,Bai tie-dyed fabric,Public domain,https://commons.wikimedia.org/wiki/File:Bai_fabric%2C_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG,already accepted in round 1 (same source image)
+R008,round-2,LACE,Transparent lace top and skirt,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Transparent_lace_top_and_skirt.png,already accepted in round 1 (same source image)
+R009,round-2,BROCADE,Silk sari with supplementary-weft brocade,Public domain,https://commons.wikimedia.org/wiki/File:%27Sari%27_from_Varanasi_%28north-central_India%29%2C_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg,already accepted in round 1 (same source image)
+R010,round-2,COTTON_PLAIN,Cotton fabric,CC BY 4.0,https://commons.wikimedia.org/wiki/File:Cotton_fabric.jpg,"raw cotton fibre, not woven cloth"
+R011,round-2,LINEN,Linen Coptic fabric,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Linen_Coptic_fabric_REM.JPG,already accepted in round 1 (same source image)
+R012,round-2,SILK,Sea silk glove,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG,"glove object, not fabric surface"
+R013,round-2,CHIFFON,1970s Givenchy orange printed silk chiffon dress detail,CC0 1.0,https://commons.wikimedia.org/wiki/File:1970s_Givenchy_cocktail_dress%2C_orange_printed_silk_chiffon_03.jpg,already accepted in round 1 (same source image)
+R014,round-2,VELVET,Ornamental velvet covering,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Ornamental_velvet_covering_Scroll_of_the_Law%2C.jpg,already accepted in round 1 (same source image)
+R015,round-2,DENIM,Denim fabric 03,CC0 1.0,https://commons.wikimedia.org/wiki/File:Denim_fabric_03_(Rico_Cilliers_and_colormass_via_Poly_Haven).png,"CGI texture render, not a photograph of cloth"
+R016,round-2,FUGU,Ghanaian smock dress,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Dress_12.jpg,already accepted in round 1 (same source image)
+R017,round-2,GONJA,Smock from Northern Ghana (Gonja-style strip-cloth proxy),CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_from_Northern_Ghana.jpg,already accepted in round 1 (same source image)
+R018,round-2,KENTE,KENTE_2019_Kente_Festival_01.jpg.jpg,,,"crowd scene, people dominate"
+R019,round-2,KENTE,KENTE_2019_Kente_Festival_02.jpg.jpg,,,"dancers, people dominate"
+R020,round-2,KENTE,KENTE_2019_Kente_Festival_03.jpg.jpg,,,"dancers, people dominate"
+R021,round-2,KENTE,KENTE_Adowa_Dancer_in_Kente_Cloth.jpg.jpg,,,"dancer photo, person dominates frame"
+R022,round-2,KENTE,KENTE_Ewe_kente_2_Ghana.JPG.jpg,,,near duplicate of R001
+R023,round-2,KENTE,KENTE_Ewe_kente_stripes_Ghana.jpg.jpg,,,already accepted in round 1 (same source image)
+R024,round-2,KENTE,KENTE_Kente_Batik_Cloth_in_Market_-_Kumasi_-_Ghana_4755541241_.jpg.jpg,,,already accepted in round 1 under KENTE_PRINT
+R025,round-2,KENTE,KENTE_Kente_Cloth.jpg.jpg,,,"two people posing, cloth incidental"
+R027,round-2,KENTE,KENTE_Kente_Cloth_MET_1972.56.1_d2.jpg.jpg,,,"same museum object as R026, detail variant"
+R029,round-2,KENTE,KENTE_Kente_cloth.jpg.jpg,,,selfie; fabric incidental
+R030,round-2,KENTE_PRINT,Broek van Afrikaanse kente stof- Stichting Nationaal Museum van Wereldculturen - R-3633b.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Broek_van_Afrikaanse_kente_stof-_Stichting_Nationaal_Museum_van_Wereldculturen_-_R-3633b.jpg,plain white trousers; mislabeled
+R031,round-2,ADINKRA,ADINKRA_AdinkraCalabashStamps.jpg.jpg,,,"calabash stamps are tools, not cloth"
+R032,round-2,ADINKRA,ADINKRA_Adinkra_1825.jpg.jpg,,,already accepted in round 1 (same source image)
+R033,round-2,ADINKRA,ADINKRA_Adinkra_Rattray.JPG.jpg,,,"symbol chart, not cloth"
+R034,round-2,ADINKRA,ADINKRA_Adinkra_cloth.JPG.jpg,,,near duplicate of R003
+R035,round-2,ADINKRA,ADINKRA_Adinkra_printing.jpg.jpg,,,person printing cloth outdoors
+R036,round-2,ADINKRA,ADINKRA_Eban_Adinkra_.png.jpg,,,digital symbol graphic
+R037,round-2,ADINKRA,ADINKRA_Epa_Adinkra_.png.jpg,,,digital symbol graphic
+R038,round-2,ADINKRA,ADINKRA_Gyaman_Adinkra_Symbols.jpg.jpg,,,symbol chart
+R041,round-2,ADINKRA,ADINKRA_Ntonso_Adinkra_stamp_ink.jpg.jpg,,,"ink pots and hands, not cloth"
+R042,round-2,ADINKRA,ADINKRA_Sankofa_Adinkra_.png.jpg,,,digital symbol graphic
+R043,round-2,WAX,Ankara 4372.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Ankara_4372.jpg,monument photo
+R044,round-2,WAX,Ankara 4P5C4740 (28614650548).jpg,CC BY-SA 2.0,https://commons.wikimedia.org/wiki/File:Ankara_4P5C4740_(28614650548).jpg,museum interior
+R045,round-2,WAX,Camerounaise du Nord ouest 2.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Camerounaise_du_Nord_ouest_2.jpg,portrait; fabric incidental
+R046,round-2,WAX,Chorale camerounaise 5.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Chorale_camerounaise_5.jpg,"choir on stage, people dominate"
+R047,round-2,WAX,Ethnography Museum of Ankara.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Ethnography_Museum_of_Ankara.jpg,museum building
+R048,round-2,WAX,Femmes humoriste camerounaise.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Femmes_humoriste_camerounaise.jpg,crowd scene
+R049,round-2,WAX,Filles lutteuses++.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Filles_lutteuses%2B%2B.jpg,"wrestling, people dominate"
+R050,round-2,WAX,Glissade ++.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Glissade_%2B%2B.jpg,performance scene
+R051,round-2,WAX,NGC7293 (2004).jpg,Public domain,https://commons.wikimedia.org/wiki/File:NGC7293_(2004).jpg,astronomy photo
+R052,round-2,WAX,Not a calabash 1.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Not_a_calabash_1.jpg,sculpture
+R053,round-2,WAX,Wax print.jpeg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Wax_print.jpeg,already accepted in round 1 (same source image)
+R054,round-2,WAX,Waxprints in a West African Shop.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Waxprints_in_a_West_African_Shop.jpg,near duplicate of R004
+R055,round-2,ANKARA,Activités du Ngondo 16.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Activit%C3%A9s_du_Ngondo_16.jpg,"festival crowd, people dominate"
+R056,round-2,ANKARA,Ankara Displays in Ankara Vakıf Eserleri Müzesi General view in 2012 01.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_Displays_in_Ankara_Vak%C4%B1f_Eserleri_M%C3%BCzesi_General_view_in_2012_01.jpg,museum interior
+R057,round-2,ANKARA,Ankara Displays in Ankara Vakıf Eserleri Müzesi Kilim from Adana in 2012 05.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_Displays_in_Ankara_Vak%C4%B1f_Eserleri_M%C3%BCzesi_Kilim_from_Adana_in_2012_05.jpg,"Turkish kilim; 'Ankara' here is the city, mislabeled"
+R058,round-2,ANKARA,Ankara Displays in Ankara Vakıf Eserleri Müzesi Manuscript in 2012 01.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_Displays_in_Ankara_Vak%C4%B1f_Eserleri_M%C3%BCzesi_Manuscript_in_2012_01.jpg,manuscript page
+R059,round-2,ANKARA,Ankara Displays in Ankara Vakıf Eserleri Müzesi Manuscript in 2012 07.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_Displays_in_Ankara_Vak%C4%B1f_Eserleri_M%C3%BCzesi_Manuscript_in_2012_07.jpg,manuscript page
+R060,round-2,ANKARA,Ankara Ethnography Museum Portal of the Ögle Mosque in Ankara Part in 2005 03.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_Ethnography_Museum_Portal_of_the_%C3%96gle_Mosque_in_Ankara_Part_in_2005_03.jpg,carved stone portal
+R061,round-2,ANKARA,Ankara Fabric With A Touch Of Smile.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_Fabric_With_A_Touch_Of_Smile.jpg,already accepted in round 1 (same source image)
+R062,round-2,ANKARA,Ankara bag.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_bag.jpg,"person holding a bag, not fabric"
+R063,round-2,ANKARA,Ankara dress.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_dress.jpg,person collage panel
+R064,round-2,ANKARA,Ankara monostrap dress.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Ankara_monostrap_dress.jpg,person-dominant dress photo
+R065,round-2,ANKARA,Lutte traditionnelle de jeunes 04.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Lutte_traditionnelle_de_jeunes_04.jpg,"wrestling, people dominate"
+R066,round-2,ANKARA,Women's day 11.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Women%27s_day_11.jpg,parade with tractors
+R067,round-2,BATIK,BATIK_Batik_Indonesia.jpg.jpg,,,near duplicate of R006
+R068,round-2,BATIK,BATIK_Batik_Tulis.jpg.jpg,,,shop interior with person
+R069,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Batiksters_aan_het_werk_op_een_stand_van_batikmaker.jpg,,,"historical workshop photo, people dominate"
+R070,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Een_batikker_aan_het_werk_met_een_wasstempel_in_een.jpg,,,"historical workshop photo, people dominate"
+R071,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Een_batikker_en_een_batikster_aan_het_werk_TMnr_600.jpg,,,"historical workshop photo, people dominate"
+R072,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Een_batikker_met_wasstempels_aan_het_werk_op_een_st.jpg,,,"historical workshop photo, people dominate"
+R073,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Een_batikster_aan_het_werk_TMnr_60008754.jpg.jpg,,,"historical workshop photo, people dominate"
+R074,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Een_geposeerde_opname_van_een_kleine_batikwerkplaat.jpg,,,"historical workshop photo, people dominate"
+R075,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Javaanse_batiksters_in_een_werkplaats_te_Batavia_TM.jpg,,,"historical workshop photo, people dominate"
+R076,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Studioportret_van_twee_Javaanse_batiksters_TMnr_600.jpg,,,"historical workshop photo, people dominate"
+R077,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Twee_batiksters_aan_het_werk_TMnr_60023531.jpg.jpg,,,"historical workshop photo, people dominate"
+R078,round-2,BATIK,BATIK_COLLECTIE_TROPENMUSEUM_Vrouwen_bezig_met_batik_werk_Midden-Java_TMnr_10014.jpg,,,"historical workshop photo, people dominate"
+R079,round-2,TIEDYE,TIEDYE_Bai_fabric_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02211.JPG.jpg,,,near duplicate of R007
+R080,round-2,TIEDYE,TIEDYE_Bai_fabric_tie-dyed_-_Yunnan_Provincial_Museum_-_DSC02212.JPG.jpg,,,same museum display object as R081
+R082,round-2,TIEDYE,TIEDYE_Craft_-_fabric_yo-yo.jpg.jpg,,,"craft object, not cloth"
+R083,round-2,TIEDYE,TIEDYE_Fabric_Club_London_2006.jpg.jpg,,,building exterior
+R084,round-2,TIEDYE,TIEDYE_Handicraft_-_fabric_yo-yo.jpg.jpg,,,"craft circles, not tie-dye cloth"
+R085,round-2,TIEDYE,TIEDYE_Madras_fabric-_plaid_madras_fabriconlinestore.jpg.jpg,,,madras plaid; not tie-dye
+R086,round-2,TIEDYE,TIEDYE_Madras_fabric_-_plaid_madras_fabric.jpg.jpg,,,madras plaid; not tie-dye
+R087,round-2,TIEDYE,TIEDYE_Rajshahi_silk_fabric_Sopura_Silk_Mills_Ltd_01_.jpg.jpg,,,"dyed silk, not a tie-dye pattern"
+R088,round-2,TIEDYE,TIEDYE_TIE_AND_DYE_TECHNIQUES.jpg.jpg,,,unlabeled fabric scraps
+R089,round-2,TIEDYE,TIEDYE_Tension_Fabric_Building.jpg.jpg,,,tent/building
+R090,round-2,TIEDYE,TIEDYE_Unix_fabric_shaver.jpg.jpg,,,fabric shaver device
+R091,round-2,LACE,LACE_1911_Britannica_-_Lace_3.jpg.jpg,,,"engraving, not a fabric photograph"
+R092,round-2,LACE,LACE_3-Pair-Mirror-white-red-Black-Flower-Floral-Lace-Fabric-Sewing-Trim-Wedding.jpg,,,watermarked product shot
+R093,round-2,LACE,LACE_African_Lace_VLM_02.jpg.jpg,,,already accepted in round 1 (same source image)
+R095,round-2,LACE,LACE_African_Lace_VLM_14.jpg.jpg,,,not lace; dark wax-lace cloth
+R096,round-2,LACE,LACE_African_Lace_VLM_34.jpg.jpg,,,"garment, not lace fabric"
+R097,round-2,LACE,LACE_African_Lace_VLM_83.jpg.jpg,,,"mannequins, not lace"
+R098,round-2,LACE,LACE_Bodysuit_worn_with_black_tights_underneath_to_dispel_the_illusion_of_naked_.jpg,,,"person modelling, fabric incidental"
+R100,round-2,LACE,LACE_Lace_and_taffeta_dress_embroidered_with_flowers_c.1910_displayed_in_the_Rij.jpg,,,"museum display case, little fabric"
+R101,round-2,LACE,LACE_Transparent_lace_top_and_skirt.png.jpg,,,near duplicate of R008
+R102,round-2,LACE,LACE_Unidentified_woman_c1850_daguerreotype_by_Southworth_Hawes.jpg.jpg,,,portrait; lace incidental
+R103,round-2,BROCADE,BROCADE_Benaras_brocade_sari.jpg.jpg,,,already accepted in round 1 (same source image)
+R104,round-2,BROCADE,BROCADE_Brocade_loom.jpg.jpg,,,"loom/machinery, no fabric closeup"
+R105,round-2,BROCADE,BROCADE_Damascus_Private_house_and_brocade_shop_8218.jpg.jpg,,,building/courtyard
+R106,round-2,BROCADE,BROCADE_Damascus_Private_house_and_brocade_shop_8219.jpg.jpg,,,interior
+R108,round-2,BROCADE,BROCADE_Konia_brocade_sari.jpg.jpg,,,already accepted in round 1 (same source image)
+R109,round-2,BROCADE,BROCADE_Nanjing_Brocade_Research_Institute.jpg.jpg,,,institute building
+R114,round-2,BROCADE,BROCADE_Woven_Fabric_ST82B_-_Woven_Fabric_-_MoMu_Antwerp.jpg.jpg,,,"same museum object as R113, other side"
+R115,round-2,COTTON_PLAIN,COTTON_PLAIN_Breechcloth_plain_weave_of_cotton_with_camelid_fiber_and_weft-patte.jpg,,,provenance could not be recovered from the source; excluded so every row stays fully attributed
+R116,round-2,COTTON_PLAIN,COTTON_PLAIN_Dorothy_Grey_Hound_displays_a_pillow_she_made_from_muslin_scraps_-_.jpg,,,person holding muslin scraps
+R117,round-2,COTTON_PLAIN,COTTON_PLAIN_Female_Mallard_Duck_Rest_3.jpg.jpg,,,duck
+R119,round-2,COTTON_PLAIN,COTTON_PLAIN_GP_Lifting_Muslin_RJ.jpg.jpg,,,stage performance with cloth
+R120,round-2,COTTON_PLAIN,COTTON_PLAIN_Male_mallard_duck_2.jpg.jpg,,,duck
+R121,round-2,COTTON_PLAIN,COTTON_PLAIN_Mantle_plain_weave_of_camelid_fiber_and_cotton_early_Nasca_style_Ic.jpg,,,provenance could not be recovered from the source; excluded so every row stays fully attributed
+R122,round-2,COTTON_PLAIN,COTTON_PLAIN_Mummy_bundle_mask_painted_plain_weave_cotton_Paracas_style_Cerror_U.jpg,,,"painted mask object, not plain cotton"
+R123,round-2,COTTON_PLAIN,COTTON_PLAIN_Muslin_Title.jpg.jpg,,,book title page
+R124,round-2,COTTON_PLAIN,COTTON_PLAIN_Slavoljub_Muslin_2011.jpg.jpg,,,portrait
+R125,round-2,COTTON_PLAIN,COTTON_PLAIN_Tunic_plain_weave_cotton_-_Peruvian_fabric_in_the_American_Museum_o.jpg,,,provenance could not be recovered from the source; excluded so every row stays fully attributed
+R126,round-2,COTTON_PLAIN,COTTON_PLAIN_Woman_s_muslin_dress_c._1855.jpg.jpg,,,already accepted in round 1 (same source image)
+R127,round-2,LINEN,LINEN_Djeserty.jpg.jpg,,,object of uncertain material
+R128,round-2,LINEN,LINEN_Egypt_Coptic_fabric.jpg.jpg,,,"black-and-white archival copy, material unclear"
+R129,round-2,LINEN,LINEN_Glims_-_Fabric_making.JPG.jpg,,,workshop interior
+R131,round-2,LINEN,LINEN_Linen_Coptic_fabric_REM.JPG.jpg,,,near duplicate of R011
+R132,round-2,LINEN,LINEN_Mini_Fabric_Beaded_Linen_Creation_-_Flickr_-_peregrine_blue.jpg.jpg,,,"beaded craft, not linen cloth"
+R134,round-2,LINEN,LINEN_SLNSW_51926_Woman_fabric_worker_stitching_linen_onto_aircraft_wings.jpg.jpg,,,"person at work, cloth incidental"
+R135,round-2,LINEN,LINEN_Shoulder_cloth_amice_Benedictine_convent_of_Engelberg_Switzerland_c._1300-.jpg,,,provenance could not be recovered from the source; excluded so every row stays fully attributed
+R136,round-2,LINEN,LINEN_Spinning_bowl.jpg.jpg,,,museum bowl
+R137,round-2,LINEN,LINEN_Sunfirm_Linen_Furnisching_Fabrics_objectnr_KA_23419.jpg.jpg,,,paper sample card
+R140,round-2,SILK,Dyed silk using Murex pigment from Tunisia.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Dyed_silk_using_Murex_pigment_from_Tunisia.jpg,"silk in a beaker, not a fabric view"
+R142,round-2,SILK,"Neoclassical furnishing fabric, Les quatre parties du monde, Lyon France, c. 1785, silk lampas - Patricia Harris Gallery of Textiles & Costume, Royal Ontario Museum - DSC09410.jpg",CC0 1.0,"https://commons.wikimedia.org/wiki/File:Neoclassical_furnishing_fabric,_Les_quatre_parties_du_monde,_Lyon_France,_c._1785,_silk_lampas_-_Patricia_Harris_Gallery_of_Textiles_%26_Costume,_Royal_Ontario_Museum_-_DSC09410.jpg",already accepted in round 1 (same source image)
+R145,round-2,SILK,"'Sari' from Varanasi (north-central India), silk and gold-wrapped silk yarn with supplementary weft brocade.jpg",Public domain,"https://commons.wikimedia.org/wiki/File:%27Sari%27_from_Varanasi_(north-central_India),_silk_and_gold-wrapped_silk_yarn_with_supplementary_weft_brocade.jpg",duplicate of the BROCADE image accepted in round 1
+R146,round-2,SILK,"School of Applied Design for Women, Interiors, Silk fabric, 1903.tif",Public domain,"https://commons.wikimedia.org/wiki/File:School_of_Applied_Design_for_Women,_Interiors,_Silk_fabric,_1903.tif",room interior
+R147,round-2,SILK,Sea silk glove lo-res.JPG,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Sea_silk_glove_lo-res.JPG,near duplicate of R012
+R148,round-2,SILK,Shima Kai-ki of traditional silk fabric of Yamanashi prefecture.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Shima_Kai-ki_of_traditional_silk_fabric_of_Yamanashi_prefecture.jpg,"museum room of textiles, little fabric"
+R149,round-2,SILK,"Silk lamb fur coat with fabric and leather belt, Germany 2008.jpg",Public domain,"https://commons.wikimedia.org/wiki/File:Silk_lamb_fur_coat_with_fabric_and_leather_belt,_Germany_2008.jpg","fur coat, not silk cloth"
+R150,round-2,SILK,Weaving silk fabric.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Weaving_silk_fabric.jpg,weaving room interior
+R152,round-2,CHIFFON,Chiffon cake kanko.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Chiffon_cake_kanko.jpg,cake
+R156,round-2,CHIFFON,Green Versace dress of Jennifer Lopez.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Green_Versace_dress_of_Jennifer_Lopez.jpg,"person on runway, fabric incidental"
+R157,round-2,CHIFFON,Hojomai Chiffon Cake.jpg,CC0 1.0,https://commons.wikimedia.org/wiki/File:Hojomai_Chiffon_Cake.jpg,cake
+R158,round-2,CHIFFON,Lillian Gish 2.jpg,Public domain,https://commons.wikimedia.org/wiki/File:Lillian_Gish_2.jpg,portrait
+R159,round-2,CHIFFON,Making Chiffon cake 2.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Making_Chiffon_cake_2.jpg,cake batter
+R160,round-2,CHIFFON,Making Chiffon cake No 3.jpg,CC BY-SA 3.0,https://commons.wikimedia.org/wiki/File:Making_Chiffon_cake_No_3.jpg,cake
+R161,round-2,CHIFFON,No8633No8638No8626No9651.png,Public domain,https://commons.wikimedia.org/wiki/File:No8633No8638No8626No9651.png,fashion illustration
+R162,round-2,CHIFFON,Turquoise Chiffon Sari.jpg,CC BY 2.0,https://commons.wikimedia.org/wiki/File:Turquoise_Chiffon_Sari.jpg,already accepted in round 1 (same source image)
+R164,round-2,VELVET,VELVET_Devoré_velvet_also_known_as_burnout_technique_.jpg.jpg,,,already accepted in round 1 (same source image)
+R165,round-2,VELVET,VELVET_Iner_ornamental_velvet_covering_Scroll_of_the_Law_.jpg.jpg,,,same exhibit as the round-1 velvet reject
+R167,round-2,VELVET,VELVET_Ornamental_velvet_covering_Scroll_of_the_Law_.jpg.jpg,,,near duplicate of R014
+R168,round-2,VELVET,VELVET_Velvet_from_China_late_19th_century_Honolulu_Museum_of_Art_3228.JPG.jpg,,,already accepted in round 1 (same source image)
+R169,round-2,VELVET,VELVET_Woven_Fabric_ST192B_-_MoMu_Antwerp.jpg.jpg,,,"narrow cut-out strip, little fabric"
+R170,round-2,VELVET,VELVET_Woven_Fabric_ST193_-_MoMu_Antwerp.jpg.jpg,,,plain weave; does not look like velvet pile
+R171,round-2,VELVET,VELVET_Woven_Fabric_ST195_-_MoMu_Antwerp.jpg.jpg,,,"damask fragment, not velvet"
+R175,round-2,DENIM,DENIM_Denim_fabric_03_Rico_Cilliers_and_colormass_via_Poly_Haven_.webp.jpg,,,"CGI texture render, not a photograph of cloth"
+R176,round-2,DENIM,DENIM_Denim_fabric_03_ao_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.jpg.jpg,,,"CGI texture render, not a photograph of cloth"
+R177,round-2,DENIM,DENIM_Denim_fabric_03_arm_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.jpg.jpg,,,near duplicate of R176
+R178,round-2,DENIM,DENIM_Denim_fabric_03_diff_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.jpg.jpg,,,"CGI texture render, not a photograph of cloth"
+R179,round-2,DENIM,DENIM_Denim_fabric_03_diff_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.png.jpg,,,near duplicate CGI variant
+R180,round-2,DENIM,DENIM_Denim_fabric_03_metal_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.png.jpg,,,"CGI texture render, not a photograph of cloth"
+R181,round-2,DENIM,DENIM_Denim_fabric_04_anisotropy_strength_8k_Rico_Cilliers_and_colormass_via_Pol.jpg,,,"CGI texture render, not a photograph of cloth"
+R182,round-2,DENIM,DENIM_Denim_fabric_04_ao_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.jpg.jpg,,,"CGI texture render, not a photograph of cloth"
+R183,round-2,DENIM,DENIM_Denim_fabric_04_arm_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.png.jpg,,,near duplicate of R176
+R184,round-2,DENIM,DENIM_Denim_fabric_04_diff_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.png.jpg,,,"CGI texture render, not a photograph of cloth"
+R185,round-2,DENIM,DENIM_Denim_fabric_04_metal_8k_Rico_Cilliers_and_colormass_via_Poly_Haven_.png.jpg,,,"CGI texture render, not a photograph of cloth"
+R186,round-2,DENIM,DENIM_Primary_flat_-_Denim_Fabric_03_Rico_Cilliers_and_colormass_via_Poly_Haven_.jpg,,,near duplicate of R177
+R187,round-2,FUGU,Dress 12.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Dress_12.jpg,near duplicate of R016
+R188,round-2,FUGU,MAN DRESSED IN LOCAL ATTIRE 01.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:MAN_DRESSED_IN_LOCAL_ATTIRE_01.jpg,already accepted in round 1 (same source image)
+R189,round-2,FUGU,MAN DRESSED IN LOCAL ATTIRE 02.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:MAN_DRESSED_IN_LOCAL_ATTIRE_02.jpg,same scene as the round-1 smock photo
+R190,round-2,FUGU,MAN DRESSED IN LOCAL ATTIRE 03.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:MAN_DRESSED_IN_LOCAL_ATTIRE_03.jpg,same scene as the round-1 smock photo
+R192,round-2,FUGU,Smock (fugu) making 03.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_(fugu)_making_03.jpg,same sewing session as R191
+R193,round-2,FUGU,Smock (fugu) making 04.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_(fugu)_making_04.jpg,same sewing session as R191
+R194,round-2,FUGU,Smock (fugu) making 05.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_(fugu)_making_05.jpg,same sewing session as R191
+R195,round-2,FUGU,Smock (fugu) making 06.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_(fugu)_making_06.jpg,same sewing session as R191
+R196,round-2,FUGU,Smock (fugu) making 07.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_(fugu)_making_07.jpg,same sewing session as R191
+R197,round-2,FUGU,Smock sewing 01.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_sewing_01.jpg,same sewing session as R191
+R198,round-2,FUGU,Smock sewing 03.jpg,CC BY-SA 4.0,https://commons.wikimedia.org/wiki/File:Smock_sewing_03.jpg,"people sewing, cloth incidental"
+R199,round-2,GONJA,GONJA_Dryoscopus_gambensis_Malaconotidae_Northern_Puffback_-_male_Mole_National_.jpg,,,bird
+R200,round-2,GONJA,GONJA_Elephant_footprint_West_Gonja_P1100394_.jpg.jpg,,,animal footprint
+R201,round-2,GONJA,GONJA_Fruits_and_flower_of_the_sausage_tree_Kigelia_africana_Ghana.jpg.jpg,,,tree
+R202,round-2,GONJA,GONJA_Genetta_pardina_344140333.jpg.jpg,,,camera-trap photo of a genet
+R203,round-2,GONJA,GONJA_Mole_National_Park_West_Gonja_P1100366_.jpg.jpg,,,park landscape
+R204,round-2,GONJA,GONJA_Mole_National_Park_West_Gonja_P1100403_.jpg.jpg,,,elephants
+R205,round-2,GONJA,GONJA_Mole_National_Park_West_Gonja_P1100442_.jpg.jpg,,,elephant

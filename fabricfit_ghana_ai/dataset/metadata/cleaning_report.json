@@ -1,0 +1,9 @@
+{
+  "rows": 21,
+  "valid_unique": 0,
+  "invalid": 0,
+  "near_duplicate_pairs": [],
+  "near_duplicate_review_required": false,
+  "pHash_available": true,
+  "warning": "Watermarks, fabric relevance and labels need manual visual review; hashes cannot certify them."
+}

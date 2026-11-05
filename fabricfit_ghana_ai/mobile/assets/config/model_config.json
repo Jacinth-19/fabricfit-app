@@ -1,0 +1,21 @@
+{
+  "status": "NOT_TRAINED",
+  "modelFile": "assets/models/fabric_classifier.tflite",
+  "input": {
+    "width": 224,
+    "height": 224,
+    "channels": 3,
+    "colorSpace": "RGB",
+    "type": "float32",
+    "range": [0, 255],
+    "orientation": "EXIF-normalized before resize",
+    "resize": "bilinear to 224x224; preserve aspect ratio by center crop only if training pipeline is changed to match"
+  },
+  "output": {
+    "type": "softmax probabilities",
+    "classLabelsFile": "assets/labels/fabric_labels.txt",
+    "classCount": 8,
+    "lowConfidencePolicy": "Do not guess. Show 'Uncertain—try a clearer fabric-only photo' below threshold; threshold must be calibrated on validation data before production."
+  },
+  "note": "This is an integration contract only. No fabric_classifier.tflite has been trained or exported; do not package this config as a working model."
+}
