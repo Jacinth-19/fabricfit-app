@@ -59,10 +59,14 @@ fails closed if the split/data gate is not met.
 
 ## Kaggle authentication-required actions
 
-The CLI is available at `/tmp/fabricfit-kaggle-venv/bin/kaggle` in this sandbox,
-but there is no Kaggle OAuth session, API token, or `~/.kaggle/kaggle.json`. No
-credentials were requested in chat or committed. Once an authorized user signs
-in securely, use the official CLI helper:
+Dataset findings and reuse decisions are documented in `DATASET_HUNT.md`. The
+CLI is available at `/tmp/fabricfit-kaggle-venv/bin/kaggle` in this sandbox, but
+there is no Kaggle OAuth session, API token, or `~/.kaggle/kaggle.json`. No
+credentials were requested in chat or committed. Kaggle CLI 2.2.5 recommends
+`kaggle auth login`; alternatively use its secure `~/.kaggle/access_token` file
+or set `KAGGLE_API_TOKEN` in the shell that runs the CLI. Older Kaggle clients
+accept `~/.kaggle/kaggle.json` (chmod 600). These paths are under the user home,
+not inside the repository. Once securely signed in, use the official CLI helper:
 
 ```bash
 scripts/kaggle_ops.sh discover
