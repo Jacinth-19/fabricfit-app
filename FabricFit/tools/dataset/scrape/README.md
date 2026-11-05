@@ -8,7 +8,8 @@ per-image provenance so nothing unlicensed or watermarked can sneak in.
 scrape/
   common.py           license gate, blocklist, dHash, staging pool + credits
   queries.json        search terms per class (edit to tune coverage)
-  wikimedia.py        Wikimedia Commons API (CC0/PD/CC BY/CC BY-SA only)
+  wikimedia.py        Wikimedia Commons search API (CC0/PD/CC BY/CC BY-SA only)
+  wikimedia_categories.py Commons Ghanaian textile category collector; every hit remains pending review
   openverse.py        Openverse API (same gate; optional OPENVERSE_API_KEY)
   github_repos.py     allowlisted research repos only (github_allowlist.json)
   manifest.py         CSV of explicit URLs you vouch for

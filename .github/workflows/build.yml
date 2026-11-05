@@ -447,8 +447,11 @@ jobs:
           python3 FabricFit/tools/dataset/scrape/manifest.py \
             FabricFit/tools/dataset/qa_real_fabrics.csv --sleep 0.2 \
             || echo '::warning::curated manifest shard incomplete'
+          python3 FabricFit/tools/dataset/scrape/wikimedia_categories.py \\
+            --classes "$CLASSES" --per-class 40 --sleep 1.0 \\
+            || echo '::warning::Wikimedia textile-category scrape incomplete'
           mkdir -p "qa-artifacts/candidates/shard-${{ matrix.shard }}"
-          for source in wikimedia openverse manifest; do
+          for source in wikimedia openverse manifest wikimedia_categories; do
             if [ -d "FabricFit/tools/dataset/scraped/$source" ]; then
               cp -r "FabricFit/tools/dataset/scraped/$source" \
                 "qa-artifacts/candidates/shard-${{ matrix.shard }}/$source"
@@ -527,7 +530,7 @@ jobs:
         with:
           name: fabricfit-review-round-3
           path: |
-            qa-artifacts/review-round-2/
+            qa-artifacts/review-round-3/
             qa-artifacts/candidates/
           if-no-files-found: warn
       - name: Commit the review sheets and decision index
