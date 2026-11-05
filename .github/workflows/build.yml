@@ -447,8 +447,8 @@ jobs:
           python3 FabricFit/tools/dataset/scrape/manifest.py \
             FabricFit/tools/dataset/qa_real_fabrics.csv --sleep 0.2 \
             || echo '::warning::curated manifest shard incomplete'
-          python3 FabricFit/tools/dataset/scrape/wikimedia_categories.py \\
-            --classes "$CLASSES" --per-class 40 --sleep 1.0 \\
+          python3 FabricFit/tools/dataset/scrape/wikimedia_categories.py \
+            --classes "$CLASSES" --per-class 40 --sleep 1.0 \
             || echo '::warning::Wikimedia textile-category scrape incomplete'
           mkdir -p "qa-artifacts/candidates/shard-${{ matrix.shard }}"
           for source in wikimedia openverse manifest wikimedia_categories; do
