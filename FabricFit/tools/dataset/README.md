@@ -16,6 +16,16 @@ tools/dataset/
   out/                generated models (never shipped without human review)
 ```
 
+## Field collection workflow
+
+For an ethical, repeatable local capture effort, follow [`FIELD_COLLECTION.md`](FIELD_COLLECTION.md)
+and use [`field_manifest_template.csv`](field_manifest_template.csv) with
+`field_intake.py`. Intake is dry-run by default and requires recorded consent and
+an explicitly selected open licence. It checks resolution, blur, duplicates and
+cross-label conflicts, but cannot verify that an image depicts its claimed family;
+manual review and knowledgeable label confirmation remain mandatory. Raw images
+and consent-bearing metadata must remain private/ignored, not committed.
+
 ## Workflow
 1. **Collect**: 300+ photos/class minimum (1000+ before publishing accuracy claims).
    Market days at Makola/Kantamanto/Kejetia, weaver cooperatives in Bonwire (kente) and
