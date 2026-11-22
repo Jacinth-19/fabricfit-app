@@ -32,7 +32,10 @@ object BodyFit {
         val waistHalf: Float,
         val hipHalf: Float,
         val thighHalf: Float,
-        /** False when the mask was too small/unusable and callers should fall back. */
+        /**
+         * True when the envelope is big enough to fit a garment to. Callers fall back to
+         * the illustration polygons when this is false.
+         */
         val usable: Boolean,
     ) {
         val personHeight: Float get() = (bottom - top).coerceAtLeast(1f)
@@ -99,7 +102,9 @@ object BodyFit {
             thighHalf = halfAt(0.62f),
             usable = false,
         )
-        return body.copy(usable = body.shoulderHalf > 8f && (body.hipHalf > 8f || body.bustHalf > 8f))
+        // 2 % of the frame height is the smallest sensible body envelope.
+        val minWidth = personHeight * 0.02f
+        return body.copy(usable = body.shoulderHalf > minWidth && (body.hipHalf > minWidth || body.bustHalf > minWidth))
     }
 
     /**

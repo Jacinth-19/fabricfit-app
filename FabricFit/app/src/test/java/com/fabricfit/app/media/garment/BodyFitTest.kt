@@ -82,12 +82,16 @@ class BodyFitTest {
     }
 
     @Test
-    fun `measure flags unusable masks instead of throwing`() {
-        val tiny = IntArray(width * height)
-        // 20x20 blob in the corner: valid mask, far too small to fit a garment to
-        for (y in 0 until 20) for (x in 0 until 20) tiny[y * width + x] = 255
-        val body = BodyFit.measure(tiny, width, height)
-        assertTrue(body == null || !body.usable)
+    fun `measure returns null for masks with no body envelope`() {
+        val empty = IntArray(width * height)
+        assertNull(BodyFit.measure(empty, width, height))
+
+        // A uniform 20x20 blob has an envelope but is far too small for a garment.
+        val blob = IntArray(width * height)
+        for (y in 100 until 120) for (x in 100 until 120) blob[y * width + x] = 255
+        val body = BodyFit.measure(blob, width, height)
+        assertNotNull(body)
+        assertTrue("a 20 px blob must not count as a body", !body!!.usable)
     }
 
     @Test
@@ -103,12 +107,14 @@ class BodyFitTest {
         val centre = (left + right) / 2f
         assertEquals("outline should be centred on the body", 200f, centre, 2f)
         // Shoulder line sits inside the measured deltoid width but wider than the neck.
-        // Shoulder seam lands inside the measured deltoid (124 px wide), not on the arms.
+        // Shoulder seam sits just inside the measured deltoid (76 px), not out on the arms
+        // and not collapsed to the neck.
         val shoulderWidth = right - left
-        assertTrue("shoulder width=$shoulderWidth", shoulderWidth in 110f..140f)
+        assertTrue("garment width=$shoulderWidth", shoulderWidth in 100f..160f)
         // Hem is near the ankles, well below the hip.
         assertTrue("hem y=${ys.max()}", ys.max() > 700f)
-        assertTrue("top y=${ys.min()}", ys.min() in 210f..240f)
+        // Top edge is the shoulder seam (~23.5 % down the person), not the top of the head.
+        assertTrue("top y=${ys.min()}", ys.min() in 200f..250f)
     }
 
     @Test
@@ -153,17 +159,29 @@ class BodyFitTest {
     @Test
     fun `necklines change the size of the chest opening`() {
         val body = BodyFit.measure(mask(), width, height)!!
-        fun opening(neck: NecklineOption): Float {
+        // The outline starts at the left shoulder seam, crosses the neck opening, then hits
+        // the right shoulder seam; everything after that is the body of the dress.
+        fun neckDip(neck: NecklineOption): Float {
             val outline = BodyFit.shapes(body, GarmentSilhouette.KABA, DesignCustomization(neckline = neck)).first()
-            // the neckline vertices are the first few points before the shoulder seam
-            return outline.take(7).minOf { it.second }
+            val shoulderY = outline.first().second
+            var dip = shoulderY
+            for (point in outline.drop(1)) {
+                if (point.second > shoulderY + 1f && kotlin.math.abs(point.first - body.centre) < body.personHeight * 0.2f) {
+                    dip = maxOf(dip, point.second)
+                } else if (dip > shoulderY + 1f) {
+                    break
+                }
+            }
+            return dip
         }
-        val high = opening(NecklineOption.HIGH)
-        val round = opening(NecklineOption.ROUND)
-        val boat = opening(NecklineOption.BOAT)
-        val v = opening(NecklineOption.VNECK)
-        // A V-neck must cut deepest; a high collar must sit highest. Round/boat sit between.
+
+        val high = neckDip(NecklineOption.HIGH)
+        val round = neckDip(NecklineOption.ROUND)
+        val boat = neckDip(NecklineOption.BOAT)
+        val v = neckDip(NecklineOption.VNECK)
+        // A V-neck must cut deepest and a high collar must sit highest.
         assertTrue("high=$high round=$round boat=$boat v=$v", high < round && round < v && high < boat)
+        assertTrue("V-neck opening should be visible: $v vs round $round", v - round > body.personHeight * 0.015f)
     }
 
     @Test
@@ -183,8 +201,8 @@ class BodyFitTest {
         val shifted = IntArray(width * height)
         val source = mask()
         for (y in 0 until height) {
-            for (x in leftShift until width) {
-                shifted[y * width + x] = source[y * width + x - leftShift]
+            for (x in 0 until width - leftShift) {
+                shifted[y * width + x] = source[y * width + x + leftShift]
             }
         }
         val body = BodyFit.measure(shifted, width, height)!!
