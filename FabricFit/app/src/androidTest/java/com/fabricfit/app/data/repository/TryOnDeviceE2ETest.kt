@@ -46,8 +46,12 @@ class TryOnDeviceE2ETest {
         assertTrue("fabric swatch missing: $fabricUri", File(fabricPath).length() > 5_000)
 
         val processor = com.fabricfit.app.media.ImageProcessor(context)
-        val loaded = processor.load(android.net.Uri.parse(personPath), 1000) // parser accepts bare paths
-        assertTrue("person photo must load", loaded is Outcome.Success)
+        // Same entry point the app uses for a sample photo: a bare absolute path.
+        val loaded = processor.load(personPath, 1000)
+        assertTrue(
+            "person photo must load: $personPath (exists=${File(personPath).exists()}) -> $loaded",
+            loaded is Outcome.Success,
+        )
         val person = (loaded as Outcome.Success).data
 
         // The real device path for the segmenter: DeepLabV3 first, Selfie fallback.

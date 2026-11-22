@@ -314,8 +314,10 @@ jobs:
               print("::error title=E2E FAILED::no androidTest XML produced - the build or the "
                     "emulator failed before the test ran; see the gradle step output")
           PY
-          # A device-side crash leaves the last lines of logcat as the only evidence.
-          adb logcat -d -t 200 2>/dev/null | grep -iE "fabricfit|vton|OutOfMemory|FATAL" | tail -60 || true
+          # A device-side crash leaves logcat as the only evidence. The emulator action has
+          # already shut the device down by now, so never block on adb: give it 20 seconds.
+          timeout 20 adb logcat -d -t 400 2>/dev/null \
+            | grep -iE "fabricfit|vton|OutOfMemory|FATAL" | tail -40 || true
 
       - name: Publish try-on images
         if: always()

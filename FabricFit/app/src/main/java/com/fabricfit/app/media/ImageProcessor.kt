@@ -48,30 +48,58 @@ class ImageProcessor(private val context: Context) {
     private fun openStream(uri: Uri): java.io.InputStream? {
         val scheme = uri.scheme
         if (scheme == null || scheme == "file") {
-            val path = if (scheme == "file") uri.path else uri.toString()
-            if (path.isNullOrBlank()) return null
-            val file = File(path)
-            return if (file.exists() && file.isFile) file.inputStream() else null
+            // A bare path parses to a Uri whose `toString()` is the path itself, while
+            // `file:///path` exposes it as `path`. Try both spellings and take the one
+            // that is actually on disk.
+            val candidates = listOfNotNull(uri.path, uri.toString()).filter { it.isNotBlank() }
+            for (path in candidates) {
+                val file = File(path)
+                if (file.exists() && file.isFile) return file.inputStream()
+            }
+            return null
         }
         return context.contentResolver.openInputStream(uri)
     }
 
-    fun load(uri: Uri, maxEdge: Int): Outcome<Bitmap> {
+    /**
+     * Loads an image from a filesystem path or a `file://` uri string.
+     *
+     * The FitRoom passes the sample model and saved looks around as plain paths, which
+     * `Uri.parse` handles inconsistently across API levels, so path input bypasses the
+     * Uri round-trip entirely.
+     */
+    fun load(path: String, maxEdge: Int): Outcome<Bitmap> {
+        val file = File(path.removePrefix("file://"))
+        if (file.exists() && file.isFile) return loadFile(file, maxEdge)
+        return load(Uri.parse(path), maxEdge)
+    }
+
+    fun load(uri: Uri, maxEdge: Int): Outcome<Bitmap> =
+        decode(maxEdge) { openStream(uri) }
+
+    private fun loadFile(file: File, maxEdge: Int): Outcome<Bitmap> =
+        decode(maxEdge) { file.inputStream() }
+
+    /**
+     * Two-pass decode: read the bounds, pick a power-of-two sample size, then decode.
+     * `open` is called once per pass so the stream is never read twice.
+     */
+    private fun decode(maxEdge: Int, open: () -> java.io.InputStream?): Outcome<Bitmap> {
         return try {
-        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        openStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
-            ?: return Outcome.Failure(AppError.InvalidImage)
-        if (options.outWidth <= 0 || options.outHeight <= 0) return Outcome.Failure(AppError.InvalidImage)
-        var sample = 1
-        while (maxOf(options.outWidth, options.outHeight) / (sample * 2) >= maxEdge) sample *= 2
-        val opts = BitmapFactory.Options().apply {
-            inSampleSize = sample
-            inPreferredConfig = Bitmap.Config.ARGB_8888
-        }
-        val bitmap = openStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
-            ?: return Outcome.Failure(AppError.InvalidImage)
-        if (bitmap.width == 0 || bitmap.height == 0) return Outcome.Failure(AppError.InvalidImage)
-        Outcome.Success(bitmap)
+            val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+            open()?.use { BitmapFactory.decodeStream(it, null, options) }
+                ?: return Outcome.Failure(AppError.InvalidImage)
+            if (options.outWidth <= 0 || options.outHeight <= 0) return Outcome.Failure(AppError.InvalidImage)
+            var sample = 1
+            while (maxOf(options.outWidth, options.outHeight) / (sample * 2) >= maxEdge) sample *= 2
+            val opts = BitmapFactory.Options().apply {
+                inSampleSize = sample
+                inPreferredConfig = Bitmap.Config.ARGB_8888
+            }
+            val bitmap = open()?.use { BitmapFactory.decodeStream(it, null, opts) }
+                ?: return Outcome.Failure(AppError.InvalidImage)
+            if (bitmap.width == 0 || bitmap.height == 0) return Outcome.Failure(AppError.InvalidImage)
+            Outcome.Success(bitmap)
         } catch (oom: OutOfMemoryError) {
             Outcome.Failure(AppError.Memory)
         } catch (e: Exception) {

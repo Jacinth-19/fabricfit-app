@@ -10,7 +10,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.Shader
-import android.net.Uri
 import com.fabricfit.app.domain.model.DesignCustomization
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
@@ -43,7 +42,9 @@ class DemoLookGenerator(
 ) : ImageGenerationRepository {
 
     override suspend fun generate(input: GenerationInput): Outcome<File> {
-        val person = when (val loaded = imageProcessor.load(Uri.parse(input.personImagePath), input.maxDimension)) {
+        // The FitRoom hands over a bare path for bundled samples and a content:// uri for
+        // the photo picker; the String overload handles both without a Uri round-trip.
+        val person = when (val loaded = imageProcessor.load(input.personImagePath, input.maxDimension)) {
             is Outcome.Success -> loaded.data
             is Outcome.Failure -> return Outcome.Failure(loaded.error)
         }
