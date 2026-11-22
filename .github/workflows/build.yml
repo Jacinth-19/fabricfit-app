@@ -54,6 +54,24 @@ jobs:
         if: failure()
         run: python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log
 
+      # Gradle only prints "There were failing tests"; the names and messages live in
+      # the JUnit XML. Annotations are readable without downloading anything.
+      - name: Annotate the failing tests
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import pathlib, xml.etree.ElementTree as ET
+          found = False
+          for xml in pathlib.Path("app/build/test-results").rglob("*.xml"):
+              for tc in ET.parse(xml).iter("testcase"):
+                  for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                      found = True
+                      name = f"{tc.attrib.get('classname')}.{tc.attrib.get('name')}"
+                      lines = [l.strip() for l in (f.text or "").splitlines() if l.strip()]
+                      print(f"::error title=FAILED TEST::{name} :: {' | '.join(lines[:4])[:1200]}")
+          print("annotated" if found else "no failing test XML found")
+          PY
+
       # Annotations are truncated, so the full error list also goes to the pull
       # request (or the branch's PR), where it can be read line by line.
       - name: Report the failure on the pull request
