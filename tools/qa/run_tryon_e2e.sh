@@ -46,7 +46,11 @@ echo "== gradle tail =="
 tail -n 40 "$LOG" || true
 
 echo "== run-as listing $DEVICE_DIR ==" | tee -a "$LOG"
-adb shell run-as "$APP_PACKAGE" ls -la "$DEVICE_DIR" >> "$LOG" 2>&1 || true
+LISTING=$(adb shell run-as "$APP_PACKAGE" ls -la "$DEVICE_DIR" 2>&1 || true)
+echo "$LISTING" >> "$LOG"
+echo "$LISTING"
+echo "::notice title=Device files::$(echo "$LISTING" | tr '\n' ' ' | head -c 700)"
+echo "::notice title=adb identity::$(adb shell id 2>&1 | head -1) | $(adb shell getprop ro.build.version.sdk 2>&1 | head -1)"
 
 # Copy each artifact out one by one. `run-as cat` keeps the bytes exact; busybox tar is
 # not present on every emulator image, so no archive round-trip.
@@ -54,6 +58,7 @@ for name in person_input.jpg person_mask.png fabric_swatch.jpg tryon_result.jpg 
   if adb exec-out run-as "$APP_PACKAGE" cat "$DEVICE_DIR/$name" > "$OUT_DIR/$name" 2>>"$LOG"; then
     size=$(stat -c%s "$OUT_DIR/$name" 2>/dev/null || echo 0)
     echo "pulled $name ($size bytes)"
+    echo "::notice title=Pulled::$name $size bytes"
     [ "$size" -gt 0 ] || rm -f "$OUT_DIR/$name"
   fi
 done
