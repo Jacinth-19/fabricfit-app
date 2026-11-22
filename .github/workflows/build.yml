@@ -367,11 +367,7 @@ jobs:
         run: |
           # Plain `run:` steps start at the repository root, unlike the emulator action
           # which is given FabricFit/ as its working directory.
-          echo "== candidate artifact dirs =="
           echo "checkout root: $GITHUB_WORKSPACE"
-          find . -path ./.git -prune -o -type d -name vton -print 2>/dev/null | head -20
-          find "$GITHUB_WORKSPACE/.." -maxdepth 4 -type f -name 'tryon_result.jpg' -print 2>/dev/null | head -5
-          find . -path ./.git -prune -o -type f -name 'tryon_result.jpg' -print 2>/dev/null | head -5
           for d in qa-artifacts/vton FabricFit/qa-artifacts/vton ../qa-artifacts/vton; do
             [ -d "$d" ] && { echo "--- $d"; ls -la "$d"; }
           done
@@ -396,7 +392,12 @@ jobs:
           mkdir -p FabricFit/docs/vton/device
           found=0
           for f in "$dir"/*.jpg "$dir"/*.png "$dir"/report.txt; do
-            [ -f "$f" ] && cp "$f" FabricFit/docs/vton/device/ && found=1
+            # `[ -f ] && cp && found=1` would stop at the first non-matching glob (the loop
+            # only advances the glob, so `found` would never be set). Use a real branch.
+            if [ -f "$f" ]; then
+              cp "$f" FabricFit/docs/vton/device/
+              found=1
+            fi
           done
           if [ "$found" = "0" ]; then
             echo "::warning title=No device images::the emulator produced no files to commit"
