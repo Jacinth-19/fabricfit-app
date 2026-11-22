@@ -277,7 +277,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      contents: read
+      contents: write
     steps:
       - uses: actions/checkout@v7
 
@@ -352,6 +352,37 @@ jobs:
           name: fabricfit-tryon-e2e
           path: qa-artifacts/vton/
           if-no-files-found: warn
+
+      # Actions artifacts need a login to download and expire; the phone-rendered look is
+      # evidence, so a passing run commits it to the branch like the screenshots job does.
+      - name: Report what the device produced
+        if: always()
+        run: |
+          ls -la qa-artifacts/vton/ || true
+          for f in qa-artifacts/vton/*.jpg qa-artifacts/vton/*.png; do
+            [ -f "$f" ] && echo "::notice title=DEVICE ARTIFACT::$(basename "$f") $(stat -c%s "$f") bytes"
+          done
+
+      - name: Commit the device images to the branch
+        if: success()
+        run: |
+          set -e
+          mkdir -p docs/vton/device
+          found=0
+          for f in qa-artifacts/vton/*.jpg qa-artifacts/vton/*.png qa-artifacts/vton/report.txt; do
+            [ -f "$f" ] && cp "$f" docs/vton/device/ && found=1
+          done
+          if [ "$found" = "0" ]; then
+            echo "::warning title=No device images::the emulator produced no files to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/vton/device/
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: try-on rendered on an Android emulator [skip ci]"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
 
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
