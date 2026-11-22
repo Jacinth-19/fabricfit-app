@@ -637,15 +637,15 @@ def fitted_garment_polys(
 
     neck_key = neckline.upper()
     if neck_key in ("V_NECK", "VNECK"):
-        neck_half, neck_dip = 0.30, 0.095
+        neck_half, neck_dip = 0.32, 0.085
     elif neck_key == "HIGH":
-        neck_half, neck_dip = 0.20, 0.012
+        neck_half, neck_dip = 0.24, 0.014
     elif neck_key == "OFF_SHOULDER":
-        neck_half, neck_dip = 0.55, 0.030
+        neck_half, neck_dip = 0.50, 0.030
     elif neck_key == "BOAT":
-        neck_half, neck_dip = 0.50, 0.018
+        neck_half, neck_dip = 0.44, 0.020
     else:  # ROUND / DEFAULT
-        neck_half, neck_dip = 0.32, 0.060
+        neck_half, neck_dip = 0.34, 0.050
 
     neck_w = shoulder * neck_half
     neck_y = y_shoulder + ph * neck_dip
@@ -677,7 +677,13 @@ def fitted_garment_polys(
         start_left = (cx - neck_w, y_shoulder)
         start_right = (cx + neck_w, y_shoulder)
 
-    outline = [start_left] + neck + [start_right] + right + left
+    # Shoulder tip -> neck edge -> opening -> neck edge -> shoulder tip -> body of the
+    # dress. The left tip segment is required: without it the opening spans the entire
+    # shoulder line and the bare photo shows through the shoulders.
+    # Fabric settles a little below the widest point of the deltoid instead of cutting a
+    # horizontal line from shoulder tip to neck.
+    shoulder_tip_left = (cx - shoulder, y_shoulder + ph * 0.030)
+    outline = [shoulder_tip_left, start_left] + neck + [start_right] + right + left
 
     panels: list[list[tuple[float, float]]] = [outline]
     trims: list[list[tuple[float, float]]] = []
@@ -689,9 +695,10 @@ def fitted_garment_polys(
         taper = 0.30 if sleeve_key == "PUFF" else 0.22
         for side in (-1, 1):
             sx = cx + side * shoulder * 0.90
-            y_top = y_shoulder + ph * 0.008
+            # Start on the bodice's shoulder seam so the outlines meet, not cross.
+            y_top = y_shoulder + ph * 0.030
             y_bot = y_shoulder + ph * drop
-            pts = []
+            pts = [(cx + side * shoulder, y_top)]
             # shoulder seam -> rounded outer cap -> cuff -> armhole
             n = 18
             for i in range(n + 1):

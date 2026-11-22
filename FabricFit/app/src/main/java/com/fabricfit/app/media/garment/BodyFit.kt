@@ -22,6 +22,12 @@ import kotlin.math.roundToInt
  */
 object BodyFit {
 
+    /**
+     * How far below the widest point the cloth settles on the deltoid: real fabric droops
+     * rather than cutting a perfect horizontal line from the shoulder tip to the neck.
+     */
+    private const val SHOULDER_JOINT_DROP = 0.030f
+
     /** Landmark measurements in source-image pixels. */
     data class Body(
         val top: Float,
@@ -156,19 +162,25 @@ object BodyFit {
         val yHem = top + ph * hemFraction
         val hem = max(hip, thigh) * flare
 
+        // Neck opening as (half-width, dip) relative to the shoulder width and body height.
+        // A neckline that spans most of the shoulder reads as an off-shoulder dress, so the
+        // deep-V and boat styles stay near a third of the shoulder width.
+        // Neck opening as (half-width, dip). It is drawn from the left neck edge across a
+        // notched opening to the right neck edge; below ~0.30 of the shoulder the two edges
+        // end up a few pixels apart and the "opening" disappears.
         val neck = when (customization.neckline) {
-            NecklineOption.VNECK, NecklineOption.V_NECK -> 0.30f to 0.095f
-            NecklineOption.HIGH -> 0.20f to 0.012f
-            NecklineOption.OFF_SHOULDER -> 0.55f to 0.030f
-            NecklineOption.BOAT -> 0.50f to 0.018f
-            NecklineOption.ROUND, NecklineOption.DEFAULT -> 0.32f to 0.060f
+            NecklineOption.VNECK, NecklineOption.V_NECK -> 0.32f to 0.085f
+            NecklineOption.HIGH -> 0.24f to 0.014f
+            NecklineOption.OFF_SHOULDER -> 0.50f to 0.030f
+            NecklineOption.BOAT -> 0.44f to 0.020f
+            NecklineOption.ROUND, NecklineOption.DEFAULT -> 0.34f to 0.050f
         }
         val neckW = shoulder * neck.first
         val neckY = yShoulder + ph * neck.second
 
         val right = smooth(
             listOf(
-                cx + shoulder to yShoulder + ph * 0.012f,
+                cx + shoulder to yShoulder + ph * SHOULDER_JOINT_DROP,
                 cx + bust to yBust,
                 cx + waist to yWaist,
                 cx + hip to yHip,
@@ -179,7 +191,11 @@ object BodyFit {
         val left = right.map { (x, y) -> (2 * cx - x) to y }.reversed()
 
         val outline = ArrayList<Pair<Float, Float>>()
-        outline.add(cx - neckW to yShoulder)
+        // The top edge runs from the left shoulder tip to the left side of the neck. Without
+        // it the neck opening spans the whole shoulder line and leaves the bare photo
+        // visible through the shoulders. (The right side already starts at the tip, so it
+        // needs no extra vertex.)
+        outline.add(cx - shoulder to yShoulder + ph * SHOULDER_JOINT_DROP)
         when (customization.neckline) {
             NecklineOption.VNECK, NecklineOption.V_NECK -> outline.add(cx to neckY)
             else -> {
@@ -206,11 +222,14 @@ object BodyFit {
         if (sleeveDrop != null) {
             val puff = if (customization.sleeve == SleeveOption.PUFF) 0.46f else 0.34f
             val taper = if (customization.sleeve == SleeveOption.PUFF) 0.30f else 0.22f
-            val yTop = yShoulder + ph * 0.008f
+            // The cap starts exactly on the bodice's shoulder seam, so the two outlines meet
+            // instead of crossing: a crossing leaves a visible sliver at the shoulder.
+            val yTop = yShoulder + ph * SHOULDER_JOINT_DROP
             val yBottom = yShoulder + ph * sleeveDrop
             for (side in intArrayOf(-1, 1)) {
                 val sx = cx + side * shoulder * 0.90f
                 val points = ArrayList<Pair<Float, Float>>()
+                points.add(cx + side * shoulder to yTop)
                 val steps = 14
                 for (i in 0..steps) {
                     val t = i.toFloat() / steps
@@ -219,6 +238,8 @@ object BodyFit {
                     val outer = shoulder * (puff * 0.55f + taper * 0.45f * bulge)
                     points.add(sx + side * outer to yTop + (yBottom - yTop) * t)
                 }
+                // Walk back up the armhole to the shoulder seam and close there, so the cap
+                // overlaps the bodice instead of leaving a notch at the shoulder joint.
                 for (i in 0..steps) {
                     val t = 1f - i.toFloat() / steps
                     val inner = shoulder * (puff * 0.02f + 0.06f * kotlin.math.sin(Math.PI * t).toFloat())

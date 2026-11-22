@@ -173,29 +173,31 @@ class BodyFitTest {
     @Test
     fun `necklines change the size of the chest opening`() {
         val body = BodyFit.measure(mask(), width, height)!!
-        // The outline starts at the left shoulder seam, crosses the neck opening, then hits
-        // the right shoulder seam; everything after that is the body of the dress.
-        fun neckDip(neck: NecklineOption): Float {
+        // The outline runs shoulder tip -> left neck edge -> opening -> right neck edge ->
+        // shoulder tip -> body of the dress. The opening is the stretch between the two neck
+        // edges: its width and how far it dips below the shoulder both describe the neckline.
+        fun opening(neck: NecklineOption): Pair<Float, Float> {
             val outline = BodyFit.shapes(body, GarmentSilhouette.KABA, DesignCustomization(neckline = neck)).first()
-            val shoulderY = outline.first().second
-            var dip = shoulderY
-            for (point in outline.drop(1)) {
-                if (point.second > shoulderY + 1f && kotlin.math.abs(point.first - body.centre) < body.personHeight * 0.2f) {
-                    dip = maxOf(dip, point.second)
-                } else if (dip > shoulderY + 1f) {
-                    break
-                }
-            }
-            return dip
+            // [0] left shoulder tip, [1] left neck edge, ... [4] right neck edge
+            val left = outline[1]
+            val right = outline[4]
+            val dip = outline.subList(1, 5).maxOf { it.second }
+            return (right.first - left.first) to dip
         }
 
-        val high = neckDip(NecklineOption.HIGH)
-        val round = neckDip(NecklineOption.ROUND)
-        val boat = neckDip(NecklineOption.BOAT)
-        val v = neckDip(NecklineOption.VNECK)
-        // A V-neck must cut deepest and a high collar must sit highest.
-        assertTrue("high=$high round=$round boat=$boat v=$v", high < round && round < v && high < boat)
-        assertTrue("V-neck opening should be visible: $v vs round $round", v - round > body.personHeight * 0.015f)
+        val (highWidth, highDip) = opening(NecklineOption.HIGH)
+        val (roundWidth, roundDip) = opening(NecklineOption.ROUND)
+        val (boatWidth, boatDip) = opening(NecklineOption.BOAT)
+        val (vWidth, vDip) = opening(NecklineOption.VNECK)
+
+        // A high collar is the shallowest and narrowest; a V-neck cuts deepest.
+        assertTrue("high dip=$highDip round dip=$roundDip", highDip < roundDip)
+        assertTrue("round dip=$roundDip v dip=$vDip", roundDip < vDip)
+        assertTrue("v dip=$vDip should be visible", vDip - roundDip > body.personHeight * 0.015f)
+        assertTrue("high width=$highWidth should be narrower than boat=$boatWidth", highWidth < boatWidth)
+        // Every opening must be a real hole in the cloth, not a two-pixel slit.
+        assertTrue("every opening needs real width: $highWidth / $roundWidth / $vWidth",
+            minOf(highWidth, roundWidth, vWidth) > body.shoulderHalf * 0.3f)
     }
 
     @Test

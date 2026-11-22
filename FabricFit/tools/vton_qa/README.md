@@ -75,7 +75,7 @@ The CI release artifacts are published on GitHub Releases, so there is nothing t
    <https://github.com/Jacinth-19/fabricfit-app/releases/latest> and download the `.apk`.
    (These are demo-signed test builds — fine to sideload, not for Play.)
 2. Allow installs from your browser when Android asks.
-3. Open FabricFit → **FitRoom** → **Use sample model** (the bundled Ghanaian model) →
+3. Open FabricFit → **FitRoom** → **Sample model (Ghanaian)** →
    **Use kente bought online** (the cloth swatch) → pick a design → **Apply fabric**.
 
 The app never sends the photos anywhere; airplane mode works.
@@ -103,20 +103,38 @@ bash tools/vton_qa/pull_from_phone.sh        # copies the images to tools/vton_q
 You get `tryon_result.jpg`, `person_input.jpg`, `fabric_swatch.jpg`, `person_mask.png`
 and `report.txt` (device model, segmentation time, coverage %, file size).
 
-CI can run the same thing: push a commit whose message contains `[tryon-e2e]`, or run the
-**build** workflow manually — the `tryon-e2e` job uploads the images as
-`fabricfit-tryon-e2e`.
+CI runs the same thing on an x86_64 emulator: push a commit whose message contains
+`[tryon-e2e]`. `tools/qa/run_tryon_e2e.sh` drives the run, and a passing job commits what
+the device rendered to `docs/vton/device/` — no login or artifact download needed.
+
+### It has actually been run on a device
+
+`docs/vton/device/` is the emulator's own output from a passing CI run, not a laptop
+render. `report.txt` from that run:
+
+```
+device      unknown Android SDK built for x86_64 (API 33)
+segment     116ms, coverage 23.8%
+generate    150ms
+result      714x1280 JPEG
+```
+
+Images: `tryon_result.jpg` (the look), `person_input.jpg`, `person_mask.png`,
+`fabric_swatch.jpg`.
 
 ## Proof the pipeline runs
 
-`docs/vton/fitroom_journey.jpg` is one run of `--demo`: the bundled Ghanaian model, the
-kente dress sourced online, the real cloth swatch and the FitRoom result.
+| Image | What it shows |
+| --- | --- |
+| `docs/vton/fitroom_journey.jpg` | Left: the bundled Ghanaian model. Right: the FitRoom look on her. One `--demo` run. |
+| `docs/vton/fit_comparison.jpg` | Person → cloth → segmentation mask → result, in one strip |
+| `docs/vton/tryon_app_baseline.jpg` | The old fixed 20–80 % box: a strip of cloth floating on the chest |
+| `docs/vton/device/` | The same pair rendered **on an Android emulator** by the shipping code |
 
-`docs/vton/fit_comparison.jpg` is the same inputs through the old fixed-box geometry and
-through the body-fitted outline.
-
-Both were produced by `vton_local.py` on this repo with the bundled TFLite models —
-the exact numbers are reproduced in `BodyFitParityTest`.
+The laptop images come from `vton_local.py` with the bundled TFLite models; the
+`device/` images come from `TryOnDeviceE2ETest` running the app's own
+`PersonSegmenter` and `DemoLookGenerator`. `BodyFitParityTest` pins the numbers the two
+implementations must agree on.
 
 ## The demo inputs
 
