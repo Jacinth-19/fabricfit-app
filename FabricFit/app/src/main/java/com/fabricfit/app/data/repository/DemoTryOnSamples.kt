@@ -7,6 +7,7 @@ import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.PatternType
 import com.fabricfit.app.domain.model.TextureType
+import kotlinx.coroutines.flow.first
 import java.io.File
 
 /**
@@ -47,8 +48,7 @@ object DemoTryOnSamples {
      * so the FitRoom fabric rail (and FabricDetail) can select it. Returns the fabric id.
      */
     suspend fun ensureFabric(context: Context, repo: com.fabricfit.app.domain.repository.FabricAnalysisRepository): Long {
-        val existing = kotlinx.coroutines.flow.first(repo.observeAll())
-            .firstOrNull { it.name == FABRIC_NAME }
+        val existing = repo.observeAll().first().firstOrNull { it.name == FABRIC_NAME }
         if (existing != null) return existing.id
 
         val swatchUri = fabricSwatch(context)
