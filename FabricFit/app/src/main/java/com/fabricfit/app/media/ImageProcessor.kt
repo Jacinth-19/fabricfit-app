@@ -39,7 +39,7 @@ class ImageProcessor(private val context: Context) {
     }
 
     /**
-     * Opens an `image/*` stream for a Uri.
+     * Opens an image stream for a Uri.
      *
      * App-private files (`file://` or a bare path, e.g. the bundled demo model, saved looks
      * and cached shares) do not go through the ContentResolver, which throws
