@@ -42,6 +42,29 @@ jobs:
 
       # assembleDebugAndroidTest compiles the instrumented source set, so a
       # package/class rename there is caught without needing an emulator.
+      # Robolectric downloads a large android-all jar on first use. GitHub's Maven proxy
+      # occasionally fails that fetch, which fails every Robolectric test at once (not just
+      # the newest one), so give the download its own retried step.
+      - name: Warm the Robolectric android-all cache
+        run: |
+          set -o pipefail
+          for attempt in 1 2 3; do
+            if ./gradlew :app:testDebugUnitTest --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
+                --console=plain 2>&1 | tee robolectric-warmup.log; then
+              echo "Robolectric runtime fetched"
+              exit 0
+            fi
+            if grep -q 'Failed to fetch maven artifact org.robolectric' robolectric-warmup.log; then
+              echo "::warning title=Robolectric download flake::attempt $attempt, retrying"
+              sleep 15
+              continue
+            fi
+            echo "warm-up failed for another reason; the real test step will report it"
+            exit 0
+          done
+          echo "::warning title=Robolectric download flake::gave up after 3 attempts"
+          exit 0
+
       - name: Unit tests, debug build, instrumented-test compile
         run: |
           set -o pipefail
