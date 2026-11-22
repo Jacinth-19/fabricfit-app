@@ -37,7 +37,21 @@ class TryOnDeviceE2ETest {
 
     @Test
     fun bundledGhanaianModelAndKenteSwatchProduceATryOn() {
-        val outDir = File(context.getExternalFilesDir(null) ?: context.filesDir, "vton-e2e").apply { mkdirs() }
+        // Write to shared Downloads: `adb pull /sdcard/Android/data/...` cannot read the
+        // app's external files dir through the shell on API 30+ (scoped storage), which is
+        // why the first emulator runs reported "no files". App-private storage is the
+        // fallback when no external volume is mounted.
+        val outDir = run {
+            val downloads = File(android.os.Environment.getExternalStoragePublicDirectory(
+                android.os.Environment.DIRECTORY_DOWNLOADS,
+            ), "FabricFit/vton-e2e")
+            val dir = if (downloads.mkdirs() || downloads.isDirectory) downloads else
+                File(context.getExternalFilesDir(null) ?: context.filesDir, "vton-e2e")
+            dir.apply { mkdirs() }
+        }
+        // Print the resolved path so CI logs show where the files actually went.
+        println("VTON_OUT_DIR=${outDir.absolutePath}")
+        assertTrue("artifact directory is not writable: $outDir", outDir.isDirectory && outDir.canWrite())
 
         val personPath = kotlinx.coroutines.runBlocking { DemoTryOnSamples.personPhoto(context) }   // bare path
         val fabricUri = kotlinx.coroutines.runBlocking { DemoTryOnSamples.fabricSwatch(context) }   // file:// uri
