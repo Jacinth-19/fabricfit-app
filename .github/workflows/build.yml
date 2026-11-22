@@ -306,7 +306,10 @@ jobs:
           arch: x86_64
           working-directory: FabricFit
           script: |
-            set -u
+            # Never exit non-zero before the test itself has run and reported: the
+            # annotations below are the only readable output in this environment.
+            set -eu
+            trap 'rc=$?; echo "::error title=E2E script failed::line $LINENO (rc=$rc) in $PWD"; pwd; ls -a .. | head -20' EXIT
             export SCREENSHOT_ABI=1
             chmod +x ./gradlew
             mkdir -p ../qa-artifacts/vton
