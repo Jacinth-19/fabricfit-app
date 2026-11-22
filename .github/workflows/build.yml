@@ -367,10 +367,17 @@ jobs:
         run: |
           # Plain `run:` steps start at the repository root, unlike the emulator action
           # which is given FabricFit/ as its working directory.
+          echo "== candidate artifact dirs =="
+          find . -path ./.git -prune -o -type d -name vton -print 2>/dev/null | head
+          find . -path ./.git -prune -o -type f -name 'tryon_result.jpg' -print 2>/dev/null | head
+          for d in qa-artifacts/vton FabricFit/qa-artifacts/vton ../qa-artifacts/vton; do
+            [ -d "$d" ] && { echo "--- $d"; ls -la "$d"; }
+          done
           dir=qa-artifacts/vton
-          [ -d "$dir" ] || dir=FabricFit/qa-artifacts/vton
-          echo "artifacts in $dir"
-          ls -la "$dir" || true
+          for d in qa-artifacts/vton FabricFit/qa-artifacts/vton; do
+            if ls "$d"/*.jpg >/dev/null 2>&1; then dir="$d"; break; fi
+          done
+          echo "using $dir"
           for f in "$dir"/*.jpg "$dir"/*.png; do
             [ -f "$f" ] && echo "::notice title=DEVICE ARTIFACT::$(basename "$f") $(stat -c%s "$f") bytes"
           done
