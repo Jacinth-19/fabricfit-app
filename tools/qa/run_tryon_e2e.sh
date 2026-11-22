@@ -56,6 +56,7 @@ for f in "$OUT_DIR"/*.jpg "$OUT_DIR"/*.png; do
   [ -f "$f" ] && echo "::notice title=Pulled::$(basename "$f") $(stat -c%s "$f") bytes"
 done
 ls -la "$OUT_DIR" || true
+echo "::notice title=Local artifact dir::$(cd "$OUT_DIR" && pwd) -> $(ls "$OUT_DIR" | tr '\n' ' ' | head -c 400)"
 # An empty artifact folder is a silent failure; say so loudly.
 if ! ls "$OUT_DIR"/*.jpg >/dev/null 2>&1; then
   echo "::warning title=No device images::the test wrote nothing to the device output dir"

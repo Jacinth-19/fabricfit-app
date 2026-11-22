@@ -368,8 +368,10 @@ jobs:
           # Plain `run:` steps start at the repository root, unlike the emulator action
           # which is given FabricFit/ as its working directory.
           echo "== candidate artifact dirs =="
-          find . -path ./.git -prune -o -type d -name vton -print 2>/dev/null | head
-          find . -path ./.git -prune -o -type f -name 'tryon_result.jpg' -print 2>/dev/null | head
+          echo "checkout root: $GITHUB_WORKSPACE"
+          find . -path ./.git -prune -o -type d -name vton -print 2>/dev/null | head -20
+          find "$GITHUB_WORKSPACE/.." -maxdepth 4 -type f -name 'tryon_result.jpg' -print 2>/dev/null | head -5
+          find . -path ./.git -prune -o -type f -name 'tryon_result.jpg' -print 2>/dev/null | head -5
           for d in qa-artifacts/vton FabricFit/qa-artifacts/vton ../qa-artifacts/vton; do
             [ -d "$d" ] && { echo "--- $d"; ls -la "$d"; }
           done
