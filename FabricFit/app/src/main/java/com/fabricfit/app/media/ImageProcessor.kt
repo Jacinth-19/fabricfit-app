@@ -38,10 +38,28 @@ class ImageProcessor(private val context: Context) {
         return Outcome.Success(uri)
     }
 
+    /**
+     * Opens an `image/*` stream for a Uri.
+     *
+     * App-private files (`file://` or a bare path, e.g. the bundled demo model, saved looks
+     * and cached shares) do not go through the ContentResolver, which throws
+     * `FileNotFoundException` for them; read those straight from disk instead.
+     */
+    private fun openStream(uri: Uri): java.io.InputStream? {
+        val scheme = uri.scheme
+        if (scheme == null || scheme == "file") {
+            val path = if (scheme == "file") uri.path else uri.toString()
+            if (path.isNullOrBlank()) return null
+            val file = File(path)
+            return if (file.exists() && file.isFile) file.inputStream() else null
+        }
+        return context.contentResolver.openInputStream(uri)
+    }
+
     fun load(uri: Uri, maxEdge: Int): Outcome<Bitmap> {
         return try {
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
+        openStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
             ?: return Outcome.Failure(AppError.InvalidImage)
         if (options.outWidth <= 0 || options.outHeight <= 0) return Outcome.Failure(AppError.InvalidImage)
         var sample = 1
@@ -50,8 +68,7 @@ class ImageProcessor(private val context: Context) {
             inSampleSize = sample
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
-        val bitmap = context.contentResolver.openInputStream(uri)
-            ?.use { BitmapFactory.decodeStream(it, null, opts) }
+        val bitmap = openStream(uri)?.use { BitmapFactory.decodeStream(it, null, opts) }
             ?: return Outcome.Failure(AppError.InvalidImage)
         if (bitmap.width == 0 || bitmap.height == 0) return Outcome.Failure(AppError.InvalidImage)
         Outcome.Success(bitmap)

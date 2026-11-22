@@ -87,7 +87,9 @@ class AppContainer private constructor(context: Context) {
     val tailors: com.fabricfit.app.domain.repository.TailorRepository =
         com.fabricfit.app.data.remote.DemoTailorSource()
 
-    val lookGenerator = DemoLookGenerator(imageProcessor)
+    // Pass the segmenter through: without it DemoLookGenerator only paints cloth over the
+    // photo and never restores the head/background, so faces get covered by high necklines.
+    val lookGenerator = DemoLookGenerator(imageProcessor, personSegmenter)
 
     val tryOn: VirtualTryOnRepository = VirtualTryOnRepositoryImpl(
         database.lookDao(),

@@ -21,6 +21,7 @@ import com.fabricfit.app.domain.model.PatternType
 import com.fabricfit.app.domain.repository.GenerationInput
 import com.fabricfit.app.domain.repository.ImageGenerationRepository
 import com.fabricfit.app.media.ImageProcessor
+import com.fabricfit.app.media.garment.BodyFit
 import com.fabricfit.app.media.garment.GarmentGeometry
 import java.io.File
 import kotlin.math.roundToInt
@@ -106,18 +107,40 @@ class DemoLookGenerator(
             ?: darken(fabric.colors.lastOrNull()?.argb?.toInt() ?: 0xFF14110F.toInt())
         val neutral = darken(fabric.colors.firstOrNull()?.argb?.toInt() ?: 0xFF14110F.toInt())
 
-        val rect = garmentRect(out.width, out.height, style.gender)
-        val polys = GarmentGeometry.shapesFor(style.silhouette, customization)
+        // Prefer body-fitted geometry measured from the segmentation mask; fall back to the
+        // illustration polygons only when there is no usable mask (no segmenter / no person).
+        val body = maskAlpha?.let { BodyFit.measure(it, out.width, out.height) }?.takeIf { it.usable }
+        val polys: List<List<Pair<Float, Float>>> = when {
+            body != null -> BodyFit.shapes(body, style.silhouette, customization)
+            else -> GarmentGeometry.shapesFor(style.silhouette, customization)
+        }
+        val rect = if (body != null) {
+            val b = BodyFit.bounds(polys)
+            RectF(b[0], b[1], b[2], b[3])
+        } else {
+            garmentRect(out.width, out.height, style.gender)
+        }
         val shapes = polys.map { poly ->
             val path = Path().apply {
-                poly.forEachIndexed { i, (x, y) ->
-                    val px = rect.left + x * rect.width()
-                    val py = rect.top + y * rect.height()
-                    if (i == 0) moveTo(px, py) else lineTo(px, py)
+                if (body != null) {
+                    poly.forEachIndexed { i, (px, py) ->
+                        if (i == 0) moveTo(px, py) else lineTo(px, py)
+                    }
+                } else {
+                    // Illustration polygons are normalised 0..1 inside the fixed box.
+                    poly.forEachIndexed { i, (x, y) ->
+                        val px = rect.left + x * rect.width()
+                        val py = rect.top + y * rect.height()
+                        if (i == 0) moveTo(px, py) else lineTo(px, py)
+                    }
                 }
                 close()
             }
-            val centroidY = poly.map { it.second }.average().toFloat()
+            val centroidY = if (body != null) {
+                (poly.map { it.second }.average().toFloat() - rect.top) / rect.height().coerceAtLeast(1f)
+            } else {
+                poly.map { it.second }.average().toFloat()
+            }
             Pair(path, centroidY)
         }
 
@@ -184,16 +207,19 @@ class DemoLookGenerator(
         }
 
         if (placement == FabricPlacement.ACCENTS) {
-            val band = Path().apply {
-                addRect(
-                    RectF(
-                        rect.left,
-                        rect.top + rect.height() * 0.44f,
-                        rect.right,
-                        rect.top + rect.height() * 0.54f,
-                    ),
-                    Path.Direction.CW,
+            val bandRect = if (body != null) {
+                val b = BodyFit.accentBand(floatArrayOf(rect.left, rect.top, rect.right, rect.bottom))
+                RectF(b[0], b[1], b[2], b[3])
+            } else {
+                RectF(
+                    rect.left,
+                    rect.top + rect.height() * 0.44f,
+                    rect.right,
+                    rect.top + rect.height() * 0.54f,
                 )
+            }
+            val band = Path().apply {
+                addRect(bandRect, Path.Direction.CW)
             }
             val combined = Path()
             shapes.forEach { (path, _) -> combined.op(path, band, Path.Op.INTERSECT) }

@@ -64,10 +64,10 @@ import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ZoomableImage
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.saveToGallery
+import com.fabricfit.app.ui.util.toMediaFile
 import com.fabricfit.app.ui.util.shareLook
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.io.File
 import com.fabricfit.app.ui.util.resolveKey
 
 @Composable
@@ -270,7 +270,7 @@ fun ResultScreen(nav: NavHostController, padding: PaddingValues, lookId: Long) {
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         IconButton(onClick = {
-                            val ok = context.saveToGallery(File(l.resultImageUri))
+                            val ok = context.saveToGallery(l.resultImageUri.toMediaFile())
                             scope.launch {
                                 snackbar.showSnackbar(
                                     if (ok) context.getString(R.string.result_saved_to_gallery)

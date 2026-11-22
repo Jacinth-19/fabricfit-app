@@ -219,7 +219,7 @@ mockups.
 | --- | --- | --- |
 | Camera scanner | **FitScan** | Photograph any fabric; on-device ML classifies the textile and extracts its palette, pattern, and texture. |
 | AI recommendation engine | **FitMatch AI** | Ranks outfit designs against your fabric with a confidence % and plain-language reasoning; filterable by occasion and category. |
-| Virtual try-on | **FitRoom** | Drapes the scanned fabric onto a model or your own photo so you can preview the finished garment before you sew. |
+| Virtual try-on | **FitRoom** | Drapes the scanned fabric onto a model or your own photo so you can preview the finished garment before you sew. Runs entirely on-device — no account, no API key, works offline. See [`FabricFit/tools/vton_qa/README.md`](FabricFit/tools/vton_qa/README.md) to test it locally or on your phone. |
 | Wardrobe & saved items | **My Fit Closet** | Organises your wardrobe capsule, saved styles, scan history, body measurements, and shareable PDF tailor briefs. |
 
 ---
