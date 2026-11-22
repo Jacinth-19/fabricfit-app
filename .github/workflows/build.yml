@@ -315,11 +315,13 @@ jobs:
             log=../qa-artifacts/vton/gradle-e2e.log
             : > "$log"
             adb devices >> "$log" 2>&1 || true
-            set -o pipefail
+            # The emulator action runs this with /bin/sh (dash): no PIPESTATUS, no pipefail.
+            # Redirect, keep the status, then replay the tail so the step log stays useful.
             ./gradlew :app:connectedDebugAndroidTest \
               -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.repository.TryOnDeviceE2ETest \
-              --console=plain 2>&1 | tee -a "$log"
-            status=${PIPESTATUS[0]}
+              --console=plain >> "$log" 2>&1
+            status=$?
+            tail -n 60 "$log" || true
             # Pull whatever the run produced, even when it failed halfway: a picture of a
             # wrong render is more useful than no picture at all.
             timeout 120 adb pull "/sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e/." ../qa-artifacts/vton/ >> "$log" 2>&1 || true
