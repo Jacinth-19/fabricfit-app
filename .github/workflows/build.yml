@@ -277,7 +277,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
+      # The job commits the emulator-rendered look back to the branch it ran on.
       contents: write
+      actions: read
     steps:
       - uses: actions/checkout@v7
 
@@ -399,10 +401,16 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add FabricFit/docs/vton/device/
-          if ! git diff --cached --quiet; then
-            git commit -m "ci: try-on rendered on an Android emulator [skip ci]"
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+          if git diff --cached --quiet; then
+            echo "device images unchanged since the last run"
+            exit 0
           fi
+          git commit -m "ci: try-on rendered on an Android emulator [skip ci]"
+          # The checkout is detached at the triggering SHA; push explicitly onto the
+          # branch that triggered the run, and never let a failed push fail the job.
+          branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          git push origin "HEAD:refs/heads/${branch}" \
+            || echo "::warning title=Device images not pushed::git push was rejected; the artifact still has them"
 
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
