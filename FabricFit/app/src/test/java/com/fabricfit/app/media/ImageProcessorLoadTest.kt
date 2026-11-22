@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.fabricfit.app.domain.model.Outcome
 import java.io.File
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -19,6 +18,10 @@ import org.robolectric.annotation.Config
  * The on-device E2E failed with "person photo must load" because the sample model is passed
  * as a bare absolute path and `Uri.parse(path)` does not give back a usable `path` on every
  * API level. These tests pin both spellings so a refactor cannot break the phone again.
+ *
+ * Note: Robolectric's BitmapFactory shadow returns a bitmap even for a bounds-only decode,
+ * while a real device returns null there. That difference is why the device E2E, not these
+ * tests, is what catches a null-chained bounds pass.
  */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
@@ -63,19 +66,6 @@ class ImageProcessorLoadTest {
         // inSampleSize is a power of two, so 1600 -> 400 exactly (sample 4).
         assertEquals(300, bitmap.width)
         assertEquals(400, bitmap.height)
-    }
-
-    @Test
-    fun `bounds-only decode of the same file returns no bitmap`() {
-        // BitmapFactory.decodeStream returns null when inJustDecodeBounds is set. load()
-        // used to chain `?: return Failure` on that null, which made every load fail;
-        // this test documents the trap so the check stays on the stream.
-        val file = jpegFile("bounds.jpg")
-        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        val bitmap = file.inputStream().use { BitmapFactory.decodeStream(it, null, bounds) }
-        assertNull("a bounds-only decode must not produce a bitmap", bitmap)
-        assertEquals(64, bounds.outWidth)
-        assertEquals(96, bounds.outHeight)
     }
 
     @Test
