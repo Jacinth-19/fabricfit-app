@@ -561,10 +561,15 @@ def measure_body(mask: Image.Image | None, size: tuple[int, int]) -> dict:
     waist = min(half_at(0.40), half_at(0.44)) or bust
     hip = max(half_at(0.48), half_at(0.52))
     thigh = half_at(0.62)
+    # Same usability rule as BodyFit.kt: the figure has to fill a decent part of the frame
+    # and the shoulder width has to be plausible, otherwise the caller falls back.
+    envelope = ph / float(h)
+    plausible = ph * 0.04 < shoulder < ph * 0.35
     return {
         "top": float(top), "bottom": float(bottom), "person_h": float(ph), "centre": float(centre_x),
         "shoulder_half": shoulder, "bust_half": bust, "waist_half": waist,
-        "hip_half": hip, "thigh_half": thigh, "ok": shoulder > 8 and hip > 8,
+        "hip_half": hip, "thigh_half": thigh,
+        "ok": bool(envelope >= 0.25 and plausible),
     }
 
 
