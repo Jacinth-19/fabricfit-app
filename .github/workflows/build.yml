@@ -350,14 +350,12 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-tryon-e2e
+          # `with:` paths are repo-relative; the runner script writes to the repo root.
           path: |
             qa-artifacts/vton/*.jpg
             qa-artifacts/vton/*.png
             qa-artifacts/vton/report.txt
             qa-artifacts/vton/gradle-e2e.log
-            FabricFit/qa-artifacts/vton/*.jpg
-            FabricFit/qa-artifacts/vton/*.png
-            FabricFit/qa-artifacts/vton/report.txt
           if-no-files-found: warn
 
       # Actions artifacts need a login to download and expire; the phone-rendered look is
@@ -365,19 +363,14 @@ jobs:
       - name: Report what the device produced
         if: always()
         run: |
-          # Plain `run:` steps start at the repository root, unlike the emulator action
-          # which is given FabricFit/ as its working directory.
-          echo "checkout root: $GITHUB_WORKSPACE"
-          for d in qa-artifacts/vton FabricFit/qa-artifacts/vton ../qa-artifacts/vton; do
-            [ -d "$d" ] && { echo "--- $d"; ls -la "$d"; }
-          done
-          dir=qa-artifacts/vton
-          for d in qa-artifacts/vton FabricFit/qa-artifacts/vton; do
-            if ls "$d"/*.jpg >/dev/null 2>&1; then dir="$d"; break; fi
-          done
-          echo "using $dir"
+          # defaults.run.working-directory is FabricFit, so a relative qa-artifacts/... would
+          # mean FabricFit/qa-artifacts; the runner script writes to the repo root.
+          dir="$GITHUB_WORKSPACE/qa-artifacts/vton"
+          ls -la "$dir" || true
           for f in "$dir"/*.jpg "$dir"/*.png; do
-            [ -f "$f" ] && echo "::notice title=DEVICE ARTIFACT::$(basename "$f") $(stat -c%s "$f") bytes"
+            if [ -f "$f" ]; then
+              echo "::notice title=DEVICE ARTIFACT::$(basename "$f") $(stat -c%s "$f") bytes"
+            fi
           done
           if [ -f "$dir/report.txt" ]; then
             echo "::notice title=DEVICE REPORT::$(tr '\n' ' ' < "$dir/report.txt" | head -c 900)"
@@ -387,20 +380,20 @@ jobs:
         if: success()
         run: |
           set -e
-          dir=qa-artifacts/vton
-          [ -d "$dir" ] || dir=FabricFit/qa-artifacts/vton
-          mkdir -p FabricFit/docs/vton/device
+          dir="$GITHUB_WORKSPACE/qa-artifacts/vton"
+          dest="$GITHUB_WORKSPACE/FabricFit/docs/vton/device"
+          mkdir -p "$dest"
           found=0
           for f in "$dir"/*.jpg "$dir"/*.png "$dir"/report.txt; do
-            # `[ -f ] && cp && found=1` would stop at the first non-matching glob (the loop
-            # only advances the glob, so `found` would never be set). Use a real branch.
+            # `[ -f ] && cp && found=1` would stop the chain at the first glob that does
+            # not match, so `found` would never be set. Use a real branch.
             if [ -f "$f" ]; then
-              cp "$f" FabricFit/docs/vton/device/
+              cp "$f" "$dest/"
               found=1
             fi
           done
           if [ "$found" = "0" ]; then
-            echo "::warning title=No device images::the emulator produced no files to commit"
+            echo "::warning title=No device images::nothing was pulled from the emulator"
             exit 0
           fi
           git config user.name "github-actions[bot]"
