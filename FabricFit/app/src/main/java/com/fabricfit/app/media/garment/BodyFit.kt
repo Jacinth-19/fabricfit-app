@@ -33,8 +33,9 @@ object BodyFit {
         val hipHalf: Float,
         val thighHalf: Float,
         /**
-         * True when the envelope is big enough to fit a garment to. Callers fall back to
-         * the illustration polygons when this is false.
+         * True when the figure fills enough of the frame and the measured widths could be a
+         * person. Callers fall back to the illustration polygons when this is false, so a
+         * cropped or distant subject never gets a sliver of cloth glued to it.
          */
         val usable: Boolean,
     ) {
@@ -102,9 +103,12 @@ object BodyFit {
             thighHalf = halfAt(0.62f),
             usable = false,
         )
-        // 2 % of the frame height is the smallest sensible body envelope.
-        val minWidth = personHeight * 0.02f
-        return body.copy(usable = body.shoulderHalf > minWidth && (body.hipHalf > minWidth || body.bustHalf > minWidth))
+        // A usable measurement needs three things: a body envelope that fills a decent part
+        // of the frame, widths that could be a person, and a shoulder wider than the neck.
+        val envelope = personHeight / height
+        val plausibleWidths = body.shoulderHalf > personHeight * 0.04f &&
+            body.shoulderHalf < personHeight * 0.35f
+        return body.copy(usable = envelope >= 0.25f && plausibleWidths)
     }
 
     /**
