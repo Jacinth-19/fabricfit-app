@@ -309,14 +309,20 @@ jobs:
             set -u
             export SCREENSHOT_ABI=1
             chmod +x ./gradlew
-            status=0
+            mkdir -p ../qa-artifacts/vton
+            # Keep the Gradle/emulator output where a later step can annotate it: the
+            # emulator action's own log is not readable from this environment.
+            log=../qa-artifacts/vton/gradle-e2e.log
+            : > "$log"
+            adb devices >> "$log" 2>&1 || true
+            set -o pipefail
             ./gradlew :app:connectedDebugAndroidTest \
               -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.repository.TryOnDeviceE2ETest \
-              || status=$?
+              --console=plain 2>&1 | tee -a "$log"
+            status=${PIPESTATUS[0]}
             # Pull whatever the run produced, even when it failed halfway: a picture of a
             # wrong render is more useful than no picture at all.
-            mkdir -p ../qa-artifacts/vton
-            timeout 120 adb pull "/sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e/." ../qa-artifacts/vton/ || true
+            timeout 120 adb pull "/sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e/." ../qa-artifacts/vton/ >> "$log" 2>&1 || true
             exit $status
 
       # Test XML and logcat live behind blob storage that some clients cannot read;
@@ -337,6 +343,10 @@ jobs:
           if not found:
               print("::error title=E2E FAILED::no androidTest XML produced - the build or the "
                     "emulator failed before the test ran; see the gradle step output")
+              log = pathlib.Path("qa-artifacts/vton/gradle-e2e.log")
+              if log.exists():
+                  tail = [l.rstrip() for l in log.read_text(errors="replace").splitlines() if l.strip()]
+                  print("::error title=E2E gradle tail::" + " | ".join(tail[-14:])[:1500])
           PY
           # A device-side crash leaves logcat as the only evidence. The emulator action has
           # already shut the device down by now, so never block on adb: give it 20 seconds.
