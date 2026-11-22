@@ -28,8 +28,10 @@ class ImageProcessor(private val context: Context) {
         if (type != null && !type.startsWith("image/")) return Outcome.Failure(AppError.UnsupportedImage)
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         try {
-            context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
-                ?: return Outcome.Failure(AppError.InvalidImage)
+            // decodeStream returns null when it only reads the bounds, so the stream is the
+            // thing whose absence means "unreadable" - not the return value.
+            val stream = openStream(uri) ?: return Outcome.Failure(AppError.InvalidImage)
+            stream.use { BitmapFactory.decodeStream(it, null, bounds) }
         } catch (e: Exception) {
             return Outcome.Failure(AppError.InvalidImage)
         }
@@ -86,9 +88,11 @@ class ImageProcessor(private val context: Context) {
      */
     private fun decode(maxEdge: Int, open: () -> java.io.InputStream?): Outcome<Bitmap> {
         return try {
+            // Pass 1 reads only the bounds. decodeStream deliberately returns null for a
+            // bounds-only decode, so the null check belongs on the stream, not the result.
             val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-            open()?.use { BitmapFactory.decodeStream(it, null, options) }
-                ?: return Outcome.Failure(AppError.InvalidImage)
+            val boundsStream = open() ?: return Outcome.Failure(AppError.InvalidImage)
+            boundsStream.use { BitmapFactory.decodeStream(it, null, options) }
             if (options.outWidth <= 0 || options.outHeight <= 0) return Outcome.Failure(AppError.InvalidImage)
             var sample = 1
             while (maxOf(options.outWidth, options.outHeight) / (sample * 2) >= maxEdge) sample *= 2
@@ -96,7 +100,8 @@ class ImageProcessor(private val context: Context) {
                 inSampleSize = sample
                 inPreferredConfig = Bitmap.Config.ARGB_8888
             }
-            val bitmap = open()?.use { BitmapFactory.decodeStream(it, null, opts) }
+            val pixels = open() ?: return Outcome.Failure(AppError.InvalidImage)
+            val bitmap = pixels.use { BitmapFactory.decodeStream(it, null, opts) }
                 ?: return Outcome.Failure(AppError.InvalidImage)
             if (bitmap.width == 0 || bitmap.height == 0) return Outcome.Failure(AppError.InvalidImage)
             Outcome.Success(bitmap)

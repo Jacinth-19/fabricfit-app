@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.fabricfit.app.domain.model.Outcome
 import java.io.File
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,6 +63,26 @@ class ImageProcessorLoadTest {
         // inSampleSize is a power of two, so 1600 -> 400 exactly (sample 4).
         assertEquals(300, bitmap.width)
         assertEquals(400, bitmap.height)
+    }
+
+    @Test
+    fun `bounds-only decode of the same file returns no bitmap`() {
+        // BitmapFactory.decodeStream returns null when inJustDecodeBounds is set. load()
+        // used to chain `?: return Failure` on that null, which made every load fail;
+        // this test documents the trap so the check stays on the stream.
+        val file = jpegFile("bounds.jpg")
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        val bitmap = file.inputStream().use { BitmapFactory.decodeStream(it, null, bounds) }
+        assertNull("a bounds-only decode must not produce a bitmap", bitmap)
+        assertEquals(64, bounds.outWidth)
+        assertEquals(96, bounds.outHeight)
+    }
+
+    @Test
+    fun `validate accepts a file uri for an existing photo`() {
+        val file = jpegFile("valid.jpg")
+        val outcome = processor.validate(android.net.Uri.parse("file://${file.absolutePath}"))
+        assertTrue("validate rejected a real photo: $outcome", outcome is Outcome.Success)
     }
 
     @Test
