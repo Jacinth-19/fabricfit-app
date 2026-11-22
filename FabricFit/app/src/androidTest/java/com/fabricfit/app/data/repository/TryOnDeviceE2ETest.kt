@@ -39,8 +39,8 @@ class TryOnDeviceE2ETest {
     fun bundledGhanaianModelAndKenteSwatchProduceATryOn() {
         val outDir = File(context.getExternalFilesDir(null) ?: context.filesDir, "vton-e2e").apply { mkdirs() }
 
-        val personPath = DemoTryOnSamples.personPhoto(context)     // bare path
-        val fabricUri = DemoTryOnSamples.fabricSwatch(context)      // file:// uri
+        val personPath = kotlinx.coroutines.runBlocking { DemoTryOnSamples.personPhoto(context) }   // bare path
+        val fabricUri = kotlinx.coroutines.runBlocking { DemoTryOnSamples.fabricSwatch(context) }   // file:// uri
         val fabricPath = java.io.File(android.net.Uri.parse(fabricUri).path!!).absolutePath
         assertTrue("model photo missing: $personPath", File(personPath).length() > 10_000)
         assertTrue("fabric swatch missing: $fabricUri", File(fabricPath).length() > 5_000)
