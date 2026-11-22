@@ -305,30 +305,10 @@ jobs:
           target: default
           arch: x86_64
           working-directory: FabricFit
+          # The action runs each line of `script` as its own command, so the whole run
+          # lives in a script: Gradle invocation, log capture and artifact pull.
           script: |
-            # Never exit non-zero before the test itself has run and reported: the
-            # annotations below are the only readable output in this environment.
-            set -eu
-            trap 'rc=$?; echo "::error title=E2E script failed::line $LINENO (rc=$rc) in $PWD"; pwd; ls -a .. | head -20' EXIT
-            export SCREENSHOT_ABI=1
-            chmod +x ./gradlew
-            mkdir -p ../qa-artifacts/vton
-            # Keep the Gradle/emulator output where a later step can annotate it: the
-            # emulator action's own log is not readable from this environment.
-            log=../qa-artifacts/vton/gradle-e2e.log
-            : > "$log"
-            adb devices >> "$log" 2>&1 || true
-            # The emulator action runs this with /bin/sh (dash): no PIPESTATUS, no pipefail.
-            # Redirect, keep the status, then replay the tail so the step log stays useful.
-            ./gradlew :app:connectedDebugAndroidTest \
-              -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.repository.TryOnDeviceE2ETest \
-              --console=plain >> "$log" 2>&1
-            status=$?
-            tail -n 60 "$log" || true
-            # Pull whatever the run produced, even when it failed halfway: a picture of a
-            # wrong render is more useful than no picture at all.
-            timeout 120 adb pull "/sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e/." ../qa-artifacts/vton/ >> "$log" 2>&1 || true
-            exit $status
+            bash ../tools/qa/run_tryon_e2e.sh
 
       # Test XML and logcat live behind blob storage that some clients cannot read;
       # annotations are always visible, so republish the failure reason as annotations.
