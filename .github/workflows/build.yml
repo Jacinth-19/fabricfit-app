@@ -327,11 +327,18 @@ jobs:
                       print(f"::error title=E2E FAILED::{name} :: {' | '.join(lines[:6])[:1200]}")
           if not found:
               print("::error title=E2E FAILED::no androidTest XML produced - the build or the "
-                    "emulator failed before the test ran; see the gradle step output")
+                    "emulator failed before the test ran; the gradle log tail follows")
+              # Anything that looks like a failure in the captured Gradle log is the
+              # next best evidence once the XML is missing.
               log = pathlib.Path("qa-artifacts/vton/gradle-e2e.log")
               if log.exists():
-                  tail = [l.rstrip() for l in log.read_text(errors="replace").splitlines() if l.strip()]
-                  print("::error title=E2E gradle tail::" + " | ".join(tail[-14:])[:1500])
+                  lines = [l.rstrip() for l in log.read_text(errors="replace").splitlines() if l.strip()]
+                  signal = [
+                      l for l in lines
+                      if any(k in l for k in ("FAILED", "Exception", "Caused by", "error:",
+                                              "Tests on", "Unable", "No connected", "BUILD"))
+                  ]
+                  print("::error title=E2E gradle log::" + " | ".join((signal or lines)[-16:])[:1500])
           PY
           # A device-side crash leaves logcat as the only evidence. The emulator action has
           # already shut the device down by now, so never block on adb: give it 20 seconds.
