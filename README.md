@@ -2,7 +2,7 @@
 
 [![build](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml/badge.svg)](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml)
 [![release](https://img.shields.io/github/v/release/Jacinth-19/fabricfit-app?label=release)](https://github.com/Jacinth-19/fabricfit-app/releases/latest)
-[![download](https://img.shields.io/badge/download-fabricfit--v1.0.1.apk-D4A84B)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
+[![download](https://img.shields.io/badge/download-fabricfit--v1.0.1.apk-D4A84B)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.3.apk)
 
 <div align="center">
 
@@ -144,19 +144,19 @@ minified **release build** is published to GitHub Releases on version tags,
 manual workflow dispatch, or a branch commit marked `[release]`; ordinary branch
 builds upload CI artifacts without replacing the public release.
 
-> ### 👉 [Download FabricFit v1.0.1 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
+> ### 👉 [Download FabricFit v1.0.3 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.3.apk)
 >
-> [`releases/latest`](https://github.com/Jacinth-19/fabricfit-app/releases/latest) also carries `fabricfit-v1.0.1.aab` for a Play upload.
+> [`releases/latest`](https://github.com/Jacinth-19/fabricfit-app/releases/latest) also carries `fabricfit-v1.0.3.aab` for a Play upload.
 
 ```bash
 # install on a connected phone or a running emulator
-adb install -r fabricfit-v1.0.1.apk
+adb install -r fabricfit-v1.0.3.apk
 ```
 
 | What | Where it comes from | Notes |
 | --- | --- | --- |
-| **Release APK** (`fabricfit-v1.0.1.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
-| **Release bundle** (`fabricfit-v1.0.1.aab`) | same release | The artifact you would upload to the Play Console. |
+| **Release APK** (`fabricfit-v1.0.3.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
+| **Release bundle** (`fabricfit-v1.0.3.aab`) | same release | The artifact you would upload to the Play Console. |
 | **Debug APK** | run → artifact `fabricfit-debug-apk` | `com.fabricfit.app.debug`, debuggable, for testers without a release key. |
 | **Instrumented test report** | run → artifact `test-reports` | Unit-test and lint output for the run. |
 
