@@ -16,9 +16,10 @@ set -uo pipefail
 # build.yml look for both qa-artifacts/vton and FabricFit/qa-artifacts/vton.
 OUT_DIR="../qa-artifacts/vton"
 LOG="$OUT_DIR/gradle-e2e.log"
-# The test prefers shared Downloads because adb cannot read /sdcard/Android/data on
-# API 30+; the app-private dir is the fallback when Downloads is not writable.
-DEVICE_DIRS="/sdcard/Download/FabricFit/vton-e2e /sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e"
+# The test writes into the app's private files dir (always writable). `adb pull` cannot
+# read it, but `adb exec-out run-as` can, because the debug build is debuggable.
+APP_PACKAGE="com.fabricfit.app.debug"
+DEVICE_DIR="/data/data/$APP_PACKAGE/files/vton-e2e"
 TEST_CLASS="com.fabricfit.app.data.repository.TryOnDeviceE2ETest"
 
 mkdir -p "$OUT_DIR"
@@ -44,20 +45,21 @@ status=$?
 echo "== gradle tail =="
 tail -n 40 "$LOG" || true
 
-# The test prints where it wrote; pulling that exact directory is more reliable than
-# guessing, and it surfaces a path problem in the annotations.
-OUT_HINT=$(grep -o 'VTON_OUT_DIR=[^ ]*' "$LOG" | tail -1 | cut -d= -f2- || true)
-if [ -n "${OUT_HINT:-}" ]; then
-  echo "device wrote to: $OUT_HINT"
-  DEVICE_DIRS="/sdcard/Download/FabricFit/vton-e2e $OUT_HINT $DEVICE_DIRS"
-  echo "::notice title=Device output dir::$OUT_HINT"
-fi
+echo "== run-as listing $DEVICE_DIR ==" | tee -a "$LOG"
+adb shell run-as "$APP_PACKAGE" ls -la "$DEVICE_DIR" >> "$LOG" 2>&1 || true
 
-# Pull whatever the run produced, even when it failed partway: a picture of a wrong
-# render is more useful than no picture at all.
-for device_dir in $DEVICE_DIRS; do
-  echo "== adb pull $device_dir ==" >> "$LOG"
-  timeout 120 adb pull "$device_dir/." "$OUT_DIR/" >> "$LOG" 2>&1 && break
+# Copy each artifact out one by one. `run-as cat` keeps the bytes exact; busybox tar is
+# not present on every emulator image, so no archive round-trip.
+for name in person_input.jpg person_mask.png fabric_swatch.jpg tryon_result.jpg report.txt; do
+  if adb exec-out run-as "$APP_PACKAGE" cat "$DEVICE_DIR/$name" > "$OUT_DIR/$name" 2>>"$LOG"; then
+    size=$(stat -c%s "$OUT_DIR/$name" 2>/dev/null || echo 0)
+    echo "pulled $name ($size bytes)"
+    [ "$size" -gt 0 ] || rm -f "$OUT_DIR/$name"
+  fi
+done
+# Fall back to a plain pull for any build that still writes to shared storage.
+for device_dir in /sdcard/Download/FabricFit/vton-e2e /sdcard/Android/data/$APP_PACKAGE/files/vton-e2e; do
+  timeout 60 adb pull "$device_dir/." "$OUT_DIR/" >> "$LOG" 2>&1 || true
 done
 ls -la "$OUT_DIR" || true
 # An empty artifact folder is a silent failure; say so loudly.

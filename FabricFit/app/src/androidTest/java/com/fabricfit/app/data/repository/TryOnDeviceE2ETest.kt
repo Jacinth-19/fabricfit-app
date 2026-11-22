@@ -37,18 +37,11 @@ class TryOnDeviceE2ETest {
 
     @Test
     fun bundledGhanaianModelAndKenteSwatchProduceATryOn() {
-        // Write to shared Downloads: `adb pull /sdcard/Android/data/...` cannot read the
-        // app's external files dir through the shell on API 30+ (scoped storage), which is
-        // why the first emulator runs reported "no files". App-private storage is the
-        // fallback when no external volume is mounted.
-        val outDir = run {
-            val downloads = File(android.os.Environment.getExternalStoragePublicDirectory(
-                android.os.Environment.DIRECTORY_DOWNLOADS,
-            ), "FabricFit/vton-e2e")
-            val dir = if (downloads.mkdirs() || downloads.isDirectory) downloads else
-                File(context.getExternalFilesDir(null) ?: context.filesDir, "vton-e2e")
-            dir.apply { mkdirs() }
-        }
+        // App-private storage is the only place a targetSdk 34 app can always write:
+        // direct File writes to /sdcard/Download are blocked by scoped storage (mkdirs and
+        // canWrite can still lie, and Bitmap.compress then fails silently). CI extracts
+        // these with `adb exec-out run-as <debug package> cat ...`, which can read them.
+        val outDir = File(context.filesDir, "vton-e2e").apply { mkdirs() }
         // Print the resolved path so CI logs show where the files actually went.
         println("VTON_OUT_DIR=${outDir.absolutePath}")
         assertTrue("artifact directory is not writable: $outDir", outDir.isDirectory && outDir.canWrite())
@@ -158,10 +151,18 @@ class TryOnDeviceE2ETest {
             maxOf(bitmap.width, bitmap.height) in 900..com.fabricfit.app.media.ImageProcessor.SAVE_MAX_EDGE,
         )
 
-        // Persist artifacts for CI upload.
+        // Persist artifacts for CI upload. Each write is checked: a failed compress would
+        // otherwise be discovered only when the artifact folder turns up empty.
         file.copyTo(File(outDir, "tryon_result.jpg"), overwrite = true)
-        person.compress(Bitmap.CompressFormat.JPEG, 88, FileOutputStream(File(outDir, "person_input.jpg")))
+        val wrotePerson = person.compress(
+            Bitmap.CompressFormat.JPEG, 88, FileOutputStream(File(outDir, "person_input.jpg")),
+        )
         File(fabricPath).copyTo(File(outDir, "fabric_swatch.jpg"), overwrite = true)
+        assertTrue("person_input.jpg was not written", wrotePerson)
+        for (name in listOf("tryon_result.jpg", "person_input.jpg", "fabric_swatch.jpg", "person_mask.png")) {
+            val artifact = File(outDir, name)
+            assertTrue("artifact missing or empty: ${artifact.absolutePath}", artifact.length() > 1_000)
+        }
 
         val report = buildString {
             appendLine("FabricFit on-device try-on E2E")
