@@ -306,12 +306,18 @@ jobs:
           arch: x86_64
           working-directory: FabricFit
           script: |
-            set -eu
+            set -u
             export SCREENSHOT_ABI=1
             chmod +x ./gradlew
-            ./gradlew :app:connectedDebugAndroidTest               -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.repository.TryOnDeviceE2ETest
+            status=0
+            ./gradlew :app:connectedDebugAndroidTest \
+              -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.repository.TryOnDeviceE2ETest \
+              || status=$?
+            # Pull whatever the run produced, even when it failed halfway: a picture of a
+            # wrong render is more useful than no picture at all.
             mkdir -p ../qa-artifacts/vton
-            adb pull "/sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e/." ../qa-artifacts/vton/
+            timeout 120 adb pull "/sdcard/Android/data/com.fabricfit.app.debug/files/vton-e2e/." ../qa-artifacts/vton/ || true
+            exit $status
 
       # Test XML and logcat live behind blob storage that some clients cannot read;
       # annotations are always visible, so republish the failure reason as annotations.

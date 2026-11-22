@@ -134,7 +134,15 @@ class TryOnDeviceE2ETest {
         val bitmap = BitmapFactory.decodeFile(file.absolutePath)
         assertNotNull(bitmap)
         bitmap!!
-        assertEquals("result width should follow the source", person.width, bitmap.width)
+        // ImageProcessor.save() caps the long edge at SAVE_MAX_EDGE (1280 px), so the saved
+        // JPEG keeps the source aspect ratio but may be smaller than the composited bitmap.
+        val sourceRatio = person.width.toFloat() / person.height
+        val savedRatio = bitmap.width.toFloat() / bitmap.height
+        assertEquals("saved look must keep the source aspect ratio", sourceRatio, savedRatio, 0.01f)
+        assertTrue(
+            "saved look should be a real-size photo, got ${bitmap.width}x${bitmap.height}",
+            maxOf(bitmap.width, bitmap.height) in 900..com.fabricfit.app.media.ImageProcessor.SAVE_MAX_EDGE,
+        )
 
         // Persist artifacts for CI upload.
         file.copyTo(File(outDir, "tryon_result.jpg"), overwrite = true)
