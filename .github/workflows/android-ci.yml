@@ -29,6 +29,20 @@ jobs:
       run: |
         cd FabricFit
         ./gradlew test --stacktrace
+
+    - name: Print failing tests
+      if: failure()
+      run: |
+        python3 - <<'PY'
+        import pathlib, xml.etree.ElementTree as ET
+        for xml in pathlib.Path("FabricFit/app/build/test-results").rglob("*.xml"):
+            for tc in ET.parse(xml).iter("testcase"):
+                for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                    name = f"{tc.attrib.get('classname')}.{tc.attrib.get('name')}"
+                    msg = (f.text or "").strip().splitlines()
+                    detail = " | ".join(m.strip() for m in msg[:3])
+                    print(f"::error title=FAILED TEST::{name} :: {detail[:900]}")
+        PY
         
     - name: Upload Test Results
       uses: actions/upload-artifact@v4
