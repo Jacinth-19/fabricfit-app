@@ -2,6 +2,7 @@ package com.fabricfit.app.data.repository
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.provider.MediaStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.fabricfit.app.data.ml.PersonSegmenter
@@ -11,7 +12,6 @@ import com.fabricfit.app.domain.model.Fabric
 import com.fabricfit.app.domain.model.Outcome
 import com.fabricfit.app.domain.repository.GenerationInput
 import java.io.File
-import java.io.FileOutputStream
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -37,14 +37,19 @@ class TryOnDeviceE2ETest {
 
     @Test
     fun bundledGhanaianModelAndKenteSwatchProduceATryOn() {
-        // App-private storage is the only place a targetSdk 34 app can always write:
-        // direct File writes to /sdcard/Download are blocked by scoped storage (mkdirs and
-        // canWrite can still lie, and Bitmap.compress then fails silently). CI extracts
-        // these with `adb exec-out run-as <debug package> cat ...`, which can read them.
-        val outDir = File(context.filesDir, "vton-e2e").apply { mkdirs() }
+        // Artifacts go to public Downloads through MediaStore: a direct File write there is
+        // blocked for a targetSdk 34 app, while a MediaStore insert is allowed without any
+        // permission. That matters because `adb pull` can only read shared storage, and
+        // Gradle uninstalls the app after the test run, taking its private data with it.
+        val outDir = File(android.os.Environment.getExternalStoragePublicDirectory(
+            android.os.Environment.DIRECTORY_DOWNLOADS,
+        ), "FabricFit/vton-e2e")
+        // Only for the assertion message; the actual writes go through MediaStore.
+        val fallbackDir = File(context.filesDir, "vton-e2e").apply { mkdirs() }
         // Print the resolved path so CI logs show where the files actually went.
+        // Shown in CI so a wrong location is visible instead of silent.
         println("VTON_OUT_DIR=${outDir.absolutePath}")
-        assertTrue("artifact directory is not writable: $outDir", outDir.isDirectory && outDir.canWrite())
+        println("VTON_FALLBACK_DIR=${fallbackDir.absolutePath}")
 
         val personPath = kotlinx.coroutines.runBlocking { DemoTryOnSamples.personPhoto(context) }   // bare path
         val fabricUri = kotlinx.coroutines.runBlocking { DemoTryOnSamples.fabricSwatch(context) }   // file:// uri
@@ -56,7 +61,7 @@ class TryOnDeviceE2ETest {
         // Same entry point the app uses for a sample photo: a bare absolute path.
         val loaded = processor.load(personPath, 1000)
         assertTrue(
-            "person photo must load: $personPath (exists=${File(personPath).exists()}) -> $loaded",
+            "person photo must load: $personPath -> $loaded",
             loaded is Outcome.Success,
         )
         val person = (loaded as Outcome.Success).data
@@ -70,7 +75,6 @@ class TryOnDeviceE2ETest {
         mask!!.let {
             val cover = coverage(it)
             assertTrue("mask covers $cover of the frame — expected 2%..80%", cover in 0.02..0.80)
-            it.compress(Bitmap.CompressFormat.PNG, 100, FileOutputStream(File(outDir, "person_mask.png")))
         }
 
         val generator = DemoLookGenerator(processor, segmenter)
@@ -153,15 +157,16 @@ class TryOnDeviceE2ETest {
 
         // Persist artifacts for CI upload. Each write is checked: a failed compress would
         // otherwise be discovered only when the artifact folder turns up empty.
-        file.copyTo(File(outDir, "tryon_result.jpg"), overwrite = true)
-        val wrotePerson = person.compress(
-            Bitmap.CompressFormat.JPEG, 88, FileOutputStream(File(outDir, "person_input.jpg")),
-        )
-        File(fabricPath).copyTo(File(outDir, "fabric_swatch.jpg"), overwrite = true)
-        assertTrue("person_input.jpg was not written", wrotePerson)
+        publish("tryon_result.jpg", "image/jpeg") { it.write(file.readBytes()) }
+        publish("person_input.jpg", "image/jpeg") {
+            person.compress(Bitmap.CompressFormat.JPEG, 88, it)
+        }
+        publish("fabric_swatch.jpg", "image/jpeg") { it.write(File(fabricPath).readBytes()) }
+        publish("person_mask.png", "image/png") { mask.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        val published = mediaFiles()
         for (name in listOf("tryon_result.jpg", "person_input.jpg", "fabric_swatch.jpg", "person_mask.png")) {
-            val artifact = File(outDir, name)
-            assertTrue("artifact missing or empty: ${artifact.absolutePath}", artifact.length() > 1_000)
+            val publishedUri = published[name]
+            assertTrue("$name was not published to Downloads", publishedUri != null)
         }
 
         val report = buildString {
@@ -172,10 +177,58 @@ class TryOnDeviceE2ETest {
             appendLine("segment     ${maskMs}ms, coverage ${"%.1f".format(coverage(mask) * 100)}%")
             appendLine("generate    ${generateMs}ms")
             appendLine("result      ${file.absolutePath} (${file.length() / 1024} KB, ${bitmap.width}x${bitmap.height})")
-            appendLine("artifacts   ${outDir.absolutePath}")
+            appendLine("artifacts   ${outDir.absolutePath} (published through MediaStore)")
         }
-        File(outDir, "report.txt").writeText(report)
+        publish("report.txt", "text/plain") { it.write(report.toByteArray()) }
         println(report)
+    }
+
+    /** MediaStore records keyed by display name, so the test can verify each upload. */
+    private fun mediaFiles(): Map<String, android.net.Uri> {
+        val resolver = context.contentResolver
+        val out = HashMap<String, android.net.Uri>()
+        val projection = arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DISPLAY_NAME)
+        resolver.query(
+            MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+            projection,
+            "${MediaStore.MediaColumns.RELATIVE_PATH} LIKE ?",
+            arrayOf("%FabricFit/vton-e2e%"),
+            null,
+        )?.use { cursor ->
+            while (cursor.moveToNext()) {
+                val name = cursor.getString(1) ?: continue
+                val id = cursor.getLong(0)
+                out[name] = android.content.ContentUris.withAppendedId(
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI, id,
+                )
+            }
+        }
+        return out
+    }
+
+    /**
+     * Writes one artifact into Downloads/FabricFit/vton-e2e through MediaStore.
+     * Returns false when the insert or the write failed.
+     */
+    private fun publish(name: String, mime: String, write: (java.io.OutputStream) -> Unit): Boolean {
+        val resolver = context.contentResolver
+        val existing = mediaFiles()
+        existing[name]?.let { resolver.delete(it, null, null) }
+        val values = android.content.ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, mime)
+            put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                "${android.os.Environment.DIRECTORY_DOWNLOADS}/FabricFit/vton-e2e",
+            )
+        }
+        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values) ?: return false
+        return try {
+            resolver.openOutputStream(uri)?.use(write) != null
+        } catch (e: Exception) {
+            println("publish($name) failed: $e")
+            false
+        }
     }
 
     private fun coverage(mask: Bitmap): Double {

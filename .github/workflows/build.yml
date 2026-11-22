@@ -351,8 +351,13 @@ jobs:
         with:
           name: fabricfit-tryon-e2e
           path: |
-            qa-artifacts/vton/
-            FabricFit/qa-artifacts/vton/
+            qa-artifacts/vton/*.jpg
+            qa-artifacts/vton/*.png
+            qa-artifacts/vton/report.txt
+            qa-artifacts/vton/gradle-e2e.log
+            FabricFit/qa-artifacts/vton/*.jpg
+            FabricFit/qa-artifacts/vton/*.png
+            FabricFit/qa-artifacts/vton/report.txt
           if-no-files-found: warn
 
       # Actions artifacts need a login to download and expire; the phone-rendered look is

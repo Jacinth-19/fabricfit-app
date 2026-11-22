@@ -16,10 +16,9 @@ set -uo pipefail
 # build.yml look for both qa-artifacts/vton and FabricFit/qa-artifacts/vton.
 OUT_DIR="../qa-artifacts/vton"
 LOG="$OUT_DIR/gradle-e2e.log"
-# The test writes into the app's private files dir (always writable). `adb pull` cannot
-# read it, but `adb exec-out run-as` can, because the debug build is debuggable.
-APP_PACKAGE="com.fabricfit.app.debug"
-DEVICE_DIR="/data/data/$APP_PACKAGE/files/vton-e2e"
+# The test publishes to public Downloads through MediaStore; Gradle uninstalls the app
+# after the run, so anything left in its private dir would be deleted with it.
+DEVICE_DIR="/sdcard/Download/FabricFit/vton-e2e"
 TEST_CLASS="com.fabricfit.app.data.repository.TryOnDeviceE2ETest"
 
 mkdir -p "$OUT_DIR"
@@ -45,26 +44,16 @@ status=$?
 echo "== gradle tail =="
 tail -n 40 "$LOG" || true
 
-echo "== run-as listing $DEVICE_DIR ==" | tee -a "$LOG"
-LISTING=$(adb shell run-as "$APP_PACKAGE" ls -la "$DEVICE_DIR" 2>&1 || true)
+echo "== listing $DEVICE_DIR ==" | tee -a "$LOG"
+LISTING=$(adb shell ls -la "$DEVICE_DIR" 2>&1 || true)
 echo "$LISTING" >> "$LOG"
 echo "$LISTING"
 echo "::notice title=Device files::$(echo "$LISTING" | tr '\n' ' ' | head -c 700)"
-echo "::notice title=adb identity::$(adb shell id 2>&1 | head -1) | $(adb shell getprop ro.build.version.sdk 2>&1 | head -1)"
 
-# Copy each artifact out one by one. `run-as cat` keeps the bytes exact; busybox tar is
-# not present on every emulator image, so no archive round-trip.
-for name in person_input.jpg person_mask.png fabric_swatch.jpg tryon_result.jpg report.txt; do
-  if adb exec-out run-as "$APP_PACKAGE" cat "$DEVICE_DIR/$name" > "$OUT_DIR/$name" 2>>"$LOG"; then
-    size=$(stat -c%s "$OUT_DIR/$name" 2>/dev/null || echo 0)
-    echo "pulled $name ($size bytes)"
-    echo "::notice title=Pulled::$name $size bytes"
-    [ "$size" -gt 0 ] || rm -f "$OUT_DIR/$name"
-  fi
-done
-# Fall back to a plain pull for any build that still writes to shared storage.
-for device_dir in /sdcard/Download/FabricFit/vton-e2e /sdcard/Android/data/$APP_PACKAGE/files/vton-e2e; do
-  timeout 60 adb pull "$device_dir/." "$OUT_DIR/" >> "$LOG" 2>&1 || true
+# Pull the folder. It survives the post-test uninstall because it is shared storage.
+timeout 120 adb pull "$DEVICE_DIR/." "$OUT_DIR/" >> "$LOG" 2>&1 || true
+for f in "$OUT_DIR"/*.jpg "$OUT_DIR"/*.png; do
+  [ -f "$f" ] && echo "::notice title=Pulled::$(basename "$f") $(stat -c%s "$f") bytes"
 done
 ls -la "$OUT_DIR" || true
 # An empty artifact folder is a silent failure; say so loudly.
