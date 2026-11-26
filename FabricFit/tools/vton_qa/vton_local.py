@@ -659,7 +659,9 @@ def fitted_garment_polys(
 
     # Right-hand profile, top to hem. Shoulder tips sit slightly below the neck edge.
     right = [
-        (cx + shoulder * 1.00, y_shoulder + ph * 0.012),
+        # Same joint as the left shoulder tip and the sleeve caps (BodyFit's
+        # SHOULDER_JOINT_DROP); a different offset makes the outline self-intersect.
+        (cx + shoulder * 1.00, y_shoulder + ph * 0.030),
         (cx + bust, y_bust),
         (cx + waist, y_waist),
         (cx + hip, y_hip),
@@ -718,7 +720,10 @@ def fitted_garment_polys(
                 t = 1 - i / n
                 inner = shoulder * (puff * 0.02 + 0.06 * math.sin(math.pi * t))
                 pts.append((sx - side * inner, y_top + (y_bot - y_top) * t))
-            panels.append(_catmull_rom(pts, samples=3))
+            # Keep both sleeves in the same winding as the bodice (the mirrored one would
+            # otherwise come out counter-clockwise).
+            sleeve_poly = _catmull_rom(pts, samples=3)
+            panels.append(sleeve_poly if side > 0 else list(reversed(sleeve_poly)))
             # cuff band
             trims.append([
                 (sx + side * shoulder * (puff * 0.42), y_bot - ph * 0.016),

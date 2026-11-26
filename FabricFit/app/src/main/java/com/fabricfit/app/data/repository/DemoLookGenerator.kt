@@ -123,6 +123,10 @@ class DemoLookGenerator(
         }
         val shapes = polys.map { poly ->
             val path = Path().apply {
+                // The fitted bodice and right sleeve wind clockwise while the left sleeve
+                // (mirrored) winds counter-clockwise. A non-zero fill handles both, and an
+                // even-odd fill would punch holes where a sleeve overlaps the bodice.
+                fillType = Path.FillType.WINDING
                 if (body != null) {
                     poly.forEachIndexed { i, (px, py) ->
                         if (i == 0) moveTo(px, py) else lineTo(px, py)

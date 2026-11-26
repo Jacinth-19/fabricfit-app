@@ -255,7 +255,10 @@ object BodyFit {
                     val inner = shoulder * (puff * 0.02f + 0.06f * kotlin.math.sin(Math.PI * t).toFloat())
                     points.add(sx - side * inner to yTop + (yBottom - yTop) * t)
                 }
-                shapes.add(smooth(points, samples = 3))
+                // The mirrored sleeve comes out counter-clockwise; keep every panel in the
+                // same winding so fills and outline strokes behave identically on both sides.
+                val panel = smooth(points, samples = 3)
+                shapes.add(if (side > 0) panel else panel.reversed())
             }
         }
 
