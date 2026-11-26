@@ -103,19 +103,25 @@ class BodyFitParityTest {
                 GarmentSilhouette.KABA,
                 DesignCustomization(neckline = neckline),
             ).first()
-            // Vertices on the shoulder line, one on each side of the centre.
-            val onLine = outline.filter { kotlin.math.abs(it.second - shoulderY) < ph * 0.01f }
-            val leftEdge = onLine.filter { it.first < body.centre - 1f }
-            val rightEdge = onLine.filter { it.first > body.centre + 1f }
-            assertTrue("$neckline: no left neck edge on the shoulder line", leftEdge.isNotEmpty())
-            assertTrue("$neckline: no right neck edge on the shoulder line", rightEdge.isNotEmpty())
-            // Both tips must also be present, further out than the neck edges.
-            val leftTip = onLine.filter {
-                it.first < leftEdge.minOf { e -> e.first } - 1f
-            }
-            val rightTip = onLine.filter {
-                it.first > rightEdge.maxOf { e -> e.first } + 1f
-            }
+            // Neck edges sit on the shoulder line; tips sit SHOULDER_JOINT_DROP lower.
+            fun nearY(target: Float) =
+                outline.filter { kotlin.math.abs(it.second - target) < ph * 0.006f }
+
+            val neckLine = nearY(shoulderY)
+            val tipLine = nearY(shoulderY + ph * 0.030f)
+            val leftEdge = neckLine.filter { it.first < body.centre - 1f }
+            val rightEdge = neckLine.filter { it.first > body.centre + 1f }
+            assertTrue("$neckline: no left neck edge", leftEdge.isNotEmpty())
+            assertTrue("$neckline: no right neck edge", rightEdge.isNotEmpty())
+            assertEquals(
+                "$neckline: neck edges must mirror around the centre",
+                body.centre - leftEdge.minOf { it.first },
+                rightEdge.maxOf { it.first } - body.centre,
+                2f,
+            )
+            // Tips must reach further out than the neck edges, on both sides.
+            val leftTip = tipLine.filter { it.first < leftEdge.minOf { e -> e.first } - 5f }
+            val rightTip = tipLine.filter { it.first > rightEdge.maxOf { e -> e.first } + 5f }
             assertTrue("$neckline: no left shoulder tip", leftTip.isNotEmpty())
             assertTrue("$neckline: no right shoulder tip", rightTip.isNotEmpty())
         }
