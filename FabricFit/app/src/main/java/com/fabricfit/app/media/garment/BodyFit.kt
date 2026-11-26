@@ -133,8 +133,18 @@ object BodyFit {
         val ph = body.personHeight
         val cx = body.centre
 
-        val shoulder = max(body.shoulderHalf * 0.93f, ph * 0.085f)
-        val bust = min(max(shoulder * 0.84f, body.bustHalf * 0.58f), shoulder * 0.98f)
+        // The mask includes the arms when they hang beside the body, so its widths are wider
+        // than a torso. Trust the measurement but pull it toward body proportions: the arms
+        // alone made the shoulder exactly as wide as the bust, leaving no shoulder shelf.
+        // When the caller passed estimated widths (no segmenter), the estimate is already
+        // torso-shaped, so it is used as-is.
+        val torsoPrior = body.bustHalf * 0.58f
+        val shoulder = if (body.usable) {
+            max((body.shoulderHalf * 0.93f + torsoPrior) / 2f, ph * 0.085f)
+        } else {
+            max(body.shoulderHalf * 0.93f, ph * 0.085f)
+        }
+        val bust = min(max(shoulder * 0.84f, torsoPrior), shoulder * 0.98f)
         val waist = min(max(shoulder * 0.70f, body.waistHalf * 0.50f), bust * 0.90f)
         val hip = min(max(shoulder * 0.94f, body.hipHalf * 0.62f), bust * 1.22f)
         val thigh = max(body.thighHalf * 1.05f, hip * 0.95f)

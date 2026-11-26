@@ -618,8 +618,15 @@ def fitted_garment_polys(
     # wide. Anchor on the deltoid width and derive the rest with body proportions
     # (bust ≈ 0.84·shoulder, waist ≈ 0.70·shoulder, hip ≈ 0.93·shoulder for the
     # front-view reference pose), then bound them with the measured values.
-    shoulder = max(body["shoulder_half"] * 0.93, body["person_h"] * 0.085)
-    bust = min(max(shoulder * 0.84, body["bust_half"] * 0.58), shoulder * 0.98)
+    # The mask includes the arms when they hang beside the body, so pull the measured
+    # shoulder halfway toward torso proportions (same rule as BodyFit.kt). `ok == False`
+    # means these are estimated fallback widths, which are already torso-shaped.
+    torso_prior = body["bust_half"] * 0.58
+    if body.get("ok"):
+        shoulder = max((body["shoulder_half"] * 0.93 + torso_prior) / 2, body["person_h"] * 0.085)
+    else:
+        shoulder = max(body["shoulder_half"] * 0.93, body["person_h"] * 0.085)
+    bust = min(max(shoulder * 0.84, torso_prior), shoulder * 0.98)
     waist = min(max(shoulder * 0.70, body["waist_half"] * 0.50), bust * 0.90)
     hip = min(max(shoulder * 0.94, body["hip_half"] * 0.62), bust * 1.22)
     thigh = max(body["thigh_half"] * 1.05, hip * 0.95)
