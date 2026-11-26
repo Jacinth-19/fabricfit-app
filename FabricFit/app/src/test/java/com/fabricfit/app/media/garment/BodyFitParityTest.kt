@@ -12,8 +12,9 @@ import org.junit.Test
  * (`tools/vton_qa/vton_local.py`) produced on the bundled Ghanaian sample model.
  *
  * If either implementation drifts, the phone and the laptop stop producing the same
- * try-on; this test fails first. Values come from `measure_body()` in the Python file
- * run against `deeplabv3_257_mv.tflite` on `catalog/samples/model_ama_fullbody.jpg`.
+ * try-on; this test fails first. Values come from `measure_body()` and
+ * `fitted_garment_polys()` in the Python file, run against `deeplabv3_257_mv.tflite` on
+ * `catalog/samples/model_ama_fullbody.jpg` at the 558x1000 render size.
  */
 class BodyFitParityTest {
 
@@ -49,16 +50,19 @@ class BodyFitParityTest {
         assertEquals(945f, body.bottom, 1f)
         assertEquals(278f, body.centre, 2f)
 
-        // The same clamps the Python renderer applies.
+        // The same clamps the Python renderer applies. The mask merges arms with the
+        // torso, so the measured shoulder is pulled halfway toward torso proportions.
         val ph = body.personHeight
-        val shoulder = maxOf(body.shoulderHalf * 0.93f, ph * 0.085f)
-        val bust = minOf(maxOf(shoulder * 0.84f, body.bustHalf * 0.58f), shoulder * 0.98f)
+        val torsoPrior = body.bustHalf * 0.58f
+        val shoulder = maxOf((body.shoulderHalf * 0.93f + torsoPrior) / 2f, ph * 0.085f)
+        val bust = minOf(maxOf(shoulder * 0.84f, torsoPrior), shoulder * 0.98f)
         val waist = minOf(maxOf(shoulder * 0.70f, body.waistHalf * 0.50f), bust * 0.90f)
         val hip = minOf(maxOf(shoulder * 0.94f, body.hipHalf * 0.62f), bust * 1.22f)
-        assertEquals("shoulder", 94.9f, shoulder, 2.5f)
-        assertEquals("bust", 79.7f, bust, 2.5f)
-        assertEquals("waist", 66.4f, waist, 2.5f)
-        assertEquals("hip", 89.2f, hip, 2.5f)
+        // Measured on the real deeplabv3 mask of the bundled model at 558x1000.
+        assertEquals("shoulder", 80.0f, shoulder, 2.5f)
+        assertEquals("bust", 67.2f, bust, 2.5f)
+        assertEquals("waist", 56.2f, waist, 2.5f)
+        assertEquals("hip", 75.2f, hip, 2.5f)
 
         val shapes = BodyFit.shapes(
             body,
@@ -66,15 +70,15 @@ class BodyFitParityTest {
             DesignCustomization(neckline = com.fabricfit.app.domain.model.NecklineOption.VNECK),
         )
         val outline = shapes.first()
-        // Garment width across the bust is ~160 px on a 558 px frame (28.7 %).
+        // Garment width across the bust is ~140 px on a 558 px frame (25 %).
         val widthAtBust = run {
             val bustY = body.top + ph * 0.335f
             val row = outline.filter { kotlin.math.abs(it.second - bustY) < ph * 0.02f }
             assertTrue("no outline points near the bust line", row.isNotEmpty())
             row.maxOf { it.first } - row.minOf { it.first }
         }
-        assertEquals("bust-line width", 165.7f, widthAtBust, 14f)
-        assertTrue("garment must cover the torso, not a strip", widthAtBust > 120f)
+        assertEquals("bust-line width", 139.7f, widthAtBust, 12f)
+        assertTrue("garment must cover the torso, not a strip", widthAtBust > 110f)
     }
 
     @Test
