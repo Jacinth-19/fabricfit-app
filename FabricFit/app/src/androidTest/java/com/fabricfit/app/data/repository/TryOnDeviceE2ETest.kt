@@ -179,6 +179,32 @@ class TryOnDeviceE2ETest {
             appendLine("result      ${file.absolutePath} (${file.length() / 1024} KB, ${bitmap.width}x${bitmap.height})")
             appendLine("artifacts   ${outDir.absolutePath} (published through MediaStore)")
         }
+        // Geometry dump: the exact polygons the compositor filled on this device. When a
+        // panel comes out wrong on-device but right in the desktop port, this is the file
+        // that shows where the two implementations diverged.
+        val pixels = IntArray(mask.width * mask.height)
+        mask.getPixels(pixels, 0, mask.width, 0, 0, mask.width, mask.height)
+        val alpha = IntArray(pixels.size) { i -> (pixels[i] ushr 24) and 0xFF }
+        val dump = buildString {
+            val b = com.fabricfit.app.media.garment.BodyFit.measure(alpha, mask.width, mask.height)
+            appendLine("mask ${mask.width}x${mask.height}")
+            appendLine("usable=${b.usable} top=${b.top} personHeight=${b.personHeight} centre=${b.centre}")
+            appendLine("shoulder=${b.shoulderHalf} bust=${b.bustHalf} waist=${b.waistHalf} hip=${b.hipHalf} thigh=${b.thighHalf}")
+            val shapes = com.fabricfit.app.media.garment.BodyFit.shapes(
+                b,
+                style.silhouette,
+                DesignCustomization(
+                    sleeve = com.fabricfit.app.domain.model.SleeveOption.PUFF,
+                    neckline = com.fabricfit.app.domain.model.NecklineOption.VNECK,
+                    length = com.fabricfit.app.domain.model.LengthOption.MAXI,
+                ),
+            )
+            shapes.forEachIndexed { i, poly ->
+                appendLine("poly $i n=${poly.size}")
+                poly.forEach { (x, y) -> appendLine("  ${"%.1f".format(x)}, ${"%.1f".format(y)}") }
+            }
+        }
+        publish("geometry.txt", "text/plain") { it.write(dump.toByteArray()) }
         publish("report.txt", "text/plain") { it.write(report.toByteArray()) }
         println(report)
     }
