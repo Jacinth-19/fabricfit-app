@@ -2,7 +2,7 @@ FabricFit on-device try-on E2E
 device      unknown Android SDK built for x86_64 (API 33)
 model       catalog/samples/model_ama_fullbody.jpg
 dress       catalog/samples/dress_kente_online.jpg — https://www.pinterest.com/ideas/ghana-kente-dress-styles/895299763693/
-segment     116ms, coverage 23.8%
-generate    150ms
-result      /data/user/0/com.fabricfit.app.debug/files/media/look_1795337615837.jpg (116 KB, 714x1280)
+segment     114ms, coverage 23.8%
+generate    164ms
+result      /data/user/0/com.fabricfit.app.debug/files/media/look_1795663601099.jpg (114 KB, 714x1280)
 artifacts   /storage/emulated/0/Download/FabricFit/vton-e2e (published through MediaStore)
