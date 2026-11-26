@@ -187,6 +187,7 @@ class TryOnDeviceE2ETest {
         val alpha = IntArray(pixels.size) { i -> (pixels[i] ushr 24) and 0xFF }
         val dump = buildString {
             val b = com.fabricfit.app.media.garment.BodyFit.measure(alpha, mask.width, mask.height)
+            requireNotNull(b) { "BodyFit.measure returned null on device" }
             appendLine("mask ${mask.width}x${mask.height}")
             appendLine("usable=${b.usable} top=${b.top} personHeight=${b.personHeight} centre=${b.centre}")
             appendLine("shoulder=${b.shoulderHalf} bust=${b.bustHalf} waist=${b.waistHalf} hip=${b.hipHalf} thigh=${b.thighHalf}")
