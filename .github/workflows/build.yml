@@ -380,6 +380,7 @@ jobs:
             qa-artifacts/vton/*.jpg
             qa-artifacts/vton/*.png
             qa-artifacts/vton/report.txt
+            qa-artifacts/vton/geometry.txt
             qa-artifacts/vton/gradle-e2e.log
           if-no-files-found: warn
 
@@ -412,7 +413,7 @@ jobs:
           dest="$GITHUB_WORKSPACE/FabricFit/docs/vton/device"
           mkdir -p "$dest"
           found=0
-          for f in "$dir"/*.jpg "$dir"/*.png "$dir"/report.txt; do
+          for f in "$dir"/*.jpg "$dir"/*.png "$dir"/report.txt "$dir"/geometry.txt; do
             # `[ -f ] && cp && found=1` would stop the chain at the first glob that does
             # not match, so `found` would never be set. Use a real branch.
             if [ -f "$f" ]; then
