@@ -180,31 +180,13 @@ class TryOnDeviceE2ETest {
             appendLine("artifacts   ${outDir.absolutePath} (published through MediaStore)")
         }
         // Geometry dump: the exact polygons the compositor filled on this device. When a
-        // panel comes out wrong on-device but right in the desktop port, this is the file
-        // that shows where the two implementations diverged.
+        // panel comes out wrong on-device but right in the desktop port, this file shows
+        // where the two implementations diverged. It is plain text so the CI job can pull
+        // it alongside the images and commit it to docs/vton/device.
         val pixels = IntArray(mask.width * mask.height)
         mask.getPixels(pixels, 0, mask.width, 0, 0, mask.width, mask.height)
         val alpha = IntArray(pixels.size) { i -> (pixels[i] ushr 24) and 0xFF }
-        val dump = buildString {
-            val b = com.fabricfit.app.media.garment.BodyFit.measure(alpha, mask.width, mask.height)
-            requireNotNull(b) { "BodyFit.measure returned null on device" }
-            appendLine("mask ${mask.width}x${mask.height}")
-            appendLine("usable=${b.usable} top=${b.top} personHeight=${b.personHeight} centre=${b.centre}")
-            appendLine("shoulder=${b.shoulderHalf} bust=${b.bustHalf} waist=${b.waistHalf} hip=${b.hipHalf} thigh=${b.thighHalf}")
-            val shapes = com.fabricfit.app.media.garment.BodyFit.shapes(
-                b,
-                style.silhouette,
-                DesignCustomization(
-                    sleeve = com.fabricfit.app.domain.model.SleeveOption.PUFF,
-                    neckline = com.fabricfit.app.domain.model.NecklineOption.VNECK,
-                    length = com.fabricfit.app.domain.model.LengthOption.MAXI,
-                ),
-            )
-            shapes.forEachIndexed { i, poly ->
-                appendLine("poly $i n=${poly.size}")
-                poly.forEach { (x, y) -> appendLine("  ${"%.1f".format(x)}, ${"%.1f".format(y)}") }
-            }
-        }
+        val dump = geometryDump(alpha, mask, style)
         publish("geometry.txt", "text/plain") { it.write(dump.toByteArray()) }
         publish("report.txt", "text/plain") { it.write(report.toByteArray()) }
         println(report)
@@ -267,4 +249,37 @@ class TryOnDeviceE2ETest {
         }
         return person.toDouble() / (mask.width.toLong() * mask.height)
     }
+
+    /** Plain-text snapshot of the measured body and the polygons the compositor fills. */
+    private fun geometryDump(
+        alpha: IntArray,
+        mask: android.graphics.Bitmap,
+        style: DressStyle,
+    ): String = buildString {
+        val body = com.fabricfit.app.media.garment.BodyFit.measure(alpha, mask.width, mask.height)
+        requireNotNull(body) { "BodyFit.measure returned null on device" }
+        appendLine("mask ${mask.width}x${mask.height}")
+        appendLine(
+            "usable=${body.usable} top=${body.top} personHeight=${body.personHeight} " +
+                "centre=${body.centre}",
+        )
+        appendLine(
+            "shoulder=${body.shoulderHalf} bust=${body.bustHalf} waist=${body.waistHalf} " +
+                "hip=${body.hipHalf} thigh=${body.thighHalf}",
+        )
+        val shapes = com.fabricfit.app.media.garment.BodyFit.shapes(
+            body,
+            style.silhouette,
+            DesignCustomization(
+                sleeve = com.fabricfit.app.domain.model.SleeveOption.PUFF,
+                neckline = com.fabricfit.app.domain.model.NecklineOption.VNECK,
+                length = com.fabricfit.app.domain.model.LengthOption.MAXI,
+            ),
+        )
+        shapes.forEachIndexed { i, poly ->
+            appendLine("poly $i n=${poly.size}")
+            poly.forEach { (x, y) -> appendLine("  ${"%.1f".format(x)}, ${"%.1f".format(y)}") }
+        }
+    }
+
 }
