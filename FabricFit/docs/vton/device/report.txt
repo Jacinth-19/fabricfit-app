@@ -3,6 +3,6 @@ device      unknown Android SDK built for x86_64 (API 33)
 model       catalog/samples/model_ama_fullbody.jpg
 dress       catalog/samples/dress_kente_online.jpg — https://www.pinterest.com/ideas/ghana-kente-dress-styles/895299763693/
 segment     89ms, coverage 23.8%
-generate    139ms
-result      /data/user/0/com.fabricfit.app.debug/files/media/look_1795669196182.jpg (109 KB, 714x1280)
+generate    141ms
+result      /data/user/0/com.fabricfit.app.debug/files/media/look_1795670457622.jpg (110 KB, 714x1280)
 artifacts   /storage/emulated/0/Download/FabricFit/vton-e2e (published through MediaStore)

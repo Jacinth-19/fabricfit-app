@@ -1,8 +1,9 @@
 mask 768x1376
 usable=true top=91.0 personHeight=1220.0 centre=385.0
 shoulder=143.5 bust=155.0 waist=155.0 hip=158.0 thigh=116.5
-poly 0 n=105
+poly 0 n=106
   273.3, 414.3
+  349.3, 377.7
   385.0, 481.4
   420.7, 377.7
   496.7, 414.3
