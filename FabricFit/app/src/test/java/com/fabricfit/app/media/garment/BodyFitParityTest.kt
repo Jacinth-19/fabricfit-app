@@ -81,6 +81,46 @@ class BodyFitParityTest {
         assertTrue("garment must cover the torso, not a strip", widthAtBust > 110f)
     }
 
+    /**
+     * The outline must reach the neck on BOTH sides of the opening. A missing left neck
+     * edge makes the fill jump from the left shoulder tip straight to the middle of the
+     * opening: on-device that drew a diagonal across the left chest and left the person's
+     * own top showing through the shoulder, while the desktop port rendered fine.
+     */
+    @Test
+    fun `outline visits both neck edges for every neckline`() {
+        val alpha = IntArray(frameW * frameH)
+        for (y in 66..945) {
+            for (x in 180..380) alpha[y * frameW + x] = 255
+        }
+        val body = BodyFit.measure(alpha, frameW, frameH)!!
+        val ph = body.personHeight
+        val shoulderY = body.top + ph * 0.235f
+
+        for (neckline in com.fabricfit.app.domain.model.NecklineOption.entries) {
+            val outline = BodyFit.shapes(
+                body,
+                GarmentSilhouette.KABA,
+                DesignCustomization(neckline = neckline),
+            ).first()
+            // Vertices on the shoulder line, one on each side of the centre.
+            val onLine = outline.filter { kotlin.math.abs(it.second - shoulderY) < ph * 0.01f }
+            val leftEdge = onLine.filter { it.first < body.centre - 1f }
+            val rightEdge = onLine.filter { it.first > body.centre + 1f }
+            assertTrue("$neckline: no left neck edge on the shoulder line", leftEdge.isNotEmpty())
+            assertTrue("$neckline: no right neck edge on the shoulder line", rightEdge.isNotEmpty())
+            // Both tips must also be present, further out than the neck edges.
+            val leftTip = onLine.filter {
+                it.first < leftEdge.minOf { e -> e.first } - 1f
+            }
+            val rightTip = onLine.filter {
+                it.first > rightEdge.maxOf { e -> e.first } + 1f
+            }
+            assertTrue("$neckline: no left shoulder tip", leftTip.isNotEmpty())
+            assertTrue("$neckline: no right shoulder tip", rightTip.isNotEmpty())
+        }
+    }
+
     @Test
     fun `hem length fractions match the reference renderer`() {
         // vton_local.py: MINI 0.665, MIDI 0.80, MAXI 0.965, FLOOR 1.0

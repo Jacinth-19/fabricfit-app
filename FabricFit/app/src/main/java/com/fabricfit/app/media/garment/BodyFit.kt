@@ -201,11 +201,21 @@ object BodyFit {
         val left = right.map { (x, y) -> (2 * cx - x) to y }.reversed()
 
         val outline = ArrayList<Pair<Float, Float>>()
-        // The top edge runs from the left shoulder tip to the left side of the neck. Without
-        // it the neck opening spans the whole shoulder line and leaves the bare photo
-        // visible through the shoulders. (The right side already starts at the tip, so it
-        // needs no extra vertex.)
+        // The top edge runs from the left shoulder tip to the left side of the neck and then
+        // back out to the right tip. Without the tip vertex the neck opening spans the whole
+        // shoulder line and leaves the bare photo visible through the shoulders.
         outline.add(cx - shoulder to yShoulder + ph * SHOULDER_JOINT_DROP)
+        // Left neck edge. Without this vertex the outline jumps straight from the left
+        // shoulder tip to the middle of the opening, so the fill cuts a diagonal across
+        // the left chest and the person's own clothing shows through where a collar
+        // should be. The desktop port (fitted_garment_polys) has always emitted it.
+        outline.add(
+            if (customization.neckline == NecklineOption.OFF_SHOULDER) {
+                cx - neckW to yShoulder - ph * 0.004f
+            } else {
+                cx - neckW to yShoulder
+            },
+        )
         when (customization.neckline) {
             NecklineOption.VNECK, NecklineOption.V_NECK -> outline.add(cx to neckY)
             else -> {
@@ -214,7 +224,13 @@ object BodyFit {
                 outline.add(cx + neckW * 0.55f to yShoulder + ph * neck.second * 0.5f)
             }
         }
-        outline.add(cx + neckW to yShoulder)
+        outline.add(
+            if (customization.neckline == NecklineOption.OFF_SHOULDER) {
+                cx + neckW to yShoulder - ph * 0.004f
+            } else {
+                cx + neckW to yShoulder
+            },
+        )
         outline.addAll(right)
         outline.addAll(left)
 
