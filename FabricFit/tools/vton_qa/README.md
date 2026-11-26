@@ -114,13 +114,16 @@ render. `report.txt` from that run:
 
 ```
 device      unknown Android SDK built for x86_64 (API 33)
-segment     116ms, coverage 23.8%
-generate    150ms
+segment     111ms, coverage 23.8%
+generate    142ms
 result      714x1280 JPEG
 ```
 
 Images: `tryon_result.jpg` (the look), `person_input.jpg`, `person_mask.png`,
-`fabric_swatch.jpg`.
+`fabric_swatch.jpg`. `before_after.jpg` shows the 1.0.3 defect next to the fix, and
+`geometry.txt` is a plain-text dump of the measured body plus every polygon the device
+compositor filled — the file to read when a panel looks wrong on the phone but right in
+this port.
 
 ## Proof the pipeline runs
 
