@@ -2,7 +2,6 @@ package com.fabricfit.app.ui.onboarding
 
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -10,6 +9,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,6 +68,7 @@ import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.StylePreference
 import com.fabricfit.app.domain.model.UserPreferences
+import com.fabricfit.app.ui.components.BrandMark
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.HeritageLuxeMark
 import com.fabricfit.app.ui.components.LocalImage
@@ -91,18 +93,26 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.graphics.graphicsLayer
 
 private data class Page(
-    @DrawableRes val illustration: Int?,
+    /** Asset path of a real catalogue photo, or null for the branded opening page. */
+    val photo: String?,
     @StringRes val title: Int,
     @StringRes val body: Int,
     val dark: Boolean = false,
 )
 
+/**
+ * The opening pages show the app's own photography rather than flat vector art.
+ *
+ * The previous illustrations were generic line drawings that shared no visual language with
+ * the rest of the app, which is built on real Ghanaian fabric and outfit imagery. Showing
+ * actual swatches tells a new user what the app is for far faster than an icon does.
+ */
 private val pages = listOf(
     Page(null, R.string.onboarding_welcome_title, R.string.onboarding_welcome_body, dark = true),
-    Page(R.drawable.illust_onboarding_scan, R.string.onboarding_step1_title, R.string.onboarding_step1_body),
-    Page(R.drawable.illust_onboarding_designs, R.string.onboarding_step2_title, R.string.onboarding_step2_body),
-    Page(R.drawable.illust_onboarding_tryon, R.string.onboarding_step3_title, R.string.onboarding_step3_body),
-    Page(R.drawable.illust_onboarding_save, R.string.onboarding_step4_title, R.string.onboarding_step4_body),
+    Page("catalog/heritage/scan_kente_closeup.jpg", R.string.onboarding_step1_title, R.string.onboarding_step1_body),
+    Page("catalog/heritage/outfit_modern_kente.jpg", R.string.onboarding_step2_title, R.string.onboarding_step2_body),
+    Page("catalog/heritage/dress_kente_flare.jpg", R.string.onboarding_step3_title, R.string.onboarding_step3_body),
+    Page("catalog/heritage/outfit_elegant_peplum.jpg", R.string.onboarding_step4_title, R.string.onboarding_step4_body),
 )
 
 internal val HERITAGE_AVATAR_PRESETS = listOf(
@@ -658,13 +668,56 @@ private fun LightPage(page: Page) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        if (page.illustration != null) {
-            Image(
-                painter = painterResource(page.illustration),
-                contentDescription = null,
-                modifier = Modifier.height(220.dp),
-            )
-            Spacer(Modifier.height(28.dp))
+        if (page.photo != null) {
+            // A framed photo card, echoing the catalogue tiles elsewhere in the app, so the
+            // onboarding reads as part of the same product rather than a separate slideshow.
+            Surface(
+                shape = RoundedCornerShape(28.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                shadowElevation = 10.dp,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(248.dp),
+            ) {
+                Box {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("file:///android_asset/${page.photo}")
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                    // Soft top-down scrim so the gold hairline reads on pale fabrics.
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(
+                                        Color.Black.copy(alpha = 0.10f),
+                                        Color.Transparent,
+                                        Color.Black.copy(alpha = 0.18f),
+                                    ),
+                                ),
+                            ),
+                    )
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(12.dp)
+                            .size(38.dp),
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            BrandMark(modifier = Modifier.size(22.dp))
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.height(30.dp))
         }
         Text(
             stringResource(page.title),

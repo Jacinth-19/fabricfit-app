@@ -2,6 +2,9 @@ package com.fabricfit.app.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,9 +49,7 @@ import com.fabricfit.app.ui.theme.HeritageForestDark
 import com.fabricfit.app.ui.theme.HeritageGold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 
@@ -109,6 +110,28 @@ fun AppShell() {
 
 @Composable
 private fun SplashArt() {
+    // One continuous timeline, matching the store promo's opening beat: the mark arrives,
+    // a gold ring settles around it, then the wordmark and tagline follow. Staggering the
+    // four beats is what makes it read as a composed ident instead of a pop-in.
+    val timeline = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        timeline.animateTo(
+            targetValue = 1f,
+            animationSpec = androidx.compose.animation.core.tween(
+                durationMillis = 1150,
+                easing = androidx.compose.animation.core.FastOutSlowInEasing,
+            ),
+        )
+    }
+
+    fun beat(startAt: Float, length: Float): Float =
+        ((timeline.value - startAt) / length).coerceIn(0f, 1f)
+
+    val markIn = beat(0f, 0.42f)
+    val ringIn = beat(0.18f, 0.46f)
+    val wordIn = beat(0.42f, 0.36f)
+    val taglineIn = beat(0.60f, 0.40f)
+
     Box(
         Modifier
             .fillMaxSize()
@@ -123,38 +146,58 @@ private fun SplashArt() {
             ),
         contentAlignment = Alignment.Center,
     ) {
+        // A faint gold bloom behind the mark, breathing open with the ring.
+        Box(
+            Modifier
+                .size(300.dp)
+                .graphicsLayer {
+                    alpha = ringIn * 0.5f
+                    scaleX = 0.7f + ringIn * 0.5f
+                    scaleY = 0.7f + ringIn * 0.5f
+                }
+                .background(
+                    Brush.radialGradient(
+                        listOf(HeritageGold.copy(alpha = 0.16f), Color.Transparent),
+                    ),
+                    shape = CircleShape,
+                ),
+        )
+
         Column(
             modifier = Modifier.padding(horizontal = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            // The generated brand icon, scaling in gently so the app opens with movement
-            // rather than a static poster.
-            var markIn by remember { mutableStateOf(false) }
-            LaunchedEffect(Unit) {
-                withFrameNanos { }
-                markIn = true
+            Box(contentAlignment = Alignment.Center) {
+                // The settling ring is drawn, not an asset, so it can resolve from a wide
+                // arc to its final weight without a second drawable.
+                Box(
+                    Modifier
+                        .size(168.dp)
+                        .graphicsLayer {
+                            alpha = ringIn
+                            scaleX = 1.14f - ringIn * 0.14f
+                            scaleY = 1.14f - ringIn * 0.14f
+                        }
+                        .border(
+                            width = 1.dp,
+                            color = HeritageGold.copy(alpha = 0.34f),
+                            shape = CircleShape,
+                        ),
+                )
+                Image(
+                    painter = painterResource(R.drawable.ic_splash_logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(132.dp)
+                        .graphicsLayer {
+                            scaleX = 0.86f + markIn * 0.14f
+                            scaleY = 0.86f + markIn * 0.14f
+                            alpha = markIn
+                        },
+                )
             }
-            val markScale by animateFloatAsState(
-                targetValue = if (markIn) 1f else 0.82f,
-                animationSpec = androidx.compose.animation.core.tween(
-                    durationMillis = 520,
-                    easing = androidx.compose.animation.core.FastOutSlowInEasing,
-                ),
-                label = "splashMark",
-            )
-            Image(
-                painter = painterResource(R.drawable.ic_splash_logo),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(132.dp)
-                    .graphicsLayer {
-                        scaleX = markScale
-                        scaleY = markScale
-                        alpha = markScale
-                    },
-            )
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(22.dp))
             Text(
                 stringResource(R.string.onboarding_brand_heritage_luxe),
                 fontFamily = FontFamily.Serif,
@@ -162,6 +205,10 @@ private fun SplashArt() {
                 fontSize = 44.sp,
                 color = HeritageGold,
                 textAlign = TextAlign.Center,
+                modifier = Modifier.graphicsLayer {
+                    alpha = wordIn
+                    translationY = (1f - wordIn) * 18.dp.toPx()
+                },
             )
             Spacer(Modifier.height(10.dp))
             Text(
@@ -169,6 +216,10 @@ private fun SplashArt() {
                 style = MaterialTheme.typography.titleLarge,
                 color = HeritageCream,
                 textAlign = TextAlign.Center,
+                modifier = Modifier.graphicsLayer {
+                    alpha = taglineIn
+                    translationY = (1f - taglineIn) * 12.dp.toPx()
+                },
             )
         }
     }
