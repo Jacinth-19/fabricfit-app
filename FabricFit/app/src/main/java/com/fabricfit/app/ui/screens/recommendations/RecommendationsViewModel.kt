@@ -167,10 +167,13 @@ class RecommendationsViewModel(
      */
     fun requestCloudRanking() {
         val fabric = _state.value.fabric ?: return
-        val pref = runCatching { container.settings.current() }.getOrNull() ?: return
-        val baseUrl = pref.cloudBaseUrl
-        if (baseUrl.isBlank()) return
         viewModelScope.launch {
+            // current() is suspend, so the preference read belongs inside the coroutine -
+            // reading it before the launch would silently skip the cloud pass.
+            val baseUrl = runCatching { container.settings.current().cloudBaseUrl }
+                .getOrDefault("")
+            if (baseUrl.isBlank()) return@launch
+
             cloudFlow.value = CloudRanking.Pending
             val candidates = container.dressStyles.all()
             val reply = container.cloudRecommendations.recommend(

@@ -17,4 +17,7 @@ fun Context.whyText(reason: WhyReason): String = when (reason) {
     is WhyReason.OccasionFit -> getString(R.string.why_occasion, getString(reason.occasion.labelRes))
     WhyReason.Tradition -> getString(R.string.why_tradition)
     is WhyReason.GenderFit -> getString(R.string.why_gender, getString(reason.gender.labelRes))
+    // Backend-supplied copy is rendered verbatim: it is the remote author's wording, and
+    // rewriting it here would misrepresent where the explanation came from.
+    is WhyReason.ReasonFromCloud -> reason.text
 }
