@@ -33,14 +33,24 @@ dump_ui() {
   adb shell cat /sdcard/fabricfit-window.xml 2>/dev/null | tr -d '\r'
 }
 
+# Resolve a label to a tap point.
+#
+# `zone` picks WHICH match wins when a label appears more than once:
+#   any  - original behaviour: the first match in document order
+#   nav  - the bottom-navigation copy (lowest on screen)
+#   body - the in-content copy (highest on screen)
+#
+# "Try-On" is both a bottom-bar tab and a quick-action pill inside the saved-looks
+# screen. Taking the first match in document order tapped the pill, which also
+# navigates, so the capture could record the surface it had not meant to leave.
 find_bounds() {
-  local label="$1" xml="$2"
+  local label="$1" xml="$2" zone="${3:-any}"
   python3 -c '
 import re
 import sys
 import xml.etree.ElementTree as ET
 
-label = sys.argv[1]
+label, zone = sys.argv[1], sys.argv[2]
 try:
     root = ET.parse(sys.stdin).getroot()
 except ET.ParseError:
@@ -54,31 +64,40 @@ for node in root.iter("node"):
     match = re.fullmatch(r"\[(\d+),(\d+)\]\[(\d+),(\d+)\]", bounds)
     if match:
         x1, y1, x2, y2 = map(int, match.groups())
-        matches.append((node.get("clickable") == "true", x1, y1, x2, y2))
+        matches.append((node.get("clickable") == "true", y1, x1, x2, y2))
+
+if not matches:
+    raise SystemExit(0)
 
 # Prefer the clickable merged Compose semantics node over its child Text node.
-if matches:
-    clickable = [item for item in matches if item[0]]
-    _, x1, y1, x2, y2 = (clickable or matches)[0]
-    print(f"{(x1 + x2) // 2} {(y1 + y2) // 2}")
-' "$label" <<< "$xml"
+clickable = [item for item in matches if item[0]]
+candidates = clickable or matches
+
+if zone == "nav":
+    candidates = sorted(candidates, key=lambda item: item[1], reverse=True)
+elif zone == "body":
+    candidates = sorted(candidates, key=lambda item: item[1])
+
+_, y1, x1, x2, y2 = candidates[0]
+print(f"{(x1 + x2) // 2} {(y1 + y2) // 2}")
+' "$label" "$zone" <<< "$xml"
 }
 
 tap_label() {
-  local label="$1" attempt xml point
+  local label="$1" zone="${2:-any}" attempt xml point
   for attempt in $(seq 1 15); do
     xml="$(dump_ui)"
-    point="$(find_bounds "$label" "$xml")"
+    point="$(find_bounds "$label" "$xml" "$zone")"
     if [[ -n "$point" ]]; then
       # shellcheck disable=SC2086
       adb shell input tap $point
-      echo "Tapped: $label ($point)"
+      echo "Tapped: $label ($point, zone=$zone)"
       sleep 2
       return 0
     fi
     sleep 1
   done
-  echo "Could not find tappable UI label: $label" >&2
+  echo "Could not find tappable UI label: $label (zone=$zone)" >&2
   return 1
 }
 
@@ -108,33 +127,84 @@ capture() {
   echo "Captured: $OUT_DIR/${name}.png"
 }
 
+# Fail unless this frame is genuinely a different screen from the last one.
+#
+# This is the invariant that matters, and unlike a label check it does not depend
+# on scroll position or on a particular string being visible. Every capture below
+# is a distinct destination, so two byte-identical frames mean a tap did not
+# navigate and the run recorded the previous screen twice - exactly how a Welcome
+# frame once shipped as `home.png`.
+assert_new_frame() {
+  local name="$1" previous="$2" a b
+  [ -f "$OUT_DIR/${previous}.png" ] || return 0
+  a="$(md5sum < "$OUT_DIR/${previous}.png" | cut -d' ' -f1)"
+  b="$(md5sum < "$OUT_DIR/${name}.png" | cut -d' ' -f1)"
+  if [ "$a" = "$b" ]; then
+    echo "::error::${name}.png is identical to ${previous}.png - the tap did not navigate" >&2
+    return 1
+  fi
+  echo "Distinct frame: ${name} != ${previous}"
+}
+
+# Report (but do not fail) when the destination's expected content is absent.
+#
+# Deliberately advisory: these labels sit at different scroll offsets and a
+# LazyColumn only composes what is near the viewport, so "not on screen" is not
+# by itself proof of a wrong screen. `assert_new_frame` carries the hard guarantee.
+require_label() {
+  local label="$1" attempt xml
+  for attempt in $(seq 1 10); do
+    xml="$(dump_ui)"
+    if [[ -n "$(find_bounds "$label" "$xml")" ]]; then
+      echo "Confirmed on screen: $label"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "::warning::expected content not visible: $label" >&2
+  return 0
+}
+
 # Capture the Heritage Luxe Welcome screen first, then skip to Home.
 capture welcome
+
 tap_label "Skip for now"
 # Do not capture on a bare sleep: wait until onboarding is actually off screen.
 wait_for_label_gone "Skip for now" || true
+require_label "Featured Fabrics"
 capture home
+assert_new_frame home welcome
 
-tap_label "Discover"
-wait_for_label_gone "Featured Fabrics" || true
+tap_label "Discover" nav
+require_label "Outfit Recommendations"
 capture discover
+assert_new_frame discover home
 
-tap_label "Camera"
+tap_label "Camera" nav
 tap_label "Got it" || true # dismiss the first-run Create coach mark
+require_label "Capture Fabric"
 sleep 3 # the camera preview needs a moment to start on the emulator
 capture create
+assert_new_frame create discover
 
-tap_label "Try-On"
-tap_label "Got it" || true # dismiss the first-run Favourites coach mark
+# The saved-looks screen carries a "Try-On" quick-action pill as well as the
+# bottom-bar tab, so tap the nav copy explicitly.
+tap_label "Try-On" nav
+tap_label "Got it" || true # dismiss the first-run saved-looks coach mark
+require_label "Recommended Dresses"
 capture favourites
+assert_new_frame favourites create
 
-tap_label "Profile"
-wait_for_label_gone "Scan Results" || true
+tap_label "Profile" nav
+require_label "My Fit Closet"
 capture profile
+assert_new_frame profile favourites
+
 tap_label "My Fit Closet"
 wait_for_label_gone "Saved Styles" || true
 sleep 1
 capture my-fit-closet
+assert_new_frame my-fit-closet profile
 
 printf 'Captured screens:\n'
 ls -lh "$OUT_DIR"

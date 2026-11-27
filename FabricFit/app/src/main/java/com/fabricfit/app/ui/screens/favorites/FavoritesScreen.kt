@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
@@ -42,7 +41,6 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,7 +66,6 @@ import com.fabricfit.app.ui.components.AnimatedBottomSheet
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.BottomSheetAction
 import com.fabricfit.app.ui.components.BottomSheetDivider
-import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.FirstRunTooltip
 import com.fabricfit.app.ui.components.GarmentArt
@@ -79,7 +76,6 @@ import com.fabricfit.app.ui.components.heritagePrice
 import com.fabricfit.app.ui.components.heritageRating
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
-import com.fabricfit.app.ui.onboarding.ProfileAvatarImage
 import com.fabricfit.app.ui.theme.HeritageCreamBright
 import com.fabricfit.app.ui.theme.HeritageForest
 import com.fabricfit.app.ui.theme.HeritageForestDark
@@ -218,23 +214,21 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
-            // Top bar: < Scan Results + profile avatar (Reference Image 4)
+            // Top bar: Favourites + profile avatar.
+            //
+            // This is a bottom-nav destination, not a pushed screen, so it gets no
+            // back arrow - the tab bar is the way out. It also used to read "Scan
+            // Results", which is the name of a different screen (the fabric analysis
+            // result) and made the tab look like it had opened the wrong place.
             item {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 10.dp),
+                        .padding(horizontal = 20.dp, vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    IconButton(onClick = { nav.navigate(Routes.HOME) }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_back),
-                            tint = MaterialTheme.colorScheme.onBackground,
-                        )
-                    }
                     Text(
-                        "Scan Results",
+                        stringResource(R.string.nav_favorites),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground,
