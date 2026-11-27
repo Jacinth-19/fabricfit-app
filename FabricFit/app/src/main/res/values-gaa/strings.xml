@@ -837,4 +837,7 @@
     <string name="contrib_duplicate">Foto nɔŋ lɛ nɔŋ dedaw.</string>
     <string name="home_hero_headline">Ghana hiɛmɔji,\nmodern hewale</string>
     <string name="home_hero_subhead">Kwɛ kente, ankara kɛ lace ni afee bo.</string>
+    <string name="recs_ranker_ondevice">Aagbe yɛ nɔ ni oboɔ lɛ - eyɛ dɔ kɛ internet</string>
+    <string name="recs_ranker_cloud">Ohe saji nɔ lɛ yɛ ni ato</string>
+    <string name="recs_ranker_cloud_failed">Saji nɔ lɛ bɛ shi - wɔsaa lɛ yɛ ni ato</string>
 </resources>

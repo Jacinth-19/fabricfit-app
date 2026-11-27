@@ -3,6 +3,7 @@ package com.fabricfit.app.ui.screens.recommendations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.data.remote.CloudRecommendationClient
 import com.fabricfit.app.domain.engine.RecommendationEngine
 import com.fabricfit.app.domain.model.DressStyle
 import com.fabricfit.app.domain.model.Fabric
@@ -10,11 +11,13 @@ import com.fabricfit.app.domain.model.GenderCategory
 import com.fabricfit.app.domain.model.Measurements
 import com.fabricfit.app.domain.model.Occasion
 import com.fabricfit.app.domain.model.Recommendation
+import com.fabricfit.app.domain.model.WhyReason
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 data class RecsUiState(
     val fabric: Fabric? = null,
@@ -24,7 +27,13 @@ data class RecsUiState(
     val occasions: Set<Occasion> = emptySet(),
     val favoriteStyles: Set<String> = emptySet(),
     val loaded: Boolean = false,
+    /** Which engine actually produced [filtered]; shown in the UI, not guessed at. */
+    val ranker: RankerSource = RankerSource.ON_DEVICE,
+    /** True while a configured cloud ranker is in flight and on-device results are shown. */
+    val cloudPending: Boolean = false,
 )
+
+enum class RankerSource { ON_DEVICE, CLOUD, CLOUD_FAILED }
 
 class RecommendationsViewModel(
     private val container: AppContainer,
@@ -41,6 +50,18 @@ class RecommendationsViewModel(
 
     private val _state = MutableStateFlow(RecsUiState())
     val state: StateFlow<RecsUiState> = _state.asStateFlow()
+
+    /** Set once a cloud reply arrives; merged into the ranking on the next rebuild. */
+    private var cloudScores: Map<String, CloudRecommendationClient.ScoredStyle> = emptyMap()
+    private val cloudFlow = MutableStateFlow<CloudRanking>(CloudRanking.Idle)
+
+    /** Lifecycle of the optional remote ranking pass. */
+    private sealed interface CloudRanking {
+        data object Idle : CloudRanking
+        data object Pending : CloudRanking
+        data class Loaded(val response: CloudRecommendationClient.RecommendationResponse) : CloudRanking
+        data object Failed : CloudRanking
+    }
 
     init {
         viewModelScope.launch {
@@ -77,6 +98,7 @@ class RecommendationsViewModel(
                 dismissedFlow,
                 measurementsFlow,
                 allLooksFlow,
+                cloudFlow,
             ) { values ->
                 val fabric = values[0] as Fabric?
                 val gender = values[1] as GenderCategory?
@@ -89,6 +111,7 @@ class RecommendationsViewModel(
                 val measurements = values[5] as Measurements
                 @Suppress("UNCHECKED_CAST")
                 val allLooks = values[6] as List<com.fabricfit.app.domain.model.InspirationLook>
+                val cloud = values[7] as CloudRanking
 
                 val recs = if (fabric != null) {
                     RecommendationEngine.recommend(
@@ -105,6 +128,15 @@ class RecommendationsViewModel(
                     emptyList()
                 }
 
+                // A cloud reply re-ranks the same candidate set rather than replacing it:
+                // every style the backend did not mention keeps its on-device score, so a
+                // partial or empty reply degrades to the local ranking instead of a blank
+                // screen.
+                val merged = when (cloud) {
+                    is CloudRanking.Loaded -> applyCloudRanking(recs, cloud.response)
+                    else -> recs
+                }
+
                 RecsUiState(
                     fabric = fabric,
                     looks = allLooks.filter { look ->
@@ -114,13 +146,58 @@ class RecommendationsViewModel(
                     gender = gender,
                     occasions = occasions,
                     favoriteStyles = favs,
-                    filtered = recs.filter { rec ->
+                    ranker = when (cloud) {
+                        is CloudRanking.Loaded -> RankerSource.CLOUD
+                        CloudRanking.Failed -> RankerSource.CLOUD_FAILED
+                        else -> RankerSource.ON_DEVICE
+                    },
+                    cloudPending = cloud is CloudRanking.Pending,
+                    filtered = merged.filter { rec ->
                         (gender == null || rec.style.gender == gender || rec.style.gender == GenderCategory.UNISEX) &&
                             (occasions.isEmpty() || rec.style.occasions.intersect(occasions).isNotEmpty())
                     },
                 )
             }.collect { _state.value = it }
         }
+    }
+
+    /**
+     * Starts the optional cloud ranking pass. Safe to call repeatedly; a blank base URL is a
+     * no-op and leaves the on-device ranking untouched.
+     */
+    fun requestCloudRanking() {
+        val fabric = _state.value.fabric ?: return
+        val pref = runCatching { container.settings.current() }.getOrNull() ?: return
+        val baseUrl = pref.cloudBaseUrl
+        if (baseUrl.isBlank()) return
+        viewModelScope.launch {
+            cloudFlow.value = CloudRanking.Pending
+            val candidates = container.dressStyles.all()
+            val reply = container.cloudRecommendations.recommend(
+                baseUrl = baseUrl,
+                fabric = fabric,
+                candidates = candidates,
+                gender = _state.value.gender?.name,
+                occasions = _state.value.occasions,
+                favorites = _state.value.favoriteStyles,
+            )
+            cloudFlow.value = if (reply == null) CloudRanking.Failed else CloudRanking.Loaded(reply)
+        }
+    }
+
+    /** Overlays backend scores onto the local ranking, keeping provenance visible. */
+    private fun applyCloudRanking(
+        local: List<Recommendation>,
+        response: CloudRecommendationClient.RecommendationResponse,
+    ): List<Recommendation> {
+        val byId = response.scored.associateBy { it.styleId }
+        return local.map { rec ->
+            val remote = byId[rec.style.id] ?: return@map rec
+            rec.copy(
+                score = (remote.score * 100f).roundToInt().coerceIn(0, 98),
+                reasons = rec.reasons + remote.reasons.map { WhyReason.ReasonFromCloud(it) },
+            )
+        }.sortedByDescending { it.score }
     }
 
     fun setGender(gender: GenderCategory) {

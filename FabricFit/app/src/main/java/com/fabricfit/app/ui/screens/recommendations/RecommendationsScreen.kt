@@ -28,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +58,9 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
     val vm: RecommendationsViewModel = appViewModel { c, ctx -> RecommendationsViewModel(c, fabricId) }
     val state by vm.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    // Silently no-ops when no cloud base URL is configured; on-device results are already
+    // on screen either way.
+    LaunchedEffect(fabricId) { vm.requestCloudRanking() }
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -114,6 +118,23 @@ fun RecommendationsScreen(nav: NavHostController, padding: PaddingValues, fabric
                     modifier = Modifier.clickable { vm.clearFilters() }.padding(4.dp),
                 )
             }
+        }
+
+        // Say which engine actually ranked this list rather than implying it is always
+        // on-device (or always AI).
+        if (state.fabric != null) {
+            Text(
+                text = stringResource(
+                    when (state.ranker) {
+                        RankerSource.CLOUD -> R.string.recs_ranker_cloud
+                        RankerSource.CLOUD_FAILED -> R.string.recs_ranker_cloud_failed
+                        RankerSource.ON_DEVICE -> R.string.recs_ranker_ondevice
+                    },
+                ),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 2.dp),
+            )
         }
 
         if (state.looks.isNotEmpty()) {

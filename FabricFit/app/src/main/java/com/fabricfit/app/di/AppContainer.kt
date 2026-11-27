@@ -64,6 +64,9 @@ class AppContainer private constructor(context: Context) {
     val mlClassifier = com.fabricfit.app.data.ml.OnDeviceMlClassifier(appContext, imageProcessor)
 
     val cloudAnalysis = com.fabricfit.app.data.remote.CloudAnalysisClient()
+
+    /** Optional ranking backend; unused unless [settings] has a cloudBaseUrl. */
+    val cloudRecommendations = com.fabricfit.app.data.remote.CloudRecommendationClient()
     val personSegmenter = com.fabricfit.app.data.ml.PersonSegmenter(appContext)
 
     val fabricAnalysis: FabricAnalysisRepository = FabricAnalysisRepositoryImpl(

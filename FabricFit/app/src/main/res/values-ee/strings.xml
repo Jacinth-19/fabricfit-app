@@ -837,4 +837,7 @@
     <string name="contrib_duplicate">Foto sia tɔgbe li xoxo.</string>
     <string name="home_hero_headline">Ghana dɔlélawo,\nmodern ɖoɖowo</string>
     <string name="home_hero_subhead">Kpɔ kente, ankara kple lace siwo woawɔ na wò.</string>
+    <string name="recs_ranker_ondevice">Wofɔ̃ ɖe mɔfiame sia dzi - edzɔa dɔe le internet manɔmee</string>
+    <string name="recs_ranker_cloud">Wò mɔfiame dɔwɔƒe la ɖo ɖe eŋu</string>
+    <string name="recs_ranker_cloud_failed">Mɔfiame dɔwɔƒe la mele eme o - míawo ɖe mɔfiame le mɔfiame sia dzi</string>
 </resources>

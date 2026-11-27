@@ -1160,4 +1160,7 @@
 
     <string name="home_hero_headline">Ghanaian fabrics,\nmodern style</string>
     <string name="home_hero_subhead">Discover kente, ankara and lace built around you.</string>
+    <string name="recs_ranker_ondevice">Ranked on this device - works offline</string>
+    <string name="recs_ranker_cloud">Ranked by your recommendation service</string>
+    <string name="recs_ranker_cloud_failed">Recommendation service unreachable - showing on-device ranking</string>
 </resources>

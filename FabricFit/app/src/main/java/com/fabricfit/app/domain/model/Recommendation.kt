@@ -26,4 +26,11 @@ sealed interface WhyReason {
     data class OccasionFit(val occasion: Occasion) : WhyReason
     data object Tradition : WhyReason
     data class GenderFit(val gender: GenderCategory) : WhyReason
+
+    /**
+     * A plain-language reason supplied by a configured recommendations backend. Kept as a
+     * separate case so the UI never presents remote copy as if the on-device engine had
+     * derived it.
+     */
+    data class ReasonFromCloud(val text: String) : WhyReason
 }
