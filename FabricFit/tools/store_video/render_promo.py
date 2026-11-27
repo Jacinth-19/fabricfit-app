@@ -277,6 +277,21 @@ def intro_frame(size: tuple[int, int], t: float) -> Image.Image:
     return canvas.convert("RGB")
 
 
+def _draw_caption_centred(layer: Image.Image, caption: str, top: int,
+                          size: int, max_width: int) -> None:
+    """Draw wrapped caption lines centred on the layer, starting at `top`."""
+    d = ImageDraw.Draw(layer)
+    font = _font(size)
+    lines = _wrap(caption, font, max_width)
+    line_h = int(size * 1.22)
+    y = top
+    for line in lines:
+        box = d.textbbox((0, 0), line, font=font)
+        d.text(((layer.width - (box[2] - box[0])) // 2, y), line, font=font,
+               fill=CREAM_BRIGHT + (255,))
+        y += line_h
+
+
 def scene_frame(shot_path: Path, caption: str, size: tuple[int, int], t: float,
                 dur: float, index: int, total: int) -> Image.Image:
     """A product scene: phone on one side, caption and chips on the other."""
@@ -288,9 +303,14 @@ def scene_frame(shot_path: Path, caption: str, size: tuple[int, int], t: float,
     ease = 1 - (1 - enter) ** 3
 
     landscape = w > h
-    phone_h = int(h * (0.80 if landscape else 0.60))
+    phone_h = int(h * (0.80 if landscape else 0.62))
     shot = Image.open(SHOTS / shot_path if not Path(shot_path).is_absolute() else shot_path)
     phone = _phone(shot, phone_h)
+
+    label = f"STEP {index + 1:02d}"
+    f_small = _font(int(h * (0.024 if landscape else 0.026)))
+    layer = Image.new("RGBA", size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
 
     if landscape:
         px = int(w * 0.10)
@@ -299,25 +319,26 @@ def scene_frame(shot_path: Path, caption: str, size: tuple[int, int], t: float,
         text_x = int(w * 0.50)
         text_y = int(h * 0.36)
         cap_size = int(h * 0.088)
+        d.text((text_x, text_y - int(h * 0.075)), label, font=f_small,
+               fill=GOLD_SOFT + (int(210 * ease),))
+        _draw_caption(layer, caption, text_x, text_y, cap_size, int(w * 0.44))
     else:
+        # Lay out from the phone's real height. _phone() returns the image wrapped in a
+        # drop shadow, so phone.height is bigger than phone_h and any layout computed from
+        # phone_h puts the caption underneath the bezel.
+        kicker_y = int(h * 0.072)
+        label_w = d.textbbox((0, 0), label, font=f_small)[2]
+        d.text(((w - label_w) // 2, kicker_y), label, font=f_small,
+               fill=GOLD_SOFT + (int(210 * ease),))
+
         px = (w - phone.width) // 2
-        py = int(h * 0.10 + (1 - ease) * h * 0.05)
+        py = kicker_y + int(h * 0.038) + int((1 - ease) * h * 0.05)
         canvas.alpha_composite(phone, (px, py))
-        # Text band sits below the phone, not on top of it.
-        text_x = int(w * 0.08)
-        text_y = int(h * 0.745)
-        cap_size = int(h * 0.042)
 
-    # Step marker
-    layer = Image.new("RGBA", size, (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
-    label = f"STEP {index + 1:02d}"
-    f_small = _font(int(h * 0.024), bold=False)
-    d.text((text_x, text_y - int(h * 0.075)), label, font=f_small,
-           fill=GOLD_SOFT + (int(210 * ease),))
-
-    _draw_caption(layer, caption, text_x, text_y, cap_size,
-                  int(w * (0.44 if landscape else 0.84)))
+        # Caption sits in the band below the phone, centred, with a clear gap.
+        cap_size = int(h * 0.045)
+        cap_top = py + phone.height + int(h * 0.042)
+        _draw_caption_centred(layer, caption, cap_top, cap_size, int(w * 0.84))
     layer = layer.point(lambda v: v)  # keep type
     # fade the whole text block in
     alpha = layer.getchannel("A").point(lambda a: int(a * ease))
