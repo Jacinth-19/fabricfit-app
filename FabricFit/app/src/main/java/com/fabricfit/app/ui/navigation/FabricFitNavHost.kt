@@ -17,13 +17,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.fabricfit.app.ui.components.MotionPhase
 import com.fabricfit.app.ui.components.MotionSpec
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.ui.components.MotionTimeline
-import kotlinx.coroutines.launch
 import com.fabricfit.app.ui.screens.create.CameraScreen
 import com.fabricfit.app.ui.screens.create.CreateScreen
 import com.fabricfit.app.ui.screens.create.EditImageScreen
@@ -117,32 +115,28 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
             .collectAsState(initial = null)
         val reducedMotion = prefs?.accessibility?.reducedMotion == true
 
-        val settled = remember { Animatable(1f) }
+        // The phase starts at 1 (settled) so the very first screen renders normally, then
+        // resets to 0 whenever the destination changes. Deriving it during composition -
+        // rather than in a LaunchedEffect - matters: effects run after the frame is
+        // composed, so a route that appeared fully-settled for one frame would flash
+        // before the animation started.
+        val settled = remember(currentRoute) {
+            Animatable(if (currentRoute == null || reducedMotion) 1f else 0f)
+        }
         var direction by remember { mutableStateOf(1) }
-        var previousKey by remember { mutableStateOf<String?>(null) }
         var depth by remember { mutableStateOf(navController.currentBackStack.value.size) }
-        val scope = rememberCoroutineScope()
 
-        LaunchedEffect(backStack?.destination?.route) {
-            // Only animate when the destination actually changed, not on recomposition.
-            val key = backStack?.destination?.route
-            if (key == previousKey) return@LaunchedEffect
-            previousKey = key
-
-            // Depth decides push vs pop. A pop lands on a shorter stack, so the incoming
-            // page enters from the left and the outgoing page recedes to the right -
-            // mirroring the push, which is what makes back feel like undoing forward.
+        LaunchedEffect(currentRoute, settled) {
+            // Depth decides push vs pop. A pop lands on a shorter stack, so the phase
+            // leans the other way and back feels like undoing forward.
             val now = navController.currentBackStack.value.size
             direction = if (now >= depth) 1 else -1
             depth = now
 
-            scope.launch {
-                if (reducedMotion) {
-                    settled.snapTo(1f)
-                } else {
-                    settled.snapTo(0f)
-                    settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))
-                }
+            if (!reducedMotion) {
+                // Animatable was just created at 0; animate it home. This is the one
+                // animation the navigator owns, and every screen reads it.
+                settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))
             }
         }
 
