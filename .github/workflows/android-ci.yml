@@ -24,11 +24,28 @@ jobs:
         
     - name: Grant execute permission for gradlew
       run: chmod +x FabricFit/gradlew
+
+    # TFLite binaries are build inputs, not source (7.5 MB). See FabricFit/docs/MODELS.md.
+    - name: Fetch TFLite models
+      run: bash tools/models/fetch_tflite_models.sh
+      working-directory: FabricFit
       
     - name: Run Unit Tests
       run: |
         cd FabricFit
         ./gradlew test --stacktrace
+
+    # Surfaces Kotlin/Javac diagnostics as annotations so failures are readable
+    # without downloading multi-MB logs.
+    - name: Annotate compile errors
+      if: failure()
+      run: |
+        cd FabricFit
+        ./gradlew compileDebugKotlin compileDebugUnitTestKotlin --console=plain -q 2>&1 \
+          | grep -E "^e: |error:" | head -40 \
+          | while IFS= read -r line; do
+              echo "::error title=COMPILE::${line//%/％}"
+            done
 
     - name: Print failing tests
       if: failure()
@@ -77,6 +94,11 @@ jobs:
         
     - name: Grant execute permission for gradlew
       run: chmod +x FabricFit/gradlew
+
+    # TFLite binaries are build inputs, not source (7.5 MB). See FabricFit/docs/MODELS.md.
+    - name: Fetch TFLite models
+      run: bash tools/models/fetch_tflite_models.sh
+      working-directory: FabricFit
       
     - name: Build Debug APK
       run: |
@@ -106,6 +128,11 @@ jobs:
         
     - name: Grant execute permission for gradlew
       run: chmod +x FabricFit/gradlew
+
+    # TFLite binaries are build inputs, not source (7.5 MB). See FabricFit/docs/MODELS.md.
+    - name: Fetch TFLite models
+      run: bash tools/models/fetch_tflite_models.sh
+      working-directory: FabricFit
       
     - name: Run Lint
       run: |

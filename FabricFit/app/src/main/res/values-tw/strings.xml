@@ -835,4 +835,6 @@
     <string name="contrib_delete_confirm">Yi mfonini yi fi hɔ?</string>
     <string name="contrib_delete_confirm_body">Wɔbeyi mfonini yi afi wo mmoa no mu.</string>
     <string name="contrib_duplicate">Mfonini yi te sɛ nea wode ama dedaw.</string>
+    <string name="home_hero_headline">Ghana ntoma,\nasetie mu nsusuw</string>
+    <string name="home_hero_subhead">Hunu kente, ankara ne lace a, yɛ bobɔ wo.</string>
 </resources>

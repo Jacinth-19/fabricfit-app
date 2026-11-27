@@ -835,4 +835,6 @@
     <string name="contrib_delete_confirm">Ojie foto nɔŋ?</string>
     <string name="contrib_delete_confirm_body">Aaji foto nɔŋ kɛjɔ oboɔmɔ mli.</string>
     <string name="contrib_duplicate">Foto nɔŋ lɛ nɔŋ dedaw.</string>
+    <string name="home_hero_headline">Ghana hiɛmɔji,\nmodern hewale</string>
+    <string name="home_hero_subhead">Kwɛ kente, ankara kɛ lace ni afee bo.</string>
 </resources>

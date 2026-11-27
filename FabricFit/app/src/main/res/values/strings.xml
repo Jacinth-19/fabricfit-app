@@ -1158,4 +1158,6 @@
     <string name="admin_moderation_dashboard">Moderation Dashboard</string>
     <string name="admin_moderation_desc">Review reported content</string>
 
+    <string name="home_hero_headline">Ghanaian fabrics,\nmodern style</string>
+    <string name="home_hero_subhead">Discover kente, ankara and lace built around you.</string>
 </resources>
