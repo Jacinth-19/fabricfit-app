@@ -128,6 +128,13 @@ These captures track the branch that triggered the screenshot job. The
 manual dispatch, or `[release]` commit, so a newer branch can temporarily be
 ahead of the latest published APK.
 
+**The emulator on the hosted runner is the weak link here.** It has been dying
+mid-capture (`device offline`, then `device not found`, with no emulator left to
+retry against), so this set can lag the source. Where it does, the picture and
+the code disagree — the picture is the older of the two. The capture job now
+fails a run where a frame is byte-identical to the previous screen, which is how
+a Welcome screen once shipped as `home.png`.
+
 <table>
   <tr>
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="215"><br><strong>1. Welcome / Splash</strong><br><sub>Editorial photo hero, FabricFit wordmark &amp; proof chips — copy on a cream panel</sub></td>
