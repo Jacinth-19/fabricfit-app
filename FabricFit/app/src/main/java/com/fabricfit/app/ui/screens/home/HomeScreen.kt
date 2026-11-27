@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -225,33 +224,54 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                             // The headline is drawn here rather than baked into the photo:
                             // assets stay text-free, so copy can be localised (en/ee/gaa/tw)
                             // and re-worded without regenerating artwork.
+                            //
+                            // A left-weighted scrim that has fallen to nothing before the
+                            // models start (~55% across). The old one used a fixed endX of
+                            // 900px, which is not related to the card's real width: on a
+                            // 360dp phone it was still 40% opaque where the subjects are,
+                            // so the headline ran across the man's arm.
                             Box(
                                 Modifier
                                     .fillMaxSize()
                                     .background(
                                         Brush.horizontalGradient(
-                                            colors = listOf(
-                                                HeritageForestDark.copy(alpha = 0.72f),
-                                                HeritageForestDark.copy(alpha = 0.18f),
-                                                Color.Transparent,
-                                            ),
-                                            endX = 900f,
+                                            0f to HeritageForestDark.copy(alpha = 0.86f),
+                                            0.30f to HeritageForestDark.copy(alpha = 0.62f),
+                                            0.48f to HeritageForestDark.copy(alpha = 0.22f),
+                                            0.62f to Color.Transparent,
                                         ),
                                     ),
                             )
                             Column(
                                 modifier = Modifier
                                     .fillMaxHeight()
-                                    .padding(start = 20.dp, top = 20.dp, bottom = 18.dp)
-                                    .widthIn(max = 210.dp),
+                                    .fillMaxWidth(0.54f)
+                                    .padding(start = 18.dp, top = 20.dp, bottom = 18.dp),
                                 verticalArrangement = Arrangement.Center,
                             ) {
+                                // The headline is measured, not styled blind: "Ghanaian
+                                // fabrics," is wider than a 50%-of-360dp column, so a fixed
+                                // size wrapped it mid-phrase on small phones. Shrinking from
+                                // 19sp until the line fits keeps one phrase per line at every
+                                // width, and the column still clears the models.
+                                var headlineSize by remember { mutableStateOf(19.sp) }
                                 Text(
                                     text = stringResource(R.string.home_hero_headline),
-                                    style = MaterialTheme.typography.headlineSmall,
+                                    style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.SemiBold,
+                                    fontSize = headlineSize,
+                                    lineHeight = headlineSize * 1.34f,
                                     color = HeritageCreamBright,
-                                    lineHeight = 30.sp,
+                                    // The string has one explicit newline, so a correct
+                                    // layout is exactly two lines. More than that means the
+                                    // first phrase soft-wrapped: step down and re-measure.
+                                    // didOverflowWidth is not usable here - it reports clipping
+                                    // from maxLines, not soft wrapping.
+                                    onTextLayout = { result ->
+                                        if (result.lineCount > 2 && headlineSize > 13.sp) {
+                                            headlineSize = (headlineSize.value - 1f).sp
+                                        }
+                                    },
                                 )
                                 Spacer(Modifier.height(8.dp))
                                 Text(
