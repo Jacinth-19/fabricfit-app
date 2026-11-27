@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -379,13 +380,18 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                                     .padding(bottom = 2.dp),
                             )
                         }
-                        items(styles, key = { it.id }) { style ->
+                        itemsIndexed(styles, key = { _, style -> style.id }) { index, style ->
                             val isFav = style.id in state.favoriteStyleIds
                             Card(
                                 onClick = { nav.navigate(Routes.design(style.id)) },
                                 shape = RoundedCornerShape(18.dp),
                                 colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                                modifier = Modifier.revealOnEnter(
+                                    // Two columns, so index/2 keeps each visual row in step
+                                    // with its neighbour rather than the right card trailing.
+                                    order = 1 + index / 2,
+                                ),
                             ) {
                                 Column(Modifier.padding(10.dp)) {
                                     Box {

@@ -77,6 +77,8 @@ data class MotionPhase(
     val settled: Float = 1f,
     val direction: Int = 0,
     val route: String? = null,
+    /** True when the user asked for less movement; ambient loops stop entirely. */
+    val reducedMotion: Boolean = false,
 )
 
 val LocalMotionPhase = staticCompositionLocalOf { MotionPhase() }
@@ -194,6 +196,7 @@ fun StaggeredReveal(
 fun Modifier.ambientBreath(
     amplitude: Float = 0.012f,
     periodMillis: Int = 9000,
+    phase: MotionPhase = LocalMotionPhase.current,
 ): Modifier {
     val transition = rememberInfiniteTransition(label = "ambientBreath")
     val wave by transition.animateFloat(
@@ -204,7 +207,10 @@ fun Modifier.ambientBreath(
         ),
         label = "ambientBreathWave",
     )
-    val scale = 1f + amplitude * kotlin.math.sin(wave)
+    // Reduced motion flattens the amplitude to zero rather than branching out of the
+    // composable, so the call site is unchanged and nothing is conditionally composed.
+    val effective = if (phase.reducedMotion) 0f else amplitude
+    val scale = 1f + effective * kotlin.math.sin(wave)
     return this.graphicsLayer {
         scaleX = scale
         scaleY = scale

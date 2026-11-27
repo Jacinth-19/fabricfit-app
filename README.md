@@ -365,7 +365,7 @@ python3 tools/i18n/generate.py
 - **Welcome screen rebuilt** for a shopping-app first impression: editorial photo hero, FabricFit wordmark, headline on a cream panel, proof chips, and a fade-and-rise entrance.
 - **"Heritage Luxe" removed from every user-facing string** (English, Twi, Ga, Ewe); it remains the internal design-system name.
 - **Real photography replaces illustrations** — the 12 catalogue looks are now editorial photographs of women and men in Ghanaian dress, and Discover opens with a photo ribbon. Assets re-encoded to phone sizes (2.5 MB → 1.3 MB).
-- **Motion** — a reusable `revealOnEnter` effect on Home and Discover, plus a scale-in on the splash.
+- **One continuous motion timeline.** A single `MotionPhase` is published above the `NavHost` on every navigation, and every screen animates from that same value: rows cascade on the shared beat, the outgoing page recedes against the incoming one, and hero photographs are carried across Home → Discover → Create with `heroCarry` instead of cutting. The "Reduced Motion" setting, previously stored but unread, now snaps transitions and stops ambient motion.
 - **Play Store cards 01–06 regenerated** so the store listing shows the current UI instead of the old welcome screen.
 
 ## Known limitations
@@ -377,7 +377,8 @@ Written down so they are not mistaken for finished work:
 - **The catalogue is bundled.** 20 styles, 12 looks, 15 swatches. There is no server, no accounts, and no way to add a look without shipping a new APK — the `CatalogDataSource` interface is the seam where a backend would attach.
 - **Twi, Ga and Ewe translations are machine-generated.** They are genuinely distinct strings (only ~5% identical between locales), but they have not been reviewed by native speakers. Treat them as a starting point, not as launch-ready copy.
 - **Four of the eight bundled `.tflite` files are small feature networks**, not trained deep models. See the ML section above for which ones are real.
-- **Motion is per-screen, not one continuous choreography.** Screens animate on entry; there is no shared element transition between them yet.
+- **The motion timeline is coordinated, not literally shared-element.** The hero image carries scale and drift across a navigation, but it is re-rendered per destination rather than handed over as one view — so the continuity is convincing at speed, not frame-exact. Compose's shared-transition APIs would be needed for true element handover.
+- **Texture rendering is procedural.** Fabric drape is a shading approximation; it is not simulated cloth.
 
 ## Testing notes
 

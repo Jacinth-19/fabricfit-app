@@ -64,6 +64,7 @@ import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.permissions.rememberCameraPermission
+import com.fabricfit.app.ui.components.ambientBreath
 import com.fabricfit.app.ui.components.heroCarry
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.FirstRunTooltip
@@ -193,7 +194,9 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                             asset = activePreset.heroAsset,
                             contentDescription = activePreset.title,
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .ambientBreath(amplitude = 0.01f),
                         )
 
                         // Deep forest studio vignette overlay

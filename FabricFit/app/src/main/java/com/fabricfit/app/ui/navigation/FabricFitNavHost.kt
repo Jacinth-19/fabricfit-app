@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import com.fabricfit.app.ui.components.MotionPhase
 import com.fabricfit.app.ui.components.MotionSpec
+import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.ui.components.MotionTimeline
 import kotlinx.coroutines.launch
 import com.fabricfit.app.ui.screens.create.CameraScreen
@@ -109,6 +110,13 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
         // One timeline for the whole app. A forward navigation runs `settled` 0 -> 1 and
         // every screen animates from that same value, so the incoming page's rows and its
         // hero land together, and the outgoing page recedes on the same curve.
+        // "Reduced Motion" was a stored preference that nothing read. Honour it: with the
+        // setting on, navigation snaps to its settled state instead of animating, so the
+        // app stays usable for motion-sensitive users without a second code path.
+        val prefs by AppContainer.get(ctx.applicationContext).settings.preferences
+            .collectAsState(initial = null)
+        val reducedMotion = prefs?.accessibility?.reducedMotion == true
+
         val settled = remember { Animatable(1f) }
         var direction by remember { mutableStateOf(1) }
         var previousKey by remember { mutableStateOf<String?>(null) }
@@ -129,8 +137,12 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
             depth = now
 
             scope.launch {
-                settled.snapTo(0f)
-                settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))
+                if (reducedMotion) {
+                    settled.snapTo(1f)
+                } else {
+                    settled.snapTo(0f)
+                    settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))
+                }
             }
         }
 
@@ -138,6 +150,7 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
             settled = settled.value,
             direction = direction,
             route = currentRoute,
+            reducedMotion = reducedMotion,
         )
         MotionTimeline(phase) {
             FabricFitNavHost(navController, padding)

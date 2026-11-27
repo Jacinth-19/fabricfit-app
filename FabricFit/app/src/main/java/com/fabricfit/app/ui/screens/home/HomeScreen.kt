@@ -78,6 +78,7 @@ import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.SectionHeader
+import com.fabricfit.app.ui.components.ambientBreath
 import com.fabricfit.app.ui.components.heroCarry
 import com.fabricfit.app.ui.components.revealOnEnter
 import com.fabricfit.app.ui.components.ShimmerCard
@@ -217,7 +218,9 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                                 asset = "catalog/heritage/hero_banner_card.jpg",
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .ambientBreath(amplitude = 0.014f),
                             )
                             // The headline is drawn here rather than baked into the photo:
                             // assets stay text-free, so copy can be localised (en/ee/gaa/tw)
