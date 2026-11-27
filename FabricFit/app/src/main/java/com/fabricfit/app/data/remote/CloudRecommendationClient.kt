@@ -209,6 +209,10 @@ class CloudRecommendationClient(
             }
             if (scored.isEmpty()) null
             else RecommendationResponse(scored, root.optString("modelVersion").takeIf { it.isNotBlank() })
+        }.onFailure { failure ->
+            // Swallowing this silently is what made a missing JSON implementation look like
+            // "the backend returned nothing" during development.
+            android.util.Log.w(TAG, "recommendation reply could not be parsed", failure)
         }.getOrNull()
     }
 
@@ -231,6 +235,8 @@ class CloudRecommendationClient(
     }
 
     companion object {
+        private const val TAG = "CloudRecs"
+
         private val JSON_MEDIA = "application/json; charset=utf-8".toMediaType()
 
         private fun defaultClient(): OkHttpClient = OkHttpClient.Builder()

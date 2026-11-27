@@ -176,6 +176,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
+    // The framework org.json is a stub that returns defaults in unit tests, which makes
+    // JSON parsing silently return null. Use the real implementation for tests.
+    testImplementation("org.json:json:20240303")
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.robolectric)
