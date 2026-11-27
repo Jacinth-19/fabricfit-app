@@ -262,6 +262,7 @@ fun AssetImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
+    alignment: Alignment = Alignment.Center,
 ) {
     val context = LocalContext.current
     val bmp = remember(asset) {
@@ -285,6 +286,7 @@ fun AssetImage(
             contentDescription = contentDescription,
             modifier = modifier,
             contentScale = contentScale,
+            alignment = alignment,
         )
     } else {
         Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh))

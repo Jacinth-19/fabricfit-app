@@ -84,7 +84,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
@@ -511,129 +510,120 @@ fun ProfileAvatarImage(
 
 @Composable
 private fun WelcomeDarkPage() {
-    // Shopping-app welcome: a real editorial photo carries the screen, and the copy sits
-    // on a cream card above it. Everything fades and rises in on first frame so the app
-    // feels alive the moment it opens.
+    // Shopping-app welcome: the editorial photograph owns the top of the screen, and the
+    // copy sits on a clean cream panel beneath it. Keeping them apart means the headline
+    // is always legible, whatever the photo is doing, and the model's head stays in frame.
     var shown by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         withFrameNanos { }
         shown = true
     }
     val rise by animateDpAsState(
-        targetValue = if (shown) 0.dp else 28.dp,
-        animationSpec = tween(durationMillis = 620, easing = FastOutSlowInEasing),
+        targetValue = if (shown) 0.dp else 26.dp,
+        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
         label = "welcomeRise",
     )
     val fade by animateFloatAsState(
         targetValue = if (shown) 1f else 0f,
-        animationSpec = tween(durationMillis = 620, easing = FastOutSlowInEasing),
+        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
         label = "welcomeFade",
     )
 
-    Box(
+    Column(
         Modifier
             .fillMaxSize()
             .background(HeritageCream),
     ) {
-        // Full-bleed editorial photograph.
-        AssetImage(
-            asset = "catalog/photos/women_kente_01.jpg",
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
-        )
-        // Cream wash behind the copy so it stays readable wherever the photo is busy.
-        // It fades out above the model's waist, leaving the dress unobstructed.
         Box(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.58f)
-                .background(
-                    Brush.verticalGradient(
-                        0f to HeritageCream.copy(alpha = 0.99f),
-                        0.45f to HeritageCream.copy(alpha = 0.95f),
-                        0.78f to HeritageCream.copy(alpha = 0.55f),
-                        1f to HeritageCream.copy(alpha = 0f),
-                    ),
-                ),
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(horizontal = 26.dp)
-                .offset(y = rise),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .weight(1f)
+                .clip(RoundedCornerShape(bottomStart = 34.dp, bottomEnd = 34.dp)),
         ) {
-            Spacer(Modifier.height(26.dp))
-
-            // Compact mark, top-left of the editorial header.
+            AssetImage(
+                asset = "catalog/photos/women_kente_01.jpg",
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.TopCenter,
+                modifier = Modifier.fillMaxSize(),
+            )
+            // Soft top scrim so the status bar and wordmark stay readable over the photo.
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(HeritageForestDark.copy(alpha = 0.55f), Color.Transparent),
+                        ),
+                    ),
+            )
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 22.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Surface(
-                    shape = RoundedCornerShape(14.dp),
-                    color = HeritageForest,
-                    modifier = Modifier.size(46.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    color = HeritageCream,
+                    modifier = Modifier.size(38.dp),
                 ) {
-                    HeritageLuxeMark(modifier = Modifier.fillMaxSize().padding(7.dp))
+                    HeritageLuxeMark(modifier = Modifier.fillMaxSize().padding(6.dp))
                 }
-                Spacer(Modifier.width(10.dp))
+                Spacer(Modifier.width(9.dp))
                 Text(
                     stringResource(R.string.onboarding_brand_heritage_luxe),
                     fontFamily = FontFamily.Serif,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
-                    color = HeritageForestDark,
+                    fontSize = 19.sp,
+                    color = HeritageCream,
                 )
                 Spacer(Modifier.weight(1f))
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = HeritageGold.copy(alpha = 0.18f),
+                    color = HeritageCream.copy(alpha = 0.22f),
                 ) {
                     Text(
                         stringResource(R.string.onboarding_brand_badge),
-                        fontSize = 11.sp,
+                        fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = HeritageForestDark,
+                        color = HeritageCream,
+                        maxLines = 1,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                     )
                 }
             }
+        }
 
-            Spacer(Modifier.height(22.dp))
-
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .offset(y = rise)
+                .padding(horizontal = 26.dp)
+                .padding(top = 22.dp, bottom = 10.dp),
+        ) {
             Text(
                 stringResource(R.string.onboarding_welcome_headline),
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                fontSize = 38.sp,
-                lineHeight = 42.sp,
+                fontSize = 33.sp,
+                lineHeight = 38.sp,
                 color = HeritageForestDark,
-                modifier = Modifier.fillMaxWidth(),
             )
-            Spacer(Modifier.height(10.dp))
+            Spacer(Modifier.height(9.dp))
             Text(
                 stringResource(R.string.onboarding_welcome_sub),
-                fontSize = 15.sp,
-                lineHeight = 21.sp,
-                color = HeritageForestDark.copy(alpha = 0.72f),
-                modifier = Modifier.fillMaxWidth(),
+                fontSize = 14.sp,
+                lineHeight = 20.sp,
+                color = HeritageForestDark.copy(alpha = 0.74f),
             )
-        }
-
-        // Credential strip pinned near the bottom, over the photo.
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .padding(horizontal = 26.dp, vertical = 18.dp)
-                .graphicsLayer { alpha = fade },
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Spacer(Modifier.height(16.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.graphicsLayer { alpha = fade },
+            ) {
                 WelcomeProofChip(R.string.onboarding_proof_offline)
                 WelcomeProofChip(R.string.onboarding_proof_tryon)
                 WelcomeProofChip(R.string.onboarding_proof_free)
@@ -646,13 +636,13 @@ private fun WelcomeDarkPage() {
 private fun WelcomeProofChip(@StringRes text: Int) {
     Surface(
         shape = RoundedCornerShape(50),
-        color = HeritageForestDark.copy(alpha = 0.82f),
+        color = HeritageForest.copy(alpha = 0.10f),
     ) {
         Text(
             stringResource(text),
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
-            color = HeritageCream,
+            color = HeritageForestDark,
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 11.dp, vertical = 6.dp),
         )
