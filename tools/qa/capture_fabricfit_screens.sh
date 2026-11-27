@@ -82,6 +82,25 @@ tap_label() {
   return 1
 }
 
+# Block until `label` is no longer present (or the timeout expires).
+#
+# The onboarding screens animate out and the first frame of the destination can take a few
+# seconds on a software-rendered emulator. Capturing on a fixed sleep raced it: `home.png`
+# came out as a second copy of the welcome page, and the README shipped that for a month.
+wait_for_label_gone() {
+  local label="$1" attempt xml
+  for attempt in $(seq 1 20); do
+    xml="$(dump_ui)"
+    if [[ -z "$(find_bounds "$label" "$xml")" ]]; then
+      echo "Gone: $label (after ${attempt}s)"
+      return 0
+    fi
+    sleep 1
+  done
+  echo "Label still present after timeout: $label" >&2
+  return 1
+}
+
 capture() {
   local name="$1"
   adb shell screencap -p "/sdcard/fabricfit-${name}.png"
@@ -92,9 +111,12 @@ capture() {
 # Capture the Heritage Luxe Welcome screen first, then skip to Home.
 capture welcome
 tap_label "Skip for now"
+# Do not capture on a bare sleep: wait until onboarding is actually off screen.
+wait_for_label_gone "Skip for now" || true
 capture home
 
 tap_label "Discover"
+wait_for_label_gone "Featured Fabrics" || true
 capture discover
 
 tap_label "Camera"
@@ -107,10 +129,11 @@ tap_label "Got it" || true # dismiss the first-run Favourites coach mark
 capture favourites
 
 tap_label "Profile"
-
+wait_for_label_gone "Scan Results" || true
 capture profile
 tap_label "My Fit Closet"
-sleep 1.5
+wait_for_label_gone "Saved Styles" || true
+sleep 1
 capture my-fit-closet
 
 printf 'Captured screens:\n'
