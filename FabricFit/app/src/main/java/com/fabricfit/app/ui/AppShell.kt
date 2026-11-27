@@ -46,6 +46,11 @@ import com.fabricfit.app.ui.theme.HeritageForestDark
 import com.fabricfit.app.ui.theme.HeritageGold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 
 /**
  * Root of the UI tree: applies theme, gates onboarding and biometric lock, then hosts the main navigation.
@@ -123,7 +128,32 @@ private fun SplashArt() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            HeritageLuxeMark(modifier = Modifier.size(124.dp))
+            // The generated brand icon, scaling in gently so the app opens with movement
+            // rather than a static poster.
+            var markIn by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                withFrameNanos { }
+                markIn = true
+            }
+            val markScale by animateFloatAsState(
+                targetValue = if (markIn) 1f else 0.82f,
+                animationSpec = androidx.compose.animation.core.tween(
+                    durationMillis = 520,
+                    easing = androidx.compose.animation.core.FastOutSlowInEasing,
+                ),
+                label = "splashMark",
+            )
+            Image(
+                painter = painterResource(R.drawable.ic_splash_logo),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(132.dp)
+                    .graphicsLayer {
+                        scaleX = markScale
+                        scaleY = markScale
+                        alpha = markScale
+                    },
+            )
             Spacer(Modifier.height(20.dp))
             Text(
                 stringResource(R.string.onboarding_brand_heritage_luxe),
