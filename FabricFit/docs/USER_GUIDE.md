@@ -51,7 +51,7 @@ When you open FabricFit for the first time, you'll see:
 - 🏠 **Home** - Your dashboard and recent activity
 - 🔍 **Discover** - Browse design styles and fabrics
 - 📷 **Create** - Scan fabrics and create looks
-- ⭐ **Try-On** - Your saved fabrics, designs and generated looks
+- ⭐ **Try-On** - Your saved fabrics, designs and generated looks, with the latest fabric match on top
 - 👤 **Profile** - Settings and account management
 
 ---
@@ -126,13 +126,13 @@ After scanning, you'll see:
 
 ### Save to Favourites
 
-**To favorite a design:**
+**To save a design:**
 1. Open the design details
 2. Tap the **heart icon** (top right)
-3. The design appears in Try-On → Favourites
+3. The design appears under Favourites on the Try-On tab
 
-**To remove from favorites:**
-1. Go to the Try-On tab, then Favourites
+**To remove from favourites:**
+1. Go to the Try-On tab
 2. Tap the heart icon again
 3. Or swipe left and tap Remove
 

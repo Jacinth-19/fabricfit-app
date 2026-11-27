@@ -22,7 +22,7 @@
     <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Shopping Home</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="210"><br><sub><strong>Home · Lookbook</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="210"><br><sub><strong>FitScan · Capture Fabric</strong></sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit favourites and saved looks" width="210"><br><sub><strong>Try-On · Saved Looks</strong></sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit favourites and saved looks" width="210"><br><sub><strong>Try-On</strong></sub></td>
   </tr>
 </table>
 
@@ -136,7 +136,7 @@ ahead of the latest published APK.
   </tr>
   <tr>
     <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="215"><br><strong>4. Capture Fabric (FitScan)</strong><br><sub>Dark forest camera chrome, viewfinder &amp; Photo/Sample/Scan switcher</sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit favourites and saved looks" width="215"><br><strong>5. Try-On / Saved Looks</strong><br><sub>Latest fabric match, colour palette, recommended dresses &amp; saved styles</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit favourites and saved looks" width="215"><br><strong>5. Try-On</strong><br><sub>Latest fabric match, colour palette, recommended dresses &amp; saved styles</sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/profile.png" alt="FabricFit Profile" width="215"><br><strong>6. Profile</strong><br><sub>Deep Forest dark luxury profile, avatar, stats &amp; wardrobe menu</sub></td>
   </tr>
 </table>
@@ -216,7 +216,7 @@ mockups.
 3. **Capture Fabric ([`create.png`](FabricFit/docs/screenshots/create.png) → `CreateScreen.kt` & `CameraScreen.kt`)**
    - Uses dark forest chrome (`#0A2B20`) to eliminate glare while inspecting textile threads.
    - Pairs a macro Kente viewfinder frame with a **Photo · Sample · ● Scan** mode indicator, a quick-access swatch gallery thumbnail, a double-ring shutter button, and a sample-fabric switcher.
-4. **Try-On / Saved Looks ([`favourites.png`](FabricFit/docs/screenshots/favourites.png) → `FavoritesScreen.kt` & `FabricDetailScreen.kt`)**
+4. **Try-On ([`favourites.png`](FabricFit/docs/screenshots/favourites.png) → `FavoritesScreen.kt` & `FabricDetailScreen.kt`)**
    - Summarises the identified weave (**Kente Royalty**) alongside a high-contrast match pill (the percentage is computed from the scan; `98% Match` is what the demo fabric scores) and four extracted colour swatches (forest green, deep burgundy, royal gold, Kente crimson).
    - Provides a segmented **Colors · Pattern · Style** inspector, a **Recommended Dresses** horizontal carousel with star ratings and review counts, and a full-width gold-on-forest **View All Recommendations** CTA.
 5. **Discover ([`discover.png`](FabricFit/docs/screenshots/discover.png) → `DiscoverScreen.kt` & `RecommendationsScreen.kt`)**

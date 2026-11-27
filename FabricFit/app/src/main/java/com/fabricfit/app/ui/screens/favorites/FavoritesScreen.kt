@@ -214,12 +214,13 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
-            // Top bar: Favourites + profile avatar.
+            // Top bar: Try-On + profile avatar.
             //
             // This is a bottom-nav destination, not a pushed screen, so it gets no
-            // back arrow - the tab bar is the way out. It also used to read "Scan
-            // Results", which is the name of a different screen (the fabric analysis
-            // result) and made the tab look like it had opened the wrong place.
+            // back arrow - the tab bar is the way out. The header reads the same
+            // string as the tab that opens it: it used to be hardcoded "Scan
+            // Results", which is a different screen (the fabric analysis result), so
+            // the tab looked like it had opened the wrong place.
             item {
                 Row(
                     Modifier
@@ -228,7 +229,7 @@ fun FavoritesScreen(nav: NavHostController, padding: PaddingValues) {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        stringResource(R.string.nav_favorites),
+                        stringResource(R.string.nav_tryon),
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground,
