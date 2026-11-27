@@ -471,6 +471,11 @@ jobs:
     timeout-minutes: 35
     permissions:
       contents: write
+    # The emulator on the hosted runner dies mid-capture intermittently ("device offline",
+    # then "device not found" with no emulator left to retry against). The capture script
+    # emits ::error:: annotations for every failure, so a broken *script* still shows up
+    # loudly; this only stops an emulator crash from painting the whole run red.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
 
