@@ -1,152 +1,176 @@
 {
-  "version": 1,
-  "note": "Brand illustrations in the house flat-vector style (brand palette on cream). They are honest style examples, not AI renders of the user's fabric. All 12 entries replace earlier web-sourced reference photos.",
-  "looks": [
-    {
-      "id": "look_kente_women_1",
-      "title_key": "look_kente_women_1",
-      "gender": "WOMEN",
-      "fabrics": [
-        "KENTE",
-        "KENTE_PRINT"
-      ],
-      "asset": "catalog/looks/look_kente_women_1.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_kente_women_2",
-      "title_key": "look_kente_women_2",
-      "gender": "WOMEN",
-      "fabrics": [
-        "KENTE",
-        "KENTE_PRINT"
-      ],
-      "asset": "catalog/looks/look_kente_women_2.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_kente_men_1",
-      "title_key": "look_kente_men_1",
-      "gender": "MEN",
-      "fabrics": [
-        "KENTE",
-        "KENTE_PRINT"
-      ],
-      "asset": "catalog/looks/look_kente_men_1.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_kente_men_2",
-      "title_key": "look_kente_men_2",
-      "gender": "MEN",
-      "fabrics": [
-        "KENTE",
-        "KENTE_PRINT"
-      ],
-      "asset": "catalog/looks/look_kente_men_2.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_lace_women_1",
-      "title_key": "look_lace_women_1",
-      "gender": "WOMEN",
-      "fabrics": [
-        "LACE",
-        "BROCADE"
-      ],
-      "asset": "catalog/looks/look_lace_women_1.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_lace_women_2",
-      "title_key": "look_lace_women_2",
-      "gender": "WOMEN",
-      "fabrics": [
-        "LACE",
-        "BROCADE"
-      ],
-      "asset": "catalog/looks/look_lace_women_2.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_smock_men_1",
-      "title_key": "look_smock_men_1",
-      "gender": "MEN",
-      "fabrics": [
-        "COTTON_PLAIN",
-        "LINEN",
-        "KENTE",
-        "FUGU",
-        "GONJA"
-      ],
-      "asset": "catalog/looks/look_smock_men_1.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_smock_men_2",
-      "title_key": "look_smock_men_2",
-      "gender": "MEN",
-      "fabrics": [
-        "COTTON_PLAIN",
-        "LINEN",
-        "KENTE",
-        "FUGU",
-        "GONJA"
-      ],
-      "asset": "catalog/looks/look_smock_men_2.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_ankara_women_1",
-      "title_key": "look_ankara_women_1",
-      "gender": "WOMEN",
-      "fabrics": [
-        "ANKARA",
-        "WAX",
-        "BATIK",
-        "TIEDYE"
-      ],
-      "asset": "catalog/looks/look_ankara_women_1.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_ankara_women_2",
-      "title_key": "look_ankara_women_2",
-      "gender": "WOMEN",
-      "fabrics": [
-        "ANKARA",
-        "WAX",
-        "BATIK",
-        "TIEDYE"
-      ],
-      "asset": "catalog/looks/look_ankara_women_2.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_ankara_men_1",
-      "title_key": "look_ankara_men_1",
-      "gender": "MEN",
-      "fabrics": [
-        "ANKARA",
-        "WAX",
-        "BATIK",
-        "TIEDYE"
-      ],
-      "asset": "catalog/looks/look_ankara_men_1.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    },
-    {
-      "id": "look_ankara_men_2",
-      "title_key": "look_ankara_men_2",
-      "gender": "MEN",
-      "fabrics": [
-        "ANKARA",
-        "WAX",
-        "BATIK",
-        "TIEDYE"
-      ],
-      "asset": "catalog/looks/look_ankara_men_2.jpg",
-      "source": "generated brand illustration (replaces web-sourced photo)"
-    }
-  ]
+ "version": 1,
+ "note": "Editorial photography generated for this catalogue. Each look names the fabrics it suits, so the recommender can match a scanned fabric to a look. These are style examples, not a render of the user's own fabric.",
+ "looks": [
+  {
+   "id": "look_kente_women_1",
+   "title_key": "look_kente_women_1",
+   "gender": "WOMEN",
+   "fabrics": [
+    "KENTE",
+    "KENTE_PRINT"
+   ],
+   "asset": "catalog/looks/look_kente_women_1.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/women_kente_01.jpg",
+   "scene": "Ankara & kente editorial"
+  },
+  {
+   "id": "look_kente_women_2",
+   "title_key": "look_kente_women_2",
+   "gender": "WOMEN",
+   "fabrics": [
+    "KENTE",
+    "KENTE_PRINT"
+   ],
+   "asset": "catalog/looks/look_kente_women_2.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/women_kaftan_01.jpg",
+   "scene": "Kaftan editorial"
+  },
+  {
+   "id": "look_kente_men_1",
+   "title_key": "look_kente_men_1",
+   "gender": "MEN",
+   "fabrics": [
+    "KENTE",
+    "KENTE_PRINT"
+   ],
+   "asset": "catalog/looks/look_kente_men_1.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/men_kente_01.jpg",
+   "scene": "Kente kaftan editorial"
+  },
+  {
+   "id": "look_kente_men_2",
+   "title_key": "look_kente_men_2",
+   "gender": "MEN",
+   "fabrics": [
+    "KENTE",
+    "KENTE_PRINT"
+   ],
+   "asset": "catalog/looks/look_kente_men_2.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/men_agbada_01.jpg",
+   "scene": "Agbada editorial"
+  },
+  {
+   "id": "look_lace_women_1",
+   "title_key": "look_lace_women_1",
+   "gender": "WOMEN",
+   "fabrics": [
+    "LACE",
+    "BROCADE"
+   ],
+   "asset": "catalog/looks/look_lace_women_1.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/women_lace_01.jpg",
+   "scene": "Lace gown editorial"
+  },
+  {
+   "id": "look_lace_women_2",
+   "title_key": "look_lace_women_2",
+   "gender": "WOMEN",
+   "fabrics": [
+    "LACE",
+    "BROCADE"
+   ],
+   "asset": "catalog/looks/look_lace_women_2.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/women_lace_01.jpg",
+   "scene": "Lace gown editorial"
+  },
+  {
+   "id": "look_smock_men_1",
+   "title_key": "look_smock_men_1",
+   "gender": "MEN",
+   "fabrics": [
+    "COTTON_PLAIN",
+    "LINEN",
+    "KENTE",
+    "FUGU",
+    "GONJA"
+   ],
+   "asset": "catalog/looks/look_smock_men_1.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/men_smock_01.jpg",
+   "scene": "Batakari smock editorial"
+  },
+  {
+   "id": "look_smock_men_2",
+   "title_key": "look_smock_men_2",
+   "gender": "MEN",
+   "fabrics": [
+    "COTTON_PLAIN",
+    "LINEN",
+    "KENTE",
+    "FUGU",
+    "GONJA"
+   ],
+   "asset": "catalog/looks/look_smock_men_2.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/men_smock_01.jpg",
+   "scene": "Batakari smock editorial"
+  },
+  {
+   "id": "look_ankara_women_1",
+   "title_key": "look_ankara_women_1",
+   "gender": "WOMEN",
+   "fabrics": [
+    "ANKARA",
+    "WAX",
+    "BATIK",
+    "TIEDYE"
+   ],
+   "asset": "catalog/looks/look_ankara_women_1.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/women_ankara_01.jpg",
+   "scene": "Ankara peplum editorial"
+  },
+  {
+   "id": "look_ankara_women_2",
+   "title_key": "look_ankara_women_2",
+   "gender": "WOMEN",
+   "fabrics": [
+    "ANKARA",
+    "WAX",
+    "BATIK",
+    "TIEDYE"
+   ],
+   "asset": "catalog/looks/look_ankara_women_2.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/women_ankara_01.jpg",
+   "scene": "Ankara peplum editorial"
+  },
+  {
+   "id": "look_ankara_men_1",
+   "title_key": "look_ankara_men_1",
+   "gender": "MEN",
+   "fabrics": [
+    "ANKARA",
+    "WAX",
+    "BATIK",
+    "TIEDYE"
+   ],
+   "asset": "catalog/looks/look_ankara_men_1.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/men_smock_01.jpg",
+   "scene": "Indigo stripe editorial"
+  },
+  {
+   "id": "look_ankara_men_2",
+   "title_key": "look_ankara_men_2",
+   "gender": "MEN",
+   "fabrics": [
+    "ANKARA",
+    "WAX",
+    "BATIK",
+    "TIEDYE"
+   ],
+   "asset": "catalog/looks/look_ankara_men_2.jpg",
+   "source": "AI-generated editorial photography (generated for this catalogue)",
+   "photo": "catalog/photos/men_kente_01.jpg",
+   "scene": "Kente kaftan editorial"
+  }
+ ]
 }

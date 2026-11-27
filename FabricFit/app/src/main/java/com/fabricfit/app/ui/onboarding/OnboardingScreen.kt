@@ -80,6 +80,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.graphics.graphicsLayer
 
 private data class Page(
     @DrawableRes val illustration: Int?,
@@ -501,68 +511,151 @@ fun ProfileAvatarImage(
 
 @Composable
 private fun WelcomeDarkPage() {
+    // Shopping-app welcome: a real editorial photo carries the screen, and the copy sits
+    // on a cream card above it. Everything fades and rises in on first frame so the app
+    // feels alive the moment it opens.
+    var shown by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        withFrameNanos { }
+        shown = true
+    }
+    val rise by animateDpAsState(
+        targetValue = if (shown) 0.dp else 28.dp,
+        animationSpec = tween(durationMillis = 620, easing = FastOutSlowInEasing),
+        label = "welcomeRise",
+    )
+    val fade by animateFloatAsState(
+        targetValue = if (shown) 1f else 0f,
+        animationSpec = tween(durationMillis = 620, easing = FastOutSlowInEasing),
+        label = "welcomeFade",
+    )
+
     Box(
         Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    listOf(
-                        HeritageForestDark,
-                        HeritageForest,
-                        Color(0xFF083023),
+            .background(HeritageCream),
+    ) {
+        // Full-bleed editorial photograph.
+        AssetImage(
+            asset = "catalog/photos/women_kente_01.jpg",
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize(),
+        )
+        // Cream wash at the top so the wordmark always has contrast; photo stays visible.
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.42f)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(
+                            HeritageCream.copy(alpha = 0.97f),
+                            HeritageCream.copy(alpha = 0.86f),
+                            HeritageCream.copy(alpha = 0f),
+                        ),
                     ),
                 ),
-            ),
-    ) {
+        )
+
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(horizontal = 26.dp)
+                .offset(y = rise),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(26.dp))
 
-            // Brand mark — gold adinkra monogram
-            HeritageLuxeMark(modifier = Modifier.size(116.dp))
+            // Compact mark, top-left of the editorial header.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = HeritageForest,
+                    modifier = Modifier.size(46.dp),
+                ) {
+                    HeritageLuxeMark(modifier = Modifier.fillMaxSize().padding(7.dp))
+                }
+                Spacer(Modifier.width(10.dp))
+                Text(
+                    stringResource(R.string.onboarding_brand_heritage_luxe),
+                    fontFamily = FontFamily.Serif,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp,
+                    color = HeritageForestDark,
+                )
+                Spacer(Modifier.weight(1f))
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = HeritageGold.copy(alpha = 0.18f),
+                ) {
+                    Text(
+                        stringResource(R.string.onboarding_brand_badge),
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = HeritageForestDark,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                    )
+                }
+            }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(22.dp))
 
-            // Wordmark — "Heritage Luxe" in royal gold serif
             Text(
-                stringResource(R.string.onboarding_brand_heritage_luxe),
+                stringResource(R.string.onboarding_welcome_headline),
                 fontFamily = FontFamily.Serif,
                 fontWeight = FontWeight.Bold,
-                fontSize = 44.sp,
-                color = HeritageGold,
-                textAlign = TextAlign.Center,
-                lineHeight = 48.sp,
-                modifier = Modifier.padding(horizontal = 24.dp),
+                fontSize = 38.sp,
+                lineHeight = 42.sp,
+                color = HeritageForestDark,
+                modifier = Modifier.fillMaxWidth(),
             )
-
             Spacer(Modifier.height(10.dp))
-
-            // Tagline — "Scan. Discover. Try. Wear."
             Text(
-                stringResource(R.string.app_tagline),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontFamily = FontFamily.SansSerif,
-                    fontWeight = FontWeight.Normal,
-                ),
-                color = HeritageCream,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 24.dp),
-            )
-
-            Spacer(Modifier.height(20.dp))
-
-            // Stacked Kente textile folds hero
-            AssetImage(
-                asset = "catalog/heritage/hero_kente_folds.jpg",
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                stringResource(R.string.onboarding_welcome_sub),
+                fontSize = 15.sp,
+                lineHeight = 21.sp,
+                color = HeritageForestDark.copy(alpha = 0.72f),
+                modifier = Modifier.fillMaxWidth(),
             )
         }
+
+        // Credential strip pinned near the bottom, over the photo.
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(horizontal = 26.dp, vertical = 18.dp)
+                .graphicsLayer { alpha = fade },
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                WelcomeProofChip(R.string.onboarding_proof_offline)
+                WelcomeProofChip(R.string.onboarding_proof_tryon)
+                WelcomeProofChip(R.string.onboarding_proof_free)
+            }
+        }
+    }
+}
+
+@Composable
+private fun WelcomeProofChip(@StringRes text: Int) {
+    Surface(
+        shape = RoundedCornerShape(50),
+        color = HeritageForestDark.copy(alpha = 0.82f),
+    ) {
+        Text(
+            stringResource(text),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium,
+            color = HeritageCream,
+            maxLines = 1,
+            modifier = Modifier.padding(horizontal = 11.dp, vertical = 6.dp),
+        )
     }
 }
 
