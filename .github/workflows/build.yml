@@ -555,9 +555,13 @@ jobs:
             exit 0
           fi
           git commit -m "ci: refresh README screenshots [skip ci]"
-          if git push 2>push.log; then
-            echo "Pushed refreshed screenshots."
+          # The checkout is detached at the triggering SHA, so a bare `git push` has no
+          # upstream and always failed: these captures could never land, only be uploaded
+          # as an artifact. Push explicitly onto the branch that triggered the run.
+          branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          if git push origin "HEAD:refs/heads/${branch}" 2>push.log; then
+            echo "Pushed refreshed screenshots to ${branch}."
           else
             echo "::warning title=SCREENSHOTS NOT PUSHED::$(tr '\n' ' ' < push.log | head -c 800)"
-            echo "Captures are still attached to this run as the 'readme-screens' artifact."
+            echo "Captures are still attached to this run as the 'fabricfit-readme-screens' artifact."
           fi
