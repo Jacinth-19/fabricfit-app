@@ -348,6 +348,8 @@ signed APK locally: `./gradlew :app:assembleRelease` →
 
 Full build instructions, release signing, and verification notes: [`FabricFit/BUILD.md`](FabricFit/BUILD.md).
 
+Regenerating the store promo videos, and how a posted clip is transcoded on device: [`FabricFit/docs/VIDEO.md`](FabricFit/docs/VIDEO.md).
+
 ## Ghanaian Languages (`i18n`)
 
 FabricFit ships with **829 strings** in each of **English**, **Twi (`tw`)**, **Ga (`gaa`)** and **Ewe (`ee`)** — four complete locale files, not English with a few words swapped (the locales differ from each other in ~95% of strings). Translation packs live in `FabricFit/tools/i18n/`; validate and regenerate the XML resources with:
