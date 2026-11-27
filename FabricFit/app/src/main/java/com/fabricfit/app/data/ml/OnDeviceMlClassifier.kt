@@ -79,9 +79,11 @@ class OnDeviceMlClassifier(
      */
     private val imagenetOutputQuantisation: Pair<Float, Int>? by lazy {
         runCatching {
-            val details = oodInterpreter?.getOutputDetails()?.firstOrNull() ?: return@runCatching null
-            val params = details.quantizationParams
-            if (params == null || params.scale <= 0f) null else params.scale to params.zeroPoint
+            // Java API: Interpreter.getOutputTensor(i).quantizationParams(). (The Python
+            // binding calls this get_output_details(); the Kotlin binding does not.)
+            val params = oodInterpreter?.getOutputTensor(0)?.quantizationParams()
+                ?: return@runCatching null
+            if (params.getScale() <= 0f) null else params.getScale() to params.getZeroPoint()
         }.getOrNull()
     }
 
