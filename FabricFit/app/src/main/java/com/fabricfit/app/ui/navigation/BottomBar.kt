@@ -1,8 +1,11 @@
 package com.fabricfit.app.ui.navigation
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -36,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -85,17 +89,34 @@ internal fun FabricFitBottomBar(
     modifier: Modifier = Modifier,
 ) {
     val isDarkChrome = currentRoute == Routes.PROFILE || currentRoute == Routes.CREATE
-    val barColor = if (isDarkChrome) HeritageForestDark else MaterialTheme.colorScheme.surface
 
-    Surface(
-        // Edge-to-edge layouts draw underneath Android's 3-button navigation bar.
-        // Keep every tab above that system area while extending the bar colour
-        // behind it; Scaffold also includes this height in the content padding.
-        modifier = modifier.navigationBarsPadding(),
-        color = barColor,
-        tonalElevation = if (isDarkChrome) 0.dp else 8.dp,
-        shadowElevation = 8.dp,
+    // Floating bar rather than an edge-to-edge strip: it lets content scroll beneath a
+    // rounded surface, which reads as a modern shopping app instead of a system tab bar.
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(start = 14.dp, end = 14.dp, bottom = 10.dp),
     ) {
+        Surface(
+            shape = RoundedCornerShape(26.dp),
+            color = if (isDarkChrome) {
+                HeritageForestDark.copy(alpha = 0.97f)
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerLowest.copy(alpha = 0.98f)
+            },
+            border = BorderStroke(
+                1.dp,
+                if (isDarkChrome) {
+                    HeritageGold.copy(alpha = 0.30f)
+                } else {
+                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+                },
+            ),
+            shadowElevation = 12.dp,
+            tonalElevation = 0.dp,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
         androidx.compose.runtime.CompositionLocalProvider(
             androidx.compose.ui.platform.LocalDensity provides
                 androidx.compose.ui.unit.Density(
@@ -132,6 +153,7 @@ internal fun FabricFitBottomBar(
                     }
                 }
             }
+            }
         }
     }
 }
@@ -147,10 +169,19 @@ private fun StandardTab(
     val label = stringResource(tab.labelRes)
     val tint = when {
         darkChrome && selected -> Color.White
-        darkChrome -> HeritageCream.copy(alpha = 0.65f)
+        darkChrome -> HeritageCream.copy(alpha = 0.62f)
         selected -> MaterialTheme.colorScheme.primary
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
+
+    // Selection is a shared movement, not a swap: the icon lifts and the label fades in,
+    // both on the same spring, so switching tabs reads as one gesture.
+    val selection by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
+        animationSpec = spring(dampingRatio = 0.72f, stiffness = Spring.StiffnessMediumLow),
+        label = "tabSelection",
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -164,19 +195,37 @@ private fun StandardTab(
                 role = Role.Tab
                 this.selected = selected
             }
-            .padding(vertical = 6.dp),
+            .padding(vertical = 5.dp),
     ) {
-        Icon(
-            imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
-            contentDescription = null,
-            tint = tint,
-            modifier = Modifier.size(26.dp),
-        )
+        Box(contentAlignment = Alignment.Center) {
+            // Soft gold halo behind the active tab.
+            Box(
+                Modifier
+                    .size(width = 42.dp, height = 26.dp)
+                    .graphicsLayer { alpha = selection * 0.18f }
+                    .background(MaterialTheme.colorScheme.primary, CircleShape),
+            )
+            Icon(
+                imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
+                contentDescription = null,
+                tint = tint,
+                modifier = Modifier
+                    .size(23.dp)
+                    .graphicsLayer {
+                        translationY = -2.dp.toPx() * selection
+                        scaleX = 1f + 0.07f * selection
+                        scaleY = 1f + 0.07f * selection
+                    },
+            )
+        }
         Text(
             label,
             style = MaterialTheme.typography.labelSmall,
             color = tint,
-            modifier = Modifier.padding(top = 3.dp),
+            maxLines = 1,
+            modifier = Modifier
+                .padding(top = 2.dp)
+                .graphicsLayer { alpha = 0.55f + 0.45f * selection },
         )
     }
 }
@@ -201,12 +250,17 @@ private fun CameraTab(
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(60.dp)
+                .size(58.dp)
                 .graphicsLayer {
                     scaleX = scale
                     scaleY = scale
                 }
-                .background(HeritageForest, CircleShape)
+                .background(
+                    Brush.verticalGradient(
+                        listOf(HeritageForest, HeritageForestDark),
+                    ),
+                    CircleShape,
+                )
                 .border(
                     width = if (selected) 2.dp else 1.2.dp,
                     color = if (selected) {
