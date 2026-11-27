@@ -542,18 +542,18 @@ private fun WelcomeDarkPage() {
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize(),
         )
-        // Cream wash at the top so the wordmark always has contrast; photo stays visible.
+        // Cream wash behind the copy so it stays readable wherever the photo is busy.
+        // It fades out above the model's waist, leaving the dress unobstructed.
         Box(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.42f)
+                .fillMaxHeight(0.58f)
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            HeritageCream.copy(alpha = 0.97f),
-                            HeritageCream.copy(alpha = 0.86f),
-                            HeritageCream.copy(alpha = 0f),
-                        ),
+                        0f to HeritageCream.copy(alpha = 0.99f),
+                        0.45f to HeritageCream.copy(alpha = 0.95f),
+                        0.78f to HeritageCream.copy(alpha = 0.55f),
+                        1f to HeritageCream.copy(alpha = 0f),
                     ),
                 ),
         )
