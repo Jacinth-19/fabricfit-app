@@ -64,6 +64,7 @@ import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.permissions.rememberCameraPermission
+import com.fabricfit.app.ui.components.heroCarry
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.FirstRunTooltip
 import com.fabricfit.app.ui.components.SampleFabrics
@@ -179,6 +180,7 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(320.dp)
+                            .heroCarry(strength = 0.09f, driftDp = 14)
                             .clip(RoundedCornerShape(22.dp))
                             .border(
                                 width = 1.dp,

@@ -375,7 +375,7 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                             EditorialRibbon(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .revealOnEnter()
+                                    .revealOnEnter(order = 0)
                                     .padding(bottom = 2.dp),
                             )
                         }

@@ -78,6 +78,7 @@ import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.SectionHeader
+import com.fabricfit.app.ui.components.heroCarry
 import com.fabricfit.app.ui.components.revealOnEnter
 import com.fabricfit.app.ui.components.ShimmerCard
 import com.fabricfit.app.ui.components.ensureSampleKenteFabric
@@ -137,7 +138,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             item {
                 Column(
                     Modifier
-                        .revealOnEnter()
+                        .revealOnEnter(order = 0)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .padding(top = 14.dp),
@@ -208,7 +209,8 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(216.dp),
+                            .height(216.dp)
+                            .heroCarry(),
                     ) {
                         Box(Modifier.fillMaxSize()) {
                             AssetImage(
@@ -292,7 +294,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             item {
                 Row(
                     Modifier
-                        .revealOnEnter(delayMillis = 90)
+                        .revealOnEnter(order = 2)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .padding(top = 22.dp, bottom = 12.dp),

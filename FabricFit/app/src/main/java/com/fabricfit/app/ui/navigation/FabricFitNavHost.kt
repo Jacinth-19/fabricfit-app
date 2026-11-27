@@ -12,7 +12,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import com.fabricfit.app.ui.components.MotionPhase
+import com.fabricfit.app.ui.components.MotionSpec
+import com.fabricfit.app.ui.components.MotionTimeline
+import kotlinx.coroutines.launch
 import com.fabricfit.app.ui.screens.create.CameraScreen
 import com.fabricfit.app.ui.screens.create.CreateScreen
 import com.fabricfit.app.ui.screens.create.EditImageScreen
@@ -96,7 +106,33 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
             }
         },
     ) { padding ->
-        FabricFitNavHost(navController, padding)
+        // One timeline for the whole app. A forward navigation runs `settled` 0 -> 1 and
+        // every screen animates from that same value, so the incoming page's rows and its
+        // hero land together, and the outgoing page recedes on the same curve.
+        val settled = remember { Animatable(1f) }
+        var direction by remember { mutableStateOf(1) }
+        var depth by remember { mutableStateOf(navController.currentBackStack.value.size) }
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(backStack?.destination?.route) {
+            // Only animate when the destination actually changed, not on recomposition.
+            val now = navController.currentBackStack.value.size
+            direction = if (now >= depth) 1 else -1
+            depth = now
+            scope.launch {
+                settled.snapTo(0f)
+                settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))
+            }
+        }
+
+        val phase = MotionPhase(
+            settled = settled.value,
+            direction = direction,
+            route = currentRoute,
+        )
+        MotionTimeline(phase) {
+            FabricFitNavHost(navController, padding)
+        }
     }
 }
 
