@@ -64,6 +64,7 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.GenderCategory
+import com.fabricfit.app.ui.components.EditorialRibbon
 import com.fabricfit.app.ui.components.revealOnEnter
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.ui.components.AssetImage
