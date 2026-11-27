@@ -111,14 +111,23 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
         // hero land together, and the outgoing page recedes on the same curve.
         val settled = remember { Animatable(1f) }
         var direction by remember { mutableStateOf(1) }
+        var previousKey by remember { mutableStateOf<String?>(null) }
         var depth by remember { mutableStateOf(navController.currentBackStack.value.size) }
         val scope = rememberCoroutineScope()
 
         LaunchedEffect(backStack?.destination?.route) {
             // Only animate when the destination actually changed, not on recomposition.
+            val key = backStack?.destination?.route
+            if (key == previousKey) return@LaunchedEffect
+            previousKey = key
+
+            // Depth decides push vs pop. A pop lands on a shorter stack, so the incoming
+            // page enters from the left and the outgoing page recedes to the right -
+            // mirroring the push, which is what makes back feel like undoing forward.
             val now = navController.currentBackStack.value.size
             direction = if (now >= depth) 1 else -1
             depth = now
+
             scope.launch {
                 settled.snapTo(0f)
                 settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))

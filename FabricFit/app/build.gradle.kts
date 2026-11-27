@@ -134,6 +134,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.common)
     
     // Google Fonts for custom branded typography (version comes from the Compose BOM)
     implementation(libs.androidx.compose.ui.text.google.fonts)

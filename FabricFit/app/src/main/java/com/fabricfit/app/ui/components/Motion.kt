@@ -140,26 +140,31 @@ fun Modifier.heroCarry(
 ): Modifier {
     val leaving = 1f - phase.settled
     val scale = 1f + leaving * strength
-    val drift = leaving * driftDp.dp.toPx() * phase.direction
+    // toPx() needs a Density receiver, which only exists inside the graphicsLayer draw
+    // scope - so the dp value is carried in and converted there.
+    val driftDpValue = leaving * driftDp * phase.direction
     return this.graphicsLayer {
         scaleX = scale
         scaleY = scale
+        val drift = driftDpValue.dp.toPx()
         translationY = -drift * 0.4f
         translationX = drift * 0.15f
     }
 }
 
 /**
- * The outgoing page's half of the movement: it recedes a few dp in the opposite direction
- * to the incoming page, which is what stops the two screens reading as a plain crossfade.
+ * The page-level half of the movement: the surface recedes a few dp while it is entering,
+ * against the direction of travel. Applied to the destination root it gives every screen
+ * the same sense of being pushed into place, which is what stops navigation reading as a
+ * plain crossfade.
  */
 @Composable
 fun Modifier.pageParallax(
     phase: MotionPhase = LocalMotionPhase.current,
 ): Modifier {
-    val leaving = 1f - phase.settled
-    val px = (leaving * MotionSpec.PAGE_PARALLAX_DP).dp.toPx() * phase.direction
-    return this.graphicsLayer { translationX = -px }
+    val travelling = 1f - phase.settled
+    val pxDp = travelling * MotionSpec.PAGE_PARALLAX_DP * phase.direction
+    return this.graphicsLayer { translationX = pxDp.dp.toPx() }
 }
 
 /**
