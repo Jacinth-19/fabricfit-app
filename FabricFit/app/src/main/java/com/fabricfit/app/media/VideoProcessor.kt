@@ -4,8 +4,17 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.util.Log
+import androidx.media3.common.MediaItem
+import androidx.media3.transformer.Composition
+import androidx.media3.transformer.EditedMediaItem
+import androidx.media3.transformer.ExportException
+import androidx.media3.transformer.ExportResult
+import androidx.media3.transformer.Transformer
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
 import java.io.File
 import java.util.UUID
 
@@ -14,42 +23,117 @@ import java.util.UUID
  */
 object VideoProcessor {
 
+    private const val TAG = "VideoProcessor"
+
+    /** Hard cap on what we will upload from the feed composer. */
+    private const val CLIP_LIMIT_MS = 3 * 60 * 1000L
+
     /**
-     * Copy a picked video into the app cache so the publish flow owns a stable
-     * file for the lifetime of the post.
+     * Transcode a picked video into the app cache so the publish flow owns a stable,
+     * predictably-sized file for the lifetime of the post.
      *
-     * NOTE: transcoding used to run through FFmpegKit (`com.arthenica:ffmpeg-kit`),
-     * which is no longer published to Maven Central and cannot be resolved by a
-     * clean build. Until the app moves to `androidx.media3` Transformer, this
-     * copies the source bytes rather than re-encoding them, so [quality] is
-     * accepted for call-site compatibility but has no effect yet.
+     * Uses Media3 Transformer rather than the old FFmpegKit path: ffmpeg-kit is no longer
+     * published to Maven Central, so that dependency could not resolve on a clean build,
+     * and the previous implementation quietly degraded to copying the source bytes.
      *
-     * @param context Application context
-     * @param inputUri Source video URI
-     * @param quality Reserved for the future transcode pass (0-100, default 70)
-     * @return Cached video file, or null if it could not be read
+     * The video is genuinely re-encoded (H.264/MP4), which is the whole point: the old
+     * implementation copied bytes and its [quality] argument did nothing.
+     *
+     * [quality] is accepted for call-site compatibility but currently has no effect —
+     * Transformer 1.4.x has no stable per-request bitrate knob, and setting encoder
+     * options here would tie the app to one Media3 minor version. It is used only to
+     * decide whether to attempt a transcode at all, so passing 0 skips re-encoding.
+     *
+     * If the device cannot transform the file (unsupported codec, corrupt input), this
+     * falls back to copying the source bytes rather than failing the post — the caller
+     * still gets a playable file. [wasTranscoded] on the result says which happened, so
+     * the UI can be honest instead of guessing.
      */
     suspend fun prepareForUpload(
         context: Context,
         inputUri: Uri,
         quality: Int = 70,
-    ): File? = withContext(Dispatchers.IO) {
-        try {
-            val outputFile = File(
-                context.cacheDir,
-                "prepared_${UUID.randomUUID()}.mp4"
-            )
-            val input = context.contentResolver.openInputStream(inputUri)
-                ?: return@withContext null
-            input.use { stream ->
-                outputFile.outputStream().use { out -> stream.copyTo(out) }
-            }
-            outputFile
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    ): PreparedVideo? = withContext(Dispatchers.IO) {
+        val target = File(context.cacheDir, "prepared_${UUID.randomUUID()}.mp4")
+
+        val transformed = if (quality <= 0) {
+            false
+        } else {
+            runCatching { transcode(context, inputUri, target) }.getOrDefault(false)
+        }
+
+        if (transformed && target.length() > 0L) {
+            PreparedVideo(target, wasTranscoded = true)
+        } else {
+            // Keep the fallback: a post that cannot be re-encoded is still worth posting.
+            runCatching { target.delete() }
+            val copied = copySource(context, inputUri)
+            copied?.let { PreparedVideo(it, wasTranscoded = false) }
         }
     }
+
+    /**
+     * Runs the Transformer to completion.
+     *
+     * Transformer reports through callbacks, so this bridges them onto a coroutine instead
+     * of blocking a thread on a latch. Returns true only when the output exists and has
+     * content.
+     *
+     * Deliberately minimal: it uses the stable Transformer 1.4.x API (start(EditedMediaItem,
+     * path)) and does not attempt to set encoder options, because the per-encoder settings
+     * API moved between 1.3 and 1.5. Transformer picks H.264 with a sensible bitrate from
+     * the input, which is the behaviour we want on the widest range of devices.
+     */
+    private suspend fun transcode(
+        context: Context,
+        inputUri: Uri,
+        target: File,
+    ): Boolean = suspendCancellableCoroutine { cont ->
+        val transformer = Transformer.Builder(context)
+            .addListener(object : Transformer.Listener {
+                override fun onCompleted(composition: Composition, exportResult: ExportResult) {
+                    if (cont.isActive) cont.resume(target.length() > 0L)
+                }
+
+                override fun onError(
+                    composition: Composition,
+                    exportResult: ExportResult,
+                    exportException: ExportException,
+                ) {
+                    // Reported as false, never thrown: the caller falls back to a copy.
+                    Log.w(TAG, "transcode failed, falling back to a byte copy", exportException)
+                    if (cont.isActive) cont.resume(false)
+                }
+            })
+            .build()
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(inputUri)
+            // Cap the length so a stray hour-long pick cannot hold the composer hostage.
+            .setClippingConfiguration(
+                MediaItem.ClippingConfiguration.Builder()
+                    .setEndPositionMs(CLIP_LIMIT_MS)
+                    .build(),
+            )
+            .build()
+
+        runCatching {
+            transformer.start(EditedMediaItem.Builder(mediaItem).build(), target.absolutePath)
+        }.onFailure { failure ->
+            Log.w(TAG, "could not start transform", failure)
+            if (cont.isActive) cont.resume(false)
+        }
+
+        cont.invokeOnCancellation { runCatching { transformer.cancel() } }
+    }
+
+    /** The old behaviour, retained only as a fallback. */
+    private fun copySource(context: Context, inputUri: Uri): File? = runCatching {
+        val output = File(context.cacheDir, "prepared_${UUID.randomUUID()}.mp4")
+        val input = context.contentResolver.openInputStream(inputUri) ?: return null
+        input.use { stream -> output.outputStream().use { out -> stream.copyTo(out) } }
+        output
+    }.getOrNull()
 
     /**
      * Generate thumbnail from video at specified time.
@@ -156,6 +240,18 @@ object VideoProcessor {
         }
     }
 }
+
+/**
+ * A staged video ready to publish.
+ *
+ * [wasTranscoded] is false when the file is a byte-for-byte copy of the picker's source
+ * because the device could not re-encode it. Callers should not claim compression happened
+ * when this is false.
+ */
+data class PreparedVideo(
+    val file: File,
+    val wasTranscoded: Boolean,
+)
 
 /**
  * Video metadata information.

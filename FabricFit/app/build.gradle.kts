@@ -135,6 +135,10 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.navigation.common)
+    // Replaces the discontinued FFmpegKit for video transcoding (see media/VideoProcessor.kt).
+    implementation(libs.androidx.media3.transformer)
+    implementation(libs.androidx.media3.effect)
+    implementation(libs.androidx.media3.common)
     
     // Google Fonts for custom branded typography (version comes from the Compose BOM)
     implementation(libs.androidx.compose.ui.text.google.fonts)
@@ -176,9 +180,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit)
-    // The framework org.json is a stub that returns defaults in unit tests, which makes
-    // JSON parsing silently return null. Use the real implementation for tests.
-    testImplementation("org.json:json:20240303")
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.robolectric)

@@ -211,8 +211,9 @@ class CloudRecommendationClient(
             else RecommendationResponse(scored, root.optString("modelVersion").takeIf { it.isNotBlank() })
         }.onFailure { failure ->
             // Swallowing this silently is what made a missing JSON implementation look like
-            // "the backend returned nothing" during development.
-            android.util.Log.w(TAG, "recommendation reply could not be parsed", failure)
+            // "the backend returned nothing" during development. Wrapped in runCatching
+            // because android.util.Log is a stub in plain JVM tests.
+            runCatching { android.util.Log.w(TAG, "recommendation reply could not be parsed", failure) }
         }.getOrNull()
     }
 

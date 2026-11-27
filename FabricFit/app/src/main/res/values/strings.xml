@@ -1163,4 +1163,6 @@
     <string name="recs_ranker_ondevice">Ranked on this device - works offline</string>
     <string name="recs_ranker_cloud">Ranked by your recommendation service</string>
     <string name="recs_ranker_cloud_failed">Recommendation service unreachable - showing on-device ranking</string>
+    <string name="post_video_optimised">Optimised for upload</string>
+    <string name="post_video_original">Original file — could not be re-encoded</string>
 </resources>

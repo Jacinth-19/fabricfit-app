@@ -840,4 +840,6 @@
     <string name="recs_ranker_ondevice">Wofɔ̃ ɖe mɔfiame sia dzi - edzɔa dɔe le internet manɔmee</string>
     <string name="recs_ranker_cloud">Wò mɔfiame dɔwɔƒe la ɖo ɖe eŋu</string>
     <string name="recs_ranker_cloud_failed">Mɔfiame dɔwɔƒe la mele eme o - míawo ɖe mɔfiame le mɔfiame sia dzi</string>
+    <string name="post_video_optimised">Wotrɔ asi le eŋu na upload</string>
+    <string name="post_video_original">Fayl gbãtɔ — mate ŋu atrɔ asi le eŋu o</string>
 </resources>

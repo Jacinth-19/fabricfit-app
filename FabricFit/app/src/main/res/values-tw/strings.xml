@@ -840,4 +840,6 @@
     <string name="recs_ranker_ondevice">Wɔakyekyere wɔ saa fɔn yi so - ɛyɛ adwuma a intanɛt</string>
     <string name="recs_ranker_cloud">Wo ntɔkwa adwuma no na ɛkyerɛ</string>
     <string name="recs_ranker_cloud_failed">Ntɔkwa adwuma no nni hɔ - yɛde deɛ ɛwɔ fɔn no so</string>
+    <string name="post_video_optimised">Wɔasiesie ama upload</string>
+    <string name="post_video_original">Fael a ɛwɔ hɔ — wontumi nsiesie</string>
 </resources>

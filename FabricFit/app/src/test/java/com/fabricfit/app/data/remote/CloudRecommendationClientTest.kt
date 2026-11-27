@@ -11,12 +11,19 @@ import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
 /**
  * The remote ranker is optional, but when it is configured its replies are parsed without
  * crashing the app. These tests cover the hostile and malformed cases, because that is the
  * code most likely to break silently in production.
+ *
+ * Run under Robolectric so `org.json` is the real implementation. In a plain JVM unit test
+ * the framework class is a stub that returns defaults, so every parse would return null and
+ * the tests would pass or fail for the wrong reason.
  */
+@RunWith(RobolectricTestRunner::class)
 class CloudRecommendationClientTest {
 
     private val client = CloudRecommendationClient()
