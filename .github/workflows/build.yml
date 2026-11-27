@@ -33,6 +33,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
+
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -156,6 +161,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
+
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -251,6 +261,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
+
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -311,6 +326,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
@@ -459,6 +479,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6

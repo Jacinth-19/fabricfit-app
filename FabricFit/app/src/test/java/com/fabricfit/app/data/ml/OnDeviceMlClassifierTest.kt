@@ -57,4 +57,47 @@ class OnDeviceMlClassifierTest {
         assertEquals(OnDeviceMlClassifier.UncertaintyReason.CONFIDENT_TEXTILE, verdict.reason)
         assertTrue(verdict.calibratedConfidence > 0.25f)
     }
+
+    @Test
+    fun `raw top1 floor rejects near-zero scores but admits real fabric scores`() {
+        // Measured with the real mobilenet_v1 gate: fabric-mapped images score 0.289..0.988,
+        // flat colours and noise 0.016..0.711. 0.22 must sit between the two floors.
+        val labels = listOf("stole", "velvet", "wool", "laptop")
+        val tooFaint = OnDeviceMlClassifier.evaluateUncertainty(
+            floatArrayOf(0.05f, 0.04f, 0.03f, 0.02f), labels,
+        )
+        assertEquals(
+            OnDeviceMlClassifier.UncertaintyReason.LOW_TOP1_CONFIDENCE,
+            tooFaint.reason,
+        )
+        assertFalse(tooFaint.isConfidentTextile)
+
+        val realFabric = OnDeviceMlClassifier.evaluateUncertainty(
+            floatArrayOf(0.34f, 0.02f, 0.02f, 0.01f), labels,
+        )
+        assertTrue(realFabric.isConfidentTextile)
+        assertTrue(realFabric.calibratedConfidence > 0.22f)
+    }
+
+    @Test
+    fun `entropy ceiling is measured rather than guessed`() {
+        // 0.994 was chosen from the real model: bundled textiles run 0.91..0.99, noise and
+        // flat colour 0.99..1.00. A tight-but-flat top-10 distribution must be rejected.
+        val flat = listOf("stole", "velvet", "wool", "damask", "chiffon", "lace", "linen", "silk")
+        val scores = FloatArray(flat.size) { 0.62f - it * 0.002f }
+        val verdict = OnDeviceMlClassifier.evaluateUncertainty(scores, flat)
+        assertEquals(OnDeviceMlClassifier.UncertaintyReason.HIGH_ENTROPY, verdict.reason)
+        assertFalse(verdict.isConfidentTextile)
+    }
+
+    @Test
+    fun `a confident textile top1 maps to its category`() {
+        val labels = listOf("velvet", "stole", "wool", "denim")
+        val verdict = OnDeviceMlClassifier.evaluateUncertainty(
+            floatArrayOf(0.61f, 0.03f, 0.02f, 0.01f), labels,
+        )
+        assertTrue(verdict.isConfidentTextile)
+        assertEquals(FabricCategory.VELVET, verdict.category)
+        assertEquals(OnDeviceMlClassifier.UncertaintyReason.CONFIDENT_TEXTILE, verdict.reason)
+    }
 }

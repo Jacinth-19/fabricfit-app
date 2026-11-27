@@ -109,7 +109,7 @@ What the bundled models actually do:
 | Model | Role | Real? |
 | --- | --- | --- |
 | `deeplabv3_257_mv.tflite` | Person segmentation | Yes, full network |
-| `mobilenet_v2_1.0_224_quant.tflite` | Out-of-distribution gate (is this even fabric?) | Yes, full network |
+| `mobilenet_v1_1.0_224_quant.tflite` | Out-of-distribution gate (is this even fabric?) | Yes, full network (89 tensors). Weak on flat swatches - see `docs/MODELS.md`. |
 | `ghanaian_fabric_classifier.tflite` | 17-class fabric classifier | Yes — see below |
 | `selfie_segmentation.tflite` | Second segmentation pass | Small fusion net |
 | `human_parsing_5class.tflite` | Body-zone parsing | Small fusion net |
