@@ -539,15 +539,25 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit refreshed screenshots to branch
+        # Pushing back from a workflow token fails on protected branches. The captures are
+        # uploaded as an artifact regardless, so a push failure here must not fail the job
+        # - but it must say so loudly instead of swallowing the reason.
         run: |
-          set -e
-          cp ../qa-artifacts/screens/*.png docs/screenshots/
+          cp ../qa-artifacts/screens/*.png docs/screenshots/ || {
+            echo "::error title=SCREENSHOTS::no captures produced under qa-artifacts/screens"
+            exit 1
+          }
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/screenshots/
-          if ! git diff --cached --quiet; then
-            git commit -m "ci: refresh README screenshots [skip ci]"
-            git push
-          else
+          if git diff --cached --quiet; then
             echo "Screenshots unchanged, nothing to commit."
+            exit 0
+          fi
+          git commit -m "ci: refresh README screenshots [skip ci]"
+          if git push 2>push.log; then
+            echo "Pushed refreshed screenshots."
+          else
+            echo "::warning title=SCREENSHOTS NOT PUSHED::$(tr '\n' ' ' < push.log | head -c 800)"
+            echo "Captures are still attached to this run as the 'readme-screens' artifact."
           fi
