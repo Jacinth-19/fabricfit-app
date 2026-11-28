@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -34,9 +35,16 @@ class PersonSegmenterDeviceTest {
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
-    /** Loads the shipped fixture; fails loudly if the asset is missing rather than returning null. */
+    /**
+     * Loads the fixture from the *test* APK's assets, not the app's.
+     *
+     * src/androidTest/assets is packaged into the instrumentation APK
+     * (com.fabricfit.app.debug.test), so it is reachable only through the instrumentation
+     * context. ApplicationProvider returns the app under test, whose assets are the shipping
+     * ones - asking it for qa_person.jpg threw FileNotFoundException while the file was there.
+     */
     private fun photo(): Bitmap {
-        val stream = context.assets.open("qa_person.jpg")
+        val stream = InstrumentationRegistry.getInstrumentation().context.assets.open("qa_person.jpg")
         val bitmap = stream.use { BitmapFactory.decodeStream(it) }
         assertNotNull("qa_person.jpg is in androidTest/assets but could not be decoded", bitmap)
         return bitmap!!
