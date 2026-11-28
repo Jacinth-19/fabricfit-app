@@ -2,6 +2,7 @@ package com.fabricfit.app.ui.screens.community
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -249,6 +250,10 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var videoDuration by remember { mutableStateOf(0L) }
     var trimStartTime by remember { mutableStateOf(0L) }
     var trimEndTime by remember { mutableStateOf(0L) }
+    // True once the trimmer has actually rewritten the media, false while a cut is in
+    // flight or after one failed. The composer shows this rather than assuming success.
+    var trimApplied by remember { mutableStateOf(false) }
+    var isApplyingTrim by remember { mutableStateOf(false) }
     
     var showAspectRatioSelector by remember { mutableStateOf(false) }
     
@@ -685,12 +690,40 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                             onTrimComplete = { start, end ->
                                                 trimStartTime = start
                                                 trimEndTime = end
-                                                // TODO: Apply trim using VideoProcessor.trimVideo()
-                                                android.widget.Toast.makeText(
-                                                    context,
-                                                    "Video trimmed to ${end - start}ms",
-                                                    android.widget.Toast.LENGTH_SHORT
-                                                ).show()
+                                                // Actually cut the media. This used to only show a
+                                                // toast while publishing the whole clip, so the
+                                                // slider lied about what the post would contain.
+                                                scope.launch {
+                                                    isApplyingTrim = true
+                                                    val trimmed = VideoProcessor.trim(
+                                                        context = context,
+                                                        inputUri = mediaUri!!,
+                                                        startMs = start,
+                                                        endMs = end,
+                                                    )
+                                                    isApplyingTrim = false
+                                                    if (trimmed != null) {
+                                                        mediaUri = Uri.fromFile(trimmed)
+                                                        videoDuration = end - start
+                                                        trimStartTime = 0L
+                                                        trimEndTime = videoDuration
+                                                        trimApplied = true
+                                                        Toast.makeText(
+                                                            context,
+                                                            context.getString(R.string.video_trim_applied),
+                                                            Toast.LENGTH_SHORT,
+                                                        ).show()
+                                                    } else {
+                                                        // Never pretend: the post still carries
+                                                        // the full clip, so say so.
+                                                        trimApplied = false
+                                                        Toast.makeText(
+                                                            context,
+                                                            context.getString(R.string.video_trim_failed),
+                                                            Toast.LENGTH_LONG,
+                                                        ).show()
+                                                    }
+                                                }
                                             },
                                         )
                                     }

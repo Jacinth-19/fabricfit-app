@@ -1132,6 +1132,8 @@
     <string name="video_trim_duration">Duration: %s</string>
     <string name="video_trim_reset">Reset</string>
     <string name="video_trim_apply">Apply Trim</string>
+    <string name="video_trim_applied">Trim applied</string>
+    <string name="video_trim_failed">Could not trim — the full clip will be posted</string>
 
     <!-- Blocked Users -->
     <string name="blocked_users_empty">No blocked users</string>
