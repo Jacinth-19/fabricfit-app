@@ -18,7 +18,7 @@ export JAVA_HOME=/var/tmp/tools/jdk17 ANDROID_HOME=/var/tmp/android-sdk GRADLE_U
 cd /home/user/FabricFit
 ./gradlew :app:assembleDebug          # debug APK
 ./gradlew :app:testDebugUnitTest      # JVM unit tests (Robolectric; first run downloads android-all)
-./gradlew :app:assembleRelease        # minified APK signed with app/demo-release.keystore (demo key!)
+./gradlew :app:assembleRelease        # minified APK; needs your upload key configured (see below)
 ./gradlew :app:bundleRelease          # Play Console artifact (.aab) — see docs/PLAY_DATA_SAFETY.md
 ```
 
@@ -81,22 +81,33 @@ Deliberately **not** renamed, and why:
 - The lower-case Akan word **ntoma** ("cloth") in Twi copy, e.g. `look_ankara_men_1`
   = "Ankara ntoma ne trɔso", and the etymology sentence in `credits_body`. Turning these
   into "FabricFit" would corrupt the translation.
-- The demo keystore alias `ntoma` and store/key passwords `ntomastudio`. Those strings are
-  baked into the binary `app/demo-release.keystore`; changing the Gradle config alone would
-  break signing. Replace the keystore with your own upload key before a real release.
+- The old demo keystore alias `ntoma` and its passwords — relic strings from that keystore,
+  which has since been deleted. Nothing reads them any more.
 
 The GitHub repository was renamed too: `Jacinth-19/ntoma-studio` → **`Jacinth-19/fabricfit-app`**.
 GitHub redirects the old URL, so existing clones, links and pull requests keep working.
 
 ## Release signing
-`signingConfigs.release` in `app/build.gradle.kts` reads `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`,
-`KEY_ALIAS`, and `KEY_PASSWORD` from Gradle properties (`-PKEYSTORE_FILE=…`) or environment
-variables. When unset, it falls back to the throwaway demo key committed at
-`app/demo-release.keystore` (alias `ntoma`, store and key password `ntomastudio`), so local
-and CI builds always produce an installable release APK out of the box.
+No key material lives in this repository, and there is no fallback key. `signingConfigs.release`
+in `app/build.gradle.kts` reads `KEYSTORE_FILE`, `KEYSTORE_PASSWORD`, `KEY_ALIAS` and
+`KEY_PASSWORD` from Gradle properties (`-PKEYSTORE_FILE=…`), environment variables, or
+`~/.gradle/gradle.properties`, and the `requireUploadKey` task fails `assembleRelease` /
+`bundleRelease` when any of them is missing or the keystore is not on disk. That ordering is
+deliberate: the alternative is an *unsigned* artifact that only fails at upload time.
 
-In GitHub Actions, the `release` job decodes an optional `KEYSTORE_BASE64` secret into
-`app/upload.keystore` and passes `KEYSTORE_PASSWORD`, `KEY_ALIAS`, and `KEY_PASSWORD` to
-Gradle; configure those four repository secrets before publishing to a store.
+Creating the key (once, on your machine — never in CI, never in a commit):
+
+```bash
+bash FabricFit/tools/release/new_upload_key.sh
+```
+
+It writes `~/fabricfit-upload.jks`, generates strong random passwords, prints the
+certificate SHA-256 to register with Play, and prints the four `gradle.properties` lines plus
+the `KEYSTORE_BASE64` value for CI. Back the `.jks` up outside the repository.
+
+In GitHub Actions, the `release` job requires the four repository secrets
+`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`; it decodes
+`KEYSTORE_BASE64` into `app/upload.keystore` and **fails the job if it is unset** rather than
+emitting an unsigned build.
 Because the application ID changed to `com.fabricfit.app`, an existing `com.ntoma.studio`
 install cannot be upgraded in place.

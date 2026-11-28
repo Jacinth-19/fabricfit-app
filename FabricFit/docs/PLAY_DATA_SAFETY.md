@@ -7,11 +7,15 @@ Play Console requires an **Android App Bundle (.aab)**, not an APK:
 ./gradlew :app:bundleRelease   # -> app/build/outputs/bundle/release/app-release.aab
 ```
 
-The release bundle is signed with `app/demo-release.keystore` (alias `ntoma`, store and key password both `ntomastudio` — these are the values in `app/build.gradle.kts` and the ones CI signs with).
+The release bundle is signed with **your upload key**, supplied as Gradle properties or CI
+secrets — no key material is committed. Create it with
+`bash FabricFit/tools/release/new_upload_key.sh`, which also prints the certificate SHA-256.
 **Before uploading:**
-1. Create a real upload key (`keytool -genkeypair ...`) and enable **Play App Signing**.
-2. Update `signingConfigs.release` in `app/build.gradle.kts` (read passwords from
-   `local.properties`/CI secrets — never commit them).
+1. Run `tools/release/new_upload_key.sh` if you have not already, and enable **Play App
+   Signing** in Play Console so Google holds the app signing key.
+2. Store the four values as repository secrets (`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`,
+   `KEY_ALIAS`, `KEY_PASSWORD`); the `release` job fails if they are missing rather than
+   emitting an unsigned artifact.
 3. Bump `versionCode` for every upload.
 
 ## Data safety form (as this build behaves)

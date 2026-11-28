@@ -7,10 +7,10 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-fun Project.signingValue(name: String, fallback: String): String =
+/** Gradle property, else environment variable, else null. Callers decide what "absent" means. */
+fun Project.signingValue(name: String): String? =
     (findProperty(name) as? String)?.takeIf { it.isNotBlank() }
         ?: System.getenv(name)?.takeIf { it.isNotBlank() }
-        ?: fallback
 
 android {
     namespace = "com.fabricfit.app"
@@ -35,13 +35,24 @@ android {
     }
 
     signingConfigs {
+        // The upload key is supplied, never baked in. There is deliberately no fallback:
+        // a release signed with a key that lives in this repository could not be handed to
+        // Play (the key would be public) and could never be rotated if it leaked, because
+        // Play pins the app to the first key it is ever signed with.
+        //
+        //   local:  -PKEYSTORE_FILE=… -PKEYSTORE_PASSWORD=… -PKEY_ALIAS=… -PKEY_PASSWORD=…
+        //           (or the matching environment variables, or ~/.gradle/gradle.properties)
+        //   CI:     the four GitHub Actions secrets, decoded by .github/workflows/build.yml
+        //
+        // Missing values fail the release build on purpose - see tasks.register below.
         create("release") {
-            // Supply your upload key via -PKEYSTORE_FILE=… / env vars; when unset, falls back
-            // to the committed demo keystore so CI builds still produce an installable APK.
-            storeFile = file(signingValue("KEYSTORE_FILE", "demo-release.keystore"))
-            storePassword = signingValue("KEYSTORE_PASSWORD", "ntomastudio")
-            keyAlias = signingValue("KEY_ALIAS", "ntoma")
-            keyPassword = signingValue("KEY_PASSWORD", "ntomastudio")
+            val storePath = signingValue("KEYSTORE_FILE")
+            if (storePath != null) {
+                storeFile = file(storePath)
+                storePassword = signingValue("KEYSTORE_PASSWORD")
+                keyAlias = signingValue("KEY_ALIAS")
+                keyPassword = signingValue("KEY_PASSWORD")
+            }
         }
     }
 
@@ -103,6 +114,37 @@ android {
         warningsAsErrors = false
     }
 }
+
+// Refuse to build a release that is not signed with a real upload key. AGP would otherwise
+// happily emit an *unsigned* APK/AAB when signingConfigs.release has no storeFile, which
+// looks like success in CI and only fails at upload time (or worse, ships unsigned).
+val requireUploadKey = tasks.register("requireUploadKey") {
+    description = "Fails if the release upload key is not configured."
+    val missing = listOf("KEYSTORE_FILE", "KEYSTORE_PASSWORD", "KEY_ALIAS", "KEY_PASSWORD")
+        .filter { signingValue(it) == null }
+    val storePath = signingValue("KEYSTORE_FILE")
+    val storePresent = storePath != null && file(storePath).exists()
+    doLast {
+        if (missing.isNotEmpty()) {
+            throw GradleException(
+                "Release signing is not configured: missing ${missing.joinToString(", ")}.\n" +
+                    "Release builds are no longer signed with a key committed to this repo.\n" +
+                    "Local: create an upload key with FabricFit/tools/release/new_upload_key.sh, put the\n" +
+                    "four values in ~/.gradle/gradle.properties, then rebuild.\n" +
+                    "CI: set the KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS and KEY_PASSWORD secrets.",
+            )
+        }
+        if (!storePresent) {
+            throw GradleException(
+                "KEYSTORE_FILE points at $storePath, which does not exist. Decode your upload " +
+                    "keystore there first (CI does this from the KEYSTORE_BASE64 secret).",
+            )
+        }
+    }
+}
+
+tasks.matching { it.name in setOf("assembleRelease", "bundleRelease", "packageRelease") }
+    .configureEach { dependsOn(requireUploadKey) }
 
 // Machine-specific: point this at your own SDK via ANDROID_HOME if the file is absent.
 val localProps = Properties().apply {

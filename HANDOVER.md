@@ -30,8 +30,9 @@ python3 tools/port_legacy_rename.py <worktree> --apply
 **If commit `775347a` is missing too** (the sandbox re-cloned the repository and rolled
 the branch pointer back during the rename session), the content still exists as plain
 files in the working tree — `HANDOVER.md`, the README screens section, and the
-`ntomastudio` password fix in `BUILD.md` and `docs/PLAY_DATA_SAFETY.md`. Check those
-files against `main` and re-commit as needed.
+password fix in `BUILD.md` and `docs/PLAY_DATA_SAFETY.md`. Check those files against
+`main` and re-commit as needed. (Both files now describe the upload-key flow instead, since
+the demo keystore has been removed.)
 
 ### Backup outside git: `/home/user/patches/`
 
@@ -111,14 +112,19 @@ screenshots checklist. Still to do:
 
 ## 3. Release signing (must do before any real upload)
 
-`FabricFit/app/demo-release.keystore` is a **throwaway demo key** with alias `ntoma`
-and store/key password `ntomastudio`. These are baked into the keystore binary, so
-the rename deliberately left them alone — editing `build.gradle.kts` alone would break
-signing. (Two docs used to claim the password was `ntomademo`; that was wrong and has
-been corrected — CI signs successfully with `ntomastudio`.)
+**Done — the demo keystore is gone.** `FabricFit/app/demo-release.keystore` (alias
+`ntoma`, password `ntomastudio`) used to be committed, with `.gitignore` carrying an
+explicit `!demo-release.keystore` exception so the file could be tracked. That key was
+public by definition and Play would have rejected it. It has been deleted, the exception
+removed, and `signingConfigs.release` no longer has a fallback: a release build without a
+configured key now fails (`requireUploadKey` in `app/build.gradle.kts`) instead of quietly
+producing an unsigned artifact.
 
-Generate a real upload key, keep it out of the repo, and switch `signingConfigs.release`
-to it (or use Play App Signing and upload with a new key). Play will reject the demo key.
+Create your own upload key once with `bash FabricFit/tools/release/new_upload_key.sh`, then
+put the four values in `~/.gradle/gradle.properties` locally and in the repository secrets
+for CI. Enable Play App Signing so Google holds the app signing key and this file is only the
+upload key. Note the history: the demo key still exists in past commits, so treat any
+artifact signed before this change as publicly-signed and do not publish it.
 
 ## 4. Unrelated open pull requests
 
@@ -143,8 +149,10 @@ python3 tools/port_legacy_rename.py . --apply          # rewrite in place
 Then rename the *paths* by hand (`git mv`): `NtomaStudio/` → `FabricFit/`,
 `app/src/main/java/com/ntoma/studio/` → `app/src/main/java/com/fabricfit/app/`.
 The tool rewrites file contents, not paths — and it deliberately never touches bare
-lower-case `ntoma` (the Akan word for cloth, live in the Twi strings) or the demo
-keystore's `ntoma`/`ntomastudio` credentials.
+lower-case `ntoma` (the Akan word for cloth, live in the Twi strings). It also refused to
+rewrite the demo keystore's `ntoma`/`ntomastudio` credentials; that keystore has since been
+deleted, so this is history rather than a live constraint. The tool is now **retired** —
+the rename it performs is already applied, and re-running it is pointless.
 
 ## 5. Smaller follow-ups
 
