@@ -42,7 +42,20 @@ def escape(text: str) -> str:
 
 
 def collect(path: str) -> list[str]:
-    with open(path, encoding="utf-8", errors="replace") as handle:
+    """Read the log, tolerating its absence.
+
+    This runs with `if: failure()`, so it is most needed exactly when an earlier step did
+    not behave as expected. A renamed or missing log used to surface as a bare traceback
+    ("exit code 1") - the same unhelpful annotation this script exists to replace.
+    """
+    try:
+        handle = open(path, encoding="utf-8", errors="replace")
+    except OSError:
+        return [
+            f"Gradle log not found: {path!r}. The step that produces it failed, was renamed, "
+            "or wrote to a different filename - check GRADLE_RETRY_LOG and the tee target.",
+        ]
+    with handle:
         lines = [line.rstrip("\n") for line in handle]
 
     interesting: list[str] = []

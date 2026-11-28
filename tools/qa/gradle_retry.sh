@@ -16,7 +16,10 @@
 set -uo pipefail
 
 MAX_ATTEMPTS="${GRADLE_RETRY_ATTEMPTS:-3}"
-LOG="${GRADLE_RETRY_LOG:-gradle-retry.log}"
+# Default to the name the annotation steps in build.yml read. A rename here once left the
+# annotations pointing at a file that no longer existed, so a real failure reported only
+# "Process completed with exit code 1".
+LOG="${GRADLE_RETRY_LOG:-verify-gradle.log}"
 
 if [ "$#" -eq 0 ]; then
   echo "usage: $(basename "$0") <gradle task>... [-- extra gradle args]" >&2

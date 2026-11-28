@@ -95,7 +95,10 @@ jobs:
       # Job logs need a login to read; annotations are visible on the public run
       # page, so the reason for a red build is obvious without opening the log.
       - name: Annotate the Gradle failure
-        if: failure() && env.HAS_KEY == 'true'
+        # No HAS_KEY here: that variable belongs to the release job's optional-signing gate.
+        # This condition was copy-edited into verify during the signing work and made the
+        # step permanently dead, so every verify failure reported only "exit code 1".
+        if: failure()
         run: python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log
 
       # Gradle only prints "There were failing tests"; the names and messages live in
