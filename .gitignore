@@ -20,3 +20,7 @@ qa-artifacts/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Python bytecode from the repo-level QA tools in tools/qa/
+__pycache__/
+*.pyc

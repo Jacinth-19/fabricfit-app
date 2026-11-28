@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Canonical public URL, served by GitHub Pages; use this in Play Console.
+     https://jacinth-19.github.io/fabricfit-app/privacy.html -->
+<link rel="canonical" href="https://jacinth-19.github.io/fabricfit-app/privacy.html">
 <title>FabricFit — Privacy Policy</title>
 <style>
   body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -19,7 +22,7 @@
 </head>
 <body>
 <h1>FabricFit — Privacy Policy</h1>
-<p><span class="gold"></span>Effective date: 3 September 2026</p>
+<p><span class="gold"></span>Effective date: 22 November 2026</p>
 <p>FabricFit ("the app") is designed around a simple principle: <strong>your photos and
 choices stay on your device</strong>. This policy explains, plainly, what the app does and
 does not collect.</p>
@@ -27,7 +30,8 @@ does not collect.</p>
 <h2><span class="gold"></span>What we collect</h2>
 <p><strong>Nothing is transmitted by this build.</strong> The app contains no analytics SDK,
 no crash-reporting transmission, no advertising SDK and no advertising identifier.
-There is no account, no sign-in and no server-side profile.</p>
+There is no account, no sign-in and no server-side profile. No data is sent anywhere unless
+<em>you</em> turn on a cloud feature, as described below.</p>
 
 <h2><span class="gold"></span>What stays on your device</h2>
 <table>
@@ -57,12 +61,19 @@ There is no account, no sign-in and no server-side profile.</p>
 broad storage access. It does <strong>not</strong> request contacts, location, microphone, SMS, phone,
 call-log, accessibility or Bluetooth permissions.</p>
 
-<h2><span class="gold"></span>On-device AI</h2>
-<p>Fabric analysis and try-on previews run <strong>on your device</strong> with bundled models and are
-labelled honestly in the app (e.g. "on-device demo"). If a future version offers an optional cloud
-analysis engine, photos would be sent only to a server URL that <em>you</em> enter yourself in
-Settings, and this policy and the in-app notices would be updated to say so before that feature
-ships.</p>
+<h2><span class="gold"></span>On-device AI, and the optional cloud engine</h2>
+<p>By default, fabric analysis and try-on previews run <strong>on your device</strong> with bundled
+models and are labelled honestly in the app (e.g. "on-device demo"). Nothing is uploaded.</p>
+<p>The app also contains an <strong>optional</strong> cloud engine, which is off until you configure
+it. Settings &rarr; Analysis engine lets you paste the address of a backend you choose; until you do,
+the app shows "No cloud endpoint is configured" and stays on-device. When you do configure one and
+use it, the image you selected is uploaded <strong>to that address</strong> so the model there can
+process it, and the analysis screen says so at the time. We operate no server of our own and receive
+nothing; whoever runs the address you enter receives the image and is responsible for it, which is
+why the field is yours to fill in rather than one we pre-fill.</p>
+<p>Photos are sent for that single request. No account, identifier or history is attached, and the
+app never uploads in the background. Removing the address, or switching back to the on-device
+engine, stops all transmission.</p>
 
 <h2><span class="gold"></span>Your choices &amp; deletion</h2>
 <p>Settings → Data controls → <strong>Delete my data</strong> removes the on-device database, media
@@ -77,8 +88,11 @@ lives outside your device.</p>
 this policy will be updated in-app and on the store listing before the change takes effect.</p>
 
 <h2><span class="gold"></span>Contact</h2>
-<p>Questions: <code>privacy@fabricfit.app</code> (placeholder until the brand domain mailbox is live).</p>
+<p>Anything about this policy, including a data-deletion request:
+<a href="mailto:fabricfit.app@gmail.com">fabricfit.app@gmail.com</a>. The same address is shown
+in the app under Settings &rarr; Help, and it is the address on our Google Play listing, so
+there is one place to write rather than several.</p>
 
-<footer>FabricFit · Accra, Ghana · This policy describes the build dated 3 September 2026.</footer>
+<footer>FabricFit · Accra, Ghana · This policy describes the build dated 22 November 2026.</footer>
 </body>
 </html>

@@ -2,7 +2,6 @@ package com.fabricfit.app.ui.screens.colormatch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,13 +20,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -47,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.engine.ColorHarmonyEngine
 import com.fabricfit.app.domain.model.Fabric
@@ -106,25 +104,10 @@ fun ColorMatchScreen(
             .fillMaxSize()
             .padding(padding),
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.Outlined.ArrowBackIosNew,
-                    contentDescription = stringResource(R.string.action_back),
-                )
-            }
-            Text(
-                stringResource(R.string.color_match_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
+        FabricFitTopBar(
+            title = stringResource(R.string.color_match_title),
+            onBack = { nav.popBackStack() },
+        )
 
         Column(
             Modifier

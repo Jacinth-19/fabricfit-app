@@ -225,7 +225,7 @@ help_faq_a4	Adwene hwɛ, anikora, abakɔsɛm ne nhyehyɛɛ di dwuma a intanɛt n
 help_faq_q5	Mɛtumi de m'ankasa adwene aka ho?
 help_faq_a5	Ɛnnyɛɛ ba. Wɔtwe adwene korabea no firi katalog a wɔbɛtumi asakra afiri backend.
 help_contact_body	Ka deɛ asɛe kyerɛ yɛn na yɛbɛgye so. Fa wo app nkabom ka ho: %1$s.
-help_contact_email	support@fabricfit.app
+help_contact_email	fabricfit.app@gmail.com
 help_contact_subject	FabricFit mmoa bisadeɛ
 empty_looks_title	Mfonini biara nni hɔ
 empty_looks_body	Sɔ adwene hwɛ wɔ mfonini so na wo nea ɛba bɛda adi wɔ ha.
@@ -555,3 +555,209 @@ contrib_delete_confirm	Yi mfonini yi fi hɔ?
 contrib_delete_confirm_body	Wɔbeyi mfonini yi afi wo mmoa no mu.
 contrib_duplicate	Mfonini yi te sɛ nea wode ama dedaw.
 outfit_builder_surprise	Yi bi ma me
+video_trim_applied	Woatwa no
+video_trim_failed	Yentumi ntwa no — wode video nyinaa
+challenge_title	Ahyɛnsodeɛ Akansi
+onboarding_brand_badge	Ghana · Wɔyɛ ma wo
+onboarding_welcome_headline	Hyɛ ntoma a, wɔahyɛ ma wo.
+onboarding_welcome_sub	Hunu ntoma no. Hunu ntade no. Tɔ hyɛ no — kaba, agbada, kaftan ne nea ɛka ho, wɔayɛ ama wo.
+onboarding_proof_offline	Ɛyɛ adwuma a intanɛt
+onboarding_proof_tryon	AI nhyɛso
+onboarding_proof_free	Ɛyɛ kwa
+custom_sleeve_three_quarter	Nsa mmiɛnsa
+custom_neck_boat	Ɔpaa kɔn
+custom_length_floor	Du asase
+fabric_wool	Wul / Nwira
+fabric_wool_desc	Nwira a wɔanwira, anaasɛ wɔayɛ no kɔtɔ.
+empty_action_scan_fabric	Sɔ wo ntoma a ɛdi kan
+empty_action_create_collection	Bɔ kuw bi
+empty_action_add_to_wardrobe	Fa ka wo ntade dan no ho
+empty_action_browse_designs	Hwɛ atade nhyehyɛe
+empty_action_start_exploring	Fi ase hwehwɛ
+empty_action_try_design	Sɔ atade bi
+empty_action_clear_filters	Yi nhunuhama no
+empty_secondary_learn_more	Sua bi ka ho
+accessibility_title	Akwan a wɔfa so hwɛ adwuma
+accessibility_desc	Siesie app no ma wo ho ahiadɛ
+accessibility_high_contrast	Ahwehwɛ kɛse
+accessibility_high_contrast_desc	Fa nsɛsɛm a ɛyɛ den ma wuhu nneɛma yiye
+accessibility_reduced_motion	Nnyigyei ketewaa
+accessibility_reduced_motion_desc	Teɛ nneɛma a ɛkɔ so kɔ ne so no
+accessibility_large_text	Nkyerɛwee kɛse
+accessibility_large_text_desc	Kɔ nkyerɛwee kɛse wɔ app no nyinaa mu
+accessibility_haptic_feedback	Nnyigyei nka
+accessibility_haptic_feedback_desc	Wobɛte nnyigyei wɔ bere a woklik
+biometric_title	Bue FabricFit
+biometric_subtitle	Maa wonim wo nipaduam
+biometric_description	Fa wonsa anaa woyɛ mu bue wo ntade dan
+biometric_available_strong	Wonsa anaa woyɛ mu wɔ hɔ
+biometric_available_weak	Nipaduam nhwɛso wɔ hɔ
+biometric_not_available	Nipaduam nhwɛso nni hɔ
+security_title	Ahobammɔ
+security_biometric_lock	App no mu bue
+security_biometric_lock_desc	Hwehwɛ nipaduam ansa na wobebue app no
+security_biometric_premium	Bɔ nneɛma a ɛyɛ dɛ no ho ban
+security_biometric_premium_desc	Hwehwɛ nipaduam ma nneɛma a ɛyɛ dɛ nko
+share_title	Fa kɔ
+share_look_text_with_fabric	Hwɛ %1$s a meyɛe wɔ FabricFit, fa %2$s ntoma! 🎨✨ #FabricFit #GhanaianFashion
+export_title	Fa wo ntade dan kɔ
+export_pdf	Yɛ no PDF
+export_pdf_desc	Yɛ wo ntoma ne wo ntade nhoma
+export_image	Yɛ no mfonini
+export_image_desc	Fa ntoma biara kɔ ne nsɛm ka ho
+export_success	Wɔayɛ ntade dan no nyɛ
+export_failed	Ɛanyɛɛ yɛ
+export_share	Fa deɛ wɔayɛ no kɔ
+action_filter	Yi
+filter_title	Yi na na
+filter_sort_by	Yi no
+filter_category	Kuw
+filter_all_categories	Kuw nyinaa
+sort_newest	Foforɔ di kan
+sort_oldest	Dada di kan
+sort_name_az	Din (A-Z)
+sort_name_za	Din (Z-A)
+community_title	Kurowm
+community_empty_title	Nnwuma nni hɔ
+community_empty_body	Di kan fa woasa kyerɛ kurowm no!
+community_empty_action	Yɛ wo nnwuma a ɛdi kan
+community_active_challenges	Akansi a ɛkɔ so
+community_gallery	Atade mfonini dan
+community_following	Wodi wo akyi
+community_followers	Wodidi wo akyi
+community_posts	Nnwuma
+action_like	Pɛ
+action_comment	Ka nsɛm
+action_follow	Di akyi
+action_unfollow	Gyae akyidi
+challenge_participants	Mpanyinfo %d
+challenge_join	Ka akansi no ho
+challenge_submit	Fa wo adwuma
+challenge_ends	Ɛkɔ so kosi %s
+user_profile	Wo ho nsɛm
+gallery_detail	Atade nsɛm
+add_comment	Ka nsɛm…
+post_comment	Fa gu so
+comments_count	Nsɛm %d
+likes_count	Pɛ %d
+fabrics_used	Ntoma a wɔfa
+style_used	Atade a wɔfa
+user_profile_not_found	Wonhu nyɔho no
+search_hint	Hwehwɛ nnwuma, nyɔho, tag…
+search_recent	Nhwehwɛ a etwa mu
+search_no_recent	Nhwehwɛ biara nni hɔ
+search_no_results	Wonhu biara
+action_clear_all	Yi nyinaa
+filter_date_range	Bere a ɛwɔ mu
+filter_tags	Tags
+action_edit	Siesie
+image_aspect_ratio	Mfonini kɛseɛ
+image_edit_title	Siesie mfonini
+image_crop	Twa
+image_rotate	Dane
+image_reset	San fi ase
+action_report	Ka asɛm
+report_title	Ka asɛm wɔ emu
+report_description	Boa yɛn ma yɛte asɛm no ase: yi tirimpɔ a woaka no.
+report_select_type	Yi tirimpɔ
+report_additional_info	Nsɛm foforɔ (sɛ wopɛ)
+report_placeholder	Ka nsɛm pii fa asɛm no ho…
+report_submit	Fa asɛm no
+report_submitting	Ɛrekɔ…
+report_success	Wɔafa asɛm no yie
+report_already_reported	Woaka asɛm wɔ emu dedaw
+report_type_spam	Nkontompo anaa nsɛm hunu
+report_type_inappropriate	Nneɛma a ɛnsɛ
+report_type_harassment	Tɔ̃tɔ̃mɔ anaa adɛn
+report_type_copyright	Copyright a wobu
+report_type_misleading	Nsɛm a ɛdaadaa
+report_type_other	Nea ɛka ho
+format_bold	Den
+format_italic	Tɛtrɛɛ
+format_code	Koodu
+format_link	Link
+format_quote	Nsɛm a wɔaka
+format_list	Nnɔtɛ
+richtext_helper	Ɛboa markdown: **den**, *tɛtrɛɛ*, `koodu`, [link](url), > nsɛm a wɔaka, - nnɔtɛ
+description_label	Nkyerɛmu
+description_placeholder	Ka nsɛm fa woasa ho… (markdown wɔ hɔ)
+notification_preferences_title	Amanneɛbɔ nhyehyɛe
+notification_category_social	Nipa a wɔne bɔ
+notification_category_community	Kurowm
+notification_category_other	Nea ɛka ho
+notification_pref_likes	Pɛ
+notification_pref_likes_desc	Sɛ obi pɛ wo nnwuma
+notification_pref_comments	Nsɛm
+notification_pref_comments_desc	Sɛ obi ka nsɛm wɔ wo nnwuma ho
+notification_pref_follows	Wodidi wo akyi foforɔ
+notification_pref_follows_desc	Sɛ obi di wo akyi
+notification_pref_mentions	Wɔaka wo din
+notification_pref_mentions_desc	Sɛ obi ka wo din
+notification_pref_challenges	Akansi
+notification_pref_challenges_desc	Nsɛm fa akansi ho
+notification_pref_email	Email amanneɛbɔ
+notification_pref_email_desc	Nya amanneɛbɔ wɔ email so
+notification_preferences_info	Wɔkora nsakrae nyinaa. Amanneɛbɔ a ɛbɛba daa hwehwɛ intanɛt.
+notification_like_title	%s pɛ wo nnwuma
+notification_like_body	Hwɛ obi a ɔpɛ woasa no
+notification_comment_title	%s ka nsɛm wɔ wo nnwuma ho
+notification_comment_body	Hwɛ deɛ ɔka fa woasa ho
+notification_follow_title	%s fi ase didi wo akyi
+notification_follow_body	Wowɔ obi a ɔdi wo akyi foforɔ!
+notification_challenge_title	Akansi nsɛm foforɔ
+notification_challenge_body	Nneɛma foforɔ wɔ %s mu
+channel_likes	Pɛ
+channel_likes_description	Amanneɛbɔ bere a obi pɛ wo nnwuma
+channel_comments	Nsɛm
+channel_comments_description	Amanneɛbɔ bere a obi ka nsɛm wɔ wo nnwuma ho
+channel_follows	Wodidi wo akyi
+channel_follows_description	Amanneɛbɔ bere a obi di wo akyi
+channel_challenges	Akansi
+channel_challenges_description	Amanneɛbɔ fa akansi ne akansi ahorow ho
+image_filters_title	Mfonini nhyehyɛe
+filter_brightness	Hann
+filter_contrast	Nsonso
+filter_saturation	Kɔla dɛ
+filter_reset	San fi ase
+media_type_image	Mfonini
+media_type_video	Video
+video_select	Yi video
+video_processing	Yɛ video no...
+video_compressing	Ɛreka video no so...
+video_generating_thumbnail	Ɛreyɛ mfonini ketewaa...
+video_duration_format	%d:%02d
+video_trim	Twa video no
+video_trim_start	Bere a wofi ase
+video_trim_end	Bere a egyae
+video_preview	Hwɛ ansa
+video_upload	Fa video no
+video_trim_title	Twa video no
+video_trim_duration	Bere tenten: %s
+video_trim_reset	San fi ase
+video_trim_apply	Fa ntwa no
+blocked_users_empty	Nyɔho a wɔasiw biara nni hɔ
+action_unblock	Bue kwan
+unblock_confirm_title	Bue kwan ma nyɔho no
+unblock_confirm_message	Wopɛ sɛ wobue kwan ma %s?
+action_block	Siw kwan
+block_confirm_title	Siw kwan ma nyɔho no
+block_confirm_message	Wopɛ sɛ wosiw kwan ma %s? Wɔrennya wo bio.
+admin_moderation_title	Nhwehwɛmu dan
+admin_no_reports	Asɛm a wɔaka biara nni hɔ
+admin_dismiss	Gyae
+admin_take_action	Fa nneyɛɛ
+report_details_reported_user	Nyɔho a wɔkaa ne ho asɛm
+report_details_content_type	Nneɛma su
+report_details_description	Nkyerɛmu
+report_details_date	Da a wɔkaa asɛm no
+report_details_status	Tebea a ɛwɔ
+settings_section_admin	Admin
+admin_moderation_dashboard	Nhwehwɛmu dan
+admin_moderation_desc	Hwɛ asɛm a wɔaka no
+home_hero_headline	Ghana ntoma,\nasetie mu nsusuw
+home_hero_subhead	Hunu kente, ankara ne lace a, yɛbɔ wo ho.
+recs_ranker_ondevice	Wɔakyekyere wɔ saa fɔn yi so - ɛyɛ adwuma a intanɛt
+recs_ranker_cloud	Wo ntɔkwa adwuma no na ɛkyerɛ
+recs_ranker_cloud_failed	Ntɔkwa adwuma no nni hɔ - yɛde deɛ ɛwɔ fɔn no so
+post_video_optimised	Wɔasiesie ama upload
+post_video_original	Fael a ɛwɔ hɔ — wontumi nsiesie

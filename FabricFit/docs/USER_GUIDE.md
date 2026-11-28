@@ -532,7 +532,7 @@ A: Google Play Store → My apps → FabricFit → Update.
 
 ### Contact Us
 
-**Email:** support@fabricfit.app  
+**Email:** fabricfit.app@gmail.com  
 **Website:** www.fabricfit.app  
 **Social Media:** @FabricFitApp
 
@@ -547,7 +547,7 @@ A: Google Play Store → My apps → FabricFit → Update.
 ### Feature Requests
 
 We love hearing from you! Send feature ideas to:  
-**ideas@fabricfit.app**
+**fabricfit.app@gmail.com**
 
 ---
 

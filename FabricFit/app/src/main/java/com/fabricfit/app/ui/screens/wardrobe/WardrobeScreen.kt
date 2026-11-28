@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.AlertDialog
@@ -70,6 +69,7 @@ import com.fabricfit.app.domain.model.WardrobeItem
 import com.fabricfit.app.export.ExportManager
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.ShimmerGrid
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.sharePdfFile
 import kotlinx.coroutines.Dispatchers
@@ -108,25 +108,10 @@ fun WardrobeScreen(nav: NavHostController, padding: PaddingValues) {
             .fillMaxSize()
             .padding(padding)
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        FabricFitTopBar(
+            title = stringResource(R.string.wardrobe_title),
+            onBack = { nav.popBackStack() },
         ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.Outlined.ArrowBackIosNew,
-                    contentDescription = stringResource(R.string.action_back),
-                )
-            }
-            Text(
-                stringResource(R.string.wardrobe_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f),
-            )
             IconButton(
                 onClick = {
                     scope.launch {

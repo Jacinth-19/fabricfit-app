@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -36,13 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Collection
 import com.fabricfit.app.ui.components.EnhancedEmptyState
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.ui.navigation.Routes
 import kotlinx.coroutines.launch
 
@@ -61,26 +60,10 @@ fun CollectionsScreen(nav: NavHostController, padding: PaddingValues) {
             .fillMaxSize()
             .padding(padding)
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.Outlined.ArrowBackIosNew,
-                    contentDescription = stringResource(R.string.action_back)
-                )
-            }
-            Text(
-                stringResource(R.string.collections_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        FabricFitTopBar(
+            title = stringResource(R.string.collections_title),
+            onBack = { nav.popBackStack() },
+        )
 
         if (collections.isEmpty()) {
             EnhancedEmptyState(

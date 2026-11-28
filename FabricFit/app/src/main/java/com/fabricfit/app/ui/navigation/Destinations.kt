@@ -10,7 +10,12 @@ object Routes {
     const val FAVORITES = "favorites"
     const val PROFILE = "profile"
 
-    const val ONBOARDING = "onboarding"
+    // Onboarding is deliberately NOT a route. AppShell gates on
+    // UserPreferences.onboardingCompleted and shows OnboardingScreen in place of the
+    // nav host, and Settings' "Replay onboarding" re-arms that flag. A route constant
+    // for it used to sit here and was referenced by nothing, which implied a
+    // navigation entry point that never existed. If onboarding ever needs to be
+    // navigable, add the composable route at the same time as the constant.
 
     const val CAMERA_FABRIC = "camera/fabric"
     const val CAMERA_PERSON = "camera/person"

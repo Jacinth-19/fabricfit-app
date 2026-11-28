@@ -181,10 +181,10 @@ adb install -r fabricfit-v1.1.0.apk
 
 > **Signing** — `signingConfigs.release` in `FabricFit/app/build.gradle.kts`
 > reads `KEYSTORE_FILE` / `KEYSTORE_PASSWORD` / `KEY_ALIAS` / `KEY_PASSWORD`
-> from Gradle properties or environment variables (and the CI `release` job
-> decodes an optional `KEYSTORE_BASE64` secret). When unset, it falls back to
-> the throwaway demo keystore at `FabricFit/app/demo-release.keystore`, so the
-> APK installs on any device out of the box; see
+> from Gradle properties, environment variables or `~/.gradle/gradle.properties`.
+> **No key is committed to this repository and there is no fallback**: a release
+> build without a configured key fails instead of emitting an unsigned APK.
+> Create one with `bash FabricFit/tools/release/new_upload_key.sh`; see
 > [`FabricFit/BUILD.md`](FabricFit/BUILD.md#release-signing).
 
 ### Continuous Integration
@@ -195,7 +195,7 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 | Job | Trigger | What it does |
 | --- | --- | --- |
 | `verify` | every push & PR (paths under `FabricFit/**`) | `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`, then uploads the debug APK and test reports. Gradle failures are annotated inline on the commit. |
-| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags, manual dispatch, or a push whose commit message contains `[release]`. |
+| `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8, signed with the upload key decoded from `KEYSTORE_BASE64` (the job fails if that secret is unset), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags, manual dispatch, or a push whose commit message contains `[release]`. |
 | `device-qa` | manual, weekly, or on `v*` tags | Linux runner (`ubuntu-latest`) with KVM & `SCREENSHOT_ABI=1`: boots an API 33 `x86_64` emulator and runs `PersonSegmenterDeviceTest`. |
 | `tryon-e2e` | manual dispatch, or any push whose commit message contains `[tryon-e2e]` | Runs the real try-on on an API 33 emulator (bundled model photo + kente swatch through `PersonSegmenter` and `DemoLookGenerator`), then commits the render, the mask, `report.txt` and a `geometry.txt` polygon dump to `FabricFit/docs/vton/device/`. |
 | `screenshots` | manual dispatch, or any push whose commit message contains `[screenshots]` | Boots an API 33 emulator, drives the app, and commits fresh PNGs to `FabricFit/docs/screenshots/`. |

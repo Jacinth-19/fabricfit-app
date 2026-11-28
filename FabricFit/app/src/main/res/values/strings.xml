@@ -565,7 +565,7 @@
     <string name="help_faq_q5">Can I add my own designs?</string>
     <string name="help_faq_a5">Not yet. The style library is loaded from a catalogue that can be updated from the backend.</string>
     <string name="help_contact_body">Tell us what went wrong and we will reply. Include your app version: %1$s.</string>
-    <string name="help_contact_email">support@fabricfit.app</string>
+    <string name="help_contact_email">fabricfit.app@gmail.com</string>
     <string name="help_contact_subject">FabricFit support request</string>
 
     <!-- ============ Empty states ============ -->
@@ -1017,6 +1017,7 @@
     <string name="challenge_join">Join Challenge</string>
     <string name="challenge_submit">Submit Entry</string>
     <string name="challenge_ends">Ends %s</string>
+    <string name="challenge_title">Style Challenge</string>
     <string name="user_profile">Profile</string>
     <string name="gallery_detail">Style Details</string>
     <string name="add_comment">Add a comment…</string>
@@ -1132,6 +1133,8 @@
     <string name="video_trim_duration">Duration: %s</string>
     <string name="video_trim_reset">Reset</string>
     <string name="video_trim_apply">Apply Trim</string>
+    <string name="video_trim_applied">Trim applied</string>
+    <string name="video_trim_failed">Could not trim — the full clip will be posted</string>
 
     <!-- Blocked Users -->
     <string name="blocked_users_empty">No blocked users</string>

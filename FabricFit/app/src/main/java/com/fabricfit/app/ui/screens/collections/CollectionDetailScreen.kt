@@ -18,7 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -39,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -54,6 +52,7 @@ import com.fabricfit.app.domain.model.GeneratedLook
 import com.fabricfit.app.ui.components.EnhancedEmptyState
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.util.resolveKey
 import kotlinx.coroutines.launch
@@ -94,27 +93,10 @@ fun CollectionDetailScreen(
             .fillMaxSize()
             .padding(padding)
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.Outlined.ArrowBackIosNew,
-                    contentDescription = stringResource(R.string.action_back),
-                )
-            }
-            Text(
-                text = collection?.name ?: stringResource(R.string.collections_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
+        FabricFitTopBar(
+            title = collection?.name ?: stringResource(R.string.collections_title),
+            onBack = { nav.popBackStack() },
+        )
 
         TabRow(selectedTabIndex = tab) {
             tabs.forEachIndexed { index, title ->

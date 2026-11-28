@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
@@ -43,7 +42,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -71,6 +69,7 @@ import com.fabricfit.app.ui.components.ShimmerGrid
 import com.fabricfit.app.ui.components.ZoomableImage
 import com.fabricfit.app.ui.components.rememberMarkwon
 import com.fabricfit.app.ui.screens.videoplayer.InlineVideoPlayer
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageGold
@@ -174,27 +173,10 @@ fun GalleryDetailScreen(nav: NavHostController, padding: PaddingValues, itemId: 
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Top bar
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_back),
-                    tint = MaterialTheme.colorScheme.onBackground,
-                )
-            }
-            Text(
-                stringResource(R.string.gallery_detail),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.weight(1f),
-            )
-        }
+        FabricFitTopBar(
+            title = stringResource(R.string.gallery_detail),
+            onBack = { nav.popBackStack() },
+        )
 
         if (isLoading) {
             ShimmerGrid(

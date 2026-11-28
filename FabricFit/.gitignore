@@ -12,7 +12,8 @@
 *.apk
 *.aab
 *.keystore
-!demo-release.keystore
+*.jks
+*.p12
 tools/dataset/raw/
 tools/dataset/augmented/
 tools/dataset/out/

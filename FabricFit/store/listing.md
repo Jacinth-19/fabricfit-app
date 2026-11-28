@@ -134,5 +134,10 @@ Made with pride in Accra, Ghana.
 - **Application Type:** App
 - **Category:** **Lifestyle** (Secondary / Store Listing tag: **Fashion & Beauty**, **Design & Art**, **Shopping**)
 - **Content Rating:** Everyone (IARC — no violence, gambling, or unrestricted user-generated content)
-- **Privacy Policy:** [`store/privacy_policy.html`](privacy_policy.html) & Data Safety declarations in [`docs/PLAY_DATA_SAFETY.md`](../docs/PLAY_DATA_SAFETY.md)
+- **Privacy Policy URL (Play Console):** https://jacinth-19.github.io/fabricfit-app/privacy.html
+  — published from `FabricFit/store/privacy_policy.html` by `.github/workflows/pages.yml`; keep
+  the two in step by editing the file, never the URL.
+- **Support / contact address:** `fabricfit.app@gmail.com` (same address in-app under Settings → Help
+  and on the privacy policy)
+- **Data Safety declarations:** [`docs/PLAY_DATA_SAFETY.md`](../docs/PLAY_DATA_SAFETY.md)
 - **Supported Locales:** `en-US` / `en-GH` (English), `tw` (Twi / Akan), `gaa` (Ga), `ee` (Ewe)

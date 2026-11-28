@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Port pre-rename Ntoma Studio file contents to the FabricFit identifiers.
 
+RETIRED: the rename this was written for is complete, so there is nothing left to port.
+It is kept for the record (and its --self-test, which documents the cases the rename had
+to get right). Do not run it against the current tree.
+
 This tool deliberately edits file contents only. It never renames source paths;
 move the old module/package directories separately after reviewing the dry run.
 """
@@ -151,6 +155,8 @@ val credits = \"The word ntoma means cloth.\"
 val alias = \"ntoma\"
 val storePassword = \"ntomastudio\"
 val keyPassword = \"ntomastudio\"
+# ^ the demo keystore this guarded was deleted in the release-signing work; the rule is
+#   kept so the self-test still proves the rename never rewrote key material.
 """
     rewritten, _ = rewrite_text(sample)
 

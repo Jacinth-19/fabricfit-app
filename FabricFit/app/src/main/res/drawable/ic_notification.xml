@@ -2,8 +2,8 @@
 <!--
   Small notification icon. Android draws notification small icons as a
   monochrome silhouette, so this keeps a single solid white shape on a
-  transparent canvas (the accent colour comes from
-  com.google.firebase.messaging.default_notification_color).
+  transparent canvas. The accent colour is set per-notification by
+  notifications/FabricFitNotifier.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"

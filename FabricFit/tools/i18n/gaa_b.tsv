@@ -225,7 +225,7 @@ help_faq_a4	Susumɔi, suɔmɔi, nɔŋ ni mli kɛ toomɔi tsɔɔ mɔ nɔɔ intan�
 help_faq_q5	Mishikaŋ bɔ mi susumɔi mi nɔŋ ba mli?
 help_faq_a5	Eshikaŋ mli. Susumɔi kɛ no kɛjɛ katalog ni atsɔɔ kɛɛ tsake backend nɔ.
 help_contact_body	Ŋwɛɛ yɛ nɔŋ ni tsra ni yɛbɔɔ nyɛlɛmɔ. Toɔ o app fɔn nɔŋ nɔ ba mli: %1$s.
-help_contact_email	support@fabricfit.app
+help_contact_email	fabricfit.app@gmail.com
 help_contact_subject	FabricFit bojamɔ bimɔ
 empty_looks_title	Shishifɔɔi bɔ mli
 empty_looks_body	Kɛ susumɔ shishifɔɔ nɔ do kpɔ ni o nɔŋ baaŋ shi fɛŋ.
@@ -555,3 +555,209 @@ contrib_delete_confirm	Ojie foto nɔŋ?
 contrib_delete_confirm_body	Aaji foto nɔŋ kɛjɔ oboɔmɔ mli.
 contrib_duplicate	Foto nɔŋ lɛ nɔŋ dedaw.
 outfit_builder_surprise	Kɛmɔ bɔ mɔ
+video_trim_applied	Atsɛɛ no
+video_trim_failed	Nyɛɛɛ atsɛɛ no — aawo video lɛ fɛɛ
+challenge_title	Nɔɔ Hewalɛ
+onboarding_brand_badge	Ghana · Ato nɛ ma bo
+onboarding_welcome_headline	Mɔ́ɔ klɛŋ ni ake bo.
+onboarding_welcome_sub	Na klɛŋ lɛ. Na atade lɛ. Hɔ shiŋ lɛ — kaba, agbada, kaftan kɛ ehe ni ekoŋŋ, ato nɛ ma bo.
+onboarding_proof_offline	Enyɛɛ adwuma ni intanɛt
+onboarding_proof_tryon	AI atade niɛ
+onboarding_proof_free	Yɛɛ fee
+custom_sleeve_three_quarter	Sɛɛ nu etɛ
+custom_neck_boat	Kɔŋ ŋtsɔɔ
+custom_length_floor	Shɛ shikpɔŋ
+fabric_wool	Wul / Nwira
+fabric_wool_desc	Nwira ni atsɛ̃ alo kɔtɔ.
+empty_action_scan_fabric	Kpɔ wo klɛŋ klɛŋ
+empty_action_create_collection	Bɔ kuu ko
+empty_action_add_to_wardrobe	Fa kɛ wo atade dan lɛ mli
+empty_action_browse_designs	Kwɛ atade hewalɛ
+empty_action_start_exploring	Je mli ni okwɛ
+empty_action_try_design	Kɛmɔ atade ko
+empty_action_clear_filters	Je ninaa lɛ
+empty_secondary_learn_more	Kase bɔ ni ekoŋŋ
+accessibility_title	Mɛi ni abɔ nɔ
+accessibility_desc	Saa app lɛ bo nɔɔ
+accessibility_high_contrast	Ninaa kɛ
+accessibility_high_contrast_desc	Kɛmɔ amɛ ni ehiɛ nyam
+accessibility_reduced_motion	Shishi bɔɔ
+accessibility_reduced_motion_desc	Ŋyɛ naa ni shishiɔ lɛ
+accessibility_large_text	Ŋmaa kɛ
+accessibility_large_text_desc	Ŋmaa kɛ kɛ app lɛ fɛɛ mli
+accessibility_haptic_feedback	Shishi ni mɔɔ
+accessibility_haptic_feedback_desc	Le sɛɛ lɛ woonuɔ
+biometric_title	Kɛ FabricFit
+biometric_subtitle	Hã ole bo diɛŋtsɛ
+biometric_description	Kɛ owo alo ohiɛ kɛ kɛ o
+biometric_available_strong	Owo alo ohiɛ yɛ
+biometric_available_weak	Mɔɔ ni mɔɔ
+biometric_not_available	Mɔɔ ni mɔɔ bɛ
+security_title	Hilɔ
+security_biometric_lock	App lɛ mli kɛ
+security_biometric_lock_desc	Hã ole bo diɛŋtsɛ danŋ app lɛ
+security_biometric_premium	Bu nɔ ni yɛ nyam lɛ
+security_biometric_premium_desc	Hã ole bo diɛŋtsɛ nɔ ni yɛ nyam lɛ pɛ
+share_title	Fa ya
+share_look_text_with_fabric	Kwɛ %1$s ni mifee yɛ FabricFit, kɛ %2$s klɛŋ! 🎨✨ #FabricFit #GhanaianFashion
+export_title	Fa o atade dan lɛ ya
+export_pdf	Fee no PDF
+export_pdf_desc	Fee o klɛŋ kɛ o atade wolo
+export_image	Fee no foto
+export_image_desc	Fa klɛŋ ɖeɖe kɛ ehe saji
+export_success	Ato atade dan lɛ jogbaŋŋ
+export_failed	Enyɛɛ fee
+export_share	Fa nɔ ni ato lɛ ya
+action_filter	Je
+filter_title	Je ni na
+filter_sort_by	Je nɔ
+filter_category	Kuu
+filter_all_categories	Kuu fɛɛ
+sort_newest	Nɔ ni yɔɔ lɛ klɛŋ
+sort_oldest	Nɔ ni bɔ lɛ klɛŋ
+sort_name_az	Gbɛi (A-Z)
+sort_name_za	Gbɛi (Z-A)
+community_title	Kuu
+community_empty_title	Saji bɛ
+community_empty_body	Klɛŋ fa o hewalɛ kɛ tsɔɔ kuu lɛ!
+community_empty_action	Fee o saji klɛŋ
+community_active_challenges	Hewalɛ ni yaa nɔ
+community_gallery	Atade foto dan
+community_following	Mɛi ni nyiɛ o sɛɛ
+community_followers	Mɛi ni nyiɛ o sɛɛ
+community_posts	Saji
+action_like	Sɔ
+action_comment	Kɛ saji
+action_follow	Nyiɛ sɛɛ
+action_unfollow	Ŋyɛ nyiɛ sɛɛ
+challenge_participants	Mɛi %d
+challenge_join	Ba hewalɛ lɛ mli
+challenge_submit	Hɔ o nɔ
+challenge_ends	Ebaa yaa nɔ kɛ %s
+user_profile	O he saji
+gallery_detail	Atade saji
+add_comment	Kɛ saji…
+post_comment	Hɔ
+comments_count	Saji %d
+likes_count	Sɔ %d
+fabrics_used	Klɛŋ ni akɛ
+style_used	Atade ni akɛ
+user_profile_not_found	Ana nyɛ nyɛ
+search_hint	Tao saji, mɛi, tag…
+search_recent	Nɔ ni atao yɛ maŋ
+search_no_recent	Nɔ ni atao bɛ
+search_no_results	Ana bɛ
+action_clear_all	Je fɛɛ
+filter_date_range	Gbɛ ni yɔɔ mli
+filter_tags	Tags
+action_edit	Tsakemɔ
+image_aspect_ratio	Foto kɛ
+image_edit_title	Tsake foto
+image_crop	Tɛ
+image_rotate	Tsɛ
+image_reset	Ku sɛɛ
+action_report	Kɛ saji
+report_title	Kɛ saji yɛ nɔ ni
+report_description	Ye bua wɔ ni wɔnu saji lɛ: je nɔ hewɔ ni ooma lɛ.
+report_select_type	Je nɔ hewɔ
+report_additional_info	Saji kroŋŋ (kɛ osumɔɔ)
+report_placeholder	Kɛ saji babaoo yɛ saji lɛ he…
+report_submit	Hɔ saji lɛ
+report_submitting	Eyaa nɔ…
+report_success	Ahɔ saji lɛ jogbaŋŋ
+report_already_reported	Okɛ saji yɛ nɔ ni dedaw
+report_type_spam	Saji ni mɔɔ bɛ alo lakamɔ
+report_type_inappropriate	Nɔ ni esa akɛ
+report_type_harassment	Hiao alo gbeye
+report_type_copyright	Copyright ni agbɔ
+report_type_misleading	Saji ni lakamɔ
+report_type_other	Nɔ kroŋŋ
+format_bold	Kɛ
+format_italic	Tsɛ̃
+format_code	Koodu
+format_link	Link
+format_quote	Saji ni akɛ
+format_list	Nɔŋ nɔ
+richtext_helper	Eboa markdown: **kɛ**, *tsɛ̃*, `koodu`, [link](url), > saji ni akɛ, - nɔŋ nɔ
+description_label	Saji
+description_placeholder	Kɛ saji yɛ o hewalɛ he… (markdown yɛ)
+notification_preferences_title	Sane ni abɔ
+notification_category_social	Mɛi ni a kɛ
+notification_category_community	Kuu
+notification_category_other	Nɔ kroŋŋ
+notification_pref_likes	Sɔ
+notification_pref_likes_desc	Kɛ mɔ ko sɔ o saji
+notification_pref_comments	Saji
+notification_pref_comments_desc	Kɛ mɔ ko kɛ saji yɛ o saji nɔ
+notification_pref_follows	Mɛi ni nyiɛ o sɛɛ yɔɔ
+notification_pref_follows_desc	Kɛ mɔ ko nyiɛ o sɛɛ
+notification_pref_mentions	Atsɛ o gbɛi
+notification_pref_mentions_desc	Kɛ mɔ ko tsɛ o gbɛi
+notification_pref_challenges	Hewalɛ
+notification_pref_challenges_desc	Saji yɛ hewalɛ he
+notification_pref_email	Email sane
+notification_pref_email_desc	Ná sane yɛ email nɔ
+notification_preferences_info	Ato tsakemɔ lɛ fɛɛ. Sane ni ba daa baa intanɛt.
+notification_like_title	%s sɔ o saji
+notification_like_body	Kwɛ mɔ ni sɔ o hewalɛ lɛ
+notification_comment_title	%s kɛ saji yɛ o saji nɔ
+notification_comment_body	Kwɛ nɔ ni ekɛ yɛ o hewalɛ he
+notification_follow_title	%s je ni nyiɛ o sɛɛ
+notification_follow_body	Owo mɔ kroŋŋ ni nyiɛ o sɛɛ!
+notification_challenge_title	Hewalɛ saji kroŋŋ
+notification_challenge_body	Nɔ kroŋŋ yɛ %s mli
+channel_likes	Sɔ
+channel_likes_description	Sane kɛ mɔ ko sɔ o saji
+channel_comments	Saji
+channel_comments_description	Sane kɛ mɔ ko kɛ saji yɛ o saji nɔ
+channel_follows	Mɛi ni nyiɛ o sɛɛ
+channel_follows_description	Sane kɛ mɔ ko nyiɛ o sɛɛ
+channel_challenges	Hewalɛ
+channel_challenges_description	Sane yɛ hewalɛ kɛ hewalɛ kroŋŋ he
+image_filters_title	Foto hewalɛ
+filter_brightness	Kpaŋ
+filter_contrast	Gbɔɔ
+filter_saturation	Mlɛ
+filter_reset	Ku sɛɛ
+media_type_image	Foto
+media_type_video	Video
+video_select	Je video
+video_processing	Fee video lɛ...
+video_compressing	Ɛ̃ video lɛ...
+video_generating_thumbnail	Efee foto bibioo...
+video_duration_format	%d:%02d
+video_trim	Tɛ video lɛ
+video_trim_start	Gbɛ ni je mli
+video_trim_end	Gbɛ ni gbɛ
+video_preview	Kwɛ klɛŋ
+video_upload	Hɔ video lɛ
+video_trim_title	Tɛ video lɛ
+video_trim_duration	Gbɛ teŋ: %s
+video_trim_reset	Ku sɛɛ
+video_trim_apply	Hɔ tɛɛmɔ lɛ
+blocked_users_empty	Mɛi ni atsi bɛ
+action_unblock	Híɛ kwan
+unblock_confirm_title	Híɛ kwan ma mɔ lɛ
+unblock_confirm_message	Osumɔɔ ni ohiɛ kwan ma %s?
+action_block	Tsi kwan
+block_confirm_title	Tsi kwan ma mɔ lɛ
+block_confirm_message	Osumɔɔ ni otsi kwan ma %s? Ebaanyɛ ekɛ bo awo nii dɔŋŋ.
+admin_moderation_title	Kwɛmɔ dan
+admin_no_reports	Saji ni akɛ bɛ
+admin_dismiss	Je
+admin_take_action	Wɔ nɔ
+report_details_reported_user	Mɔ ni akɛ e saji
+report_details_content_type	Nɔ su
+report_details_description	Saji
+report_details_date	Da ni akɛ saji lɛ
+report_details_status	Teŋ
+settings_section_admin	Admin
+admin_moderation_dashboard	Kwɛmɔ dan
+admin_moderation_desc	Kwɛ saji ni akɛ lɛ
+home_hero_headline	Ghana klɛŋ,\nhe ni yɔɔ nyam
+home_hero_subhead	Na kente, ankara kɛ lace ni abɔ bo.
+recs_ranker_ondevice	Ato nɔ yɛ fon nɛ nɔ - enyɛɛ adwuma ni intanɛt
+recs_ranker_cloud	O sɛɛvɛs lɛ nɔŋ nɔ kɛmɔ
+recs_ranker_cloud_failed	Sɛɛvɛs lɛ bɛ - yɛkɛ nɔ ni yɔɔ fon lɛ nɔ
+post_video_optimised	Ato ni ahɔ
+post_video_original	Fail ni yɔɔ — anyɛɛ ato

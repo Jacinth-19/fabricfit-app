@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,6 +34,7 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.Tailor
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.ui.navigation.Routes
 import kotlinx.coroutines.launch
 
@@ -53,25 +53,10 @@ fun TailorsScreen(nav: NavHostController, padding: PaddingValues) {
             .fillMaxSize()
             .padding(padding)
     ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.Outlined.ArrowBackIosNew,
-                    contentDescription = stringResource(R.string.action_back),
-                )
-            }
-            Text(
-                stringResource(R.string.tailors_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-            )
-        }
+        FabricFitTopBar(
+            title = stringResource(R.string.tailors_title),
+            onBack = { nav.popBackStack() },
+        )
 
         // Mandatory demo banner — the directory is sample data, never presented as real.
         Card(

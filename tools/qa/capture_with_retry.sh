@@ -11,8 +11,9 @@
 set -uo pipefail
 
 OUT_DIR="../qa-artifacts/screens"
+KEEP_DIR="../qa-artifacts/screens-kept"
 
-rm -rf "$OUT_DIR"
+rm -rf "$OUT_DIR" "$KEEP_DIR"
 
 # The emulator runner reports the device as ready before adb has finished attaching, and a
 # capture that starts in that window dies with "device offline" or "device not found". It
@@ -47,12 +48,28 @@ while [ "$attempt" -le 3 ]; do
     echo "--- attempt $attempt ---"
     tail -5 /tmp/cap.log
   } >> /tmp/capfails.log
+  # Do not throw away a partial run: an emulator that dies on screen 5 of 7 still produced
+  # four captures from the current build, which is strictly better than keeping stale ones.
+  if [ -d "$OUT_DIR" ] && [ -n "$(ls -A "$OUT_DIR" 2>/dev/null)" ]; then
+    mkdir -p "$KEEP_DIR"
+    cp -r "$OUT_DIR"/. "$KEEP_DIR"/ 2>/dev/null || true
+  fi
   rm -rf "$OUT_DIR"
   adb shell am force-stop com.fabricfit.app.debug 2>/dev/null || true
   adb shell input keyevent KEYCODE_WAKEUP 2>/dev/null || true
   sleep 10
   attempt=$((attempt + 1))
 done
+
+# Merge any earlier partial attempt back in, but never overwrite a screen the latest attempt
+# did capture - the newer file is the more current render.
+if [ -d "$KEEP_DIR" ]; then
+  mkdir -p "$OUT_DIR"
+  while IFS= read -r -d '' kept; do
+    rel="${kept#"$KEEP_DIR"/}"
+    [ -f "$OUT_DIR/$rel" ] || cp "$kept" "$OUT_DIR/$rel"
+  done < <(find "$KEEP_DIR" -name '*.png' -print0)
+fi
 
 # Total capture failure: surface the last error lines as annotations so they
 # are visible on the public run page (job logs require sign-in). Only emitted

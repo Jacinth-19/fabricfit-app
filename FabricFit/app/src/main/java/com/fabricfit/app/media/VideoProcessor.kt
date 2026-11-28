@@ -73,6 +73,42 @@ object VideoProcessor {
     }
 
     /**
+     * Cut [startMs]..[endMs] out of [inputUri] and re-encode the result.
+     *
+     * The feed composer used to render a draggable trimmer whose callback only showed a
+     * toast: the post published the whole clip while the UI implied a cut. This makes the
+     * control truthful by actually clipping the media.
+     *
+     * Uses [MediaItem.ClippingConfiguration] on the same stable Transformer 1.4.x API as
+     * [transcode]. Clipping and re-encoding happen in one pass, so there is no intermediate
+     * file and no double loss of quality.
+     *
+     * Returns null when the range is empty or inverted, or when the device cannot process
+     * the file. Callers must treat that as "trim did not happen" and say so, rather than
+     * silently uploading the untrimmed source.
+     */
+    suspend fun trim(
+        context: Context,
+        inputUri: Uri,
+        startMs: Long,
+        endMs: Long,
+    ): File? = withContext(Dispatchers.IO) {
+        if (endMs <= startMs || startMs < 0) return@withContext null
+
+        val target = File(context.cacheDir, "trimmed_${UUID.randomUUID()}.mp4")
+        val ok = runCatching {
+            transcodeRange(context, inputUri, target, startMs, endMs)
+        }.getOrDefault(false)
+
+        if (ok && target.length() > 0L) {
+            target
+        } else {
+            runCatching { target.delete() }
+            null
+        }
+    }
+
+    /**
      * Runs the Transformer to completion.
      *
      * Transformer reports through callbacks, so this bridges them onto a coroutine instead
@@ -121,6 +157,61 @@ object VideoProcessor {
             transformer.start(EditedMediaItem.Builder(mediaItem).build(), target.absolutePath)
         }.onFailure { failure ->
             Log.w(TAG, "could not start transform", failure)
+            if (cont.isActive) cont.resume(false)
+        }
+
+        cont.invokeOnCancellation { runCatching { transformer.cancel() } }
+    }
+
+    /**
+     * Transcode a specific [startMs]..[endMs] window.
+     *
+     * Kept separate from [transcode] rather than parameterising it, because the two have
+     * different clipping semantics: [transcode] applies a maximum-length cap and must not
+     * drop the head of the clip, while this must honour both bounds exactly.
+     *
+     * The same Transformer listener shape is reused so both paths fail the same way -
+     * returning false rather than throwing - which keeps the caller's fallback logic
+     * identical.
+     */
+    private suspend fun transcodeRange(
+        context: Context,
+        inputUri: Uri,
+        target: File,
+        startMs: Long,
+        endMs: Long,
+    ): Boolean = suspendCancellableCoroutine { cont ->
+        val transformer = Transformer.Builder(context)
+            .addListener(object : Transformer.Listener {
+                override fun onCompleted(composition: Composition, exportResult: ExportResult) {
+                    if (cont.isActive) cont.resume(target.length() > 0L)
+                }
+
+                override fun onError(
+                    composition: Composition,
+                    exportResult: ExportResult,
+                    exportException: ExportException,
+                ) {
+                    Log.w(TAG, "trim failed", exportException)
+                    if (cont.isActive) cont.resume(false)
+                }
+            })
+            .build()
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(inputUri)
+            .setClippingConfiguration(
+                MediaItem.ClippingConfiguration.Builder()
+                    .setStartPositionMs(startMs)
+                    .setEndPositionMs(endMs)
+                    .build(),
+            )
+            .build()
+
+        runCatching {
+            transformer.start(EditedMediaItem.Builder(mediaItem).build(), target.absolutePath)
+        }.onFailure { failure ->
+            Log.w(TAG, "could not start trim", failure)
             if (cont.isActive) cont.resume(false)
         }
 

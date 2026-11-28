@@ -27,11 +27,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21, not 17: Robolectric refuses to build a sandbox for SDK 36 on
+      # anything older ("Android SDK 36 requires Java 21"), and the module targets
+      # API 36. Bytecode still targets 17, so the APK is unaffected.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -45,40 +48,60 @@ jobs:
       - name: Make the Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      # Store and in-app copy must not advertise a mailbox on a domain we do not own; the
+      # privacy policy previously offered support@fabricfit.app, which does not exist.
+      # Note the bare path: the job's defaults.run.working-directory is already FabricFit.
+      - name: Check store contact addresses
+        run: python3 tools/qa/check_store_contacts.py
+      # AGP downloads the compileSdk platform itself, but build-tools is not implied by
+      # compileSdk: AGP 8.9's default build-tools is 35.0.0, which cannot compile an
+      # API 36 target. Pin it here so the runner does not fail on a missing package.
+      - name: Install Android 36 build-tools
+        run: |
+          sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          if [ -z "$sdk_root" ]; then
+            echo "No ANDROID_HOME or ANDROID_SDK_ROOT on this runner" >&2
+            exit 1
+          fi
+          build_tools="$sdk_root/build-tools/36.0.0"
+          if [ -d "$build_tools" ]; then
+            echo "build-tools 36.0.0 already present"
+            exit 0
+          fi
+          sdk_manager=$(find "$sdk_root/cmdline-tools" -path '*/bin/sdkmanager' -print -quit)
+          test -n "$sdk_manager"
+          yes | "$sdk_manager" --install 'build-tools;36.0.0' 'platforms;android-36'
+
       # assembleDebugAndroidTest compiles the instrumented source set, so a
       # package/class rename there is caught without needing an emulator.
       # Robolectric downloads a large android-all jar on first use. GitHub's Maven proxy
       # occasionally fails that fetch, which fails every Robolectric test at once (not just
       # the newest one), so give the download its own retried step.
       - name: Warm the Robolectric android-all cache
+        # Robolectric downloads its android-all runtime on first use, mid-test, where a slow
+        # fetch looks like a test timeout. Fetching it here, before the real run, keeps the
+        # failure attributable. Not fatal: if it cannot be fetched, the test step reports it.
         run: |
-          set -o pipefail
-          for attempt in 1 2 3; do
-            if ./gradlew :app:testDebugUnitTest --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
-                --console=plain 2>&1 | tee robolectric-warmup.log; then
-              echo "Robolectric runtime fetched"
-              exit 0
-            fi
-            if grep -q 'Failed to fetch maven artifact org.robolectric' robolectric-warmup.log; then
-              echo "::warning title=Robolectric download flake::attempt $attempt, retrying"
-              sleep 15
-              continue
-            fi
-            echo "warm-up failed for another reason; the real test step will report it"
-            exit 0
-          done
-          echo "::warning title=Robolectric download flake::gave up after 3 attempts"
-          exit 0
+          bash ../tools/qa/gradle_retry.sh \
+            :app:testDebugUnitTest \
+            --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
+            || echo "::warning title=Robolectric warm-up::could not pre-fetch the android-all runtime; continuing"
 
       - name: Unit tests, debug build, instrumented-test compile
+        # Retries only when the failure is a dependency download (Maven Central rate-limits the
+        # shared CI IP with 429s). A compile error or failing test fails on the first attempt.
         run: |
-          set -o pipefail
-          ./gradlew :app:testDebugUnitTest :app:assembleDebug \
-            :app:assembleDebugAndroidTest --console=plain 2>&1 | tee verify-gradle.log
+          bash ../tools/qa/gradle_retry.sh \
+            :app:testDebugUnitTest \
+            :app:assembleDebug \
+            :app:assembleDebugAndroidTest
 
       # Job logs need a login to read; annotations are visible on the public run
       # page, so the reason for a red build is obvious without opening the log.
       - name: Annotate the Gradle failure
+        # No HAS_KEY here: that variable belongs to the release job's optional-signing gate.
+        # This condition was copy-edited into verify during the signing work and made the
+        # step permanently dead, so every verify failure reported only "exit code 1".
         if: failure()
         run: python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log
 
@@ -155,11 +178,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21: AGP 8.9 builds this API 36 module on it; bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -172,40 +196,53 @@ jobs:
       - name: Make the Gradle wrapper executable
         run: chmod +x ./gradlew
 
-      # Decode an upload keystore when KEYSTORE_BASE64 is configured in repo
-      # secrets; otherwise app/build.gradle.kts falls back to demo-release.keystore.
-      - name: Decode release keystore (optional)
+      # The upload key is a repository secret, never a checked-in file. If the secrets are
+      # absent this job fails here with a readable message instead of producing an unsigned
+      # release. FabricFit/tools/release/new_upload_key.sh creates the key and prints the
+      # values this step expects.
+      # A job-level `if` cannot read `secrets`, so the gate lives in a step and every later
+      # step keys off HAS_KEY. Without the secret the job reports success but builds and
+      # publishes nothing, and says so with a warning annotation: a skipped release is
+      # honest, an *unsigned* release is not, and a permanently red pipeline would hide
+      # real regressions behind the noise.
+      - name: Decode release keystore
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > app/upload.keystore
-            echo "KEYSTORE_FILE=upload.keystore" >> "$GITHUB_ENV"
+          set -eu
+          if [ -z "${KEYSTORE_BASE64:-}" ]; then
+            echo "::warning title=Release skipped::KEYSTORE_BASE64 is not set, so no release artifact was built. Run FabricFit/tools/release/new_upload_key.sh and add KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS and KEY_PASSWORD as repository secrets (see FabricFit/BUILD.md, 'Release signing')."
+            echo "HAS_KEY=false" >> "$GITHUB_ENV"
+            exit 0
           fi
+          printf '%s' "$KEYSTORE_BASE64" | base64 -d > app/upload.keystore
+          echo "KEYSTORE_FILE=upload.keystore" >> "$GITHUB_ENV"
+          echo "HAS_KEY=true" >> "$GITHUB_ENV"
+          echo "Decoded upload keystore ($(stat -c%s app/upload.keystore) bytes)."
 
       - name: Minified release APK + Play bundle
+        if: env.HAS_KEY == 'true'
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          set -o pipefail
-          ./gradlew :app:assembleRelease :app:bundleRelease --console=plain 2>&1 \
-            | tee release-gradle.log
+          GRADLE_RETRY_LOG=release-gradle.log \
+            bash ../tools/qa/gradle_retry.sh :app:assembleRelease :app:bundleRelease
 
       - name: Annotate the Gradle failure
-        if: failure()
+        if: failure() && env.HAS_KEY == 'true'
         run: python3 ../tools/qa/gradle_error_annotations.py release-gradle.log
 
       - name: Upload release APK
-        if: success()
+        if: success() && env.HAS_KEY == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-release-apk
           path: FabricFit/app/build/outputs/apk/release/app-release.apk
 
       - name: Upload Play bundle
-        if: success()
+        if: success() && env.HAS_KEY == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-release-aab
@@ -215,7 +252,7 @@ jobs:
       # build is also attached to a GitHub Release for one-click install.
       - name: Publish release APK + bundle to GitHub Releases
         if: >-
-          success() && (github.event_name == 'workflow_dispatch' ||
+          success() && env.HAS_KEY == 'true' && (github.event_name == 'workflow_dispatch' ||
           startsWith(github.ref, 'refs/tags/v') ||
           (github.event_name == 'push' &&
            contains(github.event.head_commit.message, '[release]')))
@@ -241,25 +278,33 @@ jobs:
           fi
           echo "Published $tag"
 
-  # Opt-in device QA: run the DeepLabV3 instrumented test on a KVM-accelerated
+  # Opt-in device QA: run the full instrumented suite on a KVM-accelerated
   # Linux emulator. Fires on manual dispatch, on the weekly schedule, when a
   # release tag (v*) is pushed, or when the commit message contains "[device-qa]".
   device-qa:
+    permissions:
+      contents: read
+      pull-requests: write
+    # Same dual trigger as the screenshots job: the commit-message tag only exists on push
+    # events, so the PR title is the reliable opt-in when the branch has an open PR.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'schedule' ||
       startsWith(github.ref, 'refs/tags/v') ||
       (github.event_name == 'push' &&
-       contains(github.event.head_commit.message, '[device-qa]'))
+       contains(github.event.head_commit.message, '[device-qa]')) ||
+      (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.title, '[device-qa]'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21 everywhere: AGP 8.9 + this API 36 module. Bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -274,8 +319,36 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+          # The rules file only grants permissions; it cannot conjure a device node on a host
+          # without nested virtualisation. Say so here, in one line, instead of letting the
+          # emulator fail to boot five steps later with an unrelated error.
+          if [ ! -c /dev/kvm ]; then
+            echo "::error::/dev/kvm is absent on this runner, so an x86_64 emulator cannot boot accelerated (and booting unaccelerated takes ~40 minutes). Hosted runners normally provide it; if this recurs, run this job on a larger/self-hosted runner."
+            exit 1
+          fi
+          echo "/dev/kvm present: $(ls -l /dev/kvm)"
 
-      - name: DeepLabV3 person-segmentation QA on emulator
+      # A failed first boot is usually transient (download or disk contention on a shared
+      # runner). One retry with an explicit cold boot turns most of those into a green run
+      # without hiding a genuine test failure: a test assertion fails twice, a boot does not.
+      - name: Boot check (retried once)
+        uses: reactivecircus/android-emulator-runner@v2.38.0
+        continue-on-error: true
+        id: boot
+        with:
+          api-level: 33
+          target: default
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          disable-animations: true
+          working-directory: FabricFit
+          script: adb shell getprop sys.boot_completed | grep -q 1
+
+      # The whole instrumented suite, not a filtered subset. It used to hard-code a
+      # -Pandroid...class filter for PersonSegmenterDeviceTest, so any other instrumented
+      # test was silently skipped even on the runs that did execute - a passing device-qa
+      # would never have run the database, launch or try-on tests.
+      - name: Instrumented suite on emulator
         uses: reactivecircus/android-emulator-runner@v2.38.0
         env:
           SCREENSHOT_ABI: '1'
@@ -283,25 +356,112 @@ jobs:
           api-level: 33
           target: default
           arch: x86_64
+          # Explicit cold boot: no snapshot restore (the commonest cause of a half-booted
+          # emulator that answers adb but fails every instrumentation), software GPU because
+          # hosted runners have no GPU, and animations off so Compose idle detection is
+          # reliable rather than timing out under transition animations.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          disable-animations: true
           working-directory: FabricFit
+          # A wedged instrumentation hangs until the pre-installed runner's own timeout; cap
+          # it so a failure reports in minutes with logs instead of burning the job budget.
+          # This runner executes `script` with /bin/sh, so bash-only builtins (set -o
+          # pipefail) exit 2 before gradle starts - which is exactly the failure that was
+          # observed. The real logic lives in a bash script with a shebang, and the log is
+          # tee'd to $RUNNER_TEMP because a later step re-publishes it: the raw job log needs
+          # an Actions login, so failures were reported as "exit code 1" with nothing to read.
           script: >
             export SCREENSHOT_ABI=1 &&
-            chmod +x ./gradlew &&
-            ./gradlew :app:connectedDebugAndroidTest
-            -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
+            export INSTRUMENTATION_LOG="$RUNNER_TEMP/instrumentation.log" &&
+            chmod +x ./gradlew tools/qa/run_instrumented.sh &&
+            ./tools/qa/run_instrumented.sh
+
+      # Keep the HTML report and the raw XML whether the suite passed or failed: the
+      # annotation step only greps messages, and a device-only failure needs the full report.
+      - name: Upload instrumented test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: instrumented-test-results
+          path: |
+            FabricFit/app/build/outputs/androidTest-results
+            FabricFit/app/build/reports/androidTests
+          if-no-files-found: warn
+
+      - name: Report the instrumentation failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG: ${{ runner.temp }}/instrumentation.log
+        run: |
+          set -u
+          if [ -f "$LOG" ]; then
+            echo "::group::last 200 lines of instrumentation.log"
+            tail -200 "$LOG" || true
+            echo "::endgroup::"
+            # Annotations are the only channel that survives without an Actions login.
+            python3 - "$LOG" <<'PY'
+          import pathlib, sys
+          text = pathlib.Path(sys.argv[1]).read_text(errors="replace")
+          lines = [l for l in text.splitlines() if l.strip()]
+          # Prefer the per-test failures and the assertion text under them: the summary tail
+          # ("BUILD FAILED") is always present and identifies nothing.
+          test_lines = [i for i, l in enumerate(lines)
+                        if l.rstrip().endswith("FAILED") and ">" in l]
+          picked: list[str] = []
+          for i in test_lines:
+              picked.append(lines[i])
+              picked.extend(lines[i + 1:i + 3])     # the exception + its message
+          if not picked:
+              picked = [l for l in lines if any(k in l.lower() for k in
+                        ("exception", "assertion", "error", "emulator", "boot"))]
+          for line in (picked or lines)[-10:]:
+              clean = line.replace("%", "%25").replace("\r", "").replace("\n", "")
+              print(f"::error::{clean[:900]}")
+          PY
+            # A PR comment is readable from the API, so the failure can be diagnosed without
+            # the log archive; keep it short and collapsed to avoid burying the PR.
+            target_branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}"
+            if [ -n "$target_branch" ]; then
+              {
+                echo '### device-qa failed'
+                echo
+                echo "<details><summary>instrumentation.log (tail)</summary>"
+                echo
+                echo '```'
+                tail -120 "$LOG" || true
+                echo '```'
+                echo
+                echo '</details>'
+              } > "$RUNNER_TEMP/comment.md"
+              gh pr comment "$target_branch" --body-file "$RUNNER_TEMP/comment.md" \
+                || echo "::warning::could not post the failure comment"
+            fi
+          else
+            echo "::error::No instrumentation.log was produced, so gradle never started: the emulator most likely failed to boot. Check the emulator-runner step above."
+          fi
 
       - name: Annotate instrumented test failures
         if: failure()
         run: |
           python3 - <<'PY'
           import pathlib, xml.etree.ElementTree as ET
-          for xml in pathlib.Path("app/build/outputs/androidTest-results").rglob("*.xml"):
+          # This step runs in the job working-directory (FabricFit), not the workspace root.
+          root = pathlib.Path("app/build/outputs/androidTest-results")
+          if not root.exists():
+              print(f"::error title=No test results::No instrumented results under {pathlib.Path.cwd() / root}. Gradle did not get as far as running a test - check the instrumentation log above.")
+              raise SystemExit(0)
+          found = False
+          for xml in root.rglob("*.xml"):
               tree = ET.parse(xml)
               for tc in tree.iter("testcase"):
                   for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                      found = True
                       msg = (f.text or f.attrib.get("message", "")).strip()
                       esc = msg.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
                       print(f"::error::{tc.attrib.get('classname')}.{tc.attrib.get('name')}: {esc[:1400]}")
+          if not found:
+              print("::error title=No failures in the XML::Instrumentation reported failure but no test result contains one - the failure is in the runner or the app crashed at launch.")
           PY
 
   # On-demand end-to-end try-on on a real Android emulator: runs the bundled Ghanaian
@@ -321,11 +481,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21 everywhere: AGP 8.9 + this API 36 module. Bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -463,10 +624,17 @@ jobs:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
   # The job commits the refreshed PNGs back to the branch that triggered it.
   screenshots:
+    # Trigger: manual dispatch, or a push whose message carries [screenshots], or the same tag
+    # in the PR title. The PR-title route exists because a branch with an open PR emits two
+    # runs (push and pull_request) and `github.event.head_commit` is only populated on the
+    # former, so a commit-message tag appears to work or not depending on which run you look
+    # at. Remove the tag from the title afterwards: it stays true for every later push.
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'push' &&
-       contains(github.event.head_commit.message, '[screenshots]'))
+       contains(github.event.head_commit.message, '[screenshots]')) ||
+      (github.event_name == 'pull_request' &&
+       contains(github.event.pull_request.title, '[screenshots]'))
     runs-on: ubuntu-latest
     timeout-minutes: 35
     permissions:
@@ -479,11 +647,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21 everywhere: AGP 8.9 + this API 36 module. Bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -496,7 +665,7 @@ jobs:
       - name: Build debug APK with emulator native libraries
         env:
           SCREENSHOT_ABI: '1'
-        run: ./gradlew :app:assembleDebug
+        run: bash ../tools/qa/gradle_retry.sh :app:assembleDebug
 
       - name: Enable Linux emulator acceleration
         run: |
@@ -540,31 +709,74 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-readme-screens
-          path: qa-artifacts/screens/
+          path: |
+            qa-artifacts/screens/
+            qa-artifacts/screens/play/
           if-no-files-found: warn
 
       - name: Commit refreshed screenshots to branch
+        # continue-on-error is set on this job because the hosted emulator dies mid-capture
+        # intermittently. That makes the *job* non-blocking, but a plain `run:` step still
+        # reports failure on a non-zero exit, so the whole job showed red for a git push race
+        # with the author's own push. Every failure path below emits an explicit ::error::
+        # annotation instead, which is what should be read.
+        continue-on-error: true
+        if: always()
         # Pushing back from a workflow token fails on protected branches. The captures are
         # uploaded as an artifact regardless, so a push failure here must not fail the job
         # - but it must say so loudly instead of swallowing the reason.
         run: |
-          cp ../qa-artifacts/screens/*.png docs/screenshots/ || {
+          # Copies, never moves, and never a wholesale replace: an emulator that died part
+          # way through leaves fewer captures than the directory currently holds, and the
+          # images it did produce are the only ones from this build. Screen-by-screen
+          # replacement keeps a partial run useful and never blanks a slot.
+          copied=0
+          for png in ../qa-artifacts/screens/*.png; do
+            [ -f "$png" ] || continue
+            cp "$png" docs/screenshots/ && copied=$((copied + 1))
+          done
+          if [ "$copied" -eq 0 ]; then
             echo "::error title=SCREENSHOTS::no captures produced under qa-artifacts/screens"
             exit 1
-          }
+          fi
+          echo "Updated $copied README screen(s)."
+
+          # The Play listing comes from the same captures; capture_fabricfit_screens.sh is the
+          # only thing that knows which screen belongs in which listing slot. Slots that were
+          # not produced keep their existing image - a stale screenshot is better than a
+          # deleted one, and the job warns so it can be noticed.
+          play_dir="../qa-artifacts/screens/play"
+          if [ -d "$play_dir" ] && [ -n "$(ls -A "$play_dir" 2>/dev/null)" ]; then
+            for slot in "$play_dir"/*.png; do
+              base="$(basename "$slot")"
+              cp "$slot" "store/screenshots/$base"
+              echo "Play slot refreshed: $base"
+            done
+            missing=""
+            for expected in 01_play_welcome 02_play_home 03_play_fitscan 05_play_discover 06_play_wardrobe; do
+              [ -f "store/screenshots/$expected.png" ] || missing="$missing $expected"
+            done
+            [ -z "$missing" ] || echo "::warning title=PLAY SCREENSHOTS::not refreshed in this run:$missing"
+          else
+            echo "::warning title=PLAY SCREENSHOTS::no Play slots were produced; store/screenshots/ left untouched"
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/
+          git add docs/screenshots/ store/screenshots/
           if git diff --cached --quiet; then
             echo "Screenshots unchanged, nothing to commit."
             exit 0
           fi
-          git commit -m "ci: refresh README screenshots [skip ci]"
+          git commit -m "ci: refresh README and Play screenshots [skip ci]"
           # The checkout is detached at the triggering SHA, so a bare `git push` has no
           # upstream and always failed: these captures could never land, only be uploaded
           # as an artifact. Push explicitly onto the branch that triggered the run.
           branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          if git push origin "HEAD:refs/heads/${branch}" 2>push.log; then
+          # Two runs of this job can overlap (push and pull_request events), and the author
+          # may push while it runs. Rebase onto the branch head once before giving up.
+          if git push origin "HEAD:refs/heads/${branch}" 2>push.log ||
+             { git pull --rebase --autostash origin "${branch}" >/dev/null 2>&1 &&
+               git push origin "HEAD:refs/heads/${branch}" 2>>push.log; }; then
             echo "Pushed refreshed screenshots to ${branch}."
           else
             echo "::warning title=SCREENSHOTS NOT PUSHED::$(tr '\n' ' ' < push.log | head -c 800)"

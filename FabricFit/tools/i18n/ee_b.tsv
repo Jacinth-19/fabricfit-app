@@ -225,7 +225,7 @@ help_faq_a4	Ɖoɖo kpɔkpɔ, lɔlɔ̃nuwo, ŋutinya kɔ ɖoɖowo wɔa dɔ intern
 help_faq_q5	Ðe mate ŋu atsɔ nye ɖoɖo ŋutɔ akpe ɖe eŋua?
 help_faq_a5	Meka o haɖe. Woɖoa awuɖoɖo ɖoɖoƒe la tso agbalẽ me si woate ŋu atrɔ tso teƒe bubu.
 help_contact_body	Gblɔ nu si gblẽ la na mí eye míaɖo ŋu. Tsɔ wò app version kpe ɖe eŋu: %1$s.
-help_contact_email	support@fabricfit.app
+help_contact_email	fabricfit.app@gmail.com
 help_contact_subject	FabricFit kpekpeɖeŋu biabia
 empty_looks_title	Nɔnɔmeɖeɖe aɖeke meli haɖe o
 empty_looks_body	Do ɖoɖo kpɔ nɔnɔmeɖeɖe dzi eye wò kpɔɖeŋu adze afii.
@@ -555,3 +555,209 @@ contrib_delete_confirm	Woaɖe foto sia ɖa?
 contrib_delete_confirm_body	Woaɖe foto sia le wò kpekpeɖeŋuwo me.
 contrib_duplicate	Foto sia tɔgbe li xoxo.
 outfit_builder_surprise	Tia ɖeka nam
+video_trim_applied	Woɖe egbɔ
+video_trim_failed	Mate ŋu aɖe egbɔ o — woatsɔ video blibo
+challenge_title	Nu Kpɔɖeŋu
+onboarding_brand_badge	Ghana · Wotsɔ wɔwɔ na wo
+onboarding_welcome_headline	Do nu si wòle be ye.
+onboarding_welcome_sub	Kpɔ nu la. Kpɔ awu la. Ɖa si — kaba, agbada, kaftan kple nu bubu, wotsɔ wɔwɔ na wo.
+onboarding_proof_offline	Edzɔa dɔ le intanɛt manɔmee
+onboarding_proof_tryon	AI awu nukpɔkpɔ
+onboarding_proof_free	Emee
+custom_sleeve_three_quarter	Nu etɔ̃
+custom_neck_boat	Kɔ boŋ
+custom_length_floor	Ɖi anyigba
+fabric_wool	Wul / Nwira
+fabric_wool_desc	Wul alo kɔti si wotsɔ wɔwɔ.
+empty_action_scan_fabric	Kpɔ wò nu gbãtɔ
+empty_action_create_collection	Wɔ ƒuƒoƒo ɖeka
+empty_action_add_to_wardrobe	Tsɔ de wò awu dan la me
+empty_action_browse_designs	Kpɔ awu ɖoɖowo
+empty_action_start_exploring	Dze ŋgɔ nukpɔkpɔ
+empty_action_try_design	Te awu ɖeka
+empty_action_clear_filters	Ɖe nyɔɖenyɔɖewo ɖa
+empty_secondary_learn_more	Srɔ̃ nu geɖe
+accessibility_title	Ame ŋutɔ ƒe mɔnuwo
+accessibility_desc	Trɔ app la ɖo wò nu
+accessibility_high_contrast	Nukpɔkpɔ kpekpeme
+accessibility_high_contrast_desc	Zã ɔsiwo si dze ƒã nyuie
+accessibility_reduced_motion	Ɣeyiɣi kpui
+accessibility_reduced_motion_desc	Ɖe agbɔsɔsɔwo dzi
+accessibility_large_text	Ŋɔŋlɔ gã
+accessibility_large_text_desc	Lɔ̃ ɔŋŋŋlɔ gã le app la me katã
+accessibility_haptic_feedback	Asi ƒomedodo
+accessibility_haptic_feedback_desc	Anu le ne ƒom ɖe nu
+biometric_title	Ʋu FabricFit
+biometric_subtitle	Ðo wò ŋutɔ nyuie
+biometric_description	Zã wò asi alo wò mo nɔ ƒu wò awu dan
+biometric_available_strong	Wò asi alo wò mo li
+biometric_available_weak	Ame ŋutɔ ƒe mɔnu li
+biometric_not_available	Ame ŋutɔ ƒe mɔnu mele o
+security_title	Dedienɔnɔ
+security_biometric_lock	App la ƒuƒu
+security_biometric_lock_desc	Bia wò ŋutɔ nyaŋo hafi ʋu app la
+security_biometric_premium	Srɔ̃ nu xɔasiwo ta
+security_biometric_premium_desc	Bia wò ŋutɔ nyaŋo le nu xɔasiwo ko ŋu
+share_title	Tsɔ yi
+share_look_text_with_fabric	Kpɔ %1$s si mewɔ le FabricFit, kple %2$s nu! 🎨✨ #FabricFit #GhanaianFashion
+export_title	Tsɔ wò awu dan la yi
+export_pdf	Wɔe PDF
+export_pdf_desc	Wɔ wò nu kple wò awu agbale
+export_image	Wɔe nɔnɔmetata
+export_image_desc	Tsɔ nu ɖeɖe kple eƒe nyawo yi
+export_success	Wowɔ awu dan la nyuie
+export_failed	Mewɔe o
+export_share	Tsɔ nu si wowɔ la yi
+action_filter	Ɖe
+filter_title	Ɖe kple ɖoɖo
+filter_sort_by	Ðo ɖoɖo
+filter_category	Ƒuƒoƒo
+filter_all_categories	Ƒuƒoƒo katã
+sort_newest	Yeyea gbã
+sort_oldest	Xoxoa gbã
+sort_name_az	Ŋkɔ (A-Z)
+sort_name_za	Ŋkɔ (Z-A)
+community_title	Habɔbɔ
+community_empty_title	Nuwo mele o
+community_empty_body	Ŋgɔ gbã tsɔ wò nu fia habɔbɔ la!
+community_empty_action	Wɔ wò nu gbãtɔ
+community_active_challenges	Nu Kpɔɖeŋu siwo le edzi
+community_gallery	Awu nɔnɔmetata dan
+community_following	Amesiwo le wò yome
+community_followers	Amesiwo kplɔ wò
+community_posts	Nuwo
+action_like	Lɔ̃
+action_comment	Ŋlɔ nya
+action_follow	Kplɔ
+action_unfollow	Ɖe kplɔdɔdzi
+challenge_participants	Ame %d
+challenge_join	Ge ɖe nu kpɔɖeŋu la me
+challenge_submit	Ðo wò nu
+challenge_ends	Ewɔa yi %s
+user_profile	Wò ŋutɔ nyawo
+gallery_detail	Awu nyawo
+add_comment	Ŋlɔ nya…
+post_comment	Ðo ɖa
+comments_count	Nya %d
+likes_count	Lɔ̃ %d
+fabrics_used	Nu si wozã
+style_used	Awu si wozã
+user_profile_not_found	Mekpɔ ame la o
+search_hint	Di nuwo, amewo, tag…
+search_recent	Nukpɔkpɔ si va yi
+search_no_recent	Nukpɔkpɔ a va yi meli o
+search_no_results	Mekpɔ naneke o
+action_clear_all	Ɖe katã
+filter_date_range	Ɣeyiɣi dometsotso
+filter_tags	Tags
+action_edit	Trɔ
+image_aspect_ratio	Nɔnɔmetata ƒe agbɔsɔsɔ
+image_edit_title	Trɔ nɔnɔmetata
+image_crop	Lã
+image_rotate	Trɔ
+image_reset	Gbugbɔ
+action_report	Ƒo nu
+report_title	Ƒo nu le nu si ŋu
+report_description	Kpe ɖe míaŋ be míase nya la: tia susu si ta wòƒo nu la.
+report_select_type	Tia susu
+report_additional_info	Nya bubuwo (ne èdi be)
+report_placeholder	Ŋlɔ nya geɖewo ku ɖe nya la ŋu…
+report_submit	Ðo nya la
+report_submitting	Ele yiyim…
+report_success	Woɖo nya la nyuie
+report_already_reported	Èƒo nu ɖe nu sia ŋu xoxo
+report_type_spam	Nya dzodzro alo aɖaŋu
+report_type_inappropriate	Nu si mesɔ o
+report_type_harassment	Ƒoɖoɖo alo ŋɔŋlɔɖi
+report_type_copyright	Copyright ƒe kpɔɖeŋu
+report_type_misleading	Nya si blea ame
+report_type_other	Nu bubu
+format_bold	Dzẽ
+format_italic	Ɖeɖe
+format_code	Koodu
+format_link	Link
+format_quote	Nya si woƒo
+format_list	Ŋkɔŋlɔ
+richtext_helper	Ekpena markdown: **dzẽ**, *ɖeɖe*, `koodu`, [link](url), > nya si woƒo, - ŋkɔŋlɔ
+description_label	Nyaɖeɖefia
+description_placeholder	Ŋlɔ nya ku ɖe wò nu ŋu… (markdown le)
+notification_preferences_title	Nyatakaka ƒe ɖoɖowo
+notification_category_social	Ame kple ame ƒe nuwɔna
+notification_category_community	Habɔbɔ
+notification_category_other	Nu bubu
+notification_pref_likes	Lɔ̃
+notification_pref_likes_desc	Ne ame aɖe lɔ̃ wò nu
+notification_pref_comments	Nyawo
+notification_pref_comments_desc	Ne ame aɖe ŋlɔ nya ɖe wò nu ŋu
+notification_pref_follows	Amesiwo kplɔ wò yeyewo
+notification_pref_follows_desc	Ne ame aɖe kplɔ wò
+notification_pref_mentions	Woyɔ wò ŋkɔ
+notification_pref_mentions_desc	Ne ame aɖe yɔ wò ŋkɔ
+notification_pref_challenges	Nu Kpɔɖeŋuwo
+notification_pref_challenges_desc	Nya ku ɖe nu kpɔɖeŋuwo ŋu
+notification_pref_email	Email nyatakaka
+notification_pref_email_desc	Xɔ nyatakaka le email dzi
+notification_preferences_info	Woxenaa tɔtrɔwo katã. Nyatakaka si gbɔna biaa intanɛt.
+notification_like_title	%s lɔ̃ wò nu
+notification_like_body	Kpɔ ame si lɔ̃ wò nu la
+notification_comment_title	%s ŋlɔ nya ɖe wò nu ŋu
+notification_comment_body	Kpɔ nu si wògblɔ ku ɖe wò nu ŋu
+notification_follow_title	%s dze ŋgɔ kplɔ wò
+notification_follow_body	Wò ame yeye a kplɔ wò!
+notification_challenge_title	Nu Kpɔɖeŋu nya yeye
+notification_challenge_body	Nu yeye le %s me
+channel_likes	Lɔ̃
+channel_likes_description	Nyatakaka ne ame aɖe lɔ̃ wò nu
+channel_comments	Nyawo
+channel_comments_description	Nyatakaka ne ame aɖe ŋlɔ nya ɖe wò nu ŋu
+channel_follows	Amesiwo kplɔ wò
+channel_follows_description	Nyatakaka ne ame aɖe kplɔ wò
+channel_challenges	Nu Kpɔɖeŋuwo
+channel_challenges_description	Nyatakaka ku ɖe nu kpɔɖeŋuwo ŋu
+image_filters_title	Nɔnɔmetata ƒe ɖoɖowo
+filter_brightness	Kekeli
+filter_contrast	Vovototo
+filter_saturation	Amadede ƒe ɖiɖi
+filter_reset	Gbugbɔ
+media_type_image	Nɔnɔmetata
+media_type_video	Video
+video_select	Tia video
+video_processing	Wɔ video la...
+video_compressing	Wokɔa video la ɖe anyi...
+video_generating_thumbnail	Wɔa nɔnɔmetata sue...
+video_duration_format	%d:%02d
+video_trim	Lã video la
+video_trim_start	Ɣeyiɣi si dze ŋgɔ
+video_trim_end	Ɣeyiɣi si wu enu
+video_preview	Kpɔ do ŋgɔ
+video_upload	Ðo video la ɖe dzi
+video_trim_title	Lã video la
+video_trim_duration	Ɣeyiɣi ƒe didime: %s
+video_trim_reset	Gbugbɔ
+video_trim_apply	Zã lilã la
+blocked_users_empty	Ame siwo woxe mɔ ɖo meli o
+action_unblock	Ʋu mɔ
+unblock_confirm_title	Ʋu mɔ na ame la
+unblock_confirm_message	Èdi be yeaʋu mɔ na %sa?
+action_block	Xe mɔ
+block_confirm_title	Xe mɔ na ame la
+block_confirm_message	Èdi be yeaxe mɔ na %sa? Mava te ŋu awɔ nu kple wò o.
+admin_moderation_title	Dzodzro dan
+admin_no_reports	Nya siwo woƒo meli o
+admin_dismiss	Ɖe ɖa
+admin_take_action	Wɔ nu
+report_details_reported_user	Ame si woƒo nu ɖe eŋu
+report_details_content_type	Nu ƒe tɔtrɔ
+report_details_description	Nyaɖeɖefia
+report_details_date	Ŋkeke si woƒo nu la
+report_details_status	Nɔnɔme
+settings_section_admin	Admin
+admin_moderation_dashboard	Dzodzro dan
+admin_moderation_desc	Dzro nya siwo woƒo la
+home_hero_headline	Ghana nu,\nawu yeye
+home_hero_subhead	Kpɔ kente, ankara kple lace siwo wowɔ na wò.
+recs_ranker_ondevice	Woɖo ɖoɖo le fon sia dzi - edzɔa dɔ le intanɛt manɔmee
+recs_ranker_cloud	Wò dɔwɔƒe la ɖo ɖoɖo
+recs_ranker_cloud_failed	Dɔwɔƒe la meli o - míezã nu si le fon la dzi
+post_video_optimised	Wotrɔe na ɖoɖo
+post_video_original	Faɛl si le — mate ŋu atrɔe o
