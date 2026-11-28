@@ -139,9 +139,21 @@ play_slot() {
 }
 
 capture() {
-  local name="$1"
-  adb shell screencap -p "/sdcard/fabricfit-${name}.png"
-  adb pull "/sdcard/fabricfit-${name}.png" "$OUT_DIR/${name}.png"
+  local name="$1" attempts=3 i
+  # One screencap/pull can fail mid-run when the emulator stutters ("device offline").
+  # Retry before giving up, so a single hiccup does not cost every remaining screen.
+  for i in $(seq 1 "$attempts"); do
+    if adb shell screencap -p "/sdcard/fabricfit-${name}.png" 2>/dev/null &&
+       adb pull "/sdcard/fabricfit-${name}.png" "$OUT_DIR/${name}.png" >/dev/null 2>&1; then
+      break
+    fi
+    if [ "$i" -eq "$attempts" ]; then
+      echo "Capture failed after ${attempts} attempts: $name" >&2
+      return 1
+    fi
+    echo "  capture of ${name} hiccupped (attempt ${i}), retrying" >&2
+    sleep 3
+  done
   echo "Captured: $OUT_DIR/${name}.png"
 
   local slot

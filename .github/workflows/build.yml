@@ -720,20 +720,42 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit refreshed screenshots to branch
+        if: always()
         # Pushing back from a workflow token fails on protected branches. The captures are
         # uploaded as an artifact regardless, so a push failure here must not fail the job
         # - but it must say so loudly instead of swallowing the reason.
         run: |
-          cp ../qa-artifacts/screens/*.png docs/screenshots/ || {
+          # Copies, never moves, and never a wholesale replace: an emulator that died part
+          # way through leaves fewer captures than the directory currently holds, and the
+          # images it did produce are the only ones from this build. Screen-by-screen
+          # replacement keeps a partial run useful and never blanks a slot.
+          copied=0
+          for png in ../qa-artifacts/screens/*.png; do
+            [ -f "$png" ] || continue
+            cp "$png" docs/screenshots/ && copied=$((copied + 1))
+          done
+          if [ "$copied" -eq 0 ]; then
             echo "::error title=SCREENSHOTS::no captures produced under qa-artifacts/screens"
             exit 1
-          }
-          # The Play listing is regenerated from the same captures. Copies are made by
-          # capture_fabricfit_screens.sh, which is the only thing that knows which screen
-          # belongs in which listing slot.
+          fi
+          echo "Updated $copied README screen(s)."
+
+          # The Play listing comes from the same captures; capture_fabricfit_screens.sh is the
+          # only thing that knows which screen belongs in which listing slot. Slots that were
+          # not produced keep their existing image - a stale screenshot is better than a
+          # deleted one, and the job warns so it can be noticed.
           play_dir="../qa-artifacts/screens/play"
           if [ -d "$play_dir" ] && [ -n "$(ls -A "$play_dir" 2>/dev/null)" ]; then
-            cp "$play_dir"/*.png store/screenshots/
+            for slot in "$play_dir"/*.png; do
+              base="$(basename "$slot")"
+              cp "$slot" "store/screenshots/$base"
+              echo "Play slot refreshed: $base"
+            done
+            missing=""
+            for expected in 01_play_welcome 02_play_home 03_play_fitscan 05_play_discover 06_play_wardrobe; do
+              [ -f "store/screenshots/$expected.png" ] || missing="$missing $expected"
+            done
+            [ -z "$missing" ] || echo "::warning title=PLAY SCREENSHOTS::not refreshed in this run:$missing"
           else
             echo "::warning title=PLAY SCREENSHOTS::no Play slots were produced; store/screenshots/ left untouched"
           fi
