@@ -64,6 +64,8 @@ import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.permissions.rememberCameraPermission
+import com.fabricfit.app.ui.components.ambientBreath
+import com.fabricfit.app.ui.components.heroCarry
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.FirstRunTooltip
 import com.fabricfit.app.ui.components.SampleFabrics
@@ -97,14 +99,14 @@ private val STUDIO_PRESETS = listOf(
     StudioBackdropPreset(
         title = "Vibrant Ankara Wax",
         subtitle = "High-contrast West African resist print",
-        heroAsset = "catalog/heritage/hero_model_kente.jpg",
+        heroAsset = "catalog/heritage/hero_ankara_wax.jpg",
         swatchAsset = "catalog/heritage/swatch_ankara.jpg",
         sampleIndex = 1,
     ),
     StudioBackdropPreset(
         title = "Ceremonial Guipure Lace",
         subtitle = "Intricate openwork floral embroidery",
-        heroAsset = "catalog/heritage/outfit_elegant_peplum.jpg",
+        heroAsset = "catalog/heritage/hero_guipure_lace.jpg",
         swatchAsset = "catalog/heritage/swatch_lace.jpg",
         sampleIndex = 2,
     ),
@@ -179,6 +181,7 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(320.dp)
+                            .heroCarry(strength = 0.09f, driftDp = 14)
                             .clip(RoundedCornerShape(22.dp))
                             .border(
                                 width = 1.dp,
@@ -191,7 +194,9 @@ fun CreateScreen(nav: NavHostController, padding: PaddingValues) {
                             asset = activePreset.heroAsset,
                             contentDescription = activePreset.title,
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .ambientBreath(amplitude = 0.01f),
                         )
 
                         // Deep forest studio vignette overlay

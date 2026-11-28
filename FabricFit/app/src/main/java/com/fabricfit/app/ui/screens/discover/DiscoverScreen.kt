@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -63,6 +65,8 @@ import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.domain.model.FabricCategory
 import com.fabricfit.app.domain.model.GenderCategory
+import com.fabricfit.app.ui.components.EditorialRibbon
+import com.fabricfit.app.ui.components.revealOnEnter
 import com.fabricfit.app.domain.model.StyleCategory
 import com.fabricfit.app.ui.components.AssetImage
 import com.fabricfit.app.ui.components.CardSkeleton
@@ -366,13 +370,28 @@ fun DiscoverScreen(nav: NavHostController, padding: PaddingValues, initialQuery:
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp),
                     ) {
-                        items(styles, key = { it.id }) { style ->
+                        // Editorial ribbon: real photography so Discover reads like a
+                        // shopping feed above the style grid.
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            EditorialRibbon(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .revealOnEnter(order = 0)
+                                    .padding(bottom = 2.dp),
+                            )
+                        }
+                        itemsIndexed(styles, key = { _, style -> style.id }) { index, style ->
                             val isFav = style.id in state.favoriteStyleIds
                             Card(
                                 onClick = { nav.navigate(Routes.design(style.id)) },
                                 shape = RoundedCornerShape(18.dp),
                                 colors = CardDefaults.cardColors(containerColor = HeritageCreamBright),
                                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+                                modifier = Modifier.revealOnEnter(
+                                    // Two columns, so index/2 keeps each visual row in step
+                                    // with its neighbour rather than the right card trailing.
+                                    order = 1 + index / 2,
+                                ),
                             ) {
                                 Column(Modifier.padding(10.dp)) {
                                     Box {

@@ -1,8 +1,12 @@
-# FabricFit — Heritage Luxe
+# FabricFit
 
 [![build](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml/badge.svg)](https://github.com/Jacinth-19/fabricfit-app/actions/workflows/build.yml)
 [![release](https://img.shields.io/github/v/release/Jacinth-19/fabricfit-app?label=release)](https://github.com/Jacinth-19/fabricfit-app/releases/latest)
-[![download](https://img.shields.io/badge/download-fabricfit--v1.0.1.apk-D4A84B)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
+[![download](https://img.shields.io/badge/download-fabricfit--v1.1.0.apk-D4A84B)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.1.0.apk)
+
+<p align="center">
+  <img src="FabricFit/brand/fabricfit_icon_512.png" alt="FabricFit app icon" width="120">
+</p>
 
 <div align="center">
 
@@ -15,10 +19,10 @@
 
 <table>
   <tr>
-    <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Heritage Luxe</strong></sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="210"><br><sub><strong>Home Dashboard</strong></sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="210"><br><sub><strong>Welcome · Shopping Home</strong></sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="210"><br><sub><strong>Home · Lookbook</strong></sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="210"><br><sub><strong>FitScan · Capture Fabric</strong></sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Scan Results" width="210"><br><sub><strong>FitScan · Scan Results</strong></sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit favourites and saved looks" width="210"><br><sub><strong>Try-On</strong></sub></td>
   </tr>
 </table>
 
@@ -34,6 +38,8 @@ Complete Google Play Console store listing copy, feature graphics, framed screen
   <img src="FabricFit/store/video/fabricfit_promo_preview.gif" alt="FabricFit Google Play Promo Video Preview" width="760">
   <br>
   <sub><strong>🎬 <a href="FabricFit/store/video/fabricfit_play_store_promo_16x9.mp4">16:9 Google Play Promo Video (MP4 + Audio)</a> · <a href="FabricFit/store/video/fabricfit_shorts_reel_9x16.mp4">9:16 Play Shorts / Reels Video (MP4 + Audio)</a> · <a href="FabricFit/store/listing.md">Full Play Store Listing Kit</a></strong></sub>
+  <br>
+  <sub>⚠️ <strong>The promo videos are from before v1.1.0</strong> — they still show the old <em>Heritage Luxe</em> welcome screen. The framed store cards below (01–06) have been regenerated against the current UI.</sub>
 </div>
 
 <br>
@@ -53,7 +59,7 @@ Complete Google Play Console store listing copy, feature graphics, framed screen
 
 ## About FabricFit
 
-**FabricFit** (design system codename **Heritage Luxe**) is a cultural fashion and textile-intelligence Android app built in **Kotlin + Jetpack Compose** in **Accra, Ghana**. It celebrates the artistry of Ghanaian and West African textiles — **Kente**, **Ankara / Wax Print**, **Adinkra**, **Lace**, **Batik**, **Brocade**, and **Northern Fugu / Gonja smock weaves** — and turns every piece of cloth you own into a tailored outfit brief.
+**FabricFit** is a cultural fashion and textile-intelligence Android app built in **Kotlin + Jetpack Compose** in **Accra, Ghana**. It reads like a shopping app: editorial photography, a lookbook you can filter by *Women* or *Men*, and a try-on preview. It celebrates the artistry of Ghanaian and West African textiles — **Kente**, **Ankara / Wax Print**, **Adinkra**, **Lace**, **Batik**, **Brocade**, and **Northern Fugu / Gonja smock weaves** — and turns every piece of cloth you own into a tailored outfit brief.
 
 1. **Scan (`FitScan`)** — Point your camera at any fabric. On-device computer vision classifies the weave, extracts its dominant colour palette, and identifies pattern geometry and drape texture.
 2. **Discover (`FitMatch AI`)** — Browse curated Ghanaian styles (*Kaba & Slit*, *Modern Kente Dress*, *Elegant Peplum*, *Maxi Gown*, *Two-Piece Co-ord*, *Royal Agbada*, *Senator*, *Northern Smock*) ranked by confidence score and occasion.
@@ -66,7 +72,9 @@ Complete Google Play Console store listing copy, feature graphics, framed screen
 
 ## UI/UX Design System — *Heritage Luxe*
 
-As the UI/UX design direction for FabricFit, **Heritage Luxe** replaces generic utility templates with an **editorial, culturally grounded design language** inspired by Ghanaian royal textiles and contemporary luxury fashion houses.
+**Heritage Luxe** is the internal name of the design system — the colour tokens, type scale and component language. It is no longer user-facing copy: the wordmark on the welcome screen and splash reads **FabricFit**, in all four locales. (Earlier builds displayed *Heritage Luxe* as the product name; v1.1.0 removed it.)
+
+The direction replaces generic utility templates with an **editorial, culturally grounded design language** inspired by Ghanaian royal textiles and contemporary luxury fashion houses.
 
 ### 1. Design Pillars
 
@@ -95,9 +103,13 @@ As the UI/UX design direction for FabricFit, **Heritage Luxe** replaces generic 
 | **UI Controls & Commerce Metadata** | **Clean Geometric Sans-Serif** (`FontFamily.SansSerif`) | Search bar, filter chips (`All · Casual · Formal · Occasion`), confidence badges (`98% Match`), pricing (`$78.00 – $140.00`), and star ratings (`★ 4.8`). |
 | **Multilingual Readability** | **Unicode-Complete Sans** | Engineered for seamless rendering across **English**, **Twi (`tw`, ɛ/ɔ glyphs)**, **Ga (`gaa`, ŋ/ɛ/ɔ)**, and **Ewe (`ee`, ɖ/ƒ/ɣ/ŋ/ɔ/ʋ)**. |
 
-### 4. Brand Monogram (`HeritageLuxeMark`)
+### 4. Brand Mark
 
-The splash emblem and brand mark is a custom symmetrical **Adinkra-inspired monogram** rendered in Royal Gold (`#D4A84B`) on Deep Forest (`#0F3D2E`). Its central eye disk, vertical loom spine, three-pronged crown, and flanking woven wings symbolise the union of traditional loom craftsmanship and modern AI vision.
+The launcher icon was replaced in **v1.1.0**. It is a **bolt of fabric folded into a hanger**, with gold adinkra-style patterning on deep emerald — the symbol reads as *clothing* at 48 px, which the previous flat swatch mark did not. It ships as an adaptive icon (background, foreground and monochrome layer), as legacy mipmaps for Android 7–7.1, and as the splash logo.
+
+The older Adinkra monogram (`HeritageLuxeMark`, gold on deep forest, with its eye disk, loom spine, three-pronged crown and woven wings) is still drawn inside the welcome screen and the in-app splash as a compact brand lock-up, next to the **FabricFit** wordmark.
+
+Source of record: [`FabricFit/brand/fabricfit_icon_512.png`](FabricFit/brand/fabricfit_icon_512.png).
 
 ---
 
@@ -116,15 +128,22 @@ These captures track the branch that triggered the screenshot job. The
 manual dispatch, or `[release]` commit, so a newer branch can temporarily be
 ahead of the latest published APK.
 
+**The emulator on the hosted runner is the weak link here.** It has been dying
+mid-capture (`device offline`, then `device not found`, with no emulator left to
+retry against), so this set can lag the source. Where it does, the picture and
+the code disagree — the picture is the older of the two. The capture job now
+fails a run where a frame is byte-identical to the previous screen, which is how
+a Welcome screen once shipped as `home.png`.
+
 <table>
   <tr>
-    <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="215"><br><strong>1. Welcome / Splash</strong><br><sub>Deep Forest canvas, gold Adinkra monogram, folded Kente hero &amp; pill CTAs</sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="215"><br><strong>2. Home Dashboard</strong><br><sub>Search pill, editorial Kente banner, quick-action tiles &amp; Featured Fabrics</sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/discover.png" alt="FabricFit Discover" width="215"><br><strong>3. Discover (FitMatch AI)</strong><br><sub>Occasion filter pills over the 2-column Ghanaian lookbook grid</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/welcome.png" alt="FabricFit Welcome Screen" width="215"><br><strong>1. Welcome / Splash</strong><br><sub>Editorial photo hero, FabricFit wordmark &amp; proof chips — copy on a cream panel</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/home.png" alt="FabricFit Home Dashboard" width="215"><br><strong>2. Home Dashboard</strong><br><sub>Search pill, editorial banner, quick-action tiles &amp; Featured Fabrics rail</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/discover.png" alt="FabricFit Discover" width="215"><br><strong>3. Discover (FitMatch AI)</strong><br><sub>Editorial photo ribbon, Women/Men filters &amp; the 2-column lookbook grid</sub></td>
   </tr>
   <tr>
     <td align="center"><img src="FabricFit/docs/screenshots/create.png" alt="FabricFit Capture Fabric" width="215"><br><strong>4. Capture Fabric (FitScan)</strong><br><sub>Dark forest camera chrome, viewfinder &amp; Photo/Sample/Scan switcher</sub></td>
-    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit Scan Results" width="215"><br><strong>5. Scan Results (FitScan)</strong><br><sub>Fabric match, colour palette, inspector tabs &amp; recommended dresses</sub></td>
+    <td align="center"><img src="FabricFit/docs/screenshots/favourites.png" alt="FabricFit favourites and saved looks" width="215"><br><strong>5. Try-On</strong><br><sub>Latest fabric match, colour palette, recommended dresses &amp; saved styles</sub></td>
     <td align="center"><img src="FabricFit/docs/screenshots/profile.png" alt="FabricFit Profile" width="215"><br><strong>6. Profile</strong><br><sub>Deep Forest dark luxury profile, avatar, stats &amp; wardrobe menu</sub></td>
   </tr>
 </table>
@@ -144,19 +163,19 @@ minified **release build** is published to GitHub Releases on version tags,
 manual workflow dispatch, or a branch commit marked `[release]`; ordinary branch
 builds upload CI artifacts without replacing the public release.
 
-> ### 👉 [Download FabricFit v1.0.1 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.0.1.apk)
+> ### 👉 [Download FabricFit v1.1.0 (APK)](https://github.com/Jacinth-19/fabricfit-app/releases/latest/download/fabricfit-v1.1.0.apk)
 >
-> [`releases/latest`](https://github.com/Jacinth-19/fabricfit-app/releases/latest) also carries `fabricfit-v1.0.1.aab` for a Play upload.
+> [`releases/latest`](https://github.com/Jacinth-19/fabricfit-app/releases/latest) also carries `fabricfit-v1.1.0.aab` for a Play upload.
 
 ```bash
 # install on a connected phone or a running emulator
-adb install -r fabricfit-v1.0.1.apk
+adb install -r fabricfit-v1.1.0.apk
 ```
 
 | What | Where it comes from | Notes |
 | --- | --- | --- |
-| **Release APK** (`fabricfit-v1.0.1.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
-| **Release bundle** (`fabricfit-v1.0.1.aab`) | same release | The artifact you would upload to the Play Console. |
+| **Release APK** (`fabricfit-v1.1.0.apk`) | `release` job → GitHub Releases | R8-minified, `armeabi-v7a` + `arm64-v8a`, `minSdk 24` (Android 7.0+). |
+| **Release bundle** (`fabricfit-v1.1.0.aab`) | same release | The artifact you would upload to the Play Console. |
 | **Debug APK** | run → artifact `fabricfit-debug-apk` | `com.fabricfit.app.debug`, debuggable, for testers without a release key. |
 | **Instrumented test report** | run → artifact `test-reports` | Unit-test and lint output for the run. |
 
@@ -178,6 +197,7 @@ pipeline (the older `android-ci.yml` is kept only for reference):
 | `verify` | every push & PR (paths under `FabricFit/**`) | `./gradlew :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest`, then uploads the debug APK and test reports. Gradle failures are annotated inline on the commit. |
 | `release` | after `verify` | `:app:assembleRelease :app:bundleRelease` with R8 (using `KEYSTORE_BASE64` when set, otherwise `demo-release.keystore`), uploads both artifacts, and publishes them to the `v*` GitHub Release on tags, manual dispatch, or a push whose commit message contains `[release]`. |
 | `device-qa` | manual, weekly, or on `v*` tags | Linux runner (`ubuntu-latest`) with KVM & `SCREENSHOT_ABI=1`: boots an API 33 `x86_64` emulator and runs `PersonSegmenterDeviceTest`. |
+| `tryon-e2e` | manual dispatch, or any push whose commit message contains `[tryon-e2e]` | Runs the real try-on on an API 33 emulator (bundled model photo + kente swatch through `PersonSegmenter` and `DemoLookGenerator`), then commits the render, the mask, `report.txt` and a `geometry.txt` polygon dump to `FabricFit/docs/vton/device/`. |
 | `screenshots` | manual dispatch, or any push whose commit message contains `[screenshots]` | Boots an API 33 emulator, drives the app, and commits fresh PNGs to `FabricFit/docs/screenshots/`. |
 
 ```bash
@@ -193,21 +213,22 @@ The notes below refer to the genuine emulator captures in
 [`FabricFit/docs/screenshots/`](FabricFit/docs/screenshots/), not separate design
 mockups.
 
-1. **Welcome / Splash ([`welcome.png`](FabricFit/docs/screenshots/welcome.png) → `OnboardingScreen.kt`)**
-   - Full-bleed Deep Forest (`#0F3D2E`) atmosphere with the Royal Gold Adinkra monogram (`HeritageLuxeMark`), *Heritage Luxe* serif title, and *Scan. Discover. Try. Wear.* value proposition.
-   - Anchored by photorealistic stacked folds of hand-woven Kente cloth and dual full-width pill CTAs (**Get Started** in tonal forest green and **Login** in outlined muted gold).
+1. **Welcome ([`welcome.png`](FabricFit/docs/screenshots/welcome.png) → `OnboardingScreen.kt`)**
+   - A shopping app opens on product, so the screen leads with a full-bleed editorial photograph of a model in kente, with a rounded base and a top scrim carrying the compact brand lock-up and a *Ghana · Made to order* badge.
+   - The headline *Dress the way you were meant to.* and the subtitle sit on a clean cream panel beneath the photo — never on top of the pattern, which is what made earlier builds unreadable.
+   - Closes with *Works offline · AI try-on · Free to use* chips and dual pill CTAs (**Get Started**, **Login**). Content fades and rises in on first frame.
 2. **Home Dashboard ([`home.png`](FabricFit/docs/screenshots/home.png) → `HomeScreen.kt`)**
    - Opens on a Warm Cream (`#F7F1E5`) canvas with a rounded global search pill (*"Search fabrics, styles or keywords…"*).
    - Features the *"Ghanaian Fabrics · Timeless Style"* editorial hero banner, three balanced quick-action cards (**Scan Fabric**, **AI Matches**, **Virtual Try-On**), and a horizontal **Featured Fabrics** rail (**Kente**, **Ankara**, **Lace**, **Batik**, **Adinkra**).
 3. **Capture Fabric ([`create.png`](FabricFit/docs/screenshots/create.png) → `CreateScreen.kt` & `CameraScreen.kt`)**
    - Uses dark forest chrome (`#0A2B20`) to eliminate glare while inspecting textile threads.
    - Pairs a macro Kente viewfinder frame with a **Photo · Sample · ● Scan** mode indicator, a quick-access swatch gallery thumbnail, a double-ring shutter button, and a sample-fabric switcher.
-4. **Scan Results ([`favourites.png`](FabricFit/docs/screenshots/favourites.png) → `FavoritesScreen.kt` & `FabricDetailScreen.kt`)**
-   - Summarises the identified weave (**Kente Royalty**) alongside a high-contrast **`98% Match`** pill badge and four extracted colour swatches (forest green, deep burgundy, royal gold, Kente crimson).
+4. **Try-On ([`favourites.png`](FabricFit/docs/screenshots/favourites.png) → `FavoritesScreen.kt` & `FabricDetailScreen.kt`)**
+   - Summarises the identified weave (**Kente Royalty**) alongside a high-contrast match pill (the percentage is computed from the scan; `98% Match` is what the demo fabric scores) and four extracted colour swatches (forest green, deep burgundy, royal gold, Kente crimson).
    - Provides a segmented **Colors · Pattern · Style** inspector, a **Recommended Dresses** horizontal carousel with star ratings and review counts, and a full-width gold-on-forest **View All Recommendations** CTA.
-5. **Outfit Recommendations ([`discover.png`](FabricFit/docs/screenshots/discover.png) → `DiscoverScreen.kt` & `RecommendationsScreen.kt`)**
-   - Pairs an editorial serif title with pill filter chips (**All**, **Casual**, **Formal**, **Occasion**, **Fabrics**).
-   - Displays a two-column lookbook grid (*Modern Kente Dress*, *Elegant Peplum Dress*, *Maxi Dress*, *Two-Piece Set*) with favourite heart affordances, tailoring price estimates, and gold star ratings.
+5. **Discover ([`discover.png`](FabricFit/docs/screenshots/discover.png) → `DiscoverScreen.kt` & `RecommendationsScreen.kt`)**
+   - Pairs an editorial serif title with pill filter chips (**All**, **Casual**, **Formal**, **Occasion**) and a second row for **All · Women · Men** plus a sort menu (*Best Match*, *Trending*, *Popular*). *Men* also matches unisex styles.
+   - Opens with a horizontally scrolling **editorial photo ribbon** — real photography of women and men in Ghanaian dress — above the two-column lookbook grid, which carries favourite heart affordances, tailoring price estimates and gold star ratings.
 6. **Profile ([`profile.png`](FabricFit/docs/screenshots/profile.png) → `ProfileScreen.kt`)**
    - Returns to the intimate Deep Forest dark palette with a gold-ringed circular portrait (**Ama Serwaa — Fashion Lover**), a three-column activity summary for scans, favourites and try-ons, and translucent dark cards leading to **My Fit Closet**, **Saved Styles**, **Scan History**, **Settings**, and **Help & Support**.
 
@@ -219,14 +240,14 @@ mockups.
 | --- | --- | --- |
 | Camera scanner | **FitScan** | Photograph any fabric; on-device ML classifies the textile and extracts its palette, pattern, and texture. |
 | AI recommendation engine | **FitMatch AI** | Ranks outfit designs against your fabric with a confidence % and plain-language reasoning; filterable by occasion and category. |
-| Virtual try-on | **FitRoom** | Drapes the scanned fabric onto a model or your own photo so you can preview the finished garment before you sew. |
+| Virtual try-on | **FitRoom** | Drapes the scanned fabric onto a model or your own photo so you can preview the finished garment before you sew. It is **geometry plus compositing, not a diffusion render**: `PersonSegmenter` finds the person, `BodyFit` measures shoulders/bust/waist/hip from the mask, and the garment is fitted as vector polygons with the real fabric drawn through them and shaded. Runs entirely on-device in roughly 150 ms — no account, no API key, works offline. See [`FabricFit/tools/vton_qa/README.md`](FabricFit/tools/vton_qa/README.md) to test it locally or on your phone. |
 | Wardrobe & saved items | **My Fit Closet** | Organises your wardrobe capsule, saved styles, scan history, body measurements, and shareable PDF tailor briefs. |
 
 ---
 
-## Navigation Map (29 Screens)
+## Navigation Map (37 Destinations)
 
-The app ships **29 screens**: 28 registered in the navigation graph plus the first-run Welcome/Onboarding gate. Routes are declared in [`ui/navigation/Destinations.kt`](FabricFit/app/src/main/java/com/fabricfit/app/ui/navigation/Destinations.kt) and wired up in [`ui/navigation/FabricFitNavHost.kt`](FabricFit/app/src/main/java/com/fabricfit/app/ui/navigation/FabricFitNavHost.kt).
+The app ships **37 destinations**: 36 registered in the navigation graph (23 named routes plus 14 parameterised ones such as `design/{styleId}` and `tryon?fabricId=…`) plus the first-run Welcome/Onboarding gate. Routes are declared in [`ui/navigation/Destinations.kt`](FabricFit/app/src/main/java/com/fabricfit/app/ui/navigation/Destinations.kt) and wired up in [`ui/navigation/FabricFitNavHost.kt`](FabricFit/app/src/main/java/com/fabricfit/app/ui/navigation/FabricFitNavHost.kt).
 
 ```mermaid
 flowchart TD
@@ -243,13 +264,13 @@ flowchart TD
     CREATE --> CAMP[Camera · person]
     CAMF --> EDIT[Edit image]
     GAL --> EDIT
-    EDIT --> ANA[FitScan analysis]
+    EDIT --> ANA["FitScan analysis"]
     ANA --> FAB[Fabric detail]
 
-    FAB --> MATCH[FitMatch AI]
+    FAB --> MATCH["FitMatch AI"]
     FAB --> TRY[FitRoom]
     FAB --> COL[Colour ideas]
-    MATCH --> DES[Design detail]
+    MATCH --> DES["Design detail"]
     DES --> TRY
     CAMP --> TRY
     DISC --> DES
@@ -261,6 +282,17 @@ flowchart TD
     HOME --> TL[Tailors and designers]
     TL --> TDET[Tailor detail]
     HOME --> PREM[FabricFit Premium]
+    HOME --> COMM[Community feed]
+    COMM --> CPOST[Create post]
+    COMM --> CHAL[Challenge detail]
+    COMM --> CGAL[Community gallery detail]
+    COMM --> UPROF[User profile]
+    SEARCH[Search] --> DES
+    SEARCH --> UPROF
+    SET --> NOTIF[Notification preferences]
+    SET --> BLOCKED[Blocked users]
+    INFO --> LEGAL[Legal documents]
+    ADMIN[Admin moderation]
 
     PROF --> HIST[History]
     PROF --> SET[Settings]
@@ -277,11 +309,21 @@ FabricFit pairs an offline-first on-device computer-vision and ML pipeline with 
 
 | # | AI / ML Capability | Bundled `.tflite` Assets (`app/src/main/assets/`) | Core Implementation | What It Computes |
 | --- | --- | --- | --- | --- |
-| **1** | **Ghanaian Textile Classifier with OOD Uncertainty** | • `ghanaian_fabric_classifier.tflite` (`85.5 KB`, `[1,128,128,3] -> [1,17]`)<br>• `ghanaian_fabric_labels.txt` (17 classes)<br>• `mobilenet_v2_1.0_224_quant.tflite` (`3.5 MB`, `[1,224,224,3] -> [1,1001]`) | `OnDeviceMlClassifier.kt` & `FabricAnalysisRepositoryImpl.kt` | • Dedicated 17-class Ghanaian & West African textile classifier (`ADINKRA`, `ANKARA`, `BATIK`, `BROCADE`, `CHIFFON`, `COTTON_PLAIN`, `DENIM`, `FUGU`, `GONJA`, `KENTE`, `KENTE_PRINT`, `LACE`, `LINEN`, `SILK`, `TIEDYE`, `VELVET`, `WAX`).<br>• Temperature-scaled softmax, normalized Shannon entropy ($H / \ln K$), top-1/top-2 margin gating, and out-of-distribution (`NON_TEXTILE_DOMINANT`) rejection via MobileNetV2. |
+| **1** | **Ghanaian Textile Classifier with OOD Uncertainty** | • `ghanaian_fabric_classifier.tflite` (`85.5 KB`, `[1,128,128,3] -> [1,17]`)<br>• `ghanaian_fabric_labels.txt` (17 classes)<br>• `mobilenet_v1_1.0_224_quant.tflite` (`4.2 MB`, `[1,224,224,3] -> [1,1001]`, 89 tensors) | `OnDeviceMlClassifier.kt` & `FabricAnalysisRepositoryImpl.kt` | • Dedicated 17-class Ghanaian & West African textile classifier (`ADINKRA`, `ANKARA`, `BATIK`, `BROCADE`, `CHIFFON`, `COTTON_PLAIN`, `DENIM`, `FUGU`, `GONJA`, `KENTE`, `KENTE_PRINT`, `LACE`, `LINEN`, `SILK`, `TIEDYE`, `VELVET`, `WAX`).<br>• The model's own softmax output, normalized Shannon entropy ($H / \ln K$), top-1/top-2 margin gating, and out-of-distribution (`NON_TEXTILE_DOMINANT`) rejection via quantised MobileNetV1. The gate is weak on flat cloth swatches (ImageNet has no textile classes) and is documented as such in `docs/MODELS.md`. There is no temperature scaling in the code. |
 | **2** | **Multi-Scale Weave & Motif Periodicity Analyzer** | • `weave_motif_extractor.tflite` (`16.1 KB`, `[1,128,128,3] -> [1,6]`) | `TextureMetrics.kt`, `ColorPatternAnalyzer.kt` & `OnDeviceMlClassifier.kt` | • 24-filter Gabor directional conv bank (`0°`, `45°`, `90°`, `135°` across 3 wavelengths) + `gaborOrientation(...)` (`GaborOrientationProfile`).<br>• `spectralMotifProfile(...)` (`SpectralMotifProfile`): 1D DFT autocorrelation harmonic purity, normalized strip width, motif repeat pitch (`repeatX`, `repeatY`), and tailoring `AlignmentAdvice`. |
-| **3** | **Human Parsing & Skin-Tone Segmentation** | • `selfie_segmentation.tflite` (`243.7 KB`, MediaPipe `[1,256,256,3] -> [1,256,256,1]`)<br>• `human_parsing_5class.tflite` (`35.8 KB`, `[1,128,128,3] -> [1,128,128,5]`)<br>• `deeplabv3_257_mv.tflite` (`2.7 MB`, `[1,257,257,3] -> [1,257,257,21]`) | `PersonSegmenter.kt` & `ColorHarmonyEngine.kt` | • Fuses MediaPipe Selfie Segmentation, DeepLabV3, and the 5-class human parser (`BACKGROUND`, `HEAD_AND_FACE`, `UPPER_GARMENT`, `LOWER_GARMENT`, `SKIN_EXPOSED`).<br>• Extracts wearer `dominantSkinArgb` and `SkinUndertone` (`WARM_GOLDEN`, `COOL_DEEP`, `NEUTRAL_RICH`) for `ColorHarmonyEngine.skinHarmonyScore(...)` & `suggestForWearer(...)`. |
-| **4** | **Texture-Preserving Cloth Warper for Virtual Try-On** | • `cloth_warper_shading.tflite` (`11.9 KB`, `[1,64,64,4] -> [1,64,64,3]`) | `DemoLookGenerator.kt`, `GarmentGeometry.kt` & `CloudAnalysisClient.kt` | • Seamless `160×160` mirror-tiled real fabric swatch extraction (`loadRealFabricTextureOrFallback`), dynamic sleeve/neckline/length polygon reshaping, 3D cylindrical + neural fold shading (`predictClothShadingMap`), head/face pixel preservation, and `POST v1/tryon` cloud VTON contract. |
-| **5** | **Context-Aware FitMatch AI Ranker** | • `fitmatch_ranker.tflite` (`6.5 KB`, `[1,16] -> [1,1]`) | `RecommendationEngine.kt` & `RecommendationsViewModel.kt` | • 16-feature neural ranker MLP (`buildFeatureVector`) fused with `RecommendationContext` (fabric structure, wearer skin-tone harmony, `Measurements` waist-to-hip & height proportions, Gabor weave anisotropy, and session favorite style affinity). |
+| **3** | **Human Parsing & Skin-Tone Segmentation** | • `selfie_segmentation.tflite` (`243 KB`, `[1,256,256,3] -> [1,256,256,1]`, MediaPipe Selfie Segmenter, 360 tensors)<br>• `human_parsing_5class.tflite` (`24.7 KB`, `[1,128,128,3] -> [1,128,128,5]`)<br>• `deeplabv3_257_mv.tflite` (`2.7 MB`, `[1,257,257,3] -> [1,257,257,21]`) | `PersonSegmenter.kt` & `ColorHarmonyEngine.kt` | • Fuses MediaPipe Selfie Segmentation, DeepLabV3, and the 5-class human parser (`BACKGROUND`, `HEAD_AND_FACE`, `UPPER_GARMENT`, `LOWER_GARMENT`, `SKIN_EXPOSED`).<br>• Extracts wearer `dominantSkinArgb` and `SkinUndertone` (`WARM_GOLDEN`, `COOL_DEEP`, `NEUTRAL_RICH`) for `ColorHarmonyEngine.skinHarmonyScore(...)` & `suggestForWearer(...)`. |
+| **4** | **Texture-Preserving Cloth Warper for Virtual Try-On** | • `cloth_warper_shading.tflite` (`25.2 KB`, `[1,64,64,4] -> [1,64,64,3]`) | `DemoLookGenerator.kt`, `GarmentGeometry.kt` & `CloudAnalysisClient.kt` | • Seamless `160×160` mirror-tiled real fabric swatch extraction (`loadRealFabricTextureOrFallback`), dynamic sleeve/neckline/length polygon reshaping, 3D cylindrical + neural fold shading (`predictClothShadingMap`), head/face pixel preservation, and `POST v1/tryon` cloud VTON contract. |
+| **5** | **Context-Aware FitMatch AI Ranker** | • `fitmatch_ranker.tflite` (`6.6 KB`, `[1,16] -> [1,1]`) | `RecommendationEngine.kt` & `RecommendationsViewModel.kt` | • 16-feature neural ranker MLP (`buildFeatureVector`) fused with `RecommendationContext` (fabric structure, wearer skin-tone harmony, `Measurements` waist-to-hip & height proportions, Gabor weave anisotropy, and session favorite style affinity). |
+
+### What the on-device models have actually measured
+
+Checked against the real swatches bundled in the app, so the numbers below are reproducible
+rather than aspirational:
+
+- **Fabric classifier — 15 of 15 bundled swatches correct**, most at 0.99+ confidence. Stable under rotation, mirroring and brightening; degrades sensibly (desaturated kente → `BATIK`, darkened lace → `SILK`).
+- **It is confident on non-fabric input.** Solid white and solid black both return `LINEN` at 1.00; random noise returns `ANKARA` at 0.997. The model answers *"which of these 17 fabrics is this most like"*, not *"is this fabric at all"*. The ImageNet OOD gate plus the spectral/Gabor checks in `OnDeviceMlClassifier` are what actually reject a photo of a wall or a plate of food — those paths carry more weight than they look like they do.
+- **Four of the eight `.tflite` files are small feature networks**, not trained deep models: `selfie_segmentation`, `human_parsing_5class`, `weave_motif_extractor` and `cloth_warper_shading` are tensors over a handful of layers. They contribute signals; `deeplabv3`, MobileNetV2 and the fabric classifier are the three full networks in the bundle.
+- **There is no on-device generative try-on model.** Nothing phone-class exists today at usable quality. See [`FabricFit/docs/CATALOGUE_AND_ML.md`](FabricFit/docs/CATALOGUE_AND_ML.md) for the full explanation, the recommendation features, and how to swap in a remote catalogue.
 
 ---
 
@@ -289,7 +331,8 @@ FabricFit pairs an offline-first on-device computer-vision and ML pipeline with 
 
 ```
 FabricFit/          Android app (Kotlin + Jetpack Compose), package com.fabricfit.app
-  app/              app module — Heritage Luxe UI, domain engines, Room DB, on-device ML
+  app/              app module — Compose UI (Heritage Luxe design system), domain engines,
+                    Room DB, on-device ML
   docs/             brand positioning, Play readiness, device QA, research notes,
                     screenshots/ (real API 33 emulator captures)
   store/            Play listing copy, icon and feature graphic, privacy policy
@@ -312,9 +355,11 @@ signed APK locally: `./gradlew :app:assembleRelease` →
 
 Full build instructions, release signing, and verification notes: [`FabricFit/BUILD.md`](FabricFit/BUILD.md).
 
+Regenerating the store promo videos, and how a posted clip is transcoded on device: [`FabricFit/docs/VIDEO.md`](FabricFit/docs/VIDEO.md).
+
 ## Ghanaian Languages (`i18n`)
 
-FabricFit ships with full string translations in **English**, **Twi (`tw`)**, **Ga (`gaa`)**, and **Ewe (`ee`)**. Translation packs live in `FabricFit/tools/i18n/`; validate and regenerate XML resources with:
+FabricFit ships with **829 strings** in each of **English**, **Twi (`tw`)**, **Ga (`gaa`)** and **Ewe (`ee`)** — four complete locale files, not English with a few words swapped (the locales differ from each other in ~95% of strings). Translation packs live in `FabricFit/tools/i18n/`; validate and regenerate the XML resources with:
 
 ```bash
 cd FabricFit
@@ -323,13 +368,43 @@ python3 tools/i18n/generate.py
 
 ---
 
+## What's new in v1.1.0
+
+- **New launcher icon and splash mark** — fabric bolt folded into a hanger, replacing the flat swatch vector.
+- **Welcome screen rebuilt** for a shopping-app first impression: editorial photo hero, FabricFit wordmark, headline on a cream panel, proof chips, and a fade-and-rise entrance.
+- **"Heritage Luxe" removed from every user-facing string** (English, Twi, Ga, Ewe); it remains the internal design-system name.
+- **Real photography replaces illustrations** — the 12 catalogue looks are now editorial photographs of women and men in Ghanaian dress, and Discover opens with a photo ribbon. Assets re-encoded to phone sizes (2.5 MB → 1.3 MB).
+- **One continuous motion timeline.** A single `MotionPhase` is published above the `NavHost` on every navigation, and every screen animates from that same value: rows cascade on the shared beat, the outgoing page recedes against the incoming one, and hero photographs are carried across Home → Discover → Create with `heroCarry` instead of cutting. The "Reduced Motion" setting, previously stored but unread, now snaps transitions and stops ambient motion.
+- **Play Store cards 01–06 regenerated** so the store listing shows the current UI instead of the old welcome screen.
+
+## Known limitations
+
+Written down so they are not mistaken for finished work:
+
+- **The try-on is not photorealistic.** Garment edges sit slightly inside the arm silhouette, and the subject's own clothing still shows at the waist and below the sleeves. It is a fitting preview, not a render.
+- **No behavioural personalisation.** Recommendations use fabric analysis, style metadata, optional measurements, skin tone and favourites. There is no click or purchase history and no A/B testing.
+- **The catalogue is bundled.** 20 styles, 12 looks, 15 swatches. There is no server, no accounts, and no way to add a look without shipping a new APK — the `CatalogDataSource` interface is the seam where a backend would attach.
+- **Twi, Ga and Ewe translations are machine-generated.** They are genuinely distinct strings (only ~5% identical between locales), but they have not been reviewed by native speakers. Treat them as a starting point, not as launch-ready copy.
+- **Four of the eight bundled `.tflite` files are small feature networks**, not trained deep models. See the ML section above for which ones are real.
+- **The motion timeline is coordinated, not literally shared-element.** The hero image carries scale and drift across a navigation, but it is re-rendered per destination rather than handed over as one view — so the continuity is convincing at speed, not frame-exact. Compose's shared-transition APIs would be needed for true element handover.
+- **Texture rendering is procedural.** Fabric drape is a shading approximation; it is not simulated cloth.
+
+## Testing notes
+
+- Every screenshot in this README is an emulator capture (API 33, 1080 × 1920) produced by the `screenshots` job — no mockups.
+- The on-device try-on is verified on an **emulator**, not a physical handset. A real camera photo gives a messier segmentation mask than the bundled sample, so results on a phone may differ.
+- `BodyFitParityTest` pins the geometry that the Kotlin renderer and the Python reference (`tools/vton_qa/vton_local.py`) must agree on, including a guard that every neckline emits both neck edges and both shoulder tips.
+
+---
+
 ## Taglines
 
 | Context | Line |
 | --- | --- |
-| **Welcome Hero** | Scan. Discover. Try. Wear. |
-| **Heritage Luxe Editorial** | Where Ghanaian Heritage Fabric Meets Modern Style. |
+| **App tagline** (`app_tagline`) | Scan. Discover. Try. Wear. |
+| **Welcome headline** (v1.1.0) | Dress the way you were meant to. |
 | **Primary Product Line** | Scan Your Fabric. Wear Your Style. |
 | **Tech-Focused** | AI-Powered Ghanaian Fabric & Outfit Matching. |
+| **Design system** (internal) | Heritage Luxe — not user-facing copy |
 
 Made with pride in **Accra, Ghana** 🇬🇭

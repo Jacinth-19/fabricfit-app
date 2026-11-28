@@ -57,7 +57,8 @@ fun Context.timeAgo(timestamp: Long): String {
 
 /** Native Android share sheet. Nothing is ever posted automatically. */
 fun Context.shareLook(resultPath: String, styleTitle: String, fabricName: String) {
-    val uri = AppContainer.get(this).imageProcessor.shareUriFor(File(resultPath))
+    // resultPath may be a bare path or a file:// uri depending on where the look came from
+    val uri = AppContainer.get(this).imageProcessor.shareUriFor(File(resultPath.removePrefix("file://")))
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = "image/jpeg"
         putExtra(Intent.EXTRA_STREAM, uri)

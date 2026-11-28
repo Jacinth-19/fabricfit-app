@@ -13,7 +13,7 @@
 <div align="center">
   <img src="../../store/video/fabricfit_promo_preview.gif" alt="FabricFit Google Play Promo Video Preview" width="720">
   <br>
-  <sub><strong>15s Landscape Google Play Trailer (<a href="../../store/video/fabricfit_play_store_promo_16x9.mp4"><code>fabricfit_play_store_promo_16x9.mp4</code></a> · 1280×720 H.264 + AAC) &amp; 12s Vertical Play Shorts / Reels (<a href="../../store/video/fabricfit_shorts_reel_9x16.mp4"><code>fabricfit_shorts_reel_9x16.mp4</code></a> · 720×1280)</strong></sub>
+  <sub><strong>15s Landscape Google Play Trailer (<a href="../../store/video/fabricfit_play_store_promo_16x9.mp4"><code>fabricfit_play_store_promo_16x9.mp4</code></a> · 1280×720 H.264, silent) &amp; 12s Vertical Play Shorts / Reels (<a href="../../store/video/fabricfit_shorts_reel_9x16.mp4"><code>fabricfit_shorts_reel_9x16.mp4</code></a> · 720×1280)</strong></sub>
 </div>
 
 ### Ready-to-Publish Asset Index (`FabricFit/store/`)
@@ -22,8 +22,8 @@
 | --- | --- | --- |
 | **Google Play Hi-Res Icon** | `512 × 512` PNG | [`FabricFit/store/play_icon_512.png`](../../store/play_icon_512.png) |
 | **Google Play Feature Graphic** | `1024 × 500` PNG | [`FabricFit/store/feature_graphic.png`](../../store/feature_graphic.png) |
-| **Google Play Promo Video (16:9)** | `1280 × 720` MP4 (15s, Audio) | [`FabricFit/store/video/fabricfit_play_store_promo_16x9.mp4`](../../store/video/fabricfit_play_store_promo_16x9.mp4) |
-| **Play Shorts / Reels Video (9:16)** | `720 × 1280` MP4 (12s, Audio) | [`FabricFit/store/video/fabricfit_shorts_reel_9x16.mp4`](../../store/video/fabricfit_shorts_reel_9x16.mp4) |
+| **Google Play Promo Video (16:9)** | `1280 × 720` MP4 (15s, silent) | [`FabricFit/store/video/fabricfit_play_store_promo_16x9.mp4`](../../store/video/fabricfit_play_store_promo_16x9.mp4) |
+| **Play Shorts / Reels Video (9:16)** | `720 × 1280` MP4 (12s, silent) | [`FabricFit/store/video/fabricfit_shorts_reel_9x16.mp4`](../../store/video/fabricfit_shorts_reel_9x16.mp4) |
 | **Promo Video Preview (GIF)** | `640 × 360` GIF | [`FabricFit/store/video/fabricfit_promo_preview.gif`](../../store/video/fabricfit_promo_preview.gif) |
 | **Hero Campaign Banner (16:9)** | `1920 × 1080` PNG | [`FabricFit/store/banners/banner_wide_1920x1080.png`](../../store/banners/banner_wide_1920x1080.png) |
 | **TV / Play Store Banner (16:9)** | `1280 × 720` PNG | [`FabricFit/store/banners/banner_tv_1280x720.png`](../../store/banners/banner_tv_1280x720.png) |

@@ -58,6 +58,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
 import com.fabricfit.app.data.local.prefs.TooltipStore
+import com.fabricfit.app.data.repository.DemoTryOnSamples
 import com.fabricfit.app.di.AppContainer
 import com.fabricfit.app.domain.model.AppError
 import com.fabricfit.app.domain.model.CustomControl
@@ -85,7 +86,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 import com.fabricfit.app.ui.util.resolveKey
 
 @Composable
@@ -168,19 +168,14 @@ fun TryOnScreen(
                                     onClick = {
                                         scope.launch {
                                             val samplePath = withContext(Dispatchers.IO) {
-                                                val out = File(context.cacheDir, "sample_model_portrait.jpg")
-                                                if (!out.exists()) {
-                                                    context.assets.open("catalog/heritage/outfit_modern_kente.jpg").use { input ->
-                                                        out.outputStream().use { output -> input.copyTo(output) }
-                                                    }
-                                                }
-                                                out.absolutePath
+                                                DemoTryOnSamples.personPhoto(context)
                                             }
                                             vm.setPerson(samplePath)
+                                            vm.setGender(GenderHint.WOMAN)
                                         }
                                     },
                                 ) {
-                                    Text("Sample Model")
+                                    Text("Sample model (Ghanaian)")
                                 }
                             }
                         } else {
@@ -214,21 +209,16 @@ fun TryOnScreen(
                                     onClick = {
                                         scope.launch {
                                             val samplePath = withContext(Dispatchers.IO) {
-                                                val out = File(context.cacheDir, "sample_model_portrait.jpg")
-                                                if (!out.exists()) {
-                                                    context.assets.open("catalog/heritage/outfit_modern_kente.jpg").use { input ->
-                                                        out.outputStream().use { output -> input.copyTo(output) }
-                                                    }
-                                                }
-                                                out.absolutePath
+                                                DemoTryOnSamples.personPhoto(context)
                                             }
                                             vm.setPerson(samplePath)
+                                            vm.setGender(GenderHint.WOMAN)
                                         }
                                     },
                                 ) {
                                     Icon(Icons.Filled.Person, contentDescription = null)
                                     Spacer(Modifier.width(6.dp))
-                                    Text("Sample Model")
+                                    Text("Sample model (Ghanaian)")
                                 }
                             }
                         }
@@ -274,15 +264,32 @@ fun TryOnScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         Spacer(Modifier.height(8.dp))
-                        OutlinedButton(
-                            onClick = {
-                                scope.launch {
-                                    val id = ensureSampleKenteFabric(context)
-                                    vm.setFabric(id)
-                                }
-                            },
-                        ) {
-                            Text("Use Sample Kente Fabric")
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(
+                                onClick = {
+                                    scope.launch {
+                                        val id = ensureSampleKenteFabric(context)
+                                        vm.setFabric(id)
+                                    }
+                                },
+                            ) {
+                                Text("Use Sample Kente Fabric")
+                            }
+                            Button(
+                                onClick = {
+                                    scope.launch {
+                                        val id = withContext(Dispatchers.IO) {
+                                            DemoTryOnSamples.ensureFabric(
+                                                context,
+                                                AppContainer.get(context).fabricAnalysis,
+                                            )
+                                        }
+                                        vm.setFabric(id)
+                                    }
+                                },
+                            ) {
+                                Text("Use kente bought online")
+                            }
                         }
                     }
                 } else {
@@ -500,15 +507,10 @@ fun TryOnScreen(
                             scope.launch {
                                 if (state.personPath == null) {
                                     val samplePath = withContext(Dispatchers.IO) {
-                                        val out = File(context.cacheDir, "sample_model_portrait.jpg")
-                                        if (!out.exists()) {
-                                            context.assets.open("catalog/heritage/outfit_modern_kente.jpg").use { input ->
-                                                out.outputStream().use { output -> input.copyTo(output) }
-                                            }
-                                        }
-                                        out.absolutePath
+                                        DemoTryOnSamples.personPhoto(context)
                                     }
                                     vm.setPerson(samplePath)
+                                    vm.setGender(GenderHint.WOMAN)
                                 }
                                 if (state.fabricId == null) {
                                     val id = ensureSampleKenteFabric(context)

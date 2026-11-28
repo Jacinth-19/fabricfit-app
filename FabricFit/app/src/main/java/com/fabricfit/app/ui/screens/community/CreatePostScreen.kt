@@ -182,6 +182,8 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
     var mediaUri by remember { mutableStateOf<Uri?>(null) }
     var mediaType by remember { mutableStateOf(MediaType.IMAGE) }
     var videoThumbnail by remember { mutableStateOf<Bitmap?>(null) }
+    /** False when the staged file is a byte copy because re-encoding failed. */
+    var videoWasTranscoded by remember { mutableStateOf<Boolean?>(null) }
     var isProcessingVideo by remember { mutableStateOf(false) }
 
     // Image editing state
@@ -209,12 +211,15 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                     val thumbnail = VideoProcessor.generateThumbnail(context, selectedVideoUri)
                     videoThumbnail = thumbnail
                     
-                    // Stage the video in the app cache for publishing
-                    val preparedVideo = VideoProcessor.prepareForUpload(context, selectedVideoUri)
-                    
-                    if (preparedVideo != null) {
-                        mediaUri = Uri.fromFile(preparedVideo)
+                    // Stage the video in the app cache for publishing. The result says
+                    // whether it was actually re-encoded; if not, the file is a byte copy
+                    // and the UI must not claim it was compressed.
+                    val prepared = VideoProcessor.prepareForUpload(context, selectedVideoUri)
+
+                    if (prepared != null) {
+                        mediaUri = Uri.fromFile(prepared.file)
                         mediaType = MediaType.VIDEO
+                        videoWasTranscoded = prepared.wasTranscoded
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -469,6 +474,31 @@ fun CreatePostScreen(nav: NavHostController, padding: PaddingValues) {
                                             modifier = Modifier.size(64.dp),
                                             tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f)
                                         )
+                                        // Say whether the file was actually re-encoded.
+                                        // A silent "prepared" badge on a byte copy would
+                                        // be a claim we cannot back up.
+                                        if (videoWasTranscoded != null) {
+                                            Surface(
+                                                shape = RoundedCornerShape(8.dp),
+                                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.86f),
+                                                modifier = Modifier
+                                                    .align(Alignment.BottomStart)
+                                                    .padding(8.dp),
+                                            ) {
+                                                Text(
+                                                    text = stringResource(
+                                                        if (videoWasTranscoded == true) {
+                                                            R.string.post_video_optimised
+                                                        } else {
+                                                            R.string.post_video_original
+                                                        },
+                                                    ),
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSurface,
+                                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                                )
+                                            }
+                                        }
                                     }
                                 }
                                 

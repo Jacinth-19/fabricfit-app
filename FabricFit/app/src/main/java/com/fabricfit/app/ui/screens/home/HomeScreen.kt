@@ -3,12 +3,14 @@ package com.fabricfit.app.ui.screens.home
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,6 +56,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -64,6 +67,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
@@ -73,6 +77,9 @@ import com.fabricfit.app.ui.components.FabricSwatch
 import com.fabricfit.app.ui.components.GarmentArt
 import com.fabricfit.app.ui.components.LocalImage
 import com.fabricfit.app.ui.components.SectionHeader
+import com.fabricfit.app.ui.components.ambientBreath
+import com.fabricfit.app.ui.components.heroCarry
+import com.fabricfit.app.ui.components.revealOnEnter
 import com.fabricfit.app.ui.components.ShimmerCard
 import com.fabricfit.app.ui.components.ensureSampleKenteFabric
 import com.fabricfit.app.ui.components.heritagePrice
@@ -82,7 +89,9 @@ import com.fabricfit.app.ui.navigation.Routes
 import com.fabricfit.app.ui.navigation.appViewModel
 import com.fabricfit.app.ui.theme.HeritageCreamBright
 import com.fabricfit.app.ui.theme.HeritageForest
+import com.fabricfit.app.ui.theme.HeritageForestDark
 import com.fabricfit.app.ui.theme.HeritageGold
+import com.fabricfit.app.ui.theme.HeritageGoldSoft
 import com.fabricfit.app.ui.util.openFabricFlow
 import com.fabricfit.app.ui.util.rememberPhotoPicker
 import com.fabricfit.app.ui.util.resolveKey
@@ -129,6 +138,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             item {
                 Column(
                     Modifier
+                        .revealOnEnter(order = 0)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .padding(top = 14.dp),
@@ -199,14 +209,79 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
                         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(216.dp),
+                            .height(216.dp)
+                            .heroCarry(),
                     ) {
-                        AssetImage(
-                            asset = "catalog/heritage/hero_banner_card.jpg",
-                            contentDescription = "Ghanaian Fabrics Timeless Style",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                        Box(Modifier.fillMaxSize()) {
+                            AssetImage(
+                                asset = "catalog/heritage/hero_banner_card.jpg",
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .ambientBreath(amplitude = 0.014f),
+                            )
+                            // The headline is drawn here rather than baked into the photo:
+                            // assets stay text-free, so copy can be localised (en/ee/gaa/tw)
+                            // and re-worded without regenerating artwork.
+                            //
+                            // A left-weighted scrim that has fallen to nothing before the
+                            // models start (~55% across). The old one used a fixed endX of
+                            // 900px, which is not related to the card's real width: on a
+                            // 360dp phone it was still 40% opaque where the subjects are,
+                            // so the headline ran across the man's arm.
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        Brush.horizontalGradient(
+                                            0f to HeritageForestDark.copy(alpha = 0.86f),
+                                            0.30f to HeritageForestDark.copy(alpha = 0.62f),
+                                            0.48f to HeritageForestDark.copy(alpha = 0.22f),
+                                            0.62f to Color.Transparent,
+                                        ),
+                                    ),
+                            )
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .fillMaxWidth(0.54f)
+                                    .padding(start = 18.dp, top = 20.dp, bottom = 18.dp),
+                                verticalArrangement = Arrangement.Center,
+                            ) {
+                                // The headline is measured, not styled blind: "Ghanaian
+                                // fabrics," is wider than a 50%-of-360dp column, so a fixed
+                                // size wrapped it mid-phrase on small phones. Shrinking from
+                                // 19sp until the line fits keeps one phrase per line at every
+                                // width, and the column still clears the models.
+                                var headlineSize by remember { mutableStateOf(19.sp) }
+                                Text(
+                                    text = stringResource(R.string.home_hero_headline),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = headlineSize,
+                                    lineHeight = headlineSize * 1.34f,
+                                    color = HeritageCreamBright,
+                                    // The string has one explicit newline, so a correct
+                                    // layout is exactly two lines. More than that means the
+                                    // first phrase soft-wrapped: step down and re-measure.
+                                    // didOverflowWidth is not usable here - it reports clipping
+                                    // from maxLines, not soft wrapping.
+                                    onTextLayout = { result ->
+                                        if (result.lineCount > 2 && headlineSize > 13.sp) {
+                                            headlineSize = (headlineSize.value - 1f).sp
+                                        }
+                                    },
+                                )
+                                Spacer(Modifier.height(8.dp))
+                                Text(
+                                    text = stringResource(R.string.home_hero_subhead),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = HeritageGoldSoft,
+                                    lineHeight = 17.sp,
+                                )
+                            }
+                        }
                     }
 
                     Spacer(Modifier.height(16.dp))
@@ -242,6 +317,7 @@ fun HomeScreen(nav: NavHostController, padding: PaddingValues) {
             item {
                 Row(
                     Modifier
+                        .revealOnEnter(order = 2)
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                         .padding(top = 22.dp, bottom = 12.dp),

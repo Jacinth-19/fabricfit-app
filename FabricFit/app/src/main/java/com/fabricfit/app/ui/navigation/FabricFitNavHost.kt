@@ -12,7 +12,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.fabricfit.app.ui.components.MotionPhase
+import com.fabricfit.app.ui.components.MotionSpec
+import com.fabricfit.app.di.AppContainer
+import com.fabricfit.app.ui.components.MotionTimeline
 import com.fabricfit.app.ui.screens.create.CameraScreen
 import com.fabricfit.app.ui.screens.create.CreateScreen
 import com.fabricfit.app.ui.screens.create.EditImageScreen
@@ -96,7 +105,50 @@ fun MainScaffold(startWithScan: Boolean, onScanConsumed: () -> Unit) {
             }
         },
     ) { padding ->
-        FabricFitNavHost(navController, padding)
+        // One timeline for the whole app. A forward navigation runs `settled` 0 -> 1 and
+        // every screen animates from that same value, so the incoming page's rows and its
+        // hero land together, and the outgoing page recedes on the same curve.
+        // "Reduced Motion" was a stored preference that nothing read. Honour it: with the
+        // setting on, navigation snaps to its settled state instead of animating, so the
+        // app stays usable for motion-sensitive users without a second code path.
+        val prefs by AppContainer.get(ctx.applicationContext).settings.preferences
+            .collectAsState(initial = null)
+        val reducedMotion = prefs?.accessibility?.reducedMotion == true
+
+        // The phase starts at 1 (settled) so the very first screen renders normally, then
+        // resets to 0 whenever the destination changes. Deriving it during composition -
+        // rather than in a LaunchedEffect - matters: effects run after the frame is
+        // composed, so a route that appeared fully-settled for one frame would flash
+        // before the animation started.
+        val settled = remember(currentRoute) {
+            Animatable(if (currentRoute == null || reducedMotion) 1f else 0f)
+        }
+        var direction by remember { mutableStateOf(1) }
+        var depth by remember { mutableStateOf(navController.currentBackStack.value.size) }
+
+        LaunchedEffect(currentRoute, settled) {
+            // Depth decides push vs pop. A pop lands on a shorter stack, so the phase
+            // leans the other way and back feels like undoing forward.
+            val now = navController.currentBackStack.value.size
+            direction = if (now >= depth) 1 else -1
+            depth = now
+
+            if (!reducedMotion) {
+                // Animatable was just created at 0; animate it home. This is the one
+                // animation the navigator owns, and every screen reads it.
+                settled.animateTo(1f, tween(MotionSpec.SCREEN_SETTLE_MILLIS))
+            }
+        }
+
+        val phase = MotionPhase(
+            settled = settled.value,
+            direction = direction,
+            route = currentRoute,
+            reducedMotion = reducedMotion,
+        )
+        MotionTimeline(phase) {
+            FabricFitNavHost(navController, padding)
+        }
     }
 }
 

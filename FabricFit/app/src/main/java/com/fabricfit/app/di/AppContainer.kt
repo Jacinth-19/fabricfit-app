@@ -64,6 +64,9 @@ class AppContainer private constructor(context: Context) {
     val mlClassifier = com.fabricfit.app.data.ml.OnDeviceMlClassifier(appContext, imageProcessor)
 
     val cloudAnalysis = com.fabricfit.app.data.remote.CloudAnalysisClient()
+
+    /** Optional ranking backend; unused unless [settings] has a cloudBaseUrl. */
+    val cloudRecommendations = com.fabricfit.app.data.remote.CloudRecommendationClient()
     val personSegmenter = com.fabricfit.app.data.ml.PersonSegmenter(appContext)
 
     val fabricAnalysis: FabricAnalysisRepository = FabricAnalysisRepositoryImpl(
@@ -87,7 +90,9 @@ class AppContainer private constructor(context: Context) {
     val tailors: com.fabricfit.app.domain.repository.TailorRepository =
         com.fabricfit.app.data.remote.DemoTailorSource()
 
-    val lookGenerator = DemoLookGenerator(imageProcessor)
+    // Pass the segmenter through: without it DemoLookGenerator only paints cloth over the
+    // photo and never restores the head/background, so faces get covered by high necklines.
+    val lookGenerator = DemoLookGenerator(imageProcessor, personSegmenter)
 
     val tryOn: VirtualTryOnRepository = VirtualTryOnRepositoryImpl(
         database.lookDao(),

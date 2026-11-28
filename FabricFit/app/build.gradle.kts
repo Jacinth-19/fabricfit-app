@@ -27,8 +27,8 @@ android {
         applicationId = "com.fabricfit.app"
         minSdk = 24
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.0.1"
+        versionCode = 5
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += listOf("en", "tw", "gaa", "ee")
@@ -134,6 +134,11 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.common)
+    // Replaces the discontinued FFmpegKit for video transcoding (see media/VideoProcessor.kt).
+    implementation(libs.androidx.media3.transformer)
+    implementation(libs.androidx.media3.effect)
+    implementation(libs.androidx.media3.common)
     
     // Google Fonts for custom branded typography (version comes from the Compose BOM)
     implementation(libs.androidx.compose.ui.text.google.fonts)

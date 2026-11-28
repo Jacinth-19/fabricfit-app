@@ -51,7 +51,13 @@
     <!-- ============ Welcome & onboarding ============ -->
     <string name="onboarding_welcome_title">Welcome to FabricFit</string>
     <string name="onboarding_welcome_body">Photograph a fabric you own and FabricFit shows you what it could become — from kaba and slit to a modern kaftan.</string>
-    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_brand_heritage_luxe">FabricFit</string>
+    <string name="onboarding_brand_badge">Ghana · Made to order</string>
+    <string name="onboarding_welcome_headline">Dress the way\nyou were meant to.</string>
+    <string name="onboarding_welcome_sub">Find the fabric. See the outfit. Order the look — kaba, agbada, kaftan and more, made for you.</string>
+    <string name="onboarding_proof_offline">Works offline</string>
+    <string name="onboarding_proof_tryon">AI try-on</string>
+    <string name="onboarding_proof_free">Free to use</string>
     <string name="onboarding_cta_get_started">Get Started</string>
     <string name="onboarding_cta_login">Login</string>
     <string name="onboarding_step1_title">Scan or upload a fabric</string>
@@ -1152,4 +1158,11 @@
     <string name="admin_moderation_dashboard">Moderation Dashboard</string>
     <string name="admin_moderation_desc">Review reported content</string>
 
+    <string name="home_hero_headline">Ghanaian fabrics,\nmodern style</string>
+    <string name="home_hero_subhead">Discover kente, ankara and lace built around you.</string>
+    <string name="recs_ranker_ondevice">Ranked on this device - works offline</string>
+    <string name="recs_ranker_cloud">Ranked by your recommendation service</string>
+    <string name="recs_ranker_cloud_failed">Recommendation service unreachable - showing on-device ranking</string>
+    <string name="post_video_optimised">Optimised for upload</string>
+    <string name="post_video_original">Original file — could not be re-encoded</string>
 </resources>

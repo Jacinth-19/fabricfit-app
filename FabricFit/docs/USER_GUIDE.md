@@ -51,7 +51,7 @@ When you open FabricFit for the first time, you'll see:
 - 🏠 **Home** - Your dashboard and recent activity
 - 🔍 **Discover** - Browse design styles and fabrics
 - 📷 **Create** - Scan fabrics and create looks
-- ⭐ **Favorites** - Your saved fabrics and designs
+- ⭐ **Try-On** - Your saved fabrics, designs and generated looks, with the latest fabric match on top
 - 👤 **Profile** - Settings and account management
 
 ---
@@ -124,15 +124,15 @@ After scanning, you'll see:
    - Occasion (Casual/Formal/Wedding)
    - Fabric type
 
-### Save Favorites
+### Save to Favourites
 
-**To favorite a design:**
+**To save a design:**
 1. Open the design details
 2. Tap the **heart icon** (top right)
-3. The design appears in your Favorites
+3. The design appears under Favourites on the Try-On tab
 
-**To remove from favorites:**
-1. Go to Favorites tab
+**To remove from favourites:**
+1. Go to the Try-On tab
 2. Tap the heart icon again
 3. Or swipe left and tap Remove
 
@@ -173,7 +173,7 @@ Virtual Try-On lets you see how fabrics look as different outfit styles using AI
 1. **Tap "Save Look"** after generation
 2. **Add a title** (optional)
 3. **Choose to share** or keep private
-4. **Find saved looks** in Favorites → Looks
+4. **Find saved looks** in Try-On → Saved Try-On Looks
 
 ---
 

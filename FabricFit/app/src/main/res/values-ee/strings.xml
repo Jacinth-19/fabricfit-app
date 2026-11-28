@@ -49,7 +49,7 @@
     <string name="cd_bottom_navigation">Zɔzɔ vevitɔ</string>
     <string name="onboarding_welcome_title">Woezɔ loo, FabricFit</string>
     <string name="onboarding_welcome_body">Ɖe avɔ si le asiwò ƒe nɔnɔmeɖeɖe, eye FabricFit afia nu si wòate ŋu azu wò — tso kaba kɔ ɛɖɛ dzi va se ɖe kaftan yeye dzi.</string>
-    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_brand_heritage_luxe">FabricFit</string>
     <string name="onboarding_cta_get_started">Dze egɔme</string>
     <string name="onboarding_cta_login">Ge ɖe eme</string>
     <string name="onboarding_step1_title">Ɖe avɔ alo tsɔe ɖo ɖa</string>
@@ -835,4 +835,11 @@
     <string name="contrib_delete_confirm">Woaɖe foto sia ɖa?</string>
     <string name="contrib_delete_confirm_body">Woaɖe foto sia le wò kpekpeɖeŋuwo me.</string>
     <string name="contrib_duplicate">Foto sia tɔgbe li xoxo.</string>
+    <string name="home_hero_headline">Ghana dɔlélawo,\nmodern ɖoɖowo</string>
+    <string name="home_hero_subhead">Kpɔ kente, ankara kple lace siwo woawɔ na wò.</string>
+    <string name="recs_ranker_ondevice">Wofɔ̃ ɖe mɔfiame sia dzi - edzɔa dɔe le internet manɔmee</string>
+    <string name="recs_ranker_cloud">Wò mɔfiame dɔwɔƒe la ɖo ɖe eŋu</string>
+    <string name="recs_ranker_cloud_failed">Mɔfiame dɔwɔƒe la mele eme o - míawo ɖe mɔfiame le mɔfiame sia dzi</string>
+    <string name="post_video_optimised">Wotrɔ asi le eŋu na upload</string>
+    <string name="post_video_original">Fayl gbãtɔ — mate ŋu atrɔ asi le eŋu o</string>
 </resources>

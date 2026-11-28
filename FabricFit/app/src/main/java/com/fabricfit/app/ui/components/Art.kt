@@ -233,14 +233,17 @@ fun BrandMark(modifier: Modifier = Modifier) {
 }
 
 /**
- * Heritage Luxe adinkra-inspired monogram (from the welcome screen).
- * Symmetrical, woven, royal-gold glyph on transparent background — drop it onto
- * Deep Forest (#0F3D2E) for the splash hero.
+ * The FabricFit brand mark: the woven hanger, keyed to a transparent background.
+ *
+ * Replaces the old adinkra rosette (`monogram_gold.png`), which no longer matched the
+ * launcher icon. Because the mark is transparent with gold and cream line work it reads
+ * on both the Deep Forest surfaces and the cream surfaces — no per-background variant is
+ * needed. The composable name is kept so call sites and the theme tokens stay stable.
  */
 @Composable
 fun HeritageLuxeMark(modifier: Modifier = Modifier) {
     AssetImage(
-        asset = "catalog/heritage/monogram_gold.png",
+        asset = "catalog/heritage/brand_mark.png",
         contentDescription = null,
         contentScale = ContentScale.Fit,
         modifier = modifier,
@@ -262,6 +265,7 @@ fun AssetImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
+    alignment: Alignment = Alignment.Center,
 ) {
     val context = LocalContext.current
     val bmp = remember(asset) {
@@ -285,6 +289,7 @@ fun AssetImage(
             contentDescription = contentDescription,
             modifier = modifier,
             contentScale = contentScale,
+            alignment = alignment,
         )
     } else {
         Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh))

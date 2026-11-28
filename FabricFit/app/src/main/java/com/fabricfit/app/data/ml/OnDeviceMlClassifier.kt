@@ -23,9 +23,9 @@ import kotlin.math.ln
  *     128x128 RGB float32 input -> 17-class softmax output over `ghanaian_fabric_labels.txt`
  *     (`ADINKRA`, `ANKARA`, `BATIK`, `BROCADE`, `CHIFFON`, `COTTON_PLAIN`, `DENIM`, `FUGU`,
  *     `GONJA`, `KENTE`, `KENTE_PRINT`, `LACE`, `LINEN`, `SILK`, `TIEDYE`, `VELVET`, `WAX`).
- *  2. **Out-of-Distribution (OOD) Gate (`mobilenet_v2_1.0_224_quant.tflite`)**:
- *     224x224 quantized MobileNetV2 over ImageNet-1k (`imagenet_labels.txt`) with calibrated
- *     Shannon entropy and top-1/top-2 margin gating to reject non-fabric images.
+ *  2. **Out-of-Distribution (OOD) Gate (`mobilenet_v1_1.0_224_quant.tflite`)**:
+ *     224x224 quantised MobileNetV1 over ImageNet-1k (`imagenet_labels.txt`), gated by
+ *     Shannon entropy and top-1/top-2 margin to flag images that do not look like cloth.
  *  3. **Neural Weave & Motif Extractor (`weave_motif_extractor.tflite`)**:
  *     128x128 RGB float32 input -> 6-element vector
  *     `[energy_0deg, energy_45deg, energy_90deg, energy_135deg, strip_width_norm, motif_repeat_norm]`.
@@ -71,6 +71,20 @@ class OnDeviceMlClassifier(
 
     private val oodInterpreter: Interpreter? by lazy {
         loadAssetInterpreter(IMAGENET_MODEL_ASSET)
+    }
+
+    /**
+     * The OOD model's output quantisation as `(scale, zeroPoint)`, read once from the
+     * interpreter. `null` when the model is missing or the tensor is float.
+     */
+    private val imagenetOutputQuantisation: Pair<Float, Int>? by lazy {
+        runCatching {
+            // Java API: Interpreter.getOutputTensor(i).quantizationParams(). (The Python
+            // binding calls this get_output_details(); the Kotlin binding does not.)
+            val params = oodInterpreter?.getOutputTensor(0)?.quantizationParams()
+                ?: return@runCatching null
+            if (params.getScale() <= 0f) null else params.getScale() to params.getZeroPoint()
+        }.getOrNull()
     }
 
     private val weaveInterpreter: Interpreter? by lazy {
@@ -124,7 +138,7 @@ class OnDeviceMlClassifier(
 
     /**
      * Runs the 17-class Ghanaian textile TFLite model (`ghanaian_fabric_classifier.tflite`),
-     * the ImageNet OOD gate (`mobilenet_v2_1.0_224_quant.tflite`), and the neural weave extractor
+     * the ImageNet OOD gate (`mobilenet_v1_1.0_224_quant.tflite`), and the neural weave extractor
      * (`weave_motif_extractor.tflite`), fusing them with the multi-scale Gabor/spectral
      * [FabricSignature].
      */
@@ -240,7 +254,15 @@ class OnDeviceMlClassifier(
         return output[0]
     }
 
-    /** Executes `mobilenet_v2_1.0_224_quant.tflite` (`[1, 224, 224, 3]` uint8 -> `[1, 1001]` uint8). */
+    /**
+     * Executes the ImageNet OOD gate (`mobilenet_v1_1.0_224_quant.tflite`).
+     *
+     * Input is `[1, 224, 224, 3]` uint8 and output is `[1, 1001]` **uint8**, which is a
+     * quantised tensor rather than probabilities. The raw bytes are dequantised with the
+     * model's own `(scale, zeroPoint)` before anything compares them to a threshold;
+     * reading the bytes as `value / 255f` (the old behaviour) produced a number shaped
+     * like a probability but with no relation to the model's confidence.
+     */
     private fun runImagenetOod(bmp: Bitmap): FloatArray? {
         val tflite = oodInterpreter ?: return null
         val scaled = Bitmap.createScaledBitmap(bmp, IMAGENET_INPUT_SIZE, IMAGENET_INPUT_SIZE, true)
@@ -256,7 +278,13 @@ class OnDeviceMlClassifier(
         input.rewind()
         val output = Array(1) { ByteArray(IMAGENET_NUM_CLASSES) }
         synchronized(tflite) { tflite.run(input, output) }
-        return FloatArray(IMAGENET_NUM_CLASSES) { i -> (output[0][i].toInt() and 0xFF) / 255f }
+        // Dequantise with the output tensor's scale/zero point, falling back to the
+        // standard TFLite uint8 mapping (scale 1/256, zero point 0) when the interpreter
+        // reports no quantisation params.
+        val (scale, zeroPoint) = imagenetOutputQuantisation ?: (1f / 256f to 0)
+        return FloatArray(IMAGENET_NUM_CLASSES) { i ->
+            ((output[0][i].toInt() and 0xFF) - zeroPoint) * scale
+        }
     }
 
     private fun bitmapToFloatBuffer(bmp: Bitmap, side: Int): ByteBuffer {
@@ -289,15 +317,36 @@ class OnDeviceMlClassifier(
         private const val WEAVE_MODEL_ASSET = "weave_motif_extractor.tflite"
         private const val WEAVE_INPUT_SIZE = 128
 
-        private const val IMAGENET_MODEL_ASSET = "mobilenet_v2_1.0_224_quant.tflite"
+        private const val IMAGENET_MODEL_ASSET = "mobilenet_v1_1.0_224_quant.tflite"
         private const val IMAGENET_LABELS_ASSET = "imagenet_labels.txt"
         private const val IMAGENET_INPUT_SIZE = 224
         private const val IMAGENET_NUM_CLASSES = 1001
 
         private const val TEMPERATURE = 0.65f
-        private const val MIN_CALIBRATED_CONFIDENCE = 0.22f
-        private const val MIN_TOP_MARGIN = 0.06f
-        private const val MAX_NORMALIZED_ENTROPY = 0.88f
+        // Raw dequantised top-1 score, NOT a calibrated probability. Measured on the real
+        // MobileNet: fabric-mapped images score 0.289..0.988, flat colours and noise score
+        // 0.016..0.711. The overlap means this is only a weak sanity floor - it stops the
+        // near-zero cases, nothing more. Renamed from MIN_CALIBRATED_CONFIDENCE because the
+        // old name claimed a calibration the number never had.
+        private const val MIN_RAW_TOP1_SCORE = 0.22f
+
+        // Thresholds measured against the real MobileNet (mobilenet_v1 quant, 1001
+        // ImageNet classes) rather than guessed.
+        //
+        // On the 19 bundled textiles top-10 normalised entropy runs 0.91..0.99; on noise,
+        // flat colours and gradients it is 0.99..1.00. The old 0.88 ceiling rejected every
+        // genuine fabric, so the gate could never report confidence at all.
+        //
+        // 0.994 / 0.02 is the measured compromise: it admits 8 of the 19 bundled textiles
+        // (mostly the worn-clothing photos and the heavily textured swatches) and rejects
+        // every flat colour, gradient and random-noise image in the harness. It is NOT a
+        // reliable non-fabric detector - ImageNet has no textile classes, so a fabric
+        // swatch and random noise can both land on "handkerchief".
+        // The spectral/Gabor signature is the primary textile signal; this gate only
+        // nudges the category and clamps confidence when it fires. Do not raise these
+        // numbers without re-measuring: docs/MODELS.md has the harness.
+        private const val MIN_TOP_MARGIN = 0.02f
+        private const val MAX_NORMALIZED_ENTROPY = 0.994f
 
         data class UncertaintyEvaluation(
             val hints: List<MlHint>,
@@ -361,7 +410,7 @@ class OnDeviceMlClassifier(
 
             val reason = when {
                 mappedTop1 == null && mappedAnyTop3 == null -> UncertaintyReason.NON_TEXTILE_DOMINANT
-                rawScores[topIndices.first()] < MIN_CALIBRATED_CONFIDENCE -> UncertaintyReason.LOW_TOP1_CONFIDENCE
+                rawScores[topIndices.first()] < MIN_RAW_TOP1_SCORE -> UncertaintyReason.LOW_TOP1_CONFIDENCE
                 normalizedEntropy > MAX_NORMALIZED_ENTROPY -> UncertaintyReason.HIGH_ENTROPY
                 margin < MIN_TOP_MARGIN -> UncertaintyReason.SMALL_TOP1_TOP2_MARGIN
                 else -> UncertaintyReason.CONFIDENT_TEXTILE

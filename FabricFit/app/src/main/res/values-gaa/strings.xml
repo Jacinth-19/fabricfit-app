@@ -49,7 +49,7 @@
     <string name="cd_bottom_navigation">Kpɔɔmɔ kɛ yɔ</string>
     <string name="onboarding_welcome_title">O ba FabricFit mli</string>
     <string name="onboarding_welcome_body">Kɛ o ntama shishifɔɔ ni oye, ni FabricFit ba ŋwɛɛ o mɔ ni mli baaŋ — kɛjɛ kaba kɛ slit mli ya kaftan nɔŋ nɔ.</string>
-    <string name="onboarding_brand_heritage_luxe">Heritage Luxe</string>
+    <string name="onboarding_brand_heritage_luxe">FabricFit</string>
     <string name="onboarding_cta_get_started">Je shishi</string>
     <string name="onboarding_cta_login">Bote mli</string>
     <string name="onboarding_step1_title">Kɛ ntama shishifɔɔ anaa tsɔ mli</string>
@@ -835,4 +835,11 @@
     <string name="contrib_delete_confirm">Ojie foto nɔŋ?</string>
     <string name="contrib_delete_confirm_body">Aaji foto nɔŋ kɛjɔ oboɔmɔ mli.</string>
     <string name="contrib_duplicate">Foto nɔŋ lɛ nɔŋ dedaw.</string>
+    <string name="home_hero_headline">Ghana hiɛmɔji,\nmodern hewale</string>
+    <string name="home_hero_subhead">Kwɛ kente, ankara kɛ lace ni afee bo.</string>
+    <string name="recs_ranker_ondevice">Aagbe yɛ nɔ ni oboɔ lɛ - eyɛ dɔ kɛ internet</string>
+    <string name="recs_ranker_cloud">Ohe saji nɔ lɛ yɛ ni ato</string>
+    <string name="recs_ranker_cloud_failed">Saji nɔ lɛ bɛ shi - wɔsaa lɛ yɛ ni ato</string>
+    <string name="post_video_optimised">Atsakemɔ ehã upload</string>
+    <string name="post_video_original">Fael ni yɔɔ nɔŋŋ — anyɛɛɛ atsake</string>
 </resources>

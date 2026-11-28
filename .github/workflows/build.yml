@@ -33,6 +33,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
+
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -42,6 +47,29 @@ jobs:
 
       # assembleDebugAndroidTest compiles the instrumented source set, so a
       # package/class rename there is caught without needing an emulator.
+      # Robolectric downloads a large android-all jar on first use. GitHub's Maven proxy
+      # occasionally fails that fetch, which fails every Robolectric test at once (not just
+      # the newest one), so give the download its own retried step.
+      - name: Warm the Robolectric android-all cache
+        run: |
+          set -o pipefail
+          for attempt in 1 2 3; do
+            if ./gradlew :app:testDebugUnitTest --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
+                --console=plain 2>&1 | tee robolectric-warmup.log; then
+              echo "Robolectric runtime fetched"
+              exit 0
+            fi
+            if grep -q 'Failed to fetch maven artifact org.robolectric' robolectric-warmup.log; then
+              echo "::warning title=Robolectric download flake::attempt $attempt, retrying"
+              sleep 15
+              continue
+            fi
+            echo "warm-up failed for another reason; the real test step will report it"
+            exit 0
+          done
+          echo "::warning title=Robolectric download flake::gave up after 3 attempts"
+          exit 0
+
       - name: Unit tests, debug build, instrumented-test compile
         run: |
           set -o pipefail
@@ -53,6 +81,24 @@ jobs:
       - name: Annotate the Gradle failure
         if: failure()
         run: python3 ../tools/qa/gradle_error_annotations.py verify-gradle.log
+
+      # Gradle only prints "There were failing tests"; the names and messages live in
+      # the JUnit XML. Annotations are readable without downloading anything.
+      - name: Annotate the failing tests
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import pathlib, xml.etree.ElementTree as ET
+          found = False
+          for xml in pathlib.Path("app/build/test-results").rglob("*.xml"):
+              for tc in ET.parse(xml).iter("testcase"):
+                  for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                      found = True
+                      name = f"{tc.attrib.get('classname')}.{tc.attrib.get('name')}"
+                      lines = [l.strip() for l in (f.text or "").splitlines() if l.strip()]
+                      print(f"::error title=FAILED TEST::{name} :: {' | '.join(lines[:4])[:1200]}")
+          print("annotated" if found else "no failing test XML found")
+          PY
 
       # Annotations are truncated, so the full error list also goes to the pull
       # request (or the branch's PR), where it can be read line by line.
@@ -114,6 +160,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
@@ -210,6 +261,11 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
+
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
 
@@ -248,6 +304,161 @@ jobs:
                       print(f"::error::{tc.attrib.get('classname')}.{tc.attrib.get('name')}: {esc[:1400]}")
           PY
 
+  # On-demand end-to-end try-on on a real Android emulator: runs the bundled Ghanaian
+  # model + kente swatch through the shipping pipeline and publishes the images.
+  # Trigger: manual dispatch, or any push whose commit message contains "[tryon-e2e]".
+  tryon-e2e:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' &&
+       contains(github.event.head_commit.message, '[tryon-e2e]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      # The job commits the emulator-rendered look back to the branch it ran on.
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: JDK 17
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Enable Linux emulator acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Try-on E2E on emulator
+        uses: reactivecircus/android-emulator-runner@v2.38.0
+        env:
+          SCREENSHOT_ABI: '1'
+        with:
+          api-level: 33
+          target: default
+          arch: x86_64
+          working-directory: FabricFit
+          # The action runs each line of `script` as its own command, so the whole run
+          # lives in a script: Gradle invocation, log capture and artifact pull.
+          script: |
+            bash ../tools/qa/run_tryon_e2e.sh
+
+      # Test XML and logcat live behind blob storage that some clients cannot read;
+      # annotations are always visible, so republish the failure reason as annotations.
+      - name: Annotate the try-on failure
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          import pathlib, xml.etree.ElementTree as ET
+          found = False
+          for xml in pathlib.Path("app/build/outputs/androidTest-results").rglob("*.xml"):
+              for tc in ET.parse(xml).iter("testcase"):
+                  for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                      found = True
+                      name = f"{tc.attrib.get('classname')}.{tc.attrib.get('name')}"
+                      lines = [l.strip() for l in (f.text or "").splitlines() if l.strip()]
+                      print(f"::error title=E2E FAILED::{name} :: {' | '.join(lines[:6])[:1200]}")
+          if not found:
+              print("::error title=E2E FAILED::no androidTest XML produced - the build or the "
+                    "emulator failed before the test ran; the gradle log tail follows")
+              # Anything that looks like a failure in the captured Gradle log is the
+              # next best evidence once the XML is missing.
+              log = pathlib.Path("qa-artifacts/vton/gradle-e2e.log")
+              if log.exists():
+                  lines = [l.rstrip() for l in log.read_text(errors="replace").splitlines() if l.strip()]
+                  signal = [
+                      l for l in lines
+                      if any(k in l for k in ("FAILED", "Exception", "Caused by", "error:",
+                                              "Tests on", "Unable", "No connected", "BUILD"))
+                  ]
+                  print("::error title=E2E gradle log::" + " | ".join((signal or lines)[-16:])[:1500])
+          PY
+          # A device-side crash leaves logcat as the only evidence. The emulator action has
+          # already shut the device down by now, so never block on adb: give it 20 seconds.
+          timeout 20 adb logcat -d -t 400 2>/dev/null \
+            | grep -iE "fabricfit|vton|OutOfMemory|FATAL" | tail -40 || true
+
+      - name: Publish try-on images
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fabricfit-tryon-e2e
+          # `with:` paths are repo-relative; the runner script writes to the repo root.
+          path: |
+            qa-artifacts/vton/*.jpg
+            qa-artifacts/vton/*.png
+            qa-artifacts/vton/report.txt
+            qa-artifacts/vton/geometry.txt
+            qa-artifacts/vton/gradle-e2e.log
+          if-no-files-found: warn
+
+      # Actions artifacts need a login to download and expire; the phone-rendered look is
+      # evidence, so a passing run commits it to the branch like the screenshots job does.
+      - name: Report what the device produced
+        if: always()
+        run: |
+          # defaults.run.working-directory is FabricFit, so a relative qa-artifacts/... would
+          # mean FabricFit/qa-artifacts; the runner script writes to the repo root.
+          dir="$GITHUB_WORKSPACE/qa-artifacts/vton"
+          ls -la "$dir" || true
+          for f in "$dir"/*.jpg "$dir"/*.png; do
+            if [ -f "$f" ]; then
+              echo "::notice title=DEVICE ARTIFACT::$(basename "$f") $(stat -c%s "$f") bytes"
+            fi
+          done
+          if [ -f "$dir/report.txt" ]; then
+            echo "::notice title=DEVICE REPORT::$(tr '\n' ' ' < "$dir/report.txt" | head -c 900)"
+          fi
+
+      - name: Commit the device images to the branch
+        if: success()
+        run: |
+          set -e
+          # Every git command must run at the repo root: the job's working-directory is
+          # FabricFit, where `git add FabricFit/...` matches nothing and exits 128.
+          cd "$GITHUB_WORKSPACE"
+          dir="$GITHUB_WORKSPACE/qa-artifacts/vton"
+          dest="$GITHUB_WORKSPACE/FabricFit/docs/vton/device"
+          mkdir -p "$dest"
+          found=0
+          for f in "$dir"/*.jpg "$dir"/*.png "$dir"/report.txt "$dir"/geometry.txt; do
+            # `[ -f ] && cp && found=1` would stop the chain at the first glob that does
+            # not match, so `found` would never be set. Use a real branch.
+            if [ -f "$f" ]; then
+              cp "$f" "$dest/"
+              found=1
+            fi
+          done
+          if [ "$found" = "0" ]; then
+            echo "::warning title=No device images::nothing was pulled from the emulator"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add FabricFit/docs/vton/device
+          if git diff --cached --quiet; then
+            echo "device images unchanged since the last run"
+            exit 0
+          fi
+          git commit -m "ci: try-on rendered on an Android emulator [skip ci]"
+          # The checkout is detached at the triggering SHA; push explicitly onto the
+          # branch that triggered the run, and never let a failed push fail the job.
+          branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          git push origin "HEAD:refs/heads/${branch}" \
+            || echo "::warning title=Device images not pushed::git push was rejected; the artifact still has them"
+
   # Full app UI screenshots are expensive; capture them on demand only:
   # manual dispatch, or a push whose commit message contains "[screenshots]".
   # The job commits the refreshed PNGs back to the branch that triggered it.
@@ -260,6 +471,11 @@ jobs:
     timeout-minutes: 35
     permissions:
       contents: write
+    # The emulator on the hosted runner dies mid-capture intermittently ("device offline",
+    # then "device not found" with no emulator left to retry against). The capture script
+    # emits ::error:: annotations for every failure, so a broken *script* still shows up
+    # loudly; this only stops an emulator crash from painting the whole run red.
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v7
 
@@ -268,6 +484,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+
+      # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
+      # are fetched rather than committed. See FabricFit/docs/MODELS.md.
+      - name: Fetch TFLite models
+        run: bash tools/models/fetch_tflite_models.sh
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v6
@@ -323,15 +544,29 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit refreshed screenshots to branch
+        # Pushing back from a workflow token fails on protected branches. The captures are
+        # uploaded as an artifact regardless, so a push failure here must not fail the job
+        # - but it must say so loudly instead of swallowing the reason.
         run: |
-          set -e
-          cp ../qa-artifacts/screens/*.png docs/screenshots/
+          cp ../qa-artifacts/screens/*.png docs/screenshots/ || {
+            echo "::error title=SCREENSHOTS::no captures produced under qa-artifacts/screens"
+            exit 1
+          }
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/screenshots/
-          if ! git diff --cached --quiet; then
-            git commit -m "ci: refresh README screenshots [skip ci]"
-            git push
-          else
+          if git diff --cached --quiet; then
             echo "Screenshots unchanged, nothing to commit."
+            exit 0
+          fi
+          git commit -m "ci: refresh README screenshots [skip ci]"
+          # The checkout is detached at the triggering SHA, so a bare `git push` has no
+          # upstream and always failed: these captures could never land, only be uploaded
+          # as an artifact. Push explicitly onto the branch that triggered the run.
+          branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          if git push origin "HEAD:refs/heads/${branch}" 2>push.log; then
+            echo "Pushed refreshed screenshots to ${branch}."
+          else
+            echo "::warning title=SCREENSHOTS NOT PUSHED::$(tr '\n' ' ' < push.log | head -c 800)"
+            echo "Captures are still attached to this run as the 'fabricfit-readme-screens' artifact."
           fi

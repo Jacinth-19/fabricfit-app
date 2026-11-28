@@ -12,6 +12,10 @@ import java.io.File
  * On Android 10+ this uses MediaStore (no permission needed); on older versions it falls back to
  * the app's external files dir so we never request storage permission.
  */
+/** Accepts a location as stored in the database: a bare path or a `file://` uri. */
+fun String.toMediaFile(): File =
+    if (startsWith("file://")) File(android.net.Uri.parse(this).path ?: this) else File(this)
+
 fun Context.saveToGallery(file: File): Boolean = try {
     if (Build.VERSION.SDK_INT >= 29) {
         val values = ContentValues().apply {

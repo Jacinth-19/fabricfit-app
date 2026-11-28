@@ -71,8 +71,8 @@ Made with pride in Accra, Ghana.
 | --- | --- | --- | --- |
 | **Hi-Res App Icon** | `512 × 512` PNG | [`store/play_icon_512.png`](play_icon_512.png) | Royal Gold `FF` & Adinkra border on Deep Forest (`#0F3D2E`) |
 | **Feature Graphic** | `1024 × 500` PNG | [`store/feature_graphic.png`](feature_graphic.png) | Heritage Luxe headline, weave palette dots, feature pills & 3 floating phones |
-| **Play Store Promo Video (16:9)** | `1280 × 720` MP4 (H.264 + AAC, 15s) | [`store/video/fabricfit_play_store_promo_16x9.mp4`](video/fabricfit_play_store_promo_16x9.mp4) | 5-scene landscape trailer with synthesized Afro-luxury marimba score |
-| **Play Shorts / Reels Video (9:16)** | `720 × 1280` MP4 (H.264 + AAC, 12s) | [`store/video/fabricfit_shorts_reel_9x16.mp4`](video/fabricfit_shorts_reel_9x16.mp4) | Vertical social & Play Shorts trailer |
+| **Play Store Promo Video (16:9)** | `1280 × 720` MP4 (H.264, 15s, silent) | [`store/video/fabricfit_play_store_promo_16x9.mp4`](video/fabricfit_play_store_promo_16x9.mp4) | Brand open, six real app screens, capability outro. Generated from the app's own screenshots by `tools/store_video/render_promo.py` |
+| **Play Shorts / Reels Video (9:16)** | `720 × 1280` MP4 (H.264, 12s, silent) | [`store/video/fabricfit_shorts_reel_9x16.mp4`](video/fabricfit_shorts_reel_9x16.mp4) | Vertical social & Play Shorts cut, caption in its own band below the phone |
 | **Inline Promo Preview (GIF)** | `640 × 360` GIF | [`store/video/fabricfit_promo_preview.gif`](video/fabricfit_promo_preview.gif) | Animated preview of the 16:9 promo trailer |
 | **Wide Campaign Banner** | `1920 × 1080` PNG | [`store/banners/banner_wide_1920x1080.png`](banners/banner_wide_1920x1080.png) | Full HD hero banner for web, press kits, and YouTube thumbnails |
 | **TV / Tablet Banner** | `1280 × 720` PNG | [`store/banners/banner_tv_1280x720.png`](banners/banner_tv_1280x720.png) | Google Play 16:9 promotional banner |
@@ -88,7 +88,7 @@ Made with pride in Accra, Ghana.
 <div align="center">
   <img src="video/fabricfit_promo_preview.gif" alt="FabricFit Google Play Promo Video Preview" width="760">
   <br>
-  <sub><strong>Animated Preview of `fabricfit_play_store_promo_16x9.mp4` (`1280 × 720` H.264 + AAC Audio) &amp; `fabricfit_shorts_reel_9x16.mp4` (`720 × 1280`)</strong></sub>
+  <sub><strong>Animated Preview of `fabricfit_play_store_promo_16x9.mp4` (`1280 × 720` H.264, silent) &amp; `fabricfit_shorts_reel_9x16.mp4` (`720 × 1280`)</strong></sub>
 </div>
 
 ---

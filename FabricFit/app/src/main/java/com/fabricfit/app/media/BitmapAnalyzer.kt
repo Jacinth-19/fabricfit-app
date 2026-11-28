@@ -43,10 +43,29 @@ class BitmapAnalyzer(private val context: Context) {
         }
     }
 
+    /**
+     * Reads app-private files straight from disk. The ContentResolver throws
+     * `FileNotFoundException` for `file://` uris and bare paths, which is how the demo
+     * samples and saved looks are addressed.
+     */
+    private fun openStream(uri: Uri): java.io.InputStream? {
+        val scheme = uri.scheme
+        if (scheme == null || scheme == "file") {
+            for (path in listOfNotNull(uri.path, uri.toString())) {
+                val file = java.io.File(path)
+                if (path.isNotBlank() && file.exists() && file.isFile) return file.inputStream()
+            }
+            return null
+        }
+        return context.contentResolver.openInputStream(uri)
+    }
+
     fun decodeSampled(uri: Uri, maxEdge: Int): Bitmap? {
         return try {
+        // decodeStream returns null for a bounds-only decode, so only the stream is checked.
+        // App-private `file://` / bare paths do not resolve through the ContentResolver.
         val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
+        openStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
         if (options.outWidth <= 0 || options.outHeight <= 0) return null
         var sample = 1
         while (maxOf(options.outWidth, options.outHeight) / (sample * 2) >= maxEdge) sample *= 2
@@ -54,7 +73,7 @@ class BitmapAnalyzer(private val context: Context) {
             inSampleSize = sample
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
-        var bitmap = context.contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, decode) }
+        var bitmap = openStream(uri)?.use { BitmapFactory.decodeStream(it, null, decode) }
             ?: return null
         val rotation = readExifRotation(uri)
         if (rotation != 0) {
@@ -72,7 +91,7 @@ class BitmapAnalyzer(private val context: Context) {
     }
 
     private fun readExifRotation(uri: Uri): Int = try {
-        context.contentResolver.openInputStream(uri)?.use { stream ->
+        openStream(uri)?.use { stream ->
             when (ExifInterface(stream).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> 90
                 ExifInterface.ORIENTATION_ROTATE_180 -> 180
