@@ -137,7 +137,11 @@ object ImageFilterProcessor {
         contrast: Float,
         saturation: Float,
     ): Bitmap {
-        val result = bitmap.copy(bitmap.config, true)
+        // Bitmap.getConfig() is nullable in the newer SDK: it returns null for
+        // hardware-backed bitmaps, which have no readable config. Falling back to
+        // ARGB_8888 keeps the copy readable and matches what getPixels implies below.
+        val config = bitmap.config ?: Bitmap.Config.ARGB_8888
+        val result = bitmap.copy(config, true)
         val width = result.width
         val height = result.height
         val pixels = IntArray(width * height)
