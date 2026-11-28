@@ -366,15 +366,16 @@ jobs:
           working-directory: FabricFit
           # A wedged instrumentation hangs until the pre-installed runner's own timeout; cap
           # it so a failure reports in minutes with logs instead of burning the job budget.
-          # The output is tee'd to a file because a later step re-publishes it: the raw job
-          # log needs an Actions login, so failures were being reported as "exit code 1" with
-          # no way to see why from outside the runner.
+          # This runner executes `script` with /bin/sh, so bash-only builtins (set -o
+          # pipefail) exit 2 before gradle starts - which is exactly the failure that was
+          # observed. The real logic lives in a bash script with a shebang, and the log is
+          # tee'd to $RUNNER_TEMP because a later step re-publishes it: the raw job log needs
+          # an Actions login, so failures were reported as "exit code 1" with nothing to read.
           script: >
             export SCREENSHOT_ABI=1 &&
-            chmod +x ./gradlew &&
-            (set -o pipefail;
-             timeout 30m ./gradlew :app:connectedDebugAndroidTest --console=plain 2>&1
-             | tee "$RUNNER_TEMP/instrumentation.log")
+            export INSTRUMENTATION_LOG="$RUNNER_TEMP/instrumentation.log" &&
+            chmod +x ./gradlew tools/qa/run_instrumented.sh &&
+            ./tools/qa/run_instrumented.sh
 
       # Keep the HTML report and the raw XML whether the suite passed or failed: the
       # annotation step only greps messages, and a device-only failure needs the full report.
