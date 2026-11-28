@@ -78,30 +78,19 @@ jobs:
       # occasionally fails that fetch, which fails every Robolectric test at once (not just
       # the newest one), so give the download its own retried step.
       - name: Warm the Robolectric android-all cache
+        # Robolectric downloads its android-all runtime on first use, mid-test, where a slow
+        # fetch looks like a test timeout. Fetching it here, before the real run, keeps the
+        # failure attributable. Not fatal: if it cannot be fetched, the test step reports it.
         run: |
-          set -o pipefail
-          for attempt in 1 2 3; do
-            if ./gradlew :app:testDebugUnitTest --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
-                --console=plain 2>&1 | tee robolectric-warmup.log; then
-              echo "Robolectric runtime fetched"
-              exit 0
-            fi
-            if grep -q 'Failed to fetch maven artifact org.robolectric' robolectric-warmup.log; then
-              echo "::warning title=Robolectric download flake::attempt $attempt, retrying"
-              sleep 15
-              continue
-            fi
-            echo "warm-up failed for another reason; the real test step will report it"
-            exit 0
-          done
-          echo "::warning title=Robolectric download flake::gave up after 3 attempts"
-          exit 0
+          bash ../tools/qa/gradle_retry.sh \
+            :app:testDebugUnitTest --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
+            || echo "::warning title=Robolectric warm-up::could not pre-fetch the android-all runtime; continuing"
 
       - name: Unit tests, debug build, instrumented-test compile
-        run: |
-          set -o pipefail
-          ./gradlew :app:testDebugUnitTest :app:assembleDebug \
-            :app:assembleDebugAndroidTest --console=plain 2>&1 | tee verify-gradle.log
+        # Retries only when the failure is a dependency download (Maven Central rate-limits the
+        # shared CI IP with 429s). A compile error or failing test fails on the first attempt.
+        run: bash ../tools/qa/gradle_retry.sh \
+          :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
 
       # Job logs need a login to read; annotations are visible on the public run
       # page, so the reason for a red build is obvious without opening the log.
@@ -231,9 +220,8 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          set -o pipefail
-          ./gradlew :app:assembleRelease :app:bundleRelease --console=plain 2>&1 \
-            | tee release-gradle.log
+          GRADLE_RETRY_LOG=release-gradle.log \
+            bash ../tools/qa/gradle_retry.sh :app:assembleRelease :app:bundleRelease
 
       - name: Annotate the Gradle failure
         if: failure() && env.HAS_KEY == 'true'
@@ -670,7 +658,7 @@ jobs:
       - name: Build debug APK with emulator native libraries
         env:
           SCREENSHOT_ABI: '1'
-        run: ./gradlew :app:assembleDebug
+        run: bash ../tools/qa/gradle_retry.sh :app:assembleDebug
 
       - name: Enable Linux emulator acceleration
         run: |
