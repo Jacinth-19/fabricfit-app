@@ -296,11 +296,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21 everywhere: AGP 8.9 + this API 36 module. Bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -316,7 +317,11 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: DeepLabV3 person-segmentation QA on emulator
+      # The whole instrumented suite, not a filtered subset. It used to hard-code a
+      # -Pandroid...class filter for PersonSegmenterDeviceTest, so any other instrumented
+      # test was silently skipped even on the runs that did execute - a passing device-qa
+      # would never have run the database, launch or try-on tests.
+      - name: Instrumented suite on emulator
         uses: reactivecircus/android-emulator-runner@v2.38.0
         env:
           SCREENSHOT_ABI: '1'
@@ -325,18 +330,35 @@ jobs:
           target: default
           arch: x86_64
           working-directory: FabricFit
+          # A wedged instrumentation hangs until the pre-installed runner's own timeout; cap
+          # it so a failure reports in minutes with logs instead of burning the job budget.
           script: >
             export SCREENSHOT_ABI=1 &&
             chmod +x ./gradlew &&
-            ./gradlew :app:connectedDebugAndroidTest
-            -Pandroid.testInstrumentationRunnerArguments.class=com.fabricfit.app.data.ml.PersonSegmenterDeviceTest
+            timeout 30m ./gradlew :app:connectedDebugAndroidTest --console=plain
+
+      # Keep the HTML report and the raw XML whether the suite passed or failed: the
+      # annotation step only greps messages, and a device-only failure needs the full report.
+      - name: Upload instrumented test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: instrumented-test-results
+          path: |
+            FabricFit/app/build/outputs/androidTest-results
+            FabricFit/app/build/reports/androidTests
+          if-no-files-found: warn
 
       - name: Annotate instrumented test failures
         if: failure()
         run: |
           python3 - <<'PY'
           import pathlib, xml.etree.ElementTree as ET
-          for xml in pathlib.Path("app/build/outputs/androidTest-results").rglob("*.xml"):
+          root = pathlib.Path("FabricFit/app/build/outputs/androidTest-results")
+          if not root.exists():
+              print(f"::warning::No instrumented results at {root}; the failure happened before any test ran.")
+              raise SystemExit(0)
+          for xml in root.rglob("*.xml"):
               tree = ET.parse(xml)
               for tc in tree.iter("testcase"):
                   for f in list(tc.findall("failure")) + list(tc.findall("error")):
@@ -362,11 +384,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21 everywhere: AGP 8.9 + this API 36 module. Bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
@@ -520,11 +543,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: JDK 17
+      # JDK 21 everywhere: AGP 8.9 + this API 36 module. Bytecode still targets 17.
+      - name: JDK 21
         uses: actions/setup-java@v6
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
 
       # The TFLite binaries are build inputs, not source: they are 7.5 MB of weights and
       # are fetched rather than committed. See FabricFit/docs/MODELS.md.
