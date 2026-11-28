@@ -44,6 +44,24 @@ jobs:
       # The wrapper is committed without the executable bit, so make it runnable.
       - name: Make the Gradle wrapper executable
         run: chmod +x ./gradlew
+      # AGP downloads the compileSdk platform itself, but build-tools is not implied by
+      # compileSdk: AGP 8.9's default build-tools is 35.0.0, which cannot compile an
+      # API 36 target. Pin it here so the runner does not fail on a missing package.
+      - name: Install Android 36 build-tools
+        run: |
+          sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          if [ -z "$sdk_root" ]; then
+            echo "No ANDROID_HOME or ANDROID_SDK_ROOT on this runner" >&2
+            exit 1
+          fi
+          build_tools="$sdk_root/build-tools/36.0.0"
+          if [ -d "$build_tools" ]; then
+            echo "build-tools 36.0.0 already present"
+            exit 0
+          fi
+          sdk_manager=$(find "$sdk_root/cmdline-tools" -path '*/bin/sdkmanager' -print -quit)
+          test -n "$sdk_manager"
+          yes | "$sdk_manager" --install 'build-tools;36.0.0' 'platforms;android-36'
 
       # assembleDebugAndroidTest compiles the instrumented source set, so a
       # package/class rename there is caught without needing an emulator.

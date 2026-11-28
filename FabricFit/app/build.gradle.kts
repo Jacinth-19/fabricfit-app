@@ -14,7 +14,7 @@ fun Project.signingValue(name: String, fallback: String): String =
 
 android {
     namespace = "com.fabricfit.app"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         // Ship only the ABIs real target devices use; trims TFLite/AndroidX natives (~6 MB).
@@ -26,7 +26,7 @@ android {
 
         applicationId = "com.fabricfit.app"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 5
         versionName = "1.1.0"
 
