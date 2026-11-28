@@ -703,7 +703,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: fabricfit-readme-screens
-          path: qa-artifacts/screens/
+          path: |
+            qa-artifacts/screens/
+            qa-artifacts/screens/play/
           if-no-files-found: warn
 
       - name: Commit refreshed screenshots to branch
@@ -715,14 +717,23 @@ jobs:
             echo "::error title=SCREENSHOTS::no captures produced under qa-artifacts/screens"
             exit 1
           }
+          # The Play listing is regenerated from the same captures. Copies are made by
+          # capture_fabricfit_screens.sh, which is the only thing that knows which screen
+          # belongs in which listing slot.
+          play_dir="../qa-artifacts/screens/play"
+          if [ -d "$play_dir" ] && [ -n "$(ls -A "$play_dir" 2>/dev/null)" ]; then
+            cp "$play_dir"/*.png store/screenshots/
+          else
+            echo "::warning title=PLAY SCREENSHOTS::no Play slots were produced; store/screenshots/ left untouched"
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/screenshots/
+          git add docs/screenshots/ store/screenshots/
           if git diff --cached --quiet; then
             echo "Screenshots unchanged, nothing to commit."
             exit 0
           fi
-          git commit -m "ci: refresh README screenshots [skip ci]"
+          git commit -m "ci: refresh README and Play screenshots [skip ci]"
           # The checkout is detached at the triggering SHA, so a bare `git push` has no
           # upstream and always failed: these captures could never land, only be uploaded
           # as an artifact. Push explicitly onto the branch that triggered the run.
