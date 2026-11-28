@@ -50,8 +50,9 @@ jobs:
 
       # Store and in-app copy must not advertise a mailbox on a domain we do not own; the
       # privacy policy previously offered support@fabricfit.app, which does not exist.
+      # Note the bare path: the job's defaults.run.working-directory is already FabricFit.
       - name: Check store contact addresses
-        run: python3 FabricFit/tools/qa/check_store_contacts.py
+        run: python3 tools/qa/check_store_contacts.py
       # AGP downloads the compileSdk platform itself, but build-tools is not implied by
       # compileSdk: AGP 8.9's default build-tools is 35.0.0, which cannot compile an
       # API 36 target. Pin it here so the runner does not fail on a missing package.

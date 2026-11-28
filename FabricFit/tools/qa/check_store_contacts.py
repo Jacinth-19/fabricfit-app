@@ -45,10 +45,35 @@ POLICY = "FabricFit/store/privacy_policy.html"
 EMAIL_RE = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 
 
+def find_root(start: Path) -> Path | None:
+    """The directory holding FabricFit/store/privacy_policy.html.
+
+    CI runs this from two different working directories (the job default is FabricFit/, the
+    Pages job runs from the repository root), and guessing wrong produced a confusing
+    "policy is missing" failure rather than a path error. Walk upwards instead of trusting cwd.
+    """
+    for candidate in (start, *start.resolve().parents):
+        if (candidate / POLICY).exists() or (candidate / "FabricFit" / POLICY).exists():
+            return candidate
+    return None
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--root", default=".", help="repository root (default: cwd)")
-    root = Path(ap.parse_args(argv).root)
+    ap.add_argument(
+        "--root",
+        default=None,
+        help="repository root (default: the nearest parent containing FabricFit/store/privacy_policy.html)",
+    )
+    args = ap.parse_args(argv)
+    root = Path(args.root) if args.root else find_root(Path.cwd())
+    if root is None:
+        print(
+            "Could not find the repository root: no parent directory contains "
+            f"{POLICY}. Pass --root explicitly.",
+            file=sys.stderr,
+        )
+        return 2
     problems: list[str] = []
     seen: dict[str, list[str]] = {}
 
