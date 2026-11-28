@@ -21,7 +21,13 @@ adb shell settings put global animator_duration_scale 0
 adb shell input keyevent KEYCODE_WAKEUP
 adb shell wm dismiss-keyguard || true
 
-adb install -r "$APK"
+# Reinstall rather than install -r over whatever the previous attempt left behind. The
+# emulator is reused between attempts, and a package restored from a half-written state
+# answers adb but drops the device as soon as the activity starts - the exact symptom seen
+# when attempts 2 and 3 failed immediately after a successful capture on attempt 1.
+adb uninstall "$PKG" >/dev/null 2>&1 || true
+adb install "$APK" || adb install -r "$APK"
+sleep 2
 adb shell pm clear "$PKG"
 adb shell pm grant "$PKG" android.permission.POST_NOTIFICATIONS || true
 adb shell am force-stop "$PKG" || true

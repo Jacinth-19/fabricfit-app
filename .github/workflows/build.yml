@@ -720,6 +720,12 @@ jobs:
           if-no-files-found: warn
 
       - name: Commit refreshed screenshots to branch
+        # continue-on-error is set on this job because the hosted emulator dies mid-capture
+        # intermittently. That makes the *job* non-blocking, but a plain `run:` step still
+        # reports failure on a non-zero exit, so the whole job showed red for a git push race
+        # with the author's own push. Every failure path below emits an explicit ::error::
+        # annotation instead, which is what should be read.
+        continue-on-error: true
         if: always()
         # Pushing back from a workflow token fails on protected branches. The captures are
         # uploaded as an artifact regardless, so a push failure here must not fail the job
@@ -771,7 +777,11 @@ jobs:
           # upstream and always failed: these captures could never land, only be uploaded
           # as an artifact. Push explicitly onto the branch that triggered the run.
           branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          if git push origin "HEAD:refs/heads/${branch}" 2>push.log; then
+          # Two runs of this job can overlap (push and pull_request events), and the author
+          # may push while it runs. Rebase onto the branch head once before giving up.
+          if git push origin "HEAD:refs/heads/${branch}" 2>push.log ||
+             { git pull --rebase --autostash origin "${branch}" >/dev/null 2>&1 &&
+               git push origin "HEAD:refs/heads/${branch}" 2>>push.log; }; then
             echo "Pushed refreshed screenshots to ${branch}."
           else
             echo "::warning title=SCREENSHOTS NOT PUSHED::$(tr '\n' ' ' < push.log | head -c 800)"
