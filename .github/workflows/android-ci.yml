@@ -30,6 +30,14 @@ jobs:
       run: bash tools/models/fetch_tflite_models.sh
       working-directory: FabricFit
       
+    # The translation packs are checked in, generated, and easy to drift. This
+    # validates key parity, format specifiers and escaping across tw/gaa/ee
+    # without needing the Android SDK, so a missing translation fails here
+    # instead of shipping as a blank label on a non-English device.
+    - name: Validate translation packs
+      run: python3 tools/i18n/generate.py
+      working-directory: FabricFit
+
     - name: Run Unit Tests
       run: |
         cd FabricFit
