@@ -83,14 +83,18 @@ jobs:
         # failure attributable. Not fatal: if it cannot be fetched, the test step reports it.
         run: |
           bash ../tools/qa/gradle_retry.sh \
-            :app:testDebugUnitTest --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
+            :app:testDebugUnitTest \
+            --tests 'com.fabricfit.app.ui.DeepLinkIntentTest' \
             || echo "::warning title=Robolectric warm-up::could not pre-fetch the android-all runtime; continuing"
 
       - name: Unit tests, debug build, instrumented-test compile
         # Retries only when the failure is a dependency download (Maven Central rate-limits the
         # shared CI IP with 429s). A compile error or failing test fails on the first attempt.
-        run: bash ../tools/qa/gradle_retry.sh \
-          :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest
+        run: |
+          bash ../tools/qa/gradle_retry.sh \
+            :app:testDebugUnitTest \
+            :app:assembleDebug \
+            :app:assembleDebugAndroidTest
 
       # Job logs need a login to read; annotations are visible on the public run
       # page, so the reason for a red build is obvious without opening the log.
