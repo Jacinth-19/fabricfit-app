@@ -405,15 +405,25 @@ jobs:
           import pathlib, sys
           text = pathlib.Path(sys.argv[1]).read_text(errors="replace")
           lines = [l for l in text.splitlines() if l.strip()]
-          interesting = [l for l in lines if any(k in l.lower() for k in
-                         ("fail", "error", "exception", "assert", "boot", "emulator", "> task"))]
-          for line in (interesting or lines)[-6:]:
+          # Prefer the per-test failures and the assertion text under them: the summary tail
+          # ("BUILD FAILED") is always present and identifies nothing.
+          test_lines = [i for i, l in enumerate(lines)
+                        if l.rstrip().endswith("FAILED") and ">" in l]
+          picked: list[str] = []
+          for i in test_lines:
+              picked.append(lines[i])
+              picked.extend(lines[i + 1:i + 3])     # the exception + its message
+          if not picked:
+              picked = [l for l in lines if any(k in l.lower() for k in
+                        ("exception", "assertion", "error", "emulator", "boot"))]
+          for line in (picked or lines)[-10:]:
               clean = line.replace("%", "%25").replace("\r", "").replace("\n", "")
               print(f"::error::{clean[:900]}")
           PY
             # A PR comment is readable from the API, so the failure can be diagnosed without
             # the log archive; keep it short and collapsed to avoid burying the PR.
-            if [ -n "${GITHUB_HEAD_REF:-}" ]; then
+            target_branch="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}"
+            if [ -n "$target_branch" ]; then
               {
                 echo '### device-qa failed'
                 echo
@@ -425,7 +435,7 @@ jobs:
                 echo
                 echo '</details>'
               } > "$RUNNER_TEMP/comment.md"
-              gh pr comment "$GITHUB_HEAD_REF" --body-file "$RUNNER_TEMP/comment.md" \
+              gh pr comment "$target_branch" --body-file "$RUNNER_TEMP/comment.md" \
                 || echo "::warning::could not post the failure comment"
             fi
           else
@@ -437,17 +447,22 @@ jobs:
         run: |
           python3 - <<'PY'
           import pathlib, xml.etree.ElementTree as ET
-          root = pathlib.Path("FabricFit/app/build/outputs/androidTest-results")
+          # This step runs in the job working-directory (FabricFit), not the workspace root.
+          root = pathlib.Path("app/build/outputs/androidTest-results")
           if not root.exists():
-              print(f"::warning::No instrumented results at {root}; the failure happened before any test ran.")
+              print(f"::error title=No test results::No instrumented results under {pathlib.Path.cwd() / root}. Gradle did not get as far as running a test - check the instrumentation log above.")
               raise SystemExit(0)
+          found = False
           for xml in root.rglob("*.xml"):
               tree = ET.parse(xml)
               for tc in tree.iter("testcase"):
                   for f in list(tc.findall("failure")) + list(tc.findall("error")):
+                      found = True
                       msg = (f.text or f.attrib.get("message", "")).strip()
                       esc = msg.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
                       print(f"::error::{tc.attrib.get('classname')}.{tc.attrib.get('name')}: {esc[:1400]}")
+          if not found:
+              print("::error title=No failures in the XML::Instrumentation reported failure but no test result contains one - the failure is in the runner or the app crashed at launch.")
           PY
 
   # On-demand end-to-end try-on on a real Android emulator: runs the bundled Ghanaian
