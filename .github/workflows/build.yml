@@ -283,10 +283,13 @@ jobs:
           fi
           echo "Published $tag"
 
-  # Opt-in device QA: run the DeepLabV3 instrumented test on a KVM-accelerated
+  # Opt-in device QA: run the full instrumented suite on a KVM-accelerated
   # Linux emulator. Fires on manual dispatch, on the weekly schedule, when a
   # release tag (v*) is pushed, or when the commit message contains "[device-qa]".
   device-qa:
+    permissions:
+      contents: read
+      pull-requests: write
     if: >-
       github.event_name == 'workflow_dispatch' ||
       github.event_name == 'schedule' ||
@@ -317,6 +320,30 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+          # The rules file only grants permissions; it cannot conjure a device node on a host
+          # without nested virtualisation. Say so here, in one line, instead of letting the
+          # emulator fail to boot five steps later with an unrelated error.
+          if [ ! -c /dev/kvm ]; then
+            echo "::error::/dev/kvm is absent on this runner, so an x86_64 emulator cannot boot accelerated (and booting unaccelerated takes ~40 minutes). Hosted runners normally provide it; if this recurs, run this job on a larger/self-hosted runner."
+            exit 1
+          fi
+          echo "/dev/kvm present: $(ls -l /dev/kvm)"
+
+      # A failed first boot is usually transient (download or disk contention on a shared
+      # runner). One retry with an explicit cold boot turns most of those into a green run
+      # without hiding a genuine test failure: a test assertion fails twice, a boot does not.
+      - name: Boot check (retried once)
+        uses: reactivecircus/android-emulator-runner@v2.38.0
+        continue-on-error: true
+        id: boot
+        with:
+          api-level: 33
+          target: default
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          disable-animations: true
+          working-directory: FabricFit
+          script: adb shell getprop sys.boot_completed | grep -q 1
 
       # The whole instrumented suite, not a filtered subset. It used to hard-code a
       # -Pandroid...class filter for PersonSegmenterDeviceTest, so any other instrumented
@@ -330,13 +357,24 @@ jobs:
           api-level: 33
           target: default
           arch: x86_64
+          # Explicit cold boot: no snapshot restore (the commonest cause of a half-booted
+          # emulator that answers adb but fails every instrumentation), software GPU because
+          # hosted runners have no GPU, and animations off so Compose idle detection is
+          # reliable rather than timing out under transition animations.
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot
+          disable-animations: true
           working-directory: FabricFit
           # A wedged instrumentation hangs until the pre-installed runner's own timeout; cap
           # it so a failure reports in minutes with logs instead of burning the job budget.
+          # The output is tee'd to a file because a later step re-publishes it: the raw job
+          # log needs an Actions login, so failures were being reported as "exit code 1" with
+          # no way to see why from outside the runner.
           script: >
             export SCREENSHOT_ABI=1 &&
             chmod +x ./gradlew &&
-            timeout 30m ./gradlew :app:connectedDebugAndroidTest --console=plain
+            (set -o pipefail;
+             timeout 30m ./gradlew :app:connectedDebugAndroidTest --console=plain 2>&1
+             | tee "$RUNNER_TEMP/instrumentation.log")
 
       # Keep the HTML report and the raw XML whether the suite passed or failed: the
       # annotation step only greps messages, and a device-only failure needs the full report.
@@ -349,6 +387,49 @@ jobs:
             FabricFit/app/build/outputs/androidTest-results
             FabricFit/app/build/reports/androidTests
           if-no-files-found: warn
+
+      - name: Report the instrumentation failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG: ${{ runner.temp }}/instrumentation.log
+        run: |
+          set -u
+          if [ -f "$LOG" ]; then
+            echo "::group::last 200 lines of instrumentation.log"
+            tail -200 "$LOG" || true
+            echo "::endgroup::"
+            # Annotations are the only channel that survives without an Actions login.
+            python3 - "$LOG" <<'PY'
+          import pathlib, sys
+          text = pathlib.Path(sys.argv[1]).read_text(errors="replace")
+          lines = [l for l in text.splitlines() if l.strip()]
+          interesting = [l for l in lines if any(k in l.lower() for k in
+                         ("fail", "error", "exception", "assert", "boot", "emulator", "> task"))]
+          for line in (interesting or lines)[-6:]:
+              clean = line.replace("%", "%25").replace("\r", "").replace("\n", "")
+              print(f"::error::{clean[:900]}")
+          PY
+            # A PR comment is readable from the API, so the failure can be diagnosed without
+            # the log archive; keep it short and collapsed to avoid burying the PR.
+            if [ -n "${GITHUB_HEAD_REF:-}" ]; then
+              {
+                echo '### device-qa failed'
+                echo
+                echo "<details><summary>instrumentation.log (tail)</summary>"
+                echo
+                echo '```'
+                tail -120 "$LOG" || true
+                echo '```'
+                echo
+                echo '</details>'
+              } > "$RUNNER_TEMP/comment.md"
+              gh pr comment "$GITHUB_HEAD_REF" --body-file "$RUNNER_TEMP/comment.md" \
+                || echo "::warning::could not post the failure comment"
+            fi
+          else
+            echo "::error::No instrumentation.log was produced, so gradle never started: the emulator most likely failed to boot. Check the emulator-runner step above."
+          fi
 
       - name: Annotate instrumented test failures
         if: failure()
