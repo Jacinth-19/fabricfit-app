@@ -72,25 +72,49 @@ CI runs on every PR and every push to `main`: `verify` (unit tests, debug APK,
 androidTest compile) then `release` (R8 APK + Play bundle). The macOS emulator job
 runs weekly (Mon 06:00), on `v*` tags, or manually.
 
-## 1. Gradle 8.9 is flagged out of date (low risk, do it deliberately)
+## 1. Toolchain — done, and what it now pins
 
-CI warns on every run:
-`Gradle 8.9 is out of date: consider updating to the latest Gradle version.`
+The API 36 bump moved the whole chain at once, because each layer only reveals its own
+incompatibility when the previous one is satisfied:
 
-Bumping Gradle means matching AGP and Kotlin. As of writing the repo pins
-**AGP 8.5.2 / Kotlin 2.0.20 / KSP 2.0.20-1.0.25**. Check the compatibility tables
-before moving:
+| Component | Version | Why this one |
+|---|---|---|
+| `compileSdk` / `targetSdk` | 36 | Play requires API 36 for new apps and updates from 31 Aug 2026 |
+| AGP | 8.9.1 | lowest release that officially supports `compileSdk 36` |
+| Gradle | 8.11.1 | AGP 8.9 requires it; wrapper is pinned to `gradle-8.11.1-bin.zip` |
+| Kotlin / KSP | 2.0.21 / 2.0.21-1.0.28 | KSP must match Kotlin exactly |
+| Compose BOM | 2025.04.01 | compiler ships with Kotlin 2.x, so only the BOM moves |
+| Robolectric | 4.16.1 | 4.13 refuses `targetSdk 36`; 4.16 covers API 23-36 |
+| build-tools | 36.0.0 | pinned — AGP 8.9's default is still 35.0.0 |
+| CI JDK | **21** | SDK 36 jars are compiled with Java 21; Robolectric will not build a sandbox otherwise |
 
-- AGP ↔ Gradle: <https://developer.android.com/build/releases/gradle-plugin>
-- Kotlin ↔ AGP ↔ Compose compiler: <https://kotlinlang.org/docs/compose-compiler-migration-guide.html>
-  (Kotlin 2.x ships the Compose compiler in the Kotlin plugin, so the
-  `kotlin.compose` plugin in `app/build.gradle.kts` must stay in step with Kotlin.)
-- KSP must match Kotlin exactly (`2.0.20-1.0.25` → `<kotlin>-<ksp>`).
+`sourceCompatibility`/`targetCompatibility`/`jvmTarget` stay at **17**: JDK 21 is the
+toolchain that runs the build, not the bytecode it emits. `media3` is still 1.4.1; 1.5+
+needs `compileSdk 35`, which is now satisfied, so that is a safe separable follow-up.
 
-Also add `gradle/actions/setup-gradle` caching still works after the bump, and update
-the pinned `gradle-8.9-bin.zip` in `FabricFit/gradle/wrapper/gradle-wrapper.properties`.
-`compileSdk`/`targetSdk` 34 will also need a bump against Play's current target-API
-deadline (see `docs/PLAY_DATA_SAFETY.md`, which already flags this).
+## 1a. CI durability — traps that each cost real debugging time
+
+Worth knowing before touching the workflows; each of these reported the wrong thing.
+
+- **`run:` steps execute in `defaults.run.working-directory`, which is `FabricFit`.**
+  `uses:` steps resolve paths against the workspace root instead. A path written for one
+  context silently fails in the other - it looks like "file not found" or "no results".
+  `FabricFit/tools/qa/check_store_contacts.py` therefore finds the repo root itself.
+- **A YAML plain scalar is not a block scalar.** `run: bash x.sh \` followed by an
+  indented continuation escapes the *space*, so the next line becomes a leading space in
+  the argument: `Cannot locate tasks that match ' :app:testDebugUnitTest'`. Multi-line
+  commands need `run: |` with explicit `\` continuations.
+- **`github.event.head_commit` only exists on `push`.** A branch with an open PR emits two
+  runs per commit, so a commit-message trigger appears to work or not depending on which
+  run you look at. Both opt-in tags also match the PR title for that reason.
+- **Do not make the annotators conditional.** `verify`'s annotation step had
+  `env.HAS_KEY` copy-edited into it (that variable belongs to `release`), so it never ran
+  and every failure reported only "exit code 1". Logs are unreadable without an Actions
+  login; annotations are the only channel that survives.
+- **Maven Central rate-limits shared CI IPs** with HTTP 429, which is why
+  `tools/qa/gradle_retry.sh` exists. It retries only download failures and fails at once on
+  compile or test errors, so it cannot hide a regression. `settings.gradle.kts` also
+  prefers Google's Maven mirror ahead of Central to reduce the exposure.
 
 ## 2. Play Store listing for `com.fabricfit.app`
 
@@ -172,9 +196,14 @@ the rename it performs is already applied, and re-running it is pointless.
 
 ## 5. Smaller follow-ups
 
-- **Instrumented emulator test has never actually run.** The weekly schedule will
-  exercise it; check the first Monday run and fix whatever it surfaces (DeepLabV3
-  delegate loading on `macos-latest` is the likely friction point).
+- **The instrumented suite runs, and is green.** `device-qa` used to filter itself down to
+  one test with `-Pandroid.testInstrumentationRunnerArguments.class`, so every other test was
+  skipped even on the runs that executed - it could only ever pass by not running. It now runs
+  the whole suite on API 33, and gained `DatabaseDeviceTest` (Room on real framework SQLite)
+  and `AppLaunchSmokeTest` (launches `MainActivity` through the real DI container, checks the
+  start destination, tab navigation, and the first-run onboarding path). Trigger it with
+  `[device-qa]` in the commit message or PR title; it also runs weekly and on `v*` tags.
+  The start-up path had never been executed by any build before this.
 - **The Android SDK / JDK toolchain script** is `tools/setup_toolchain.sh` at the repo
   root. It still assumes the module path is `/home/user/FabricFit`, which is correct,
   but it downloads from `api.adoptium.net`, `services.gradle.org` and `dl.google.com` —
@@ -183,10 +212,12 @@ the rename it performs is already applied, and re-running it is pointless.
   `ui/navigation/Destinations.kt` is declared but never referenced — onboarding is a
   state gate in `AppShell` (`onboardingCompleted`), and Settings' "Replay onboarding"
   re-arms that flag rather than navigating. Either wire it up or delete the constant.
+  (Left alone deliberately: deleting it is a one-line change but would have turned a
+  release-gate PR into an unrelated refactor.)
 - **The README documents all 29 screens** (map + tables) and includes real API 33
-  emulator captures of the core tabs under `FabricFit/docs/screenshots/`. The separate
-  Play Store screenshot plan is still outstanding: capture the five feature shots listed
-  in `docs/PLAY_DATA_SAFETY.md` and drop them in `FabricFit/store/screenshots/`.
+  emulator captures of the core tabs under `FabricFit/docs/screenshots/`. Play listing
+  screenshots are generated by the same run (see the listing section above); what is left
+  there is the emulator dropping off adb after the first screen.
 - **`credits_body` keeps the etymology** ("the name comes from 'ntoma', Akan for cloth")
   in all four locales. That is intentional and reviewed — do not "fix" it.
 - Twi copy legitimately contains the word `ntoma` ("cloth"), e.g. `look_ankara_men_1`
