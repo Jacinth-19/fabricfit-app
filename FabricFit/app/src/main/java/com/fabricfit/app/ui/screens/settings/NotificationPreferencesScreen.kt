@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -27,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.fabricfit.app.R
+import com.fabricfit.app.ui.components.FabricFitTopBar
 import com.fabricfit.app.domain.model.CommunityNotificationPreferences
 
 /**
@@ -38,27 +35,10 @@ fun NotificationPreferencesScreen(nav: NavHostController, padding: PaddingValues
 
     Column(Modifier.fillMaxSize().padding(padding)) {
         // Top bar
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            IconButton(onClick = { nav.popBackStack() }) {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(R.string.cd_back),
-                    tint = MaterialTheme.colorScheme.onBackground,
-                )
-            }
-            Text(
-                stringResource(R.string.notification_preferences_title),
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground,
-                modifier = Modifier.weight(1f),
-            )
-        }
+        FabricFitTopBar(
+            title = stringResource(R.string.notification_preferences_title),
+            onBack = { nav.popBackStack() },
+        )
 
         // Preferences list
         Column(
