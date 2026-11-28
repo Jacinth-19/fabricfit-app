@@ -74,22 +74,8 @@
                 tools:node="remove" />
         </provider>
 
-        <!-- Firebase Cloud Messaging Service -->
-        <service
-            android:name=".notifications.FabricFitMessagingService"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-
-        <!-- Default notification icon and color -->
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/fabricfit_gold" />
+        <!-- Notifications are local: SmartNotifications posts them from WorkManager jobs, so
+             there is no messaging service here. See the Firebase note in app/build.gradle.kts. -->
     </application>
 
 </manifest>

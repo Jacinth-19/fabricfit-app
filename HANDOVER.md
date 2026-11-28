@@ -102,8 +102,14 @@ screenshots checklist. Still to do:
   `store/` still holds only `play_icon_512.png`, `feature_graphic.png`, `listing.md` and
   `privacy_policy.html`. Capture the Play-focused journey Home → FitScan → FitMatch AI →
   FitRoom → My Fit Closet and put those listing creatives in `FabricFit/store/screenshots/`.
-- **Host the privacy policy** at a public URL and paste `store/privacy_policy.html`
-  (contact address in it is `privacy@fabricfit.app`, currently a placeholder).
+- **Privacy policy — done, pending one manual step.** `FabricFit/store/privacy_policy.html` is
+  published to https://jacinth-19.github.io/fabricfit-app/privacy.html by
+  `.github/workflows/pages.yml`. The contact address is `fabricfit.app@gmail.com`, because
+  `privacy@`/`support@fabricfit.app` never existed (the domain is not registered, so those
+  addresses bounced) and `FabricFit/tools/qa/check_store_contacts.py` now fails the build if
+  one comes back. **Manual step:** in the repository's Settings → Pages, set the source to
+  "GitHub Actions" once, or the deploy job will not have a Pages site to publish to. Then paste
+  the URL into Play Console → Store listing → Privacy policy.
 - **The application ID changed**, so this is a *new* Play listing. An existing
   `com.ntoma.studio` install cannot upgrade in place, and the old listing cannot be
   transferred — do not expect install continuity.

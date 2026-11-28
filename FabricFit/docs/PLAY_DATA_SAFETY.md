@@ -23,16 +23,27 @@ Map the form answers to actual code behaviour:
 
 | Question | Answer for this build | Why (code reference) |
 |---|---|---|
-| Photos collected/shared? | **No** | Images are read via CameraX/Photo Picker and stored only in app-private storage (`ImageProcessor.save` → `filesDir/media`). No upload path exists; analysis and try-on run on-device (`FabricAnalysisRepositoryImpl`, `DemoLookGenerator`). |
+| Photos collected/shared? | **No by default; yes if the user configures a cloud engine** | Images are read via CameraX/Photo Picker and stored only in app-private storage (`ImageProcessor.save` → `filesDir/media`). The default path is on-device (`FabricAnalysisRepositoryImpl`, `DemoLookGenerator`). The optional cloud engine (`data/remote/CloudAnalysisClient`, `CloudRecommendationClient`) uploads the selected image **to the endpoint the user pastes into Settings → Analysis engine**; there is no default endpoint, no endpoint of ours, and no background upload. |
 | Camera permission | Yes, requested at runtime | Only for fabric/person capture, with pre-explanation (`permissions/PermissionGate.kt`). |
-| Analytics collected? | **No** | `DebugAnalyticsLogger` writes to logcat only; nothing is transmitted. |
+| Analytics collected? | **No** | `DebugAnalyticsLogger` writes to logcat only; nothing is transmitted. No Firebase Analytics, Crashlytics or other analytics SDK is included — the Firebase dependencies were removed for exactly this reason (see `app/build.gradle.kts`). |
 | Crash logs? | On-device only | `analytics/CrashReporter.kt` writes stack traces to `filesDir/crashlogs` (max 10). Not transmitted. Swap for Crashlytics before enabling collection (see below). |
 | Ads / advertising ID? | **No** | No ad SDK included; no `AD_ID` permission in the manifest. UI ad slots were removed for v1. |
 | Account data? | None | No sign-in; the display name is stored locally in DataStore. |
 | Data deletion | In-app | Settings → Data controls → Delete my data wipes DB, media files, and quotas (`DataControlsViewModel.deleteAll`). |
 
-If a cloud analysis/try-on backend is enabled later, this table **must** be updated: photos would
-become collected data with a declared purpose, retention, and deletion path.
+**Cloud engine — how to answer the form.** The optional cloud engine is code-complete, so this must
+be declared rather than deferred: Play's Data Safety form asks about the *app*, not about default
+settings. Tick **Photos → collected → purpose: app functionality → not shared → optional → not
+processed ephemerally**, and state that data is sent only to a server address the user supplies.
+Google operates no backend for FabricFit, and Play App Signing aside we receive nothing, but a
+"no data collected" answer would be false for any user who turns the engine on.
+
+**Firebase is gone.** `firebase-messaging-ktx` and `firebase-analytics-ktx` used to be declared
+while no `google-services.json` or plugin existed, so neither could ever initialise. They were
+removed rather than wired up: a no-analytics policy plus a bundled analytics SDK is a
+contradiction waiting to become a violation, and FCM cannot receive a message without
+registration credentials. Push, when it is wanted, needs the Firebase project, the plugin, the
+consent flow, this table and the policy updated together.
 
 ## Permissions declared (and why)
 - `CAMERA` — fabric/person capture (runtime, pre-explained).

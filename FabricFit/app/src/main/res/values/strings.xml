@@ -565,7 +565,7 @@
     <string name="help_faq_q5">Can I add my own designs?</string>
     <string name="help_faq_a5">Not yet. The style library is loaded from a catalogue that can be updated from the backend.</string>
     <string name="help_contact_body">Tell us what went wrong and we will reply. Include your app version: %1$s.</string>
-    <string name="help_contact_email">support@fabricfit.app</string>
+    <string name="help_contact_email">fabricfit.app@gmail.com</string>
     <string name="help_contact_subject">FabricFit support request</string>
 
     <!-- ============ Empty states ============ -->

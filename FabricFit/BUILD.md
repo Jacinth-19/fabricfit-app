@@ -75,7 +75,7 @@ Use CI (or a dev machine) for compiles.
 | `Theme.Ntoma` / `Theme.Ntoma.Splash` | `Theme.FabricFit` / `Theme.FabricFit.Splash` |
 | colours `ntoma_*` | `fabricfit_*` |
 | `brand/ntoma_icon_512.png` | `brand/fabricfit_icon_512.png` |
-| support address `support@ntoma.app` | `support@fabricfit.app` |
+| support address `support@ntoma.app` | `fabricfit.app@gmail.com` |
 
 Deliberately **not** renamed, and why:
 - The lower-case Akan word **ntoma** ("cloth") in Twi copy, e.g. `look_ankara_men_1`

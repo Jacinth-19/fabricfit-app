@@ -205,10 +205,14 @@ dependencies {
     // extension; ship it so R8 does not strip (or fail on) the reference.
     implementation("com.atlassian.commonmark:commonmark-ext-gfm-strikethrough:0.13.0")
     
-    // Firebase Cloud Messaging for push notifications
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-    implementation("com.google.firebase:firebase-messaging-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
+    // No Firebase SDKs. The privacy policy and the Play Data Safety form both state that no
+    // analytics or push infrastructure is present, and Google's own libraries collect device
+    // data independently of what this app does with them. FCM could not work in any case:
+    // there is no google-services.json and no google-services plugin, so the app never
+    // registers with Firebase and can never receive a message. Local notifications
+    // (notifications/FabricFitNotifier + SmartNotifications) do the work and need none of it.
+    // Re-adding push means a Firebase project, the plugin, crash/analytics consent, and an
+    // update to the policy and the Data Safety form in the same change.
     
     // ExoPlayer for video playback
     implementation("com.google.android.exoplayer:exoplayer:2.19.1")

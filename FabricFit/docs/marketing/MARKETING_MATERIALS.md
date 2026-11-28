@@ -192,7 +192,7 @@ FabricFit features a premium design language inspired by Ghana's royal heritage:
 📧 GET IN TOUCH
 
 Questions? Feedback? Feature requests?
-• Email: support@fabricfit.app
+• Email: fabricfit.app@gmail.com
 • Website: www.fabricfit.app
 • Instagram: @FabricFitApp
 • Twitter: @FabricFitApp

@@ -1,0 +1,85 @@
+name: Privacy policy (GitHub Pages)
+
+# Play requires the privacy policy to live at a public URL, not in a repository and not as a
+# PDF attachment. This publishes FabricFit/store/privacy_policy.html at
+#   https://jacinth-19.github.io/fabricfit-app/privacy.html
+# which is the URL to paste into Play Console (and the canonical link inside the document).
+#
+# Nothing is duplicated: the site is assembled from the one policy file at deploy time, so the
+# page can never drift from the file the review of this repository reads.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - FabricFit/store/privacy_policy.html
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; let a queued deploy finish rather than cancelling it mid-flight.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Assemble the site
+        run: |
+          set -eu
+          policy=FabricFit/store/privacy_policy.html
+          test -s "$policy" || { echo "::error::$policy is missing"; exit 1; }
+          mkdir -p _site
+          cp "$policy" _site/privacy.html
+          cat > _site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>FabricFit</title>
+          <style>
+            body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+                   max-width: 34rem; margin: 4rem auto; padding: 0 1.25rem;
+                   color: #1d1a17; background: #fffbf7; line-height: 1.6; }
+            h1 { color: #8c2f39; } a { color: #1f5450; }
+          </style>
+          </head>
+          <body>
+          <h1>FabricFit</h1>
+          <p>Fabric analysis, try-on previews and wardrobe tools, on your device.</p>
+          <p><a href="privacy.html">Privacy policy</a></p>
+          <p>Questions: <a href="mailto:fabricfit.app@gmail.com">fabricfit.app@gmail.com</a></p>
+          </body>
+          </html>
+          HTML
+          ls -l _site
+
+      # Fails the deploy if the policy still advertises a mailbox on a domain we do not own.
+      # A policy whose contact address bounces is a Play review finding.
+      - name: Check the published copy advertises a reachable address
+        run: python3 FabricFit/tools/qa/check_store_contacts.py
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
