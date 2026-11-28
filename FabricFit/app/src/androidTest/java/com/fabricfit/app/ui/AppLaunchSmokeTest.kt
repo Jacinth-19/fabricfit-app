@@ -44,6 +44,28 @@ class AppLaunchSmokeTest {
 
     private fun label(labelRes: Int): String = rule.activity.getString(labelRes)
 
+    /**
+     * Waits for [predicate] to hold, in one-second steps.
+     *
+     * The navigation animations are real: after a tab tap the selected state settles over
+     * several frames, and a single waitForIdle can sample it mid-transition. That produced a
+     * one-in-N flake on the emulator, which is worse than useless in a release gate - it
+     * teaches people to re-run rather than read the failure.
+     */
+    private fun waitUntil(what: String, tries: Int = 15, predicate: () -> Boolean) {
+        repeat(tries) { attempt ->
+            if (runCatching(predicate).getOrDefault(false)) return
+            Thread.sleep(1000)
+            if (attempt == tries - 1) rule.waitForIdle()
+        }
+        throw AssertionError("timed out after ${tries}s waiting for: $what")
+    }
+
+    private fun tabIsSelected(labelRes: Int): Boolean = runCatching {
+        tab(labelRes).assertIsSelected()
+        true
+    }.getOrDefault(false)
+
     /** Tabs carry their label as a content description, so find them by that, not by text. */
     private fun tab(labelRes: Int) = rule.onNode(
         SemanticsMatcher.expectValue(SemanticsProperties.ContentDescription, listOf(label(labelRes))),
@@ -81,16 +103,14 @@ class AppLaunchSmokeTest {
         rule.waitForIdle()
 
         tab(R.string.nav_profile).performClick()
-        rule.waitForIdle()
-
+        waitUntil("Profile tab to become selected") { tabIsSelected(R.string.nav_profile) }
         tab(R.string.nav_profile).assertIsSelected()
         tab(R.string.nav_home).assertIsNotSelected()
 
         // A hop in the other direction proves the graph is not stuck on the destination it
         // happened to reach.
         tab(R.string.nav_home).performClick()
-        rule.waitForIdle()
-
+        waitUntil("Home tab to become selected") { tabIsSelected(R.string.nav_home) }
         tab(R.string.nav_home).assertIsSelected()
         tab(R.string.nav_profile).assertIsNotSelected()
     }
@@ -104,12 +124,20 @@ class AppLaunchSmokeTest {
         // The shell already composed with onboarding completed, so restart the activity to get
         // the real first-run path - that path is the thing worth testing.
         rule.activityRule.scenario.recreate()
-        rule.waitForIdle()
 
+        // Wait for onboarding to actually come back rather than assuming a frame boundary.
+        waitUntil("onboarding to render after recreate") {
+            runCatching {
+                rule.onNodeWithText(label(R.string.onboarding_cta_skip)).assertIsDisplayed()
+            }.isSuccess
+        }
         rule.onNodeWithText(label(R.string.onboarding_cta_skip)).performClick()
-        rule.waitForIdle()
 
-        // The CTA is only on onboarding, so its disappearance is what proves the skip worked.
+        // The CTA exists only on onboarding, so the bottom bar appearing is what proves the
+        // skip worked; assert that rather than inferring it from the click.
+        waitUntil("the bottom navigation to appear after skipping onboarding") {
+            runCatching { tab(R.string.nav_home).assertIsDisplayed() }.isSuccess
+        }
         tab(R.string.nav_home).assertIsDisplayed()
     }
 }
