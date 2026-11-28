@@ -1017,6 +1017,7 @@
     <string name="challenge_join">Join Challenge</string>
     <string name="challenge_submit">Submit Entry</string>
     <string name="challenge_ends">Ends %s</string>
+    <string name="challenge_title">Style Challenge</string>
     <string name="user_profile">Profile</string>
     <string name="gallery_detail">Style Details</string>
     <string name="add_comment">Add a comment…</string>
