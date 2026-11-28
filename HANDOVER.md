@@ -97,11 +97,21 @@ deadline (see `docs/PLAY_DATA_SAFETY.md`, which already flags this).
 `store/listing.md` has the short and full descriptions, categorisation and the
 screenshots checklist. Still to do:
 
-- **No Play listing screenshots exist yet.** The README's real UI previews live in
-  `FabricFit/docs/screenshots/` (Home, Discover, Create, Favourites, Profile and My Fit Closet).
-  `store/` still holds only `play_icon_512.png`, `feature_graphic.png`, `listing.md` and
-  `privacy_policy.html`. Capture the Play-focused journey Home → FitScan → FitMatch AI →
-  FitRoom → My Fit Closet and put those listing creatives in `FabricFit/store/screenshots/`.
+- **Play listing screenshots — wired up, but the capture is only part reliable.** Six images
+  exist in `FabricFit/store/screenshots/` (1080x1920, inside Play's accepted range) and
+  `tools/qa/capture_fabricfit_screens.sh` now regenerates the Play slots from the same emulator
+  run that produces `docs/screenshots/`, so the listing can no longer drift from the build by
+  construction. What it cannot yet do is finish: on every attempt so far the hosted emulator
+  drops off adb after the *first* screen (`device 'emulator-5554' not found`, on attempts 2 and
+  3 of 3), so a run commits one refreshed screen and leaves the rest as they were. The job
+  reports this honestly rather than passing.
+  - The `screenshots` job is the only one it happens in, and the same runner boots fine for
+    `device-qa` (which runs the full instrumented suite on API 33). The difference is that this
+    job installs the API 33 **google_apis** image to get a virtual camera; try `default`
+    without `-camera-back`, or add `adb kill-server && adb start-server` between attempts.
+  - `04_play_scan_results.png` is not regenerated at all: that screen needs a fabric photo
+    mid-analysis, which the capture script does not drive. It keeps an older image deliberately
+    rather than pretending to have recaptured it.
 - **Privacy policy — done, pending one manual step.** `FabricFit/store/privacy_policy.html` is
   published to https://jacinth-19.github.io/fabricfit-app/privacy.html by
   `.github/workflows/pages.yml`. The contact address is `fabricfit.app@gmail.com`, because
